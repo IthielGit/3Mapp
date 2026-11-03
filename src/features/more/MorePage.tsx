@@ -43,6 +43,9 @@ export function MorePage() {
         <Link to="/plus/rates" className={LINK_CLASS}>
           {t("more.rates")}
         </Link>
+        <Link to="/plus/security" className={LINK_CLASS}>
+          {t("more.security")}
+        </Link>
         <Link to="/plus/import" className={LINK_CLASS}>
           {t("more.import")}
         </Link>

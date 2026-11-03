@@ -10,6 +10,7 @@ import { GoalsPage } from "./features/goals-debts/GoalsPage";
 import { DebtsPage } from "./features/goals-debts/DebtsPage";
 import { ReconcilePage } from "./features/money/ReconcilePage";
 import { RatesPage } from "./features/money/RatesPage";
+import { SecurityPage } from "./features/security/SecurityPage";
 import { HomePage } from "./features/home/HomePage";
 import { StatsPage } from "./features/stats/StatsPage";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="plus/debts" element={<DebtsPage />} />
         <Route path="plus/debts/:id" element={<DebtsPage />} />
         <Route path="plus/rates" element={<RatesPage />} />
+        <Route path="plus/security" element={<SecurityPage />} />
         <Route path="plus/wallets/:id/reconcile" element={<ReconcilePage />} />
         <Route path="plus/categories" element={<CategoriesPage />} />
         <Route path="plus/categories/new" element={<CategoryFormPage />} />

@@ -10,3 +10,8 @@ body {
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
 }
+
+.hide-amounts [data-amount] {
+  filter: blur(8px);
+  user-select: none;
+}

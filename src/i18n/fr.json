@@ -57,7 +57,8 @@
     "import": "Import / Export",
     "goals": "Objectifs d'épargne",
     "rates": "Devises et taux",
-    "debts": "Dettes et prêts"
+    "debts": "Dettes et prêts",
+    "security": "Sécurité"
   },
   "onboarding": {
     "progress": "Progression de la configuration",
@@ -401,5 +402,36 @@
   "app": {
     "updateAvailable": "Nouvelle version disponible",
     "reload": "Mettre à jour"
+  },
+  "security": {
+    "title": "Sécurité",
+    "pinTitle": "Code PIN",
+    "currentPin": "PIN actuel",
+    "newPin": "Nouveau PIN",
+    "createPin": "Créer un PIN (4 à 6 chiffres)",
+    "change": "Changer le PIN",
+    "create": "Créer le PIN",
+    "remove": "Supprimer le PIN",
+    "removed": "PIN supprimé.",
+    "saved": "Enregistré.",
+    "autoLockTitle": "Verrouillage automatique",
+    "autoLock": "Verrouiller après être sorti de l'app",
+    "lockImmediately": "Immédiatement",
+    "never": "Jamais",
+    "afterSeconds": "Après {{seconds}} s",
+    "hideAmounts": "Masquer les montants à l'accueil",
+    "biometricTitle": "Biométrie (optionnelle)",
+    "biometricEnable": "Activer la biométrie sur cet appareil",
+    "biometricDisable": "Désactiver la biométrie",
+    "biometricOn": "Biométrie activée.",
+    "biometricOff": "Biométrie désactivée.",
+    "biometricFailed": "La biométrie n'a pas pu être configurée.",
+    "biometricUnsupported": "Non disponible sur cet appareil ou ce navigateur.",
+    "unlock": "Déverrouiller",
+    "wrongPin": "PIN incorrect.",
+    "locked": "Trop d'essais : attendez avant de réessayer.",
+    "retryIn": "Réessayez dans {{seconds}} s.",
+    "confirm": "Valider",
+    "digits": "{{count}} chiffre(s) saisi(s)"
   }
 }

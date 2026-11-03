@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { registerSW } from "virtual:pwa-register";
 import App from "./App";
+import { SecurityProvider } from "./features/security/SecurityProvider";
 import { ThemeProvider } from "./lib/theme";
 import "./i18n";
 import "./index.css";
@@ -21,7 +22,9 @@ createRoot(rootElement).render(
   <StrictMode>
     <ThemeProvider>
       <BrowserRouter>
-        <App />
+        <SecurityProvider>
+          <App />
+        </SecurityProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>,

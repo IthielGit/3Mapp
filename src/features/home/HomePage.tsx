@@ -63,7 +63,9 @@ export function HomePage() {
       ) : null}
       <header className="flex flex-col gap-1">
         <p className="text-sm text-slate-500">{t("home.totalBalance")}</p>
-        <p className="text-3xl font-bold">{formatMoney(totalBalance, baseCurrency)}</p>
+        <p className="text-3xl font-bold" data-amount>
+          {formatMoney(totalBalance, baseCurrency)}
+        </p>
         {missingRates.length > 0 ? (
           <p className="text-xs text-amber-700 dark:text-amber-400">
             {t("home.missingRate", { currencies: missingRates.join(", ") })}
@@ -78,7 +80,7 @@ export function HomePage() {
               <span className="text-sm text-slate-500">
                 {w.icon} {w.name}
               </span>
-              <span className="font-semibold">
+              <span className="font-semibold" data-amount>
                 {formatMoney(balances[w.id] ?? w.initialBalance, w.currency)}
               </span>
             </Link>
@@ -144,7 +146,9 @@ function Figure({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-slate-200 p-2 dark:border-slate-700">
       <p className="text-slate-500">{label}</p>
-      <p className="font-semibold">{value}</p>
+      <p className="font-semibold" data-amount>
+        {value}
+      </p>
     </div>
   );
 }

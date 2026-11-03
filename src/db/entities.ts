@@ -25,6 +25,10 @@ export const settingsSchema = baseEntity.extend({
   autoLockSeconds: z.number().int().min(0).optional(),
   pinHash: z.string().optional(),
   pinSalt: z.string().optional(),
+  pinFailures: z.number().int().nonnegative().optional(),
+  pinLockedUntil: isoDateTime.optional(),
+  hideAmounts: z.boolean().optional(),
+  biometricCredentialId: z.string().optional(),
 });
 
 export const currencySchema = baseEntity.extend({
