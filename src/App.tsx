@@ -4,6 +4,8 @@ import { RequireOnboarding } from "./components/RequireOnboarding";
 import { BudgetsPage } from "./features/budgets/BudgetsPage";
 import { BudgetDetailPage } from "./features/budgets/BudgetDetailPage";
 import { BudgetFormPage } from "./features/budgets/BudgetFormPage";
+import { RecurringPage, RecurringDetailPage } from "./features/recurring/RecurringPage";
+import { RecurringFormPage } from "./features/recurring/RecurringFormPage";
 import { HomePage } from "./features/home/HomePage";
 import { StatsPage } from "./features/stats/StatsPage";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
@@ -42,6 +44,9 @@ export default function App() {
         <Route path="plus/wallets/:id" element={<WalletDetailPage />} />
         <Route path="plus/wallets/:id/edit" element={<WalletFormPage />} />
         <Route path="plus/import" element={<ImportExportPage />} />
+        <Route path="plus/recurring" element={<RecurringPage />} />
+        <Route path="plus/recurring/new" element={<RecurringFormPage />} />
+        <Route path="plus/recurring/:id" element={<RecurringDetailPage />} />
         <Route path="plus/categories" element={<CategoriesPage />} />
         <Route path="plus/categories/new" element={<CategoryFormPage />} />
         <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />

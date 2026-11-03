@@ -206,6 +206,43 @@
     "counted": "Dépenses comptées",
     "noCounted": "Aucune dépense comptée sur cette période."
   },
+  "recurring": {
+    "title": "Récurrences",
+    "pendingTitle": "En attente",
+    "noPending": "Aucune transaction en attente.",
+    "validate": "Valider",
+    "postpone": "Reporter d'un jour",
+    "ignore": "Ignorer",
+    "listTitle": "Récurrentes",
+    "empty": "Aucune récurrence. Ajoutez un loyer, un salaire ou un abonnement.",
+    "every": "Tous les {{interval}} {{unit}}",
+    "units": { "day": "jour(s)", "week": "semaine(s)", "month": "mois", "year": "an(s)" },
+    "pausedBadge": "en pause",
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "notFound": "Récurrence introuvable.",
+    "deleteConfirm": "Supprimer cette récurrence ? Les transactions déjà créées sont conservées.",
+    "nextOn": "Prochaine occurrence : {{date}}",
+    "history": "Historique",
+    "noHistory": "Aucune occurrence générée pour le moment.",
+    "pendingTag": "en attente",
+    "postedTag": "validée",
+    "newTitle": "Nouvelle récurrence",
+    "every_label": "Tous les",
+    "unit": "Unité",
+    "startDate": "Premier passage",
+    "endDate": "Fin (facultatif)",
+    "lastDay": "Toujours le dernier jour du mois",
+    "autoPost": "Créer directement comme validée (sinon en attente)",
+    "invalidInterval": "L'intervalle doit être un entier d'au moins 1."
+  },
+  "templates": {
+    "label": "Modèle",
+    "none": "Aucun modèle",
+    "saveAsTemplate": "Enregistrer comme modèle",
+    "templateName": "Nom du modèle",
+    "saved": "Modèle enregistré."
+  },
   "period": {
     "label": "Période",
     "kinds": {
@@ -227,7 +264,8 @@
     "net": "Net",
     "recent": "Dernières transactions",
     "seeAll": "Tout voir",
-    "noTransactions": "Aucune transaction pour le moment."
+    "noTransactions": "Aucune transaction pour le moment.",
+    "pendingBanner": "{{count}} transaction(s) récurrente(s) en attente de validation"
   },
   "stats": {
     "title": "Statistiques",

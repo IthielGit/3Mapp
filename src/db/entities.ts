@@ -139,6 +139,8 @@ export const recurringSchema = baseEntity
     startDate: isoDateTime,
     endDate: isoDateTime.optional(),
     nextDate: isoDateTime,
+    /** Index de la prochaine occurrence (0 = première). Évite la dérive des dates (ex. 31 → 28 → 31). */
+    occurrenceIndex: z.number().int().nonnegative(),
     autoPost: z.boolean(),
     paused: z.boolean(),
     dayOfMonthRule: z.enum(["same_day", "last_day"]),

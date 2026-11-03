@@ -1,0 +1,228 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { db } from "../../db/database";
+import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
+import { parseMoney, type CurrencyCode } from "../../lib/money";
+import type { Recurring } from "../../db/entities";
+import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
+import { createRecurring } from "./recurring-service";
+
+const EMPTY: never[] = [];
+type TxType = Recurring["type"];
+
+export function RecurringFormPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
+  const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
+  const active = wallets.filter((w) => !w.archived);
+
+  const [type, setType] = useState<TxType>("expense");
+  const [walletId, setWalletId] = useState("");
+  const [toWalletId, setToWalletId] = useState("");
+  const [amountText, setAmountText] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [memo, setMemo] = useState("");
+  const [unit, setUnit] = useState<RecurrenceUnit>("month");
+  const [interval, setInterval] = useState("1");
+  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
+  const [endDate, setEndDate] = useState("");
+  const [lastDay, setLastDay] = useState(false);
+  const [autoPost, setAutoPost] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+
+  const effectiveWallet = walletId || active[0]?.id || "";
+  const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";
+  const kind = type === "income" ? "income" : "expense";
+
+  async function save() {
+    setError(undefined);
+    const amount = parseMoney(amountText, currency);
+    if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
+    const every = Number(interval);
+    if (!Number.isInteger(every) || every < 1) return setError(t("recurring.invalidInterval"));
+    const isCategorised = type === "expense" || type === "income";
+    try {
+      await createRecurring({
+        draft: {
+          type,
+          amount,
+          walletId: effectiveWallet,
+          toWalletId: type === "transfer" ? toWalletId || undefined : undefined,
+          categoryId: isCategorised ? categoryId || undefined : undefined,
+          memo,
+          attachmentIds: [],
+        },
+        frequency: { unit, interval: every },
+        startDate: new Date(startDate).toISOString(),
+        endDate: endDate ? new Date(`${endDate}T23:59`).toISOString() : undefined,
+        dayOfMonthRule: (lastDay ? "last_day" : "same_day") as DayRule,
+        autoPost,
+      });
+      navigate("/plus/recurring", { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.generic"));
+    }
+  }
+
+  return (
+    <section className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">{t("recurring.newTitle")}</h1>
+
+      <Field label={t("transactions.type")}>
+        <select
+          className={inputClass}
+          value={type}
+          onChange={(e) => setType(e.target.value as TxType)}
+        >
+          {(["expense", "income", "transfer"] as const).map((tp) => (
+            <option key={tp} value={tp}>
+              {t(`transactions.types.${tp}`)}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <Field label={`${t("transactions.amount")} (${currency})`}>
+        <input
+          inputMode="decimal"
+          className={inputClass}
+          value={amountText}
+          onChange={(e) => setAmountText(e.target.value)}
+        />
+      </Field>
+      <Field label={t("transactions.wallet")}>
+        <select
+          className={inputClass}
+          value={effectiveWallet}
+          onChange={(e) => setWalletId(e.target.value)}
+        >
+          {active.map((w) => (
+            <option key={w.id} value={w.id}>
+              {w.name} ({w.currency})
+            </option>
+          ))}
+        </select>
+      </Field>
+      {type === "transfer" ? (
+        <Field label={t("transactions.toWallet")}>
+          <select
+            className={inputClass}
+            value={toWalletId}
+            onChange={(e) => setToWalletId(e.target.value)}
+          >
+            <option value="">—</option>
+            {active
+              .filter((w) => w.id !== effectiveWallet)
+              .map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name}
+                </option>
+              ))}
+          </select>
+        </Field>
+      ) : null}
+      {type !== "transfer" ? (
+        <Field label={t("common.category")}>
+          <select
+            className={inputClass}
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+          >
+            <option value="">—</option>
+            {categories
+              .filter((c) => c.kind === kind && !c.archived)
+              .map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.icon} {c.name}
+                </option>
+              ))}
+          </select>
+        </Field>
+      ) : null}
+      <Field label={t("transactions.memo")}>
+        <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-2">
+        <Field label={t("recurring.every_label")}>
+          <input
+            inputMode="numeric"
+            className={inputClass}
+            value={interval}
+            onChange={(e) => setInterval(e.target.value)}
+          />
+        </Field>
+        <Field label={t("recurring.unit")}>
+          <select
+            className={inputClass}
+            value={unit}
+            onChange={(e) => setUnit(e.target.value as RecurrenceUnit)}
+          >
+            {(["day", "week", "month", "year"] as const).map((u) => (
+              <option key={u} value={u}>
+                {t(`recurring.units.${u}`)}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+
+      <Field label={t("recurring.startDate")}>
+        <input
+          type="datetime-local"
+          className={inputClass}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </Field>
+      <Field label={t("recurring.endDate")}>
+        <input
+          type="date"
+          className={inputClass}
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </Field>
+
+      {unit === "month" || unit === "year" ? (
+        <label className="flex min-h-[44px] items-center gap-3">
+          <input
+            type="checkbox"
+            className="h-5 w-5"
+            checked={lastDay}
+            onChange={(e) => setLastDay(e.target.checked)}
+          />
+          {t("recurring.lastDay")}
+        </label>
+      ) : null}
+
+      <label className="flex min-h-[44px] items-center gap-3">
+        <input
+          type="checkbox"
+          className="h-5 w-5"
+          checked={autoPost}
+          onChange={(e) => setAutoPost(e.target.checked)}
+        />
+        {t("recurring.autoPost")}
+      </label>
+
+      {error ? (
+        <p role="alert" className="text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="flex justify-end gap-3">
+        <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
+          {t("common.cancel")}
+        </button>
+        <button type="button" className={buttonPrimary} onClick={() => void save()}>
+          {t("common.save")}
+        </button>
+      </div>
+    </section>
+  );
+}

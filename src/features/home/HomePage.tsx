@@ -28,6 +28,8 @@ export function HomePage() {
   const baseCurrency: CurrencyCode =
     useLiveQuery(async () => (await db.settings.toArray())[0]?.baseCurrency, []) ?? "MGA";
 
+  const pendingCount =
+    useLiveQuery(() => db.transactions.where("status").equals("pending").count(), []) ?? 0;
   const active = wallets.filter((w) => !w.archived);
   const balances = useMemo(() => computeBalances(active, transactions), [active, transactions]);
   const inBase = active.filter((w) => w.includeInTotal && w.currency === baseCurrency);
@@ -39,6 +41,14 @@ export function HomePage() {
   return (
     <section className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">{t("nav.home")}</h1>
+      {pendingCount > 0 ? (
+        <Link
+          to="/plus/recurring"
+          className="rounded-lg bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+        >
+          {t("home.pendingBanner", { count: pendingCount })}
+        </Link>
+      ) : null}
       <header className="flex flex-col gap-1">
         <p className="text-sm text-slate-500">{t("home.totalBalance")}</p>
         <p className="text-3xl font-bold">{formatMoney(totalBalance, baseCurrency)}</p>
