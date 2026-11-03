@@ -1,0 +1,210 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { db } from "../../db/database";
+import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
+import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { createBudget, updateBudget, type BudgetInput } from "./budget-service";
+import type { Budget } from "../../db/entities";
+
+const EMPTY: never[] = [];
+
+export function BudgetFormPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const settings = useLiveQuery(() => db.settings.toArray(), []) ?? EMPTY;
+  const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
+  const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
+  const currency: CurrencyCode = settings[0]?.baseCurrency ?? "MGA";
+
+  const [loaded, setLoaded] = useState(!id);
+  const [existing, setExisting] = useState<Budget | undefined>();
+  const [name, setName] = useState("");
+  const [amountText, setAmountText] = useState("");
+  const [period, setPeriod] = useState<Budget["period"]>("month");
+  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState("");
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [walletIds, setWalletIds] = useState<string[]>([]);
+  const [rollover, setRollover] = useState(false);
+  const [threshold, setThreshold] = useState("80");
+  const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (!id) return;
+    void db.budgets.get(id).then((b) => {
+      if (!b) return;
+      setExisting(b);
+      setName(b.name);
+      setAmountText(formatMoney(b.amount, b.currency, { withSymbol: false }));
+      setPeriod(b.period);
+      setStartDate(format(new Date(b.startDate), "yyyy-MM-dd"));
+      setEndDate(b.endDate ? format(new Date(b.endDate), "yyyy-MM-dd") : "");
+      setCategoryIds(b.categoryIds);
+      setWalletIds(b.walletIds);
+      setRollover(b.rollover);
+      setThreshold(String(b.alertThreshold));
+      setLoaded(true);
+    });
+  }, [id]);
+
+  if (!loaded) return null;
+
+  const expenseCategories = categories.filter((c) => c.kind === "expense" && !c.archived);
+
+  function toggle(list: string[], value: string): string[] {
+    return list.includes(value) ? list.filter((x) => x !== value) : [...list, value];
+  }
+
+  async function save() {
+    setError(undefined);
+    if (name.trim() === "") return setError(t("errors.required"));
+    const amount = parseMoney(amountText, currency);
+    if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
+    if (categoryIds.length === 0) return setError(t("budgets.needCategory"));
+    const pct = Number(threshold);
+    if (!Number.isInteger(pct) || pct < 1 || pct > 100)
+      return setError(t("budgets.invalidThreshold"));
+
+    const input: BudgetInput = {
+      name: name.trim(),
+      amount,
+      currency,
+      period,
+      startDate: new Date(`${startDate}T00:00`).toISOString(),
+      endDate:
+        period === "custom" && endDate ? new Date(`${endDate}T23:59`).toISOString() : undefined,
+      categoryIds,
+      walletIds,
+      rollover,
+      alertThreshold: pct,
+    };
+    try {
+      if (existing) await updateBudget(existing.id, input);
+      else await createBudget(input);
+      navigate("/budgets", { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.generic"));
+    }
+  }
+
+  return (
+    <section className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">
+        {existing ? t("budgets.editTitle") : t("budgets.newTitle")}
+      </h1>
+
+      <Field label={t("common.name")}>
+        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+      </Field>
+      <Field label={`${t("budgets.amount")} (${currency})`}>
+        <input
+          inputMode="decimal"
+          className={inputClass}
+          value={amountText}
+          onChange={(e) => setAmountText(e.target.value)}
+        />
+      </Field>
+      <Field label={t("budgets.periodLabel")}>
+        <select
+          className={inputClass}
+          value={period}
+          onChange={(e) => setPeriod(e.target.value as Budget["period"])}
+        >
+          {(["week", "month", "year", "custom"] as const).map((p) => (
+            <option key={p} value={p}>
+              {t(`budgets.periods.${p}`)}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t("budgets.startDate")}>
+        <input
+          type="date"
+          className={inputClass}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </Field>
+      {period === "custom" ? (
+        <Field label={t("budgets.endDate")}>
+          <input
+            type="date"
+            className={inputClass}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </Field>
+      ) : null}
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1 text-sm font-medium">{t("budgets.categories")}</legend>
+        {expenseCategories.map((c) => (
+          <label key={c.id} className="flex min-h-[44px] items-center gap-3">
+            <input
+              type="checkbox"
+              className="h-5 w-5"
+              checked={categoryIds.includes(c.id)}
+              onChange={() => setCategoryIds((ids) => toggle(ids, c.id))}
+            />
+            {c.icon} {c.name}
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1 text-sm font-medium">{t("budgets.walletsOptional")}</legend>
+        {wallets
+          .filter((w) => !w.archived && w.currency === currency)
+          .map((w) => (
+            <label key={w.id} className="flex min-h-[44px] items-center gap-3">
+              <input
+                type="checkbox"
+                className="h-5 w-5"
+                checked={walletIds.includes(w.id)}
+                onChange={() => setWalletIds((ids) => toggle(ids, w.id))}
+              />
+              {w.name}
+            </label>
+          ))}
+      </fieldset>
+
+      <label className="flex min-h-[44px] items-center gap-3">
+        <input
+          type="checkbox"
+          className="h-5 w-5"
+          checked={rollover}
+          onChange={(e) => setRollover(e.target.checked)}
+        />
+        {t("budgets.rollover")}
+      </label>
+
+      <Field label={t("budgets.threshold")}>
+        <input
+          inputMode="numeric"
+          className={inputClass}
+          value={threshold}
+          onChange={(e) => setThreshold(e.target.value)}
+        />
+      </Field>
+
+      {error ? (
+        <p role="alert" className="text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="flex justify-end gap-3">
+        <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
+          {t("common.cancel")}
+        </button>
+        <button type="button" className={buttonPrimary} onClick={() => void save()}>
+          {t("common.save")}
+        </button>
+      </div>
+    </section>
+  );
+}

@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { RequireOnboarding } from "./components/RequireOnboarding";
-import { BudgetsPage } from "./features/pages";
+import { BudgetsPage } from "./features/budgets/BudgetsPage";
+import { BudgetDetailPage } from "./features/budgets/BudgetDetailPage";
+import { BudgetFormPage } from "./features/budgets/BudgetFormPage";
 import { HomePage } from "./features/home/HomePage";
 import { StatsPage } from "./features/stats/StatsPage";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
@@ -31,6 +33,9 @@ export default function App() {
         <Route path="transactions/:id/edit" element={<TransactionsPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="budgets" element={<BudgetsPage />} />
+        <Route path="budgets/new" element={<BudgetFormPage />} />
+        <Route path="budgets/:id" element={<BudgetDetailPage />} />
+        <Route path="budgets/:id/edit" element={<BudgetFormPage />} />
         <Route path="plus" element={<MorePage />} />
         <Route path="plus/wallets" element={<WalletsPage />} />
         <Route path="plus/wallets/new" element={<WalletFormPage />} />

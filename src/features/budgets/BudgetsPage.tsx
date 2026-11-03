@@ -1,0 +1,116 @@
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
+import { db } from "../../db/database";
+import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { budgetStates } from "../../domain/budget";
+import { formatMoney } from "../../lib/money";
+import { usePeriodSettings } from "../stats/period-state";
+
+const EMPTY: never[] = [];
+
+export function BudgetsPage() {
+  const { t } = useTranslation();
+  const settings = usePeriodSettings();
+  const [extended, setExtended] = useState(false);
+  const [now] = useState(() => new Date());
+  const budgets = useLiveQuery(() => db.budgets.toArray(), []) ?? EMPTY;
+  const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
+  const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
+  const names = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
+
+  const active = budgets.filter((b) => !b.archived);
+  const states = useMemo(
+    () => budgetStates(active, transactions, now, settings),
+    [active, transactions, now, settings],
+  );
+
+  return (
+    <section className="flex flex-col gap-4">
+      <header className="flex items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">{t("budgets.title")}</h1>
+        <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
+          {t("common.add")}
+        </Link>
+      </header>
+
+      <div className="flex justify-end">
+        <button
+          type="button"
+          className={buttonSecondary}
+          aria-pressed={extended}
+          onClick={() => setExtended((e) => !e)}
+        >
+          {extended ? t("budgets.simpleView") : t("budgets.extendedView")}
+        </button>
+      </div>
+
+      {active.length === 0 ? <p className="text-slate-500">{t("budgets.empty")}</p> : null}
+
+      <ul className="flex flex-col gap-3">
+        {active.map((b) => {
+          const s = states.get(b.id);
+          if (!s) return null;
+          const width = Math.min(100, Math.max(0, s.percent));
+          const barColor =
+            s.status === "exceeded"
+              ? "bg-red-600"
+              : s.status === "threshold"
+                ? "bg-amber-500"
+                : "bg-brand-600";
+          return (
+            <li
+              key={b.id}
+              className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+            >
+              <Link to={`/budgets/${b.id}`} className="flex flex-col gap-2">
+                <div className="flex justify-between gap-2">
+                  <span className="font-medium">{b.name}</span>
+                  <span className="text-sm text-slate-500">{t(`budgets.periods.${b.period}`)}</span>
+                </div>
+                <div
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.min(100, s.percent)}
+                  aria-label={b.name}
+                  className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
+                >
+                  <div className={`h-full ${barColor}`} style={{ width: `${width}%` }} />
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>
+                    {formatMoney(s.spent, b.currency)} / {formatMoney(s.available, b.currency)}
+                  </span>
+                  <span className={s.status === "exceeded" ? "text-red-700 dark:text-red-400" : ""}>
+                    {s.status === "exceeded"
+                      ? t("budgets.exceededBy", { amount: formatMoney(-s.remaining, b.currency) })
+                      : t("budgets.remaining", { amount: formatMoney(s.remaining, b.currency) })}
+                  </span>
+                </div>
+                {s.dailyAllowance !== null ? (
+                  <p className="text-xs text-slate-500">
+                    {t("budgets.dailyAllowance", {
+                      amount: formatMoney(s.dailyAllowance, b.currency),
+                    })}
+                  </p>
+                ) : null}
+              </Link>
+
+              {extended ? (
+                <p className="text-xs text-slate-500">
+                  {b.categoryIds
+                    .map((id) => names.get(id))
+                    .filter(Boolean)
+                    .join(", ")}
+                  {b.rollover ? ` · ${t("budgets.rolloverOn")}` : ""}
+                </p>
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
