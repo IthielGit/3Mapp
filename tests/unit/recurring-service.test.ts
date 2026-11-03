@@ -188,7 +188,10 @@ describe("actions sur les transactions en attente", () => {
     const tx = await pendingOne();
     await postponePending(tx.id, db);
     const after = await db.transactions.get(tx.id);
-    expect(new Date(after!.date).getTime() - new Date(tx.date).getTime()).toBe(24 * 60 * 60 * 1000);
+    expect(after).toBeDefined();
+    expect(new Date(after?.date ?? "").getTime() - new Date(tx.date).getTime()).toBe(
+      24 * 60 * 60 * 1000,
+    );
   });
 
   it("ignorer supprime l’occurrence sans en recréer une", async () => {
