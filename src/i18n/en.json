@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Home",
+    "transactions": "Transactions",
+    "stats": "Stats",
+    "budgets": "Budgets",
+    "more": "More"
+  },
+  "pages": {
+    "home": { "title": "Home", "empty": "No data yet." },
+    "transactions": { "title": "Transactions", "empty": "No transactions." },
+    "stats": { "title": "Statistics", "empty": "No statistics yet." },
+    "budgets": { "title": "Budgets", "empty": "No budget set." },
+    "more": { "title": "More", "theme": "Theme", "themeLight": "Light", "themeDark": "Dark" }
+  },
+  "app": {
+    "updateAvailable": "New version available",
+    "reload": "Update"
+  }
+}

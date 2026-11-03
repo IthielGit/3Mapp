@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "transactions": "Transactions",
+    "stats": "Stats",
+    "budgets": "Budgets",
+    "more": "Plus"
+  },
+  "pages": {
+    "home": { "title": "Accueil", "empty": "Aucune donnée pour le moment." },
+    "transactions": { "title": "Transactions", "empty": "Aucune transaction." },
+    "stats": { "title": "Statistiques", "empty": "Pas encore de statistiques." },
+    "budgets": { "title": "Budgets", "empty": "Aucun budget défini." },
+    "more": { "title": "Plus", "theme": "Thème", "themeLight": "Clair", "themeDark": "Sombre" }
+  },
+  "app": {
+    "updateAvailable": "Nouvelle version disponible",
+    "reload": "Mettre à jour"
+  }
+}
