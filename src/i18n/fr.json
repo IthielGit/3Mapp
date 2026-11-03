@@ -28,10 +28,24 @@
     "more": "Plus"
   },
   "pages": {
-    "home": { "title": "Accueil", "empty": "Aucune donnée pour le moment." },
-    "stats": { "title": "Statistiques", "empty": "Pas encore de statistiques." },
-    "budgets": { "title": "Budgets", "empty": "Aucun budget défini." },
-    "more": { "title": "Plus", "theme": "Thème", "themeLight": "Clair", "themeDark": "Sombre" }
+    "home": {
+      "title": "Accueil",
+      "empty": "Aucune donnée pour le moment."
+    },
+    "stats": {
+      "title": "Statistiques",
+      "empty": "Pas encore de statistiques."
+    },
+    "budgets": {
+      "title": "Budgets",
+      "empty": "Aucun budget défini."
+    },
+    "more": {
+      "title": "Plus",
+      "theme": "Thème",
+      "themeLight": "Clair",
+      "themeDark": "Sombre"
+    }
   },
   "more": {
     "wallets": "Portefeuilles",
@@ -42,6 +56,7 @@
     "demoDone": "{{count}} transactions de démo ajoutées.",
     "import": "Import / Export",
     "goals": "Objectifs d'épargne",
+    "rates": "Devises et taux",
     "debts": "Dettes et prêts"
   },
   "onboarding": {
@@ -182,7 +197,12 @@
     "editTitle": "Modifier le budget",
     "simpleView": "Vue simple",
     "extendedView": "Vue étendue",
-    "periods": { "week": "Semaine", "month": "Mois", "year": "Année", "custom": "Personnalisé" },
+    "periods": {
+      "week": "Semaine",
+      "month": "Mois",
+      "year": "Année",
+      "custom": "Personnalisé"
+    },
     "periodLabel": "Période",
     "amount": "Montant",
     "startDate": "Date de début",
@@ -225,7 +245,10 @@
   },
   "debts": {
     "title": "Dettes et prêts",
-    "tabs": { "borrowed": "Je dois", "lent": "On me doit" },
+    "tabs": {
+      "borrowed": "Je dois",
+      "lent": "On me doit"
+    },
     "empty": "Aucune dette dans cet onglet.",
     "creditor": "À qui je dois",
     "debtor": "Qui me doit",
@@ -234,7 +257,11 @@
     "invalidRate": "Taux invalide.",
     "startDate": "Date de début",
     "dueDate": "Échéance (facultatif)",
-    "status": { "ongoing": "En cours", "settled": "Soldée", "late": "En retard" },
+    "status": {
+      "ongoing": "En cours",
+      "settled": "Soldée",
+      "late": "En retard"
+    },
     "notFound": "Dette introuvable.",
     "interest": "Intérêts courus",
     "paid": "Déjà payé",
@@ -255,7 +282,12 @@
     "listTitle": "Récurrentes",
     "empty": "Aucune récurrence. Ajoutez un loyer, un salaire ou un abonnement.",
     "every": "Tous les {{interval}} {{unit}}",
-    "units": { "day": "jour(s)", "week": "semaine(s)", "month": "mois", "year": "an(s)" },
+    "units": {
+      "day": "jour(s)",
+      "week": "semaine(s)",
+      "month": "mois",
+      "year": "an(s)"
+    },
     "pausedBadge": "en pause",
     "pause": "Mettre en pause",
     "resume": "Reprendre",
@@ -282,6 +314,29 @@
     "templateName": "Nom du modèle",
     "saved": "Modèle enregistré."
   },
+  "reconcile": {
+    "title": "Réconcilier {{name}}",
+    "open": "Réconcilier le solde",
+    "computed": "Solde calculé",
+    "real": "Solde réel constaté",
+    "gap": "Écart à corriger : {{amount}}",
+    "noGap": "Aucun écart : les soldes concordent.",
+    "memo": "Motif (facultatif)",
+    "button": "Créer l'ajustement",
+    "done": "Réconciliation enregistrée.",
+    "history": "Historique",
+    "noHistory": "Aucune réconciliation pour le moment.",
+    "defaultMemo": "Réconciliation"
+  },
+  "rates": {
+    "title": "Devises et taux",
+    "hint": "Taux manuels datés : le dernier taux connu à la date d'une transaction sert à la convertir.",
+    "from": "De",
+    "to": "Vers",
+    "rate": "Taux ({{from}} → {{to}})",
+    "date": "Date du taux",
+    "add": "Ajouter le taux"
+  },
   "period": {
     "label": "Période",
     "kinds": {
@@ -304,7 +359,8 @@
     "recent": "Dernières transactions",
     "seeAll": "Tout voir",
     "noTransactions": "Aucune transaction pour le moment.",
-    "pendingBanner": "{{count}} transaction(s) récurrente(s) en attente de validation"
+    "pendingBanner": "{{count}} transaction(s) récurrente(s) en attente de validation",
+    "missingRate": "Taux manquant pour {{currencies}} : ces soldes ne sont pas inclus dans le total."
   },
   "stats": {
     "title": "Statistiques",

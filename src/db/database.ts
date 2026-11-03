@@ -10,6 +10,7 @@ import type {
   Goal,
   GoalTransaction,
   Recurring,
+  Reconciliation,
   Settings,
   Subcategory,
   Template,
@@ -23,7 +24,7 @@ export const DB_NAME = "money-manager";
  * Base IndexedDB (SPEC §4).
  *
  * Chaque évolution du schéma ajoute une version : on ne modifie jamais une version publiée.
- * Version 1 = schéma initial complet.
+ * Version 1 = schéma initial complet ; version 2 = réconciliations.
  */
 export class AppDatabase extends Dexie {
   declare settings: Table<Settings, string>;
@@ -41,6 +42,7 @@ export class AppDatabase extends Dexie {
   declare debts: Table<Debt, string>;
   declare debtPayments: Table<DebtPayment, string>;
   declare attachments: Table<Attachment, string>;
+  declare reconciliations: Table<Reconciliation, string>;
 
   constructor(name: string = DB_NAME) {
     super(name);
@@ -62,6 +64,11 @@ export class AppDatabase extends Dexie {
       debts: "id, direction",
       debtPayments: "id, debtId",
       attachments: "id",
+    });
+
+    // Version 2 : historique des réconciliations (SPEC §5.12). Ajout de table, données existantes conservées.
+    this.version(2).stores({
+      reconciliations: "id, walletId",
     });
   }
 }

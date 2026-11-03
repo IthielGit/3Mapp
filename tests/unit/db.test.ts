@@ -20,6 +20,7 @@ const EXPECTED_TABLES = [
   "debts",
   "debtPayments",
   "attachments",
+  "reconciliations",
 ].sort();
 
 let testDb: AppDatabase;

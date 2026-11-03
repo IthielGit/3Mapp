@@ -95,6 +95,12 @@ export function WalletDetailPage() {
         >
           {t("common.edit")}
         </Link>
+        <Link
+          to={`/plus/wallets/${id}/reconcile`}
+          className={buttonSecondary + " inline-flex items-center justify-center"}
+        >
+          {t("reconcile.open")}
+        </Link>
         {wallet.archived ? (
           <button
             type="button"

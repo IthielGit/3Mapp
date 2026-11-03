@@ -218,3 +218,16 @@ export type GoalTransaction = z.infer<typeof goalTransactionSchema>;
 export type Debt = z.infer<typeof debtSchema>;
 export type DebtPayment = z.infer<typeof debtPaymentSchema>;
 export type Attachment = z.infer<typeof attachmentSchema>;
+
+/** Réconciliation d'un portefeuille (SPEC §5.12) : solde réel saisi, écart, ajustement créé. */
+export const reconciliationSchema = baseEntity.extend({
+  walletId: z.uuid(),
+  date: isoDateTime,
+  realBalance: minorAmount,
+  computedBalance: minorAmount,
+  adjustment: minorAmount,
+  transactionId: z.uuid().optional(),
+  memo: z.string(),
+});
+
+export type Reconciliation = z.infer<typeof reconciliationSchema>;

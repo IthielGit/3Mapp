@@ -4,8 +4,9 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
+import { convertedSum } from "../../domain/fx";
 import { periodSummary, transactionsIn } from "../../domain/stats";
-import { formatMoney, sumMinor, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker, periodLabel } from "../stats/PeriodPicker";
 import {
   currentPeriod,
@@ -22,6 +23,7 @@ export function HomePage() {
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const period = currentPeriod(state, settings);
 
+  const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? EMPTY;
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
@@ -32,8 +34,18 @@ export function HomePage() {
     useLiveQuery(() => db.transactions.where("status").equals("pending").count(), []) ?? 0;
   const active = wallets.filter((w) => !w.archived);
   const balances = useMemo(() => computeBalances(active, transactions), [active, transactions]);
-  const inBase = active.filter((w) => w.includeInTotal && w.currency === baseCurrency);
-  const totalBalance = sumMinor(inBase.map((w) => balances[w.id] ?? w.initialBalance));
+  const inBase = active.filter((w) => w.includeInTotal);
+  const converted = convertedSum(
+    inBase.map((w) => ({
+      amount: balances[w.id] ?? w.initialBalance,
+      currency: w.currency,
+      date: new Date().toISOString(),
+    })),
+    baseCurrency,
+    rates,
+  );
+  const totalBalance = converted.total;
+  const missingRates = converted.missing;
   const summary = periodSummary(transactionsIn(transactions, period, baseCurrency), period);
   const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, 5);
   const walletName = new Map(wallets.map((w) => [w.id, w.name]));
@@ -52,6 +64,11 @@ export function HomePage() {
       <header className="flex flex-col gap-1">
         <p className="text-sm text-slate-500">{t("home.totalBalance")}</p>
         <p className="text-3xl font-bold">{formatMoney(totalBalance, baseCurrency)}</p>
+        {missingRates.length > 0 ? (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            {t("home.missingRate", { currencies: missingRates.join(", ") })}
+          </p>
+        ) : null}
       </header>
 
       <ul className="grid grid-cols-2 gap-2">

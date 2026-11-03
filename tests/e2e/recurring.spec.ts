@@ -18,6 +18,7 @@ test("récurrence passée : rattrapée à l’ouverture, puis validée depuis «
   await page.reload();
   await expect(page.getByRole("heading", { name: /En attente \(\d+\)/ })).toBeVisible();
 
+  await expect(page.getByRole("button", { name: "Valider" }).first()).toBeVisible();
   const validateButtons = page.getByRole("button", { name: "Valider" });
   const before = await validateButtons.count();
   expect(before).toBeGreaterThan(1);
