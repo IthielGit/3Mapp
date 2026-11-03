@@ -28,6 +28,7 @@ import {
   removeTransactions,
   restoreTransactions,
   type TransactionDraft,
+  type RemovedBundle,
 } from "./transaction-service";
 import { TransactionSheet } from "./TransactionSheet";
 
@@ -35,7 +36,7 @@ const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustme
 type Period = "all" | "month" | "thirty";
 
 interface Undo {
-  records: Transaction[];
+  bundle: RemovedBundle;
 }
 
 type Row =
@@ -143,14 +144,14 @@ export function TransactionsPage() {
     if (ids.length === 0) return;
     if (!window.confirm(t("transactions.confirmDelete", { count: ids.length }))) return;
     const removed = await removeTransactions(ids);
-    setUndo({ records: removed });
+    setUndo({ bundle: removed });
     setSelected(new Set());
     setSelectMode(false);
   }
 
   async function runUndo() {
     if (!undo) return;
-    await restoreTransactions(undo.records);
+    await restoreTransactions(undo.bundle);
     setUndo(null);
   }
 
@@ -389,7 +390,7 @@ export function TransactionsPage() {
           role="status"
           className="fixed inset-x-0 bottom-20 z-40 mx-auto flex max-w-lg items-center justify-between gap-3 rounded-lg bg-slate-900 px-4 py-3 text-white"
         >
-          <span>{t("transactions.deleted", { count: undo.records.length })}</span>
+          <span>{t("transactions.deleted", { count: undo.bundle.transactions.length })}</span>
           <button
             type="button"
             className="min-h-[44px] font-semibold underline"

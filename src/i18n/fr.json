@@ -40,7 +40,9 @@
     "demoHint": "Ajoute 5 000 transactions fictives pour tester les performances. Ne les utilisez pas avec vos vraies données.",
     "demoButton": "Générer 5 000 transactions de démo",
     "demoDone": "{{count}} transactions de démo ajoutées.",
-    "import": "Import / Export"
+    "import": "Import / Export",
+    "goals": "Objectifs d'épargne",
+    "debts": "Dettes et prêts"
   },
   "onboarding": {
     "progress": "Progression de la configuration",
@@ -205,6 +207,43 @@
     "percentUsed": "{{percent}} % consommé",
     "counted": "Dépenses comptées",
     "noCounted": "Aucune dépense comptée sur cette période."
+  },
+  "goals": {
+    "title": "Objectifs d'épargne",
+    "empty": "Aucun objectif. Créez-en un pour suivre une épargne.",
+    "target": "Cible",
+    "targetDate": "Échéance (facultatif)",
+    "reached": "Objectif atteint",
+    "estimated": "atteint vers le {{date}}",
+    "noEstimate": "Ajoutez un versement pour obtenir une date estimée.",
+    "notFound": "Objectif introuvable.",
+    "deposit": "Versement",
+    "withdraw": "Retrait",
+    "linkWallet": "Créer aussi la transaction dans",
+    "noLink": "Ne pas créer de transaction",
+    "deleteConfirm": "Supprimer cet objectif et son historique ?"
+  },
+  "debts": {
+    "title": "Dettes et prêts",
+    "tabs": { "borrowed": "Je dois", "lent": "On me doit" },
+    "empty": "Aucune dette dans cet onglet.",
+    "creditor": "À qui je dois",
+    "debtor": "Qui me doit",
+    "principal": "Montant initial",
+    "rate": "Intérêts simples annuels, % (facultatif)",
+    "invalidRate": "Taux invalide.",
+    "startDate": "Date de début",
+    "dueDate": "Échéance (facultatif)",
+    "status": { "ongoing": "En cours", "settled": "Soldée", "late": "En retard" },
+    "notFound": "Dette introuvable.",
+    "interest": "Intérêts courus",
+    "paid": "Déjà payé",
+    "remaining": "Reste dû",
+    "payment": "Paiement",
+    "addPayment": "Enregistrer le paiement",
+    "linkWallet": "Créer aussi la transaction dans",
+    "tooMuch": "Le paiement dépasse le reste dû.",
+    "deleteConfirm": "Supprimer cette dette et ses paiements ?"
   },
   "recurring": {
     "title": "Récurrences",

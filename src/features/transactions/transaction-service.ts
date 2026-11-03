@@ -1,6 +1,11 @@
 import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { RuleError } from "../../db/errors";
-import { transactionSchema, type Transaction } from "../../db/entities";
+import {
+  transactionSchema,
+  type DebtPayment,
+  type GoalTransaction,
+  type Transaction,
+} from "../../db/entities";
 import { createRepository } from "../../db/repositories";
 import type { CurrencyCode, Minor } from "../../lib/money";
 
@@ -143,30 +148,58 @@ export async function updateTransaction(
   return repo(database).update(id, record);
 }
 
-/** Supprime et retourne les enregistrements supprimés, pour permettre l'annulation. */
+export interface RemovedBundle {
+  transactions: Transaction[];
+  goalTransactions: GoalTransaction[];
+  debtPayments: DebtPayment[];
+}
+
+/**
+ * Supprime des transactions et les liaisons qui pointent vers elles (versements d'objectif, paiements de dette).
+ * Retourne tout ce qui a été supprimé, pour permettre l'annulation.
+ */
 export async function removeTransactions(
   ids: readonly string[],
   database: AppDatabase = defaultDb,
-): Promise<Transaction[]> {
-  return database.transaction("rw", database.transactions, async () => {
-    const removed: Transaction[] = [];
-    for (const id of ids) {
-      const existing = await database.transactions.get(id);
-      if (existing) {
-        removed.push(existing);
-        await database.transactions.delete(id);
+): Promise<RemovedBundle> {
+  return database.transaction(
+    "rw",
+    [database.transactions, database.goalTransactions, database.debtPayments],
+    async () => {
+      const bundle: RemovedBundle = { transactions: [], goalTransactions: [], debtPayments: [] };
+      for (const id of ids) {
+        const existing = await database.transactions.get(id);
+        if (!existing) continue;
+        bundle.transactions.push(existing);
+        bundle.goalTransactions.push(
+          ...(await database.goalTransactions.filter((g) => g.transactionId === id).toArray()),
+        );
+        bundle.debtPayments.push(
+          ...(await database.debtPayments.filter((p) => p.transactionId === id).toArray()),
+        );
       }
-    }
-    return removed;
-  });
+      await database.goalTransactions.bulkDelete(bundle.goalTransactions.map((g) => g.id));
+      await database.debtPayments.bulkDelete(bundle.debtPayments.map((p) => p.id));
+      await database.transactions.bulkDelete(bundle.transactions.map((t) => t.id));
+      return bundle;
+    },
+  );
 }
 
-/** Annulation d'une suppression : réinsère les enregistrements tels qu'ils étaient. */
+/** Annulation d'une suppression : réinsère exactement ce qui avait été retiré. */
 export async function restoreTransactions(
-  records: readonly Transaction[],
+  bundle: RemovedBundle,
   database: AppDatabase = defaultDb,
 ): Promise<void> {
-  await database.transactions.bulkPut([...records]);
+  await database.transaction(
+    "rw",
+    [database.transactions, database.goalTransactions, database.debtPayments],
+    async () => {
+      await database.transactions.bulkPut(bundle.transactions);
+      await database.goalTransactions.bulkPut(bundle.goalTransactions);
+      await database.debtPayments.bulkPut(bundle.debtPayments);
+    },
+  );
 }
 
 export async function duplicateTransaction(

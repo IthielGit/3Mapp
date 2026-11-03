@@ -6,6 +6,8 @@ import { BudgetDetailPage } from "./features/budgets/BudgetDetailPage";
 import { BudgetFormPage } from "./features/budgets/BudgetFormPage";
 import { RecurringPage, RecurringDetailPage } from "./features/recurring/RecurringPage";
 import { RecurringFormPage } from "./features/recurring/RecurringFormPage";
+import { GoalsPage } from "./features/goals-debts/GoalsPage";
+import { DebtsPage } from "./features/goals-debts/DebtsPage";
 import { HomePage } from "./features/home/HomePage";
 import { StatsPage } from "./features/stats/StatsPage";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
@@ -47,6 +49,10 @@ export default function App() {
         <Route path="plus/recurring" element={<RecurringPage />} />
         <Route path="plus/recurring/new" element={<RecurringFormPage />} />
         <Route path="plus/recurring/:id" element={<RecurringDetailPage />} />
+        <Route path="plus/goals" element={<GoalsPage />} />
+        <Route path="plus/goals/:id" element={<GoalsPage />} />
+        <Route path="plus/debts" element={<DebtsPage />} />
+        <Route path="plus/debts/:id" element={<DebtsPage />} />
         <Route path="plus/categories" element={<CategoriesPage />} />
         <Route path="plus/categories/new" element={<CategoryFormPage />} />
         <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />
