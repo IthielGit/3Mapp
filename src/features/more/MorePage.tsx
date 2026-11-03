@@ -5,6 +5,9 @@ import { useTheme } from "../../lib/theme-context";
 import { buttonSecondary } from "../../components/FormControls";
 import { generateDemoTransactions } from "../demo/demo-data";
 
+const LINK_CLASS =
+  "flex min-h-[44px] items-center rounded-lg border border-slate-200 px-4 font-medium dark:border-slate-700";
+
 export function MorePage() {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
@@ -25,17 +28,14 @@ export function MorePage() {
       <h1 className="text-2xl font-bold">{t("pages.more.title")}</h1>
 
       <nav aria-label={t("pages.more.title")} className="flex flex-col gap-2">
-        <Link
-          to="/plus/wallets"
-          className="flex min-h-[44px] items-center rounded-lg border border-slate-200 px-4 font-medium dark:border-slate-700"
-        >
+        <Link to="/plus/wallets" className={LINK_CLASS}>
           {t("more.wallets")}
         </Link>
-        <Link
-          to="/plus/categories"
-          className="flex min-h-[44px] items-center rounded-lg border border-slate-200 px-4 font-medium dark:border-slate-700"
-        >
+        <Link to="/plus/categories" className={LINK_CLASS}>
           {t("more.categories")}
+        </Link>
+        <Link to="/plus/import" className={LINK_CLASS}>
+          {t("more.import")}
         </Link>
       </nav>
 

@@ -38,7 +38,8 @@
     "demo": "Données de démo",
     "demoHint": "Ajoute 5 000 transactions fictives pour tester les performances. Ne les utilisez pas avec vos vraies données.",
     "demoButton": "Générer 5 000 transactions de démo",
-    "demoDone": "{{count}} transactions de démo ajoutées."
+    "demoDone": "{{count}} transactions de démo ajoutées.",
+    "import": "Import / Export"
   },
   "onboarding": {
     "progress": "Progression de la configuration",
@@ -170,6 +171,29 @@
     "required": "Ce champ est obligatoire.",
     "invalidAmount": "Montant invalide. Exemple : 12 500 ou 12,50.",
     "generic": "Une erreur est survenue. Réessayez."
+  },
+  "importExport": {
+    "title": "Import / Export",
+    "importTitle": "Importer un fichier CSV",
+    "importHint": "Format natif : Date, Type, Category, Amount, Currency, Memo, Wallet. Les dates s'écrivent MM/DD/YYYY, HH:mm. Un virement est une seule ligne « A -> B ».",
+    "chooseFile": "Choisir un fichier CSV",
+    "separator": "Séparateur détecté : {{separator}}",
+    "preview": "Aperçu",
+    "summary": "{{valid}} transaction(s) à importer, {{duplicates}} doublon(s) ignoré(s), {{invalid}} ligne(s) en erreur.",
+    "errorsTitle": "Lignes en erreur (non importées) :",
+    "line": "Ligne {{line}}",
+    "importButton": "Importer {{count}} transaction(s)",
+    "done": "Import terminé : {{created}} créée(s), {{duplicates}} doublon(s) ignoré(s), {{invalid}} erreur(s), {{wallets}} portefeuille(s) et {{categories}} catégorie(s) créé(s).",
+    "exportTitle": "Exporter",
+    "fields": {
+      "date": "Date",
+      "type": "Type",
+      "category": "Catégorie",
+      "amount": "Montant",
+      "currency": "Devise",
+      "memo": "Mémo",
+      "wallet": "Portefeuille"
+    }
   },
   "app": {
     "updateAvailable": "Nouvelle version disponible",

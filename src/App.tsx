@@ -8,6 +8,7 @@ import { TransactionsPage } from "./features/transactions/TransactionsPage";
 import { WalletsPage } from "./features/wallets/WalletsPage";
 import { WalletFormPage } from "./features/wallets/WalletFormPage";
 import { WalletDetailPage } from "./features/wallets/WalletDetailPage";
+import { ImportExportPage } from "./features/import-export/ImportExportPage";
 import { CategoriesPage } from "./features/categories/CategoriesPage";
 import { CategoryFormPage } from "./features/categories/CategoryFormPage";
 
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="plus/wallets/new" element={<WalletFormPage />} />
         <Route path="plus/wallets/:id" element={<WalletDetailPage />} />
         <Route path="plus/wallets/:id/edit" element={<WalletFormPage />} />
+        <Route path="plus/import" element={<ImportExportPage />} />
         <Route path="plus/categories" element={<CategoriesPage />} />
         <Route path="plus/categories/new" element={<CategoryFormPage />} />
         <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />
