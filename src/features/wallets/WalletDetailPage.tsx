@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 import { db } from "../../db/database";
 import { InUseError } from "../../db/errors";
 import { buttonDanger, buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { walletBalance } from "../../domain/balance";
 import { formatMoney } from "../../lib/money";
 import { deleteWallet, setWalletArchived } from "./wallet-service";
 
@@ -13,10 +15,19 @@ export function WalletDetailPage() {
   const navigate = useNavigate();
   const { id = "" } = useParams();
   const wallet = useLiveQuery(() => db.wallets.get(id), [id]);
+  const movements = useLiveQuery(
+    async () =>
+      (
+        await db.transactions.filter((tx) => tx.walletId === id || tx.toWalletId === id).toArray()
+      ).sort((a, b) => b.date.localeCompare(a.date)),
+    [id],
+  );
   const [error, setError] = useState<string | undefined>();
 
   if (wallet === undefined) return null;
   if (!wallet) return <p>{t("wallets.notFound")}</p>;
+
+  const balance = walletBalance(wallet, movements ?? []);
 
   async function remove() {
     setError(undefined);
@@ -46,12 +57,36 @@ export function WalletDetailPage() {
       </header>
 
       <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
-        <p className="text-sm text-slate-500">{t("wallets.initialBalance")}</p>
-        <p className="text-2xl font-semibold">
-          {formatMoney(wallet.initialBalance, wallet.currency)}
+        <p className="text-sm text-slate-500">{t("wallets.balance")}</p>
+        <p className="text-2xl font-semibold">{formatMoney(balance, wallet.currency)}</p>
+        <p className="mt-2 text-sm text-slate-500">
+          {t("wallets.initialBalance")} : {formatMoney(wallet.initialBalance, wallet.currency)}
         </p>
-        <p className="mt-2 text-sm text-slate-500">{t("wallets.movementsLater")}</p>
       </div>
+
+      <section className="flex flex-col gap-2">
+        <h2 className="font-semibold">{t("wallets.movements")}</h2>
+        {(movements ?? []).length === 0 ? (
+          <p className="text-slate-500">{t("wallets.noMovements")}</p>
+        ) : null}
+        <ul className="flex flex-col gap-2">
+          {(movements ?? []).slice(0, 30).map((tx) => (
+            <li key={tx.id}>
+              <Link
+                to={`/transactions/${tx.id}/edit`}
+                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+              >
+                <span className="text-sm">
+                  {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}
+                  {t(`transactions.types.${tx.type}`)}
+                  {tx.memo ? ` · ${tx.memo}` : ""}
+                </span>
+                <span className="font-medium">{formatMoney(tx.amount, tx.currency)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div className="flex flex-col gap-2">
         <Link

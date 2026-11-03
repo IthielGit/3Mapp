@@ -1,9 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { RequireOnboarding } from "./components/RequireOnboarding";
-import { BudgetsPage, HomePage, StatsPage, TransactionsPage } from "./features/pages";
+import { BudgetsPage, HomePage, StatsPage } from "./features/pages";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
 import { MorePage } from "./features/more/MorePage";
+import { TransactionsPage } from "./features/transactions/TransactionsPage";
 import { WalletsPage } from "./features/wallets/WalletsPage";
 import { WalletFormPage } from "./features/wallets/WalletFormPage";
 import { WalletDetailPage } from "./features/wallets/WalletDetailPage";
@@ -23,6 +24,8 @@ export default function App() {
       >
         <Route index element={<HomePage />} />
         <Route path="transactions" element={<TransactionsPage />} />
+        <Route path="transactions/new" element={<TransactionsPage />} />
+        <Route path="transactions/:id/edit" element={<TransactionsPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="budgets" element={<BudgetsPage />} />
         <Route path="plus" element={<MorePage />} />

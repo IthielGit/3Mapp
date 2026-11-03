@@ -1,15 +1,24 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
+import type { Wallet } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { computeBalances } from "../../domain/balance";
 import { formatMoney } from "../../lib/money";
 import { moveWallet, setWalletArchived } from "./wallet-service";
-import type { Wallet } from "../../db/entities";
+
+const EMPTY: never[] = [];
 
 export function WalletsPage() {
   const { t } = useTranslation();
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
+  const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
+  const balances = useMemo(
+    () => computeBalances(wallets ?? [], transactions),
+    [wallets, transactions],
+  );
   if (!wallets) return null;
 
   const active = wallets.filter((w) => !w.archived);
@@ -31,6 +40,7 @@ export function WalletsPage() {
           <WalletRow
             key={wallet.id}
             wallet={wallet}
+            balance={balances[wallet.id] ?? wallet.initialBalance}
             isFirst={index === 0}
             isLast={index === active.length - 1}
           />
@@ -76,10 +86,12 @@ export function WalletsPage() {
 
 function WalletRow({
   wallet,
+  balance,
   isFirst,
   isLast,
 }: {
   wallet: Wallet;
+  balance: number;
   isFirst: boolean;
   isLast: boolean;
 }) {
@@ -93,7 +105,7 @@ function WalletRow({
         <span className="flex flex-col">
           <span className="font-medium">{wallet.name}</span>
           <span className="text-sm text-slate-500">
-            {t("wallets.initialBalance")} : {formatMoney(wallet.initialBalance, wallet.currency)}
+            {t("wallets.balance")} : {formatMoney(balance, wallet.currency)}
           </span>
         </span>
       </Link>

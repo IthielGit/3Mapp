@@ -1,10 +1,25 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../lib/theme-context";
+import { buttonSecondary } from "../../components/FormControls";
+import { generateDemoTransactions } from "../demo/demo-data";
 
 export function MorePage() {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const [demoMessage, setDemoMessage] = useState<string | undefined>();
+
+  async function addDemo() {
+    setDemoMessage(undefined);
+    try {
+      const count = await generateDemoTransactions(5000);
+      setDemoMessage(t("more.demoDone", { count }));
+    } catch (err) {
+      setDemoMessage(err instanceof Error ? err.message : t("errors.generic"));
+    }
+  }
+
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">{t("pages.more.title")}</h1>
@@ -43,6 +58,19 @@ export function MorePage() {
           </label>
         ))}
       </fieldset>
+
+      <section className="flex flex-col gap-2 border-t border-slate-200 pt-4 dark:border-slate-700">
+        <h2 className="font-semibold">{t("more.demo")}</h2>
+        <p className="text-sm text-slate-500">{t("more.demoHint")}</p>
+        <button type="button" className={buttonSecondary} onClick={() => void addDemo()}>
+          {t("more.demoButton")}
+        </button>
+        {demoMessage ? (
+          <p role="status" className="text-sm">
+            {demoMessage}
+          </p>
+        ) : null}
+      </section>
     </section>
   );
 }

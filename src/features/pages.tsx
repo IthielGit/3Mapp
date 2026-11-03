@@ -5,7 +5,7 @@ interface PlaceholderProps {
   emptyKey: string;
 }
 
-/** Page encore vide : titre et message d'état vide. Les écrans métier arrivent en Phases 3, 5 et 6. */
+/** Page encore vide : titre et message d'état vide. Les écrans restants arrivent en Phases 5 et 6. */
 function PlaceholderPage({ titleKey, emptyKey }: PlaceholderProps) {
   const { t } = useTranslation();
   return (
@@ -18,12 +18,6 @@ function PlaceholderPage({ titleKey, emptyKey }: PlaceholderProps) {
 
 export function HomePage() {
   return <PlaceholderPage titleKey="pages.home.title" emptyKey="pages.home.empty" />;
-}
-
-export function TransactionsPage() {
-  return (
-    <PlaceholderPage titleKey="pages.transactions.title" emptyKey="pages.transactions.empty" />
-  );
 }
 
 export function StatsPage() {
