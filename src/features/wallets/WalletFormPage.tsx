@@ -1,0 +1,151 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { db } from "../../db/database";
+import type { Wallet } from "../../db/entities";
+import { ColorPicker, IconPicker } from "../../components/Pickers";
+import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
+import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { createWallet, updateWallet } from "./wallet-service";
+
+const GROUPS: Wallet["group"][] = ["bank", "cash", "mobile", "savings", "credit_card"];
+
+export function WalletFormPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loaded, setLoaded] = useState(!id);
+  const [existing, setExisting] = useState<Wallet | undefined>();
+
+  const [name, setName] = useState("");
+  const [group, setGroup] = useState<Wallet["group"]>("bank");
+  const [currency, setCurrency] = useState<CurrencyCode>("MGA");
+  const [balanceText, setBalanceText] = useState("0");
+  const [icon, setIcon] = useState("🏦");
+  const [color, setColor] = useState("#0f766e");
+  const [includeInTotal, setIncludeInTotal] = useState(true);
+  const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (!id) return;
+    void db.wallets.get(id).then((wallet) => {
+      if (!wallet) return;
+      setExisting(wallet);
+      setName(wallet.name);
+      setGroup(wallet.group);
+      setCurrency(wallet.currency);
+      setBalanceText(formatMoney(wallet.initialBalance, wallet.currency, { withSymbol: false }));
+      setIcon(wallet.icon);
+      setColor(wallet.color);
+      setIncludeInTotal(wallet.includeInTotal);
+      setLoaded(true);
+    });
+  }, [id]);
+
+  if (!loaded) return null;
+
+  async function save() {
+    setError(undefined);
+    if (name.trim() === "") return setError(t("errors.required"));
+    const initialBalance = parseMoney(balanceText || "0", currency);
+    if (initialBalance === null) return setError(t("errors.invalidAmount"));
+
+    const input = {
+      name: name.trim(),
+      group,
+      currency,
+      initialBalance,
+      icon,
+      color,
+      includeInTotal,
+    };
+    if (existing) {
+      await updateWallet(existing.id, input);
+      navigate(`/plus/wallets/${existing.id}`);
+    } else {
+      const created = await createWallet({ ...input, archived: false });
+      navigate(`/plus/wallets/${created.id}`);
+    }
+  }
+
+  return (
+    <section className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">
+        {existing ? t("wallets.editTitle") : t("wallets.newTitle")}
+      </h1>
+
+      <Field label={t("common.name")}>
+        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+      </Field>
+
+      <Field label={t("wallets.group")}>
+        <select
+          className={inputClass}
+          value={group}
+          onChange={(e) => setGroup(e.target.value as Wallet["group"])}
+        >
+          {GROUPS.map((g) => (
+            <option key={g} value={g}>
+              {t(`groups.${g}`)}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field label={t("common.currency")}>
+        <select
+          className={inputClass}
+          value={currency}
+          disabled={existing !== undefined}
+          onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+        >
+          {Object.values(CURRENCIES).map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.code} — {c.name}
+            </option>
+          ))}
+        </select>
+        {existing ? (
+          <span className="text-sm text-slate-500">{t("wallets.currencyLocked")}</span>
+        ) : null}
+      </Field>
+
+      <Field label={t("wallets.initialBalance")}>
+        <input
+          inputMode="decimal"
+          className={inputClass}
+          value={balanceText}
+          onChange={(e) => setBalanceText(e.target.value)}
+        />
+      </Field>
+
+      <label className="flex min-h-[44px] items-center gap-3">
+        <input
+          type="checkbox"
+          className="h-5 w-5"
+          checked={includeInTotal}
+          onChange={(e) => setIncludeInTotal(e.target.checked)}
+        />
+        {t("wallets.includeInTotal")}
+      </label>
+
+      <IconPicker value={icon} onChange={setIcon} label={t("common.icon")} />
+      <ColorPicker value={color} onChange={setColor} label={t("common.color")} />
+
+      {error ? (
+        <p role="alert" className="text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="flex justify-end gap-3">
+        <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
+          {t("common.cancel")}
+        </button>
+        <button type="button" className={buttonPrimary} onClick={save}>
+          {t("common.save")}
+        </button>
+      </div>
+    </section>
+  );
+}

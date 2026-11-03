@@ -1,4 +1,22 @@
 {
+  "common": {
+    "add": "Ajouter",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "open": "Ouvrir",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "name": "Nom",
+    "icon": "Icône",
+    "color": "Couleur",
+    "currency": "Devise",
+    "moveUp": "Monter",
+    "moveDown": "Descendre"
+  },
   "nav": {
     "home": "Accueil",
     "transactions": "Transactions",
@@ -12,6 +30,80 @@
     "stats": { "title": "Statistiques", "empty": "Pas encore de statistiques." },
     "budgets": { "title": "Budgets", "empty": "Aucun budget défini." },
     "more": { "title": "Plus", "theme": "Thème", "themeLight": "Clair", "themeDark": "Sombre" }
+  },
+  "more": {
+    "wallets": "Portefeuilles",
+    "categories": "Catégories"
+  },
+  "onboarding": {
+    "progress": "Progression de la configuration",
+    "slide1": {
+      "title": "Suivez votre argent",
+      "text": "Notez vos dépenses, revenus et virements en quelques secondes."
+    },
+    "slide2": {
+      "title": "Plusieurs portefeuilles",
+      "text": "Banque, mobile money, espèces : chacun a son solde, et les virements entre eux restent cohérents."
+    },
+    "slide3": {
+      "title": "Vos données restent chez vous",
+      "text": "Tout est stocké sur cet appareil, hors ligne. Vous gardez le contrôle des sauvegardes."
+    },
+    "settingsTitle": "Langue et devise",
+    "language": "Langue",
+    "currency": "Devise principale",
+    "walletTitle": "Votre premier portefeuille",
+    "walletHint": "Par exemple votre compte bancaire ou votre argent en espèces.",
+    "walletPlaceholder": "Ex. Compte BNI",
+    "balanceTitle": "Solde de départ",
+    "finish": "Terminer"
+  },
+  "groups": {
+    "bank": "Banque",
+    "cash": "Espèces",
+    "mobile": "Mobile money",
+    "savings": "Épargne",
+    "credit_card": "Carte de crédit"
+  },
+  "wallets": {
+    "title": "Portefeuilles",
+    "empty": "Aucun portefeuille actif.",
+    "archivedSection": "Archivés",
+    "archivedBadge": "archivé",
+    "newTitle": "Nouveau portefeuille",
+    "editTitle": "Modifier le portefeuille",
+    "group": "Type",
+    "initialBalance": "Solde initial",
+    "includeInTotal": "Inclure dans le total",
+    "currencyLocked": "La devise ne peut pas être modifiée après création.",
+    "movementsLater": "Les mouvements apparaîtront ici dès l'ajout de transactions.",
+    "notFound": "Portefeuille introuvable.",
+    "deleteConfirm": "Supprimer définitivement ce portefeuille ?",
+    "deleteBlocked": "Ce portefeuille est utilisé. Archivez-le plutôt que de le supprimer."
+  },
+  "categories": {
+    "title": "Catégories",
+    "empty": "Aucune catégorie active.",
+    "expense": "Dépenses",
+    "income": "Revenus",
+    "archivedSection": "Archivées",
+    "newTitle": "Nouvelle catégorie",
+    "editTitle": "Modifier la catégorie",
+    "kind": "Type",
+    "subcategories": "Sous-catégories",
+    "subPlaceholder": "Nouvelle sous-catégorie",
+    "subDeleteBlocked": "Cette sous-catégorie est utilisée et ne peut pas être supprimée.",
+    "deleteConfirm": "Supprimer cette catégorie et ses sous-catégories ?",
+    "deleteBlocked": "Cette catégorie est utilisée. Archivez-la ou fusionnez-la avec une autre.",
+    "merge": "Fusionner",
+    "mergeHint": "Toutes les opérations de cette catégorie seront transférées vers la catégorie choisie, puis cette catégorie sera supprimée.",
+    "mergeTarget": "Fusionner dans…",
+    "mergeConfirm": "Fusionner et supprimer cette catégorie ?"
+  },
+  "errors": {
+    "required": "Ce champ est obligatoire.",
+    "invalidAmount": "Montant invalide. Exemple : 12 500 ou 12,50.",
+    "generic": "Une erreur est survenue. Réessayez."
   },
   "app": {
     "updateAvailable": "Nouvelle version disponible",

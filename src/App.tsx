@@ -1,16 +1,38 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
-import { BudgetsPage, HomePage, MorePage, StatsPage, TransactionsPage } from "./features/pages";
+import { RequireOnboarding } from "./components/RequireOnboarding";
+import { BudgetsPage, HomePage, StatsPage, TransactionsPage } from "./features/pages";
+import { OnboardingPage } from "./features/onboarding/OnboardingPage";
+import { MorePage } from "./features/more/MorePage";
+import { WalletsPage } from "./features/wallets/WalletsPage";
+import { WalletFormPage } from "./features/wallets/WalletFormPage";
+import { WalletDetailPage } from "./features/wallets/WalletDetailPage";
+import { CategoriesPage } from "./features/categories/CategoriesPage";
+import { CategoryFormPage } from "./features/categories/CategoryFormPage";
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
+      <Route path="onboarding" element={<OnboardingPage />} />
+      <Route
+        element={
+          <RequireOnboarding>
+            <AppLayout />
+          </RequireOnboarding>
+        }
+      >
         <Route index element={<HomePage />} />
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="budgets" element={<BudgetsPage />} />
         <Route path="plus" element={<MorePage />} />
+        <Route path="plus/wallets" element={<WalletsPage />} />
+        <Route path="plus/wallets/new" element={<WalletFormPage />} />
+        <Route path="plus/wallets/:id" element={<WalletDetailPage />} />
+        <Route path="plus/wallets/:id/edit" element={<WalletFormPage />} />
+        <Route path="plus/categories" element={<CategoriesPage />} />
+        <Route path="plus/categories/new" element={<CategoryFormPage />} />
+        <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
