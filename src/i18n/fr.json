@@ -172,6 +172,42 @@
     "invalidAmount": "Montant invalide. Exemple : 12 500 ou 12,50.",
     "generic": "Une erreur est survenue. Réessayez."
   },
+  "period": {
+    "label": "Période",
+    "kinds": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois",
+      "year": "Année",
+      "custom": "Perso."
+    },
+    "from": "Du",
+    "to": "Au",
+    "previous": "Période précédente",
+    "next": "Période suivante"
+  },
+  "home": {
+    "totalBalance": "Solde total",
+    "income": "Revenus",
+    "expense": "Dépenses",
+    "net": "Net",
+    "recent": "Dernières transactions",
+    "seeAll": "Tout voir",
+    "noTransactions": "Aucune transaction pour le moment."
+  },
+  "stats": {
+    "title": "Statistiques",
+    "uncategorised": "Sans catégorie",
+    "savingsRate": "Taux d'épargne",
+    "dailyAverage": "Dépense moyenne / jour",
+    "byCategory": "Dépenses par catégorie",
+    "noExpenses": "Aucune donnée sur cette période.",
+    "byWeek": "Revenus et dépenses par semaine",
+    "byMonth": "Revenus et dépenses par mois ({{year}})",
+    "balanceCurve": "Évolution du solde",
+    "top10": "Top 10 des dépenses",
+    "byWallet": "Par portefeuille"
+  },
   "importExport": {
     "title": "Import / Export",
     "importTitle": "Importer un fichier CSV",

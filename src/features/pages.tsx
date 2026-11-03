@@ -16,14 +16,6 @@ function PlaceholderPage({ titleKey, emptyKey }: PlaceholderProps) {
   );
 }
 
-export function HomePage() {
-  return <PlaceholderPage titleKey="pages.home.title" emptyKey="pages.home.empty" />;
-}
-
-export function StatsPage() {
-  return <PlaceholderPage titleKey="pages.stats.title" emptyKey="pages.stats.empty" />;
-}
-
 export function BudgetsPage() {
   return <PlaceholderPage titleKey="pages.budgets.title" emptyKey="pages.budgets.empty" />;
 }

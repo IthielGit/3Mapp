@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { RequireOnboarding } from "./components/RequireOnboarding";
-import { BudgetsPage, HomePage, StatsPage } from "./features/pages";
+import { BudgetsPage } from "./features/pages";
+import { HomePage } from "./features/home/HomePage";
+import { StatsPage } from "./features/stats/StatsPage";
 import { OnboardingPage } from "./features/onboarding/OnboardingPage";
 import { MorePage } from "./features/more/MorePage";
 import { TransactionsPage } from "./features/transactions/TransactionsPage";
