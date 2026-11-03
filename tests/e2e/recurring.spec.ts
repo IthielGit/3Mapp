@@ -5,7 +5,9 @@ test("récurrence passée : rattrapée à l’ouverture, puis validée depuis «
   page,
 }) => {
   await completeOnboardingUi(page, "Compte BNI");
-  await page.goto("/plus/recurring/new");
+  await page.getByRole("link", { name: "Plus" }).click();
+  await page.getByRole("link", { name: "Récurrences et modèles" }).click();
+  await page.getByRole("link", { name: "Ajouter" }).click();
 
   await page.getByLabel(/Montant/).fill("150000");
   await page.getByLabel("Mémo").fill("Loyer");

@@ -58,7 +58,8 @@
     "goals": "Objectifs d'épargne",
     "rates": "Devises et taux",
     "debts": "Dettes et prêts",
-    "security": "Sécurité"
+    "security": "Sécurité",
+    "recurring": "Récurrences et modèles"
   },
   "onboarding": {
     "progress": "Progression de la configuration",

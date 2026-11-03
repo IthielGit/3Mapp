@@ -34,6 +34,9 @@ export function MorePage() {
         <Link to="/plus/categories" className={LINK_CLASS}>
           {t("more.categories")}
         </Link>
+        <Link to="/plus/recurring" className={LINK_CLASS}>
+          {t("more.recurring")}
+        </Link>
         <Link to="/plus/goals" className={LINK_CLASS}>
           {t("more.goals")}
         </Link>
