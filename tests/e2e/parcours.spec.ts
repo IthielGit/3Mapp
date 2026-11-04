@@ -44,7 +44,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
 
   // Virement de 2 000 du compte BNI vers Mobile Money.
   await goToTab(page, "Transactions");
-  await page.getByRole("link", { name: "Ajouter une transaction" }).click();
+  await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   await page.getByRole("radio", { name: "Virement" }).click();
   await typeAmount(page, "2000");
   await selectOptionContaining(destinationSelect(page), "Mobile Money");
@@ -72,7 +72,7 @@ test("budget dépassé : une dépense au-delà du plafond est signalée", async 
 
   // Dépense de 60 000 dans la même catégorie.
   await goToTab(page, "Transactions");
-  await page.getByRole("link", { name: "Ajouter une transaction" }).click();
+  await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   await typeAmount(page, "60000");
   await selectOptionContaining(categorySelect(page), "Alimentation");
   await page.getByRole("button", { name: "Enregistrer" }).click();

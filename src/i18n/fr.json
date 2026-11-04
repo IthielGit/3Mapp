@@ -234,7 +234,9 @@
     "bulkDone": "Modification appliquée.",
     "confirmDelete": "Supprimer {{count}} transaction(s) ?",
     "deleted": "{{count}} transaction(s) supprimée(s).",
-    "add": "Ajouter une transaction"
+    "add": "Ajouter une transaction",
+    "resetFilters": "Réinitialiser",
+    "summary": "Synthèse"
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

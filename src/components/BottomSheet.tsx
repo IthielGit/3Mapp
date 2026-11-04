@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface BottomSheetProps {
   open: boolean;
@@ -17,23 +18,28 @@ const EXIT_MS = 260;
  */
 export function BottomSheet({ open, title, onClose, children }: BottomSheetProps) {
   const titleId = useId();
-  const [mounted, setMounted] = useState(open);
+  const [present, setPresent] = useState(open);
   const [visible, setVisible] = useState(false);
-  const exitTimer = useRef<number | undefined>(undefined);
 
+  // Aucun setState de façon synchrone dans l'effet : tout passe par des minuteurs ou des images.
   useEffect(() => {
     if (open) {
-      window.clearTimeout(exitTimer.current);
-      setMounted(true);
+      const mount = window.setTimeout(() => setPresent(true));
       // Deux images : la feuille doit d'abord exister hors écran, puis glisser.
       const frame = window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => setVisible(true)),
       );
-      return () => window.cancelAnimationFrame(frame);
+      return () => {
+        window.clearTimeout(mount);
+        window.cancelAnimationFrame(frame);
+      };
     }
-    setVisible(false);
-    exitTimer.current = window.setTimeout(() => setMounted(false), EXIT_MS);
-    return () => window.clearTimeout(exitTimer.current);
+    // Fermeture : la feuille glisse tout de suite (classes conditionnées par open), puis se démonte.
+    const exit = window.setTimeout(() => {
+      setPresent(false);
+      setVisible(false);
+    }, EXIT_MS);
+    return () => window.clearTimeout(exit);
   }, [open]);
 
   useEffect(() => {
@@ -45,9 +51,10 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  if (!mounted) return null;
+  if (!present) return null;
+  const shown = open && visible;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <button
         type="button"
@@ -55,7 +62,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
         tabIndex={-1}
         onClick={onClose}
         className={`absolute inset-0 bg-slate-900/50 transition-opacity duration-200 ease-out ${
-          visible ? "opacity-100" : "opacity-0"
+          shown ? "opacity-100" : "opacity-0"
         }`}
       />
       <div
@@ -63,7 +70,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
         aria-modal="true"
         aria-labelledby={titleId}
         className={`relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl transition-transform duration-[320ms] ease-drawer motion-reduce:transform-none dark:bg-slate-900 ${
-          visible ? "translate-y-0" : "translate-y-full"
+          shown ? "translate-y-0" : "translate-y-full"
         }`}
       >
         <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-700">
@@ -83,6 +90,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

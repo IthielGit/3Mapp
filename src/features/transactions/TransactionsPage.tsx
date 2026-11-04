@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "react-i18next";
 import { endOfMonth, format, startOfMonth, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -51,7 +51,8 @@ export function TransactionsPage() {
   const location = useLocation();
   const { id } = useParams();
   const [params] = useSearchParams();
-  const parentRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
 
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
@@ -118,11 +119,21 @@ export function TransactionsPage() {
     return out;
   }, [visible, baseCurrency]);
 
-  const virtualizer = useVirtualizer({
+  // Une seule zone de défilement : la fenêtre. La liste mesure sa position dans la page pour que
+  // la virtualisation sache où elle commence.
+  useLayoutEffect(() => {
+    const measure = () =>
+      setScrollMargin((listRef.current?.getBoundingClientRect().top ?? 0) + window.scrollY);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [rows.length]);
+
+  const virtualizer = useWindowVirtualizer({
     count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: (index) => (rows[index]?.kind === "header" ? 40 : 68),
+    estimateSize: (index) => (rows[index]?.kind === "header" ? 44 : 68),
     overscan: 8,
+    scrollMargin,
   });
 
   // Annulation : le bandeau disparaît après 5 secondes.
@@ -131,6 +142,11 @@ export function TransactionsPage() {
     const timer = window.setTimeout(() => setUndo(null), 5000);
     return () => window.clearTimeout(timer);
   }, [undo]);
+
+  function resetAll() {
+    setFilters({});
+    setPeriod("all");
+  }
 
   const sheetMode = location.pathname.endsWith("/new") ? "new" : id ? "edit" : null;
   const editing = sheetMode === "edit" ? transactions.find((t) => t.id === id) : undefined;
@@ -202,58 +218,112 @@ export function TransactionsPage() {
     (period !== "all" ? 1 : 0);
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">{t("transactions.title")}</h1>
-        <div className="flex gap-2">
+        <h1 className="text-xl font-semibold text-[#172033] dark:text-slate-100">
+          {t("transactions.title")}
+        </h1>
+        <div className="flex items-center gap-1">
           <button
             type="button"
-            className={buttonSecondary}
+            onClick={openFilters}
+            aria-label={t("transactions.filters")}
+            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#64748B] active:bg-slate-100 dark:text-slate-400"
+          >
+            <FilterIcon />
+            {activeFilterCount > 0 ? (
+              <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0F8178] px-1 text-[10px] font-semibold text-white">
+                {activeFilterCount}
+              </span>
+            ) : null}
+          </button>
+          <button
+            type="button"
             onClick={() => setSelectMode((m) => !m)}
             aria-pressed={selectMode}
+            className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
+              selectMode ? "bg-[#0F8178] text-white" : "text-[#0F8178] dark:text-teal-300"
+            }`}
           >
             {selectMode ? t("transactions.selectDone") : t("transactions.select")}
-          </button>
-          <button type="button" className={buttonSecondary} onClick={openFilters}>
-            {t("transactions.filters")}
-            {activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
           </button>
         </div>
       </header>
 
-      <input
-        type="search"
-        className={inputClass}
-        placeholder={t("transactions.searchPlaceholder")}
-        aria-label={t("transactions.search")}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <label className="relative block">
+        <span className="sr-only">{t("transactions.search")}</span>
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#64748B]" />
+        <input
+          type="search"
+          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          placeholder={t("transactions.searchPlaceholder")}
+          aria-label={t("transactions.search")}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </label>
 
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-slate-500">{t("transactions.count", { count: visible.length })}</span>
-        <button
-          type="button"
-          className="text-brand-700 underline"
-          onClick={() => setOldestFirst((o) => !o)}
-        >
-          {oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
-        </button>
+      <div className="flex items-center justify-between gap-2 text-sm">
+        <span className="text-[#64748B] dark:text-slate-400">
+          {t("transactions.count", { count: visible.length })}
+        </span>
+        <div className="flex items-center gap-3">
+          {activeFilterCount > 0 ? (
+            <button
+              type="button"
+              className="font-medium text-[#0F8178] dark:text-teal-300"
+              onClick={resetAll}
+            >
+              {t("transactions.resetFilters")}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="font-medium text-[#0F8178] dark:text-teal-300"
+            onClick={() => setOldestFirst((o) => !o)}
+          >
+            {oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-card border border-slate-200 p-3 text-center text-sm dark:border-slate-700">
-        <Summary
-          label={t("transactions.income")}
-          value={formatMoney(summary.income, baseCurrency)}
-          tone="text-income dark:text-income-dark"
-        />
-        <Summary
-          label={t("transactions.expense")}
-          value={formatMoney(summary.expense, baseCurrency)}
-          tone="text-expense dark:text-expense-dark"
-        />
-        <Summary label={t("transactions.net")} value={formatMoney(summary.net, baseCurrency)} />
-      </div>
+      <section
+        aria-label={t("transactions.summary")}
+        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+      >
+        <div className="flex flex-col">
+          <p className="text-sm text-[#64748B] dark:text-slate-400">{t("transactions.net")}</p>
+          <p
+            className={`text-3xl font-bold tabular-nums ${
+              summary.net < 0
+                ? "text-[#DC2626] dark:text-red-400"
+                : summary.net > 0
+                  ? "text-[#15803D] dark:text-emerald-400"
+                  : "text-[#172033] dark:text-slate-100"
+            }`}
+            data-amount
+          >
+            {formatMoney(summary.net, baseCurrency)}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-slate-700">
+          <div className="flex flex-col">
+            <p className="text-[#64748B] dark:text-slate-400">{t("transactions.income")}</p>
+            <p
+              className="font-semibold tabular-nums text-[#15803D] dark:text-emerald-400"
+              data-amount
+            >
+              {formatMoney(summary.income, baseCurrency)}
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <p className="text-[#64748B] dark:text-slate-400">{t("transactions.expense")}</p>
+            <p className="font-semibold tabular-nums text-[#DC2626] dark:text-red-400" data-amount>
+              {formatMoney(summary.expense, baseCurrency)}
+            </p>
+          </div>
+        </div>
+      </section>
 
       {message ? (
         <p role="status" className="text-sm text-slate-600 dark:text-slate-300">
@@ -265,11 +335,7 @@ export function TransactionsPage() {
         <p className="py-10 text-center text-slate-500">{t("transactions.empty")}</p>
       ) : null}
 
-      <div
-        ref={parentRef}
-        className="relative h-[calc(100dvh-22rem)] overflow-y-auto"
-        data-testid="transaction-list"
-      >
+      <div ref={listRef} className="relative" data-testid="transaction-list">
         <div style={{ height: virtualizer.getTotalSize(), position: "relative", width: "100%" }}>
           {virtualizer.getVirtualItems().map((virtual) => {
             const row = rows[virtual.index];
@@ -284,18 +350,23 @@ export function TransactionsPage() {
                   top: 0,
                   left: 0,
                   width: "100%",
-                  transform: `translateY(${virtual.start}px)`,
+                  transform: `translateY(${virtual.start - scrollMargin}px)`,
                 }}
               >
                 {row.kind === "header" ? (
-                  <div className="flex items-center justify-between gap-3 border-b border-slate-200 py-2 dark:border-slate-700">
+                  <div className="flex items-center justify-between gap-3 pb-1 pt-3">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold">{format(new Date(row.day), "dd")}</span>
-                      <span className="text-sm capitalize text-slate-500 dark:text-slate-400">
+                      <span className="text-xl font-semibold tabular-nums text-[#172033] dark:text-slate-100">
+                        {format(new Date(row.day), "dd")}
+                      </span>
+                      <span className="text-sm capitalize text-[#64748B] dark:text-slate-400">
                         {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
                       </span>
                     </div>
-                    <span className="font-medium" data-amount>
+                    <span
+                      className="text-sm tabular-nums text-[#64748B] dark:text-slate-400"
+                      data-amount
+                    >
                       {formatMoney(row.net, row.currency)}
                     </span>
                   </div>
@@ -408,16 +479,6 @@ export function TransactionsPage() {
             {t("common.undo")}
           </button>
         </div>
-      ) : null}
-
-      {!selectMode ? (
-        <Link
-          to="/transactions/new"
-          aria-label={t("transactions.add")}
-          className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-3xl text-white shadow-lg"
-        >
-          +
-        </Link>
       ) : null}
 
       {filtersOpen ? (
@@ -553,17 +614,6 @@ export function TransactionsPage() {
   );
 }
 
-function Summary({ label, value, tone = "" }: { label: string; value: string; tone?: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
-      <p className={`font-semibold ${tone}`} data-amount>
-        {value}
-      </p>
-    </div>
-  );
-}
-
 interface TransactionRowProps {
   transaction: Transaction;
   walletName: string;
@@ -593,37 +643,81 @@ function TransactionRow({
       ? `${walletName} → ${toWalletName}`
       : categoryName || translate(`transactions.types.${t.type}`);
   const sign = t.type === "income" || (t.type === "adjustment" && t.amount > 0) ? "+" : "";
-  const amountText =
-    t.type === "transfer"
-      ? formatMoney(t.amount, t.currency)
-      : `${sign}${formatMoney(t.amount, t.currency)}`;
+
+  const amountClass =
+    t.type === "expense"
+      ? "text-[#DC2626] dark:text-red-400"
+      : t.type === "income"
+        ? "text-[#15803D] dark:text-emerald-400"
+        : "text-[#172033] dark:text-slate-100";
+  const details = [time, t.memo, t.type === "transfer" ? "" : walletName]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <button
       type="button"
       onClick={selectMode ? onToggle : onOpen}
-      className="flex min-h-[60px] w-full items-center gap-3 rounded-lg border border-slate-200 px-3 py-2 text-left dark:border-slate-700"
+      className="flex min-h-[56px] w-full items-center gap-3 border-b border-[#E2E8F0] py-2.5 text-left active:bg-slate-100 dark:border-slate-800 dark:active:bg-slate-800/60"
       aria-pressed={selectMode ? selected : undefined}
     >
       {selectMode ? (
         <span
           aria-hidden="true"
-          className={`h-5 w-5 rounded border ${selected ? "bg-brand-700" : ""}`}
-        />
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
+            selected ? "border-[#0F8178] bg-[#0F8178] text-white" : "border-[#64748B]"
+          }`}
+        >
+          {selected ? "✓" : null}
+        </span>
       ) : null}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{label}</span>
-        <span className="truncate text-sm text-slate-500">
-          {time}
-          {t.memo ? ` · ${t.memo}` : ""}
-          {t.type === "transfer" ? "" : ` · ${walletName}`}
+        <span className="truncate text-[15px] font-medium text-[#172033] dark:text-slate-100">
+          {label}
         </span>
+        <span className="truncate text-sm text-[#64748B] dark:text-slate-400">{details}</span>
       </span>
       <span
-        className={`whitespace-nowrap font-semibold ${t.type === "income" ? "text-emerald-700 dark:text-emerald-400" : ""}`}
+        className={`shrink-0 whitespace-nowrap text-[15px] font-semibold tabular-nums ${amountClass}`}
+        data-amount
       >
-        {amountText}
+        {t.type === "expense" ? "−" : sign}
+        {formatMoney(t.amount, t.currency)}
       </span>
     </button>
+  );
+}
+
+/** Icônes en SVG, sans bibliothèque : trait fin, couleur héritée du texte. */
+function FilterIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+    >
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
+  );
+}
+
+function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+    >
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4 4" />
+    </svg>
   );
 }

@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test("saisir une dépense au clavier puis la retrouver dans la liste", async ({ page }) => {
   await page.getByRole("link", { name: "Transactions" }).click();
-  await page.getByRole("link", { name: "Ajouter une transaction" }).click();
+  await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   for (const key of ["1", "5", "0", "0"]) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }

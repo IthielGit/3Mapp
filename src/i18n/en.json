@@ -234,7 +234,9 @@
     "bulkDone": "Change applied.",
     "confirmDelete": "Delete {{count}} transaction(s)?",
     "deleted": "{{count}} transaction(s) deleted.",
-    "add": "Add transaction"
+    "add": "Add transaction",
+    "resetFilters": "Reset",
+    "summary": "Summary"
   },
   "errors": {
     "required": "This field is required.",

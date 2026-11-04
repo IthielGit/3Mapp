@@ -25,7 +25,7 @@ test("hors ligne : l'app se charge depuis le cache et affiche les données local
 
   // Une autre page de l'application (route gérée côté client) fonctionne aussi hors ligne.
   await page.getByRole("link", { name: "Transactions" }).click();
-  await expect(page.getByRole("link", { name: "Ajouter une transaction" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Nouvelle transaction" })).toBeVisible();
 
   await context.setOffline(false);
 });

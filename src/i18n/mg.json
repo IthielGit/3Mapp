@@ -234,7 +234,9 @@
     "bulkDone": "Voampiharina ny fanovana.",
     "confirmDelete": "Esorina fifanakalozana {{count}} ?",
     "deleted": "Voafafa ny fifanakalozana {{count}}.",
-    "add": "Ampio fifanakalozana"
+    "add": "Ampio fifanakalozana",
+    "resetFilters": "Averina",
+    "summary": "Fintinana"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

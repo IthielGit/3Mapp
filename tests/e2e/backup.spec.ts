@@ -10,7 +10,7 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
 
   // Une dépense de 1 500 au clavier.
   await page.getByRole("link", { name: "Transactions" }).click();
-  await page.getByRole("link", { name: "Ajouter une transaction" }).click();
+  await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   for (const key of ["1", "5", "0", "0"]) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }
