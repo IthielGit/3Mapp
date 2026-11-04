@@ -124,43 +124,43 @@ export function CalendarPage() {
             </span>
           ))}
         </div>
-      </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {cells.map((day) => {
-          const key = format(day, "yyyy-MM-dd");
-          const group = byDay.get(key);
-          const inMonth = format(day, "yyyy-MM") === monthKey;
-          const isSelected = key === selected;
-          const net = group?.net ?? 0;
-          return (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={isSelected}
-              aria-label={`${format(day, "d MMMM", { locale })}${group ? `, ${formatMoney(net, baseCurrency)}` : ""}`}
-              onClick={() => setSelected(key)}
-              className={`flex min-h-[52px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
-                isSelected ? "bg-ink text-white dark:bg-white dark:text-ink" : ""
-              } ${inMonth ? "text-ink dark:text-fg" : "text-slate-400 dark:text-slate-600"}`}
-            >
-              <span className="tabular-nums">{format(day, "d")}</span>
-              {group ? (
-                <span
-                  className={`max-w-full truncate text-[11px] font-semibold tabular-nums ${
-                    isSelected
-                      ? "text-white dark:text-ink"
-                      : net < 0
-                        ? "text-expense dark:text-expense-dark"
-                        : "text-income dark:text-income-dark"
-                  }`}
-                >
-                  {compactAmount(net / 100)}
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
+        <div className="grid grid-cols-7 gap-1">
+          {cells.map((day) => {
+            const key = format(day, "yyyy-MM-dd");
+            const group = byDay.get(key);
+            const inMonth = format(day, "yyyy-MM") === monthKey;
+            const isSelected = key === selected;
+            const net = group?.net ?? 0;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={isSelected}
+                aria-label={`${format(day, "d MMMM", { locale })}${group ? `, ${formatMoney(net, baseCurrency)}` : ""}`}
+                onClick={() => setSelected(key)}
+                className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
+                  isSelected ? "bg-ink text-white dark:bg-white dark:text-ink" : ""
+                } ${inMonth ? "text-ink dark:text-fg" : "text-slate-400 dark:text-slate-600"}`}
+              >
+                <span className="tabular-nums">{format(day, "d")}</span>
+                {group ? (
+                  <span
+                    className={`max-w-full truncate text-[11px] font-semibold tabular-nums ${
+                      isSelected
+                        ? "text-white dark:text-ink"
+                        : net < 0
+                          ? "text-expense dark:text-expense-dark"
+                          : "text-income dark:text-income-dark"
+                    }`}
+                  >
+                    {compactAmount(net / 100)}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <section className="flex flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card">
