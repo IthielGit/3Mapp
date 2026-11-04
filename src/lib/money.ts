@@ -31,8 +31,8 @@ export const CURRENCIES: Readonly<Record<CurrencyCode, CurrencyDef>> = {
   },
 };
 
-const GROUP_SEPARATOR = " "; // espace fine insécable (format français)
-const DECIMAL_SEPARATOR = ",";
+const GROUP_SEPARATOR = "."; // séparateur de milliers : 1.000.000
+const DECIMAL_SEPARATOR = ","; // décimales : 1.000.000,00 (devises à centimes)
 const MINUS_SIGN = "−";
 const NBSP = " ";
 

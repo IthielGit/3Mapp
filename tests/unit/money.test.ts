@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MoneyError, formatMoney, parseMoney, roundedDivide, sumMinor } from "../../src/lib/money";
 
-const GROUP = " ";
+const GROUP = ".";
 const NBSP = " ";
 const MINUS = "−";
 
@@ -39,7 +39,7 @@ describe("parseMoney", () => {
   it("MGA : entiers, espaces et symbole ignorés", () => {
     expect(parseMoney("1500", "MGA")).toBe(1500);
     expect(parseMoney("1 500", "MGA")).toBe(1500);
-    expect(parseMoney(` 1${GROUP}234${NBSP}567 Ar `, "MGA")).toBe(1234567);
+    expect(parseMoney(" 1.234.567 Ar ", "MGA")).toBe(1234567);
   });
 
   it("EUR : décimale virgule ou point", () => {

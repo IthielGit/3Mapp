@@ -12,7 +12,7 @@ test("saisir une dépense au clavier puis la retrouver dans la liste", async ({ 
     await page.getByRole("button", { name: key, exact: true }).click();
   }
   await page.getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByTestId("transaction-list")).toContainText("1 500");
+  await expect(page.getByTestId("transaction-list")).toContainText("1.500");
 });
 
 test("liste virtualisée : 5 000 lignes de démo, peu d’éléments rendus", async ({ page }) => {

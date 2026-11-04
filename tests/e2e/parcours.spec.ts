@@ -49,13 +49,13 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await typeAmount(page, "2000");
   await selectOptionContaining(destinationSelect(page), "Mobile Money");
   await page.getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByTestId("transaction-list")).toContainText("2 000");
+  await expect(page.getByTestId("transaction-list")).toContainText("2.000");
 
   // Le solde du portefeuille de destination passe à 2 000.
   await page.goto("/plus");
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: /Mobile Money/ }).click();
-  await expect(page.getByText("2 000").first()).toBeVisible();
+  await expect(page.getByText("2.000").first()).toBeVisible();
 });
 
 test("budget dépassé : une dépense au-delà du plafond est signalée", async ({ page }) => {

@@ -32,6 +32,7 @@ import { contains, localDayKey, previousPeriod, splitPeriods } from "../../domai
 import { BottomSheet } from "../../components/BottomSheet";
 import { Field, buttonSecondary, inputClass } from "../../components/FormControls";
 import { useTheme } from "../../lib/theme-context";
+import { compactAmount } from "../../lib/compact";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker, periodLabel } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
@@ -356,7 +357,11 @@ export function StatsPage() {
                 <LineChart data={savingsCumulative}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Line
                     type="monotone"
@@ -371,7 +376,11 @@ export function StatsPage() {
                 <BarChart data={savingsRows}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Bar dataKey="net" name={t("stats.savedPerMonth")} radius={[6, 6, 0, 0]}>
                     {savingsRows.map((row) => (
@@ -399,7 +408,11 @@ export function StatsPage() {
                 <BarChart data={categoryData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} interval={0} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Bar
                     dataKey="value"
@@ -412,7 +425,11 @@ export function StatsPage() {
                 <LineChart data={weekData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Line
@@ -434,7 +451,11 @@ export function StatsPage() {
                 <BarChart data={weekData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Bar
@@ -454,7 +475,11 @@ export function StatsPage() {
                 <LineChart data={evolution}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
-                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <YAxis
+                    tickFormatter={compactAmount}
+                    tick={{ fill: tick, fontSize: 11 }}
+                    width={52}
+                  />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Line
                     type="monotone"

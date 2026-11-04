@@ -8,6 +8,7 @@ import { TransactionRow } from "../../components/TransactionRow";
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { compactAmount } from "../../lib/compact";
 import { usePeriodSettings } from "../stats/period-state";
 
 const EMPTY: never[] = [];
@@ -133,7 +134,7 @@ export function CalendarPage() {
                         : "text-income dark:text-income-dark"
                   }`}
                 >
-                  {new Intl.NumberFormat(i18n.language, { notation: "compact" }).format(net / 100)}
+                  {compactAmount(net / 100)}
                 </span>
               ) : null}
             </button>

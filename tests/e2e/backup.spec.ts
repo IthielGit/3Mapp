@@ -15,7 +15,7 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
     await page.getByRole("button", { name: key, exact: true }).click();
   }
   await page.getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByTestId("transaction-list")).toContainText("1 500");
+  await expect(page.getByTestId("transaction-list")).toContainText("1.500");
 
   await page
     .getByRole("navigation", { name: "Accueil" })
