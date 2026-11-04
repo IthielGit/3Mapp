@@ -11,6 +11,32 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Finitions : anneau de focus visible, sélection et curseur aux couleurs de la marque. */
+:focus-visible {
+  outline: 2px solid #ee4444;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgb(238 68 68 / 0.18);
+}
+
+input,
+textarea {
+  caret-color: #ee4444;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #667085;
+  opacity: 1;
+}
+
+:root.dark input::placeholder,
+:root.dark textarea::placeholder {
+  color: #9aa0ab;
+}
+
 .hide-amounts [data-amount] {
   filter: blur(8px);
   user-select: none;

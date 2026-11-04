@@ -149,7 +149,7 @@ export function HomePage() {
       {backupState !== "none" ? (
         <Link
           to="/plus/backup"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg dark:border-l-4 dark:border-accent"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
         >
           {t("home.backupReminder")}
         </Link>
@@ -157,7 +157,7 @@ export function HomePage() {
       {pendingCount > 0 ? (
         <Link
           to="/plus/recurring"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg dark:border-l-4 dark:border-accent"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
         >
           {t("home.pendingBanner", { count: pendingCount })}
         </Link>
