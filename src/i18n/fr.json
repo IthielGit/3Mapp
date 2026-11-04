@@ -468,7 +468,10 @@
     "savedOver": "Économisé sur {{count}} mois",
     "savingsDuration": "Durée de l'épargne",
     "cumulative": "Cumul",
-    "savedPerMonth": "Épargne du mois"
+    "savedPerMonth": "Épargne du mois",
+    "thisMonth": "Ce mois-ci",
+    "lastMonth": "Mois dernier",
+    "nextMonthForecast": "Prévision mois prochain"
   },
   "importExport": {
     "title": "Import / Export",
@@ -578,5 +581,12 @@
   },
   "calendar": {
     "empty": "Aucune transaction ce jour."
+  },
+  "resetAccount": {
+    "button": "Réinitialiser le compte",
+    "title": "Réinitialiser le compte ?",
+    "warning": "Toutes les données de cet appareil seront supprimées : portefeuilles, transactions, catégories, budgets, objectifs, dettes, récurrences et pièces jointes. Cette action est irréversible. Exportez une sauvegarde avant si vous voulez la garder.",
+    "confirm": "Tout supprimer",
+    "group": "Réinitialisation"
   }
 }

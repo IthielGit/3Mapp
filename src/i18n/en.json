@@ -468,7 +468,10 @@
     "savedOver": "Saved over {{count}} months",
     "savingsDuration": "Savings period",
     "cumulative": "Cumulative",
-    "savedPerMonth": "Saved per month"
+    "savedPerMonth": "Saved per month",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "nextMonthForecast": "Next month (forecast)"
   },
   "importExport": {
     "title": "Import / Export",
@@ -578,5 +581,12 @@
   },
   "calendar": {
     "empty": "No transaction this day."
+  },
+  "resetAccount": {
+    "button": "Reset account",
+    "title": "Reset account?",
+    "warning": "All data on this device will be deleted: wallets, transactions, categories, budgets, goals, debts, recurring items and attachments. This cannot be undone. Export a backup first if you want to keep it.",
+    "confirm": "Delete everything",
+    "group": "Reset"
   }
 }

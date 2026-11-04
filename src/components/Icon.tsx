@@ -97,6 +97,7 @@ const PATHS: Record<string, ReactNode> = {
   ),
   arrowUp: <path d="M12 19V5M6 11l6-6 6 6" />,
   arrowDown: <path d="M12 5v14M6 13l6 6 6-6" />,
+  reset: <path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4" />,
   equal: <path d="M5 9h14M5 15h14" />,
   percent: (
     <>

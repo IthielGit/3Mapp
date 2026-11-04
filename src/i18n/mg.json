@@ -468,7 +468,10 @@
     "savedOver": "Voa-tahiry nandritra ny volana {{count}}",
     "savingsDuration": "Halaviran'ny tahiry",
     "cumulative": "Fitambarana",
-    "savedPerMonth": "Tahiry isam-bolana"
+    "savedPerMonth": "Tahiry isam-bolana",
+    "thisMonth": "Volana androany",
+    "lastMonth": "Volana teo",
+    "nextMonthForecast": "Vinavina volana ho avy"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",
@@ -578,5 +581,12 @@
   },
   "calendar": {
     "empty": "Tsy misy raharaha androany."
+  },
+  "resetAccount": {
+    "button": "Averina ny kaonty",
+    "title": "Averina ny kaonty?",
+    "warning": "Hofafana ao amin'ity fitaovana ity ny angon-drakitra rehetra : kaonty, fifandraisana, sokajy, tetibola, tanjona, trosa, fandoavana mandavaka ary fanampiny. Tsy azo averina io. Raiso aloha ny backup raha tianao ny hitahiry azy.",
+    "confirm": "Fafao ny rehetra",
+    "group": "Averina"
   }
 }

@@ -8,6 +8,7 @@ import { buttonSecondary } from "../../components/FormControls";
 import { generateDemoTransactions } from "../demo/demo-data";
 import { InstallCard } from "../../components/PwaComponents";
 import { PreferencesSection } from "../settings/PreferencesSection";
+import { ResetAccountSection } from "../settings/ResetAccountSection";
 
 /** Ligne de liste cliquable avec chevron : pour les pages de réglages et de gestion. */
 function NavRow({ to, icon, children }: { to: string; icon: IconName; children: ReactNode }) {
@@ -103,6 +104,14 @@ export function MorePage() {
             <NavRow to="/plus/import" icon="upload">
               {t("more.import")}
             </NavRow>
+          </ul>
+        </nav>
+      </Group>
+
+      <Group title={t("resetAccount.group")}>
+        <nav aria-label={t("resetAccount.group")}>
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+            <ResetAccountSection />
           </ul>
         </nav>
       </Group>

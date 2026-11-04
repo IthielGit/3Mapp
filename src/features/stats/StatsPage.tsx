@@ -180,10 +180,22 @@ export function StatsPage() {
     },
     [],
   );
-  const savedMinor = savingsRows.reduce((sum, row) => sum + Math.round(row.net * 100), 0);
-  const savingsIncome = savingsRows.reduce((sum, row) => sum + row.income, 0);
-  const savingsRate =
-    savingsIncome > 0 ? Math.round((savedMinor * 1000) / savingsIncome) / 10 : null;
+  // Épargne (revenus - dépenses, en unités mineures) des 3 mois précédents et du mois en cours.
+  const monthNets = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 4 }, (_, i) => {
+      const from = startOfMonth(addMonths(today, i - 3));
+      const month = { from, to: startOfMonth(addMonths(from, 1)) };
+      return periodSummary(
+        transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
+        month,
+      ).net;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions, baseCurrency, walletFilter]);
+  const thisMonthMinor = monthNets[3] ?? 0;
+  const lastMonthMinor = monthNets[2] ?? 0;
+  const forecastMinor = Math.round(monthNets.slice(0, 3).reduce((sum, n) => sum + n, 0) / 3);
 
   const categoryData = slices.map((s) => ({ name: s.name, value: toMajor(s.amount) }));
   const top = topExpenses(inPeriod, 10);
@@ -344,18 +356,35 @@ export function StatsPage() {
               ))}
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-slate-500 dark:text-muted">
-                {t("stats.savedOver", { count: savingsMonths })}
-              </p>
+              <p className="text-sm text-slate-500 dark:text-muted">{t("stats.thisMonth")}</p>
               <p
-                className={`text-3xl font-semibold tabular-nums ${savedMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                className={`text-3xl font-semibold tabular-nums ${thisMonthMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
                 data-amount
               >
-                {formatMoney(savedMinor, baseCurrency)}
+                {formatMoney(thisMonthMinor, baseCurrency)}
               </p>
-              <p className="text-xs text-slate-500 dark:text-muted">
-                {t("stats.savingsRate")} : {savingsRate === null ? "—" : `${savingsRate} %`}
-              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
+              <div className="flex flex-col">
+                <p className="text-sm text-slate-500 dark:text-muted">{t("stats.lastMonth")}</p>
+                <p
+                  className={`text-lg font-semibold tabular-nums ${lastMonthMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                  data-amount
+                >
+                  {formatMoney(lastMonthMinor, baseCurrency)}
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <p className="text-sm text-slate-500 dark:text-muted">
+                  {t("stats.nextMonthForecast")}
+                </p>
+                <p
+                  className={`text-lg font-semibold tabular-nums ${forecastMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                  data-amount
+                >
+                  {formatMoney(forecastMinor, baseCurrency)}
+                </p>
+              </div>
             </div>
           </div>
         ) : null}
