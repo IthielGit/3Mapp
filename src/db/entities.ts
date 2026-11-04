@@ -31,6 +31,18 @@ export const settingsSchema = baseEntity.extend({
   biometricCredentialId: z.string().optional(),
   /** Date de la dernière sauvegarde téléchargée (rappel après 7 jours, SPEC §5.14). */
   lastBackupAt: isoDateTime.optional(),
+  /** Touche de zéros du clavier de saisie : « 00 » ou « 000 » (défaut : 000). */
+  keypadZeros: z.union([z.literal(2), z.literal(3)]).optional(),
+  /** Solde « à aujourd'hui » : ignore les transactions datées dans le futur. */
+  ignoreFutureBalance: z.boolean().optional(),
+  /** Rappel quotidien de saisie (notification, uniquement quand l'app est ouverte). */
+  reminderEnabled: z.boolean().optional(),
+  reminderTime: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+    .optional(),
+  /** Jour (AAAA-MM-JJ) du dernier rappel affiché, pour ne le montrer qu'une fois par jour. */
+  lastReminderDay: z.string().optional(),
 });
 
 export const currencySchema = baseEntity.extend({

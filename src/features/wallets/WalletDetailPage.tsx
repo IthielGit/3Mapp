@@ -9,6 +9,7 @@ import { buttonDanger, buttonPrimary, buttonSecondary } from "../../components/F
 import { walletBalance } from "../../domain/balance";
 import { formatMoney } from "../../lib/money";
 import { deleteWallet, setWalletArchived } from "./wallet-service";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 export function WalletDetailPage() {
   const { t } = useTranslation();
@@ -23,11 +24,12 @@ export function WalletDetailPage() {
     [id],
   );
   const [error, setError] = useState<string | undefined>();
+  const cutoff = useBalanceCutoff();
 
   if (wallet === undefined) return null;
   if (!wallet) return <p>{t("wallets.notFound")}</p>;
 
-  const balance = walletBalance(wallet, movements ?? []);
+  const balance = walletBalance(wallet, movements ?? [], cutoff);
 
   async function remove() {
     setError(undefined);

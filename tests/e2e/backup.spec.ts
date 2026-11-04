@@ -25,7 +25,7 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
   const balanceBefore = await page.locator("[data-amount]").first().innerText();
 
   // Sauvegarde en clair, téléchargée par le navigateur.
-  await page.getByRole("link", { name: "Plus" }).click();
+  await page.getByRole("link", { name: "Paramètres" }).click();
   await page.getByRole("link", { name: "Sauvegarde et restauration" }).click();
   const [download] = await Promise.all([
     page.waitForEvent("download"),

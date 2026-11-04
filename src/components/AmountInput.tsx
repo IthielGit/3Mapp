@@ -1,3 +1,5 @@
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "../db/database";
 import { expressionToMinor } from "../lib/calc";
 import { minorToPlainText } from "../lib/amount-text";
 import { formatMoney, type CurrencyCode, type Minor } from "../lib/money";
@@ -22,6 +24,11 @@ interface AmountInputProps {
  * « = » remplace l'expression par son résultat arrondi à la devise.
  */
 export function AmountInput({ expression, onExpressionChange, currency, label }: AmountInputProps) {
+  // Touche de zéros configurable dans Paramètres : « 00 » ou « 000 » (défaut : 000).
+  const zeros =
+    useLiveQuery(async () => (await db.settings.toCollection().first())?.keypadZeros, []) ?? 3;
+  const zeroKey = zeros === 2 ? "00" : "000";
+
   const minor: Minor | null =
     expression.trim() === "" ? null : expressionToMinor(expression, currency);
 
@@ -75,13 +82,21 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         <button
           type="button"
           onClick={() => onExpressionChange("")}
           className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-slate-700"
         >
           C
+        </button>
+        <button
+          type="button"
+          onClick={() => press(zeroKey)}
+          aria-label={zeroKey}
+          className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-slate-700"
+        >
+          {zeroKey}
         </button>
         <button
           type="button"

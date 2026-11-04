@@ -25,7 +25,7 @@
     "transactions": "Fifanakalozan-vola",
     "stats": "Statistika",
     "budgets": "Tetibola",
-    "more": "Hafa",
+    "more": "Fikirana",
     "quickAdd": "Fampidirana vaovao"
   },
   "pages": {
@@ -42,7 +42,7 @@
       "empty": "Tsy misy tetibola voafaritra."
     },
     "more": {
-      "title": "Hafa",
+      "title": "Fikirana",
       "theme": "Lohahevitra",
       "themeLight": "Mazava",
       "themeDark": "Maizina"
@@ -490,5 +490,36 @@
     "retryIn": "Andramo indray aorian'ny {{seconds}} s.",
     "confirm": "Hamafy",
     "digits": "Litera {{count}} voaray"
+  },
+  "prefs": {
+    "title": "Safidy",
+    "language": "Fiteny",
+    "languageFr": "Français",
+    "languageEn": "English",
+    "weekStart": "Voalohan'ny herinandro",
+    "monthStart": "Voalohan'ny volana",
+    "monthDay": "Andro {{day}}",
+    "keypadZeros": "Bokotra aotra eo amin'ny kilasy",
+    "ignoreFuture": "Tsy raisina ny vola ho avy",
+    "ignoreFutureHint": "Ny vola mitovy amin'ny androany ihany no alaina.",
+    "reminder": "Fampahatsiarana fanoratana",
+    "reminderTime": "Ora fampahatsiarana",
+    "reminderHint": "Fampahafantarana iray isan'andro, rehefa misokatra ny rindrambaiko.",
+    "reminderDenied": "Voaraka ny fampahafantarana eo amin'ny mpitety.",
+    "reminderUnsupported": "Tsy mamela fampahafantarana ity mpitety ity.",
+    "reminderTitle": "Tsarovy ny fandaniana",
+    "reminderBody": "Ampidiro ny raharaha an'androany.",
+    "weekdays": ["Alatsinainy", "Talata", "Alarobia", "Alakamisy", "Zoma", "Sabotsy", "Lahadiny"],
+    "weekdaysSun": ["Lahadiny", "Alatsinainy", "Talata", "Alarobia", "Alakamisy", "Zoma", "Sabotsy"]
+  },
+  "repeat": {
+    "label": "Averina (fanamarinana)",
+    "every": "Isaky ny",
+    "day": "andro",
+    "week": "herinandro",
+    "month": "volana",
+    "year": "taona",
+    "hint": "Ho noforonina ho azy ny manaraka.",
+    "unit": "Unité"
   }
 }

@@ -25,7 +25,7 @@
     "transactions": "Transactions",
     "stats": "Stats",
     "budgets": "Budgets",
-    "more": "More",
+    "more": "Settings",
     "quickAdd": "New transaction"
   },
   "pages": {
@@ -42,7 +42,7 @@
       "empty": "No budget set."
     },
     "more": {
-      "title": "More",
+      "title": "Settings",
       "theme": "Theme",
       "themeLight": "Light",
       "themeDark": "Dark"
@@ -490,5 +490,36 @@
     "retryIn": "Try again in {{seconds}} s.",
     "confirm": "Confirm",
     "digits": "{{count}} digit(s) entered"
+  },
+  "prefs": {
+    "title": "Preferences",
+    "language": "Language",
+    "languageFr": "Français",
+    "languageEn": "English",
+    "weekStart": "First day of the week",
+    "monthStart": "First day of the month",
+    "monthDay": "Day {{day}}",
+    "keypadZeros": "Zero key on the keypad",
+    "ignoreFuture": "Ignore future balance",
+    "ignoreFutureHint": "Balances only include transactions dated up to today.",
+    "reminder": "Entry reminder",
+    "reminderTime": "Reminder time",
+    "reminderHint": "One notification per day, while the app is open.",
+    "reminderDenied": "Notifications are blocked by the browser.",
+    "reminderUnsupported": "This browser does not support notifications.",
+    "reminderTitle": "Remember to log your expenses",
+    "reminderBody": "Add today's transactions.",
+    "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    "weekdaysSun": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  },
+  "repeat": {
+    "label": "Repeat (recurring)",
+    "every": "Every",
+    "day": "day(s)",
+    "week": "week(s)",
+    "month": "month(s)",
+    "year": "year(s)",
+    "hint": "The next occurrence will be created automatically.",
+    "unit": "Unit"
   }
 }

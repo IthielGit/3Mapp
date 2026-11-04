@@ -3,8 +3,12 @@ import { Outlet } from "react-router-dom";
 import { BottomNav } from "./BottomNav";
 import { UpdateBanner } from "./PwaComponents";
 import { generateDueOccurrences } from "../features/recurring/recurring-service";
+import { useAppPreferences } from "../features/settings/app-preferences";
 
 export function AppLayout() {
+  // Langue choisie dans Paramètres et rappel quotidien de saisie.
+  useAppPreferences();
+
   // Rattrapage des récurrences à l'ouverture (SPEC §2, §5.7) : une passe par ouverture de l'app.
   useEffect(() => {
     void generateDueOccurrences().catch(() => undefined);

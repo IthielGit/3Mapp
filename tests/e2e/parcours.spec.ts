@@ -35,7 +35,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await completeOnboardingUi(page, "Compte BNI");
 
   // Second portefeuille.
-  await page.getByRole("link", { name: "Plus" }).click();
+  await page.getByRole("link", { name: "Paramètres" }).click();
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: "Ajouter" }).click();
   await page.getByLabel("Nom").fill("Mobile Money");
@@ -52,7 +52,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await expect(page.getByTestId("transaction-list")).toContainText("2 000");
 
   // Le solde du portefeuille de destination passe à 2 000.
-  await page.getByRole("link", { name: "Plus" }).click();
+  await page.getByRole("link", { name: "Paramètres" }).click();
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: /Mobile Money/ }).click();
   await expect(page.getByText("2 000").first()).toBeVisible();

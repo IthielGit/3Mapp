@@ -12,11 +12,14 @@ import { sumMinor, type Minor } from "../lib/money";
 export function walletBalance(
   wallet: Pick<Wallet, "id" | "initialBalance">,
   transactions: readonly Transaction[],
+  asOf?: Date,
 ): Minor {
   const parts: Minor[] = [wallet.initialBalance];
 
   for (const t of transactions) {
     if (t.status !== "posted") continue;
+    // « Ignorer le solde futur » : seules les transactions jusqu'à `asOf` comptent.
+    if (asOf && new Date(t.date).getTime() > asOf.getTime()) continue;
 
     if (t.type === "income" && t.walletId === wallet.id) {
       parts.push(t.amount);
@@ -42,10 +45,11 @@ export function walletBalance(
 export function computeBalances(
   wallets: readonly Pick<Wallet, "id" | "initialBalance">[],
   transactions: readonly Transaction[],
+  asOf?: Date,
 ): Record<string, Minor> {
   const result: Record<string, Minor> = {};
   for (const wallet of wallets) {
-    result[wallet.id] = walletBalance(wallet, transactions);
+    result[wallet.id] = walletBalance(wallet, transactions, asOf);
   }
   return result;
 }

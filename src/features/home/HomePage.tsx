@@ -10,6 +10,7 @@ import { convertedSum } from "../../domain/fx";
 import { groupByDay } from "../../domain/grouping";
 import { periodSummary, transactionsIn } from "../../domain/stats";
 import { EmptyState, Skeleton } from "../../components/PwaComponents";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker, periodLabel } from "../stats/PeriodPicker";
@@ -47,7 +48,11 @@ export function HomePage() {
 
   const backupState = backupReminder(lastBackupAt, new Date(), transactions.length > 0);
   const active = wallets.filter((w) => !w.archived);
-  const balances = useMemo(() => computeBalances(active, transactions), [active, transactions]);
+  const cutoff = useBalanceCutoff();
+  const balances = useMemo(
+    () => computeBalances(active, transactions, cutoff),
+    [active, transactions, cutoff],
+  );
   const inBase = active.filter((w) => w.includeInTotal);
   const converted = convertedSum(
     inBase.map((w) => ({

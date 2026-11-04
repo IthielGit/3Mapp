@@ -19,14 +19,14 @@ function placeholders(text: string): string[] {
   return [...text.matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((m) => m[1] ?? "").sort();
 }
 
-const reference = leaves(fr as Tree);
+const reference = leaves(fr as unknown as Tree);
 
 describe("traductions (SPEC §5.17)", () => {
   for (const [name, locale] of [
     ["anglais", en],
     ["malgache", mg],
   ] as const) {
-    const translated = leaves(locale as Tree);
+    const translated = leaves(locale as unknown as Tree);
 
     it(`${name} : toutes les clés du français sont présentes`, () => {
       const missing = [...reference.keys()].filter((key) => !translated.has(key));

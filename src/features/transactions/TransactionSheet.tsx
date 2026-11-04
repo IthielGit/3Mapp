@@ -19,6 +19,8 @@ import { minorToPlainText } from "../../lib/amount-text";
 import type { CurrencyCode } from "../../lib/money";
 import { addAttachment, removeAttachment } from "./attachment-service";
 import { saveTransactionAsTemplate } from "./template-service";
+import { createRecurring } from "../recurring/recurring-service";
+import { occurrenceDate, type Frequency } from "../../domain/recurrence";
 import {
   createTransaction,
   draftFromTransaction,
@@ -61,6 +63,10 @@ export function TransactionSheet({
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
   const [type, setType] = useState<TxType>(initial?.type ?? defaultType ?? "expense");
+  // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
+  const [repeat, setRepeat] = useState(false);
+  const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
+  const [repeatEvery, setRepeatEvery] = useState(1);
   const [amountExpr, setAmountExpr] = useState(
     transaction ? minorToPlainText(Math.abs(transaction.amount), transaction.currency) : "",
   );
@@ -176,8 +182,22 @@ export function TransactionSheet({
     setSaving(true);
     try {
       const draft = buildDraft();
-      if (transaction) await updateTransaction(transaction.id, draft);
-      else await createTransaction(draft);
+      if (transaction) {
+        await updateTransaction(transaction.id, draft);
+      } else {
+        await createTransaction(draft);
+        if (repeat && draft.type !== "adjustment") {
+          const frequency: Frequency = { unit: repeatUnit, interval: repeatEvery };
+          const next = occurrenceDate(new Date(draft.date), frequency, 1, "same_day");
+          await createRecurring({
+            draft,
+            frequency,
+            startDate: next.toISOString(),
+            dayOfMonthRule: "same_day",
+            autoPost: true,
+          });
+        }
+      }
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errors.generic"));
@@ -262,6 +282,52 @@ export function TransactionSheet({
           currency={currency}
           label={t("transactions.amount")}
         />
+
+        {!transaction && type !== "adjustment" ? (
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+            <label className="flex min-h-[44px] items-center gap-3">
+              <input
+                type="checkbox"
+                className="h-5 w-5 accent-brand-700"
+                checked={repeat}
+                onChange={(e) => setRepeat(e.target.checked)}
+              />
+              <span className="font-medium">{t("repeat.label")}</span>
+            </label>
+            {repeat ? (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label={t("repeat.every")}>
+                    <input
+                      type="number"
+                      min={1}
+                      max={99}
+                      inputMode="numeric"
+                      className={inputClass}
+                      value={repeatEvery}
+                      onChange={(e) =>
+                        setRepeatEvery(Math.max(1, Math.min(99, Number(e.target.value) || 1)))
+                      }
+                    />
+                  </Field>
+                  <Field label={t("repeat.unit")}>
+                    <select
+                      className={inputClass}
+                      value={repeatUnit}
+                      onChange={(e) => setRepeatUnit(e.target.value as Frequency["unit"])}
+                    >
+                      <option value="day">{t("repeat.day")}</option>
+                      <option value="week">{t("repeat.week")}</option>
+                      <option value="month">{t("repeat.month")}</option>
+                      <option value="year">{t("repeat.year")}</option>
+                    </select>
+                  </Field>
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t("repeat.hint")}</p>
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
         {type === "adjustment" ? (
           <div

@@ -12,7 +12,7 @@ test("navigation entre les 5 pages sur mobile", async ({ page }) => {
     ["Transactions", "Transactions"],
     ["Stats", "Statistiques"],
     ["Budgets", "Budgets"],
-    ["Plus", "Plus"],
+    ["Paramètres", "Paramètres"],
     ["Accueil", "Accueil"],
   ];
   for (const [tab, heading] of tabs) {

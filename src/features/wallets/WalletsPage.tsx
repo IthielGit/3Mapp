@@ -8,6 +8,7 @@ import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { computeBalances } from "../../domain/balance";
 import { formatMoney } from "../../lib/money";
 import { moveWallet, setWalletArchived } from "./wallet-service";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
 
@@ -15,9 +16,10 @@ export function WalletsPage() {
   const { t } = useTranslation();
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
   const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
+  const cutoff = useBalanceCutoff();
   const balances = useMemo(
-    () => computeBalances(wallets ?? [], transactions),
-    [wallets, transactions],
+    () => computeBalances(wallets ?? [], transactions, cutoff),
+    [wallets, transactions, cutoff],
   );
   if (!wallets) return null;
 
