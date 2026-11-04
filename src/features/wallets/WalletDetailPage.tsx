@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
 import { InUseError } from "../../db/errors";
-import { buttonDanger, buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { walletBalance } from "../../domain/balance";
+import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { formatMoney } from "../../lib/money";
 import { deleteWallet, setWalletArchived } from "./wallet-service";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
@@ -43,20 +43,27 @@ export function WalletDetailPage() {
     }
   }
 
+  const walletActions: MenuItem[] = [
+    { label: t("common.edit"), to: `/plus/wallets/${id}/edit` },
+    { label: t("reconcile.open"), to: `/plus/wallets/${id}/reconcile` },
+    wallet.archived
+      ? { label: t("common.restore"), onSelect: () => void setWalletArchived(id, false) }
+      : { label: t("common.archive"), onSelect: () => void setWalletArchived(id, true) },
+    { label: t("common.delete"), onSelect: () => void remove(), danger: true },
+  ];
+
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex items-center gap-3">
-        <span aria-hidden="true" className="text-3xl" style={{ color: wallet.color }}>
-          {wallet.icon}
-        </span>
-        <div>
-          <h1 className="text-2xl font-bold">{wallet.name}</h1>
-          <p className="text-sm text-slate-500">
-            {t(`groups.${wallet.group}`)}
-            {wallet.archived ? ` · ${t("wallets.archivedBadge")}` : ""}
-          </p>
-        </div>
-      </header>
+      <DetailHeader
+        title={wallet.name}
+        backTo="/plus/wallets"
+        actions={<ActionMenu items={walletActions} />}
+      >
+        <p className="text-center text-sm text-slate-500 dark:text-muted">
+          {wallet.icon} {t(`groups.${wallet.group}`)}
+          {wallet.archived ? ` · ${t("wallets.archivedBadge")}` : ""}
+        </p>
+      </DetailHeader>
 
       <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
         <p className="text-sm text-slate-500">{t("wallets.balance")}</p>
@@ -90,45 +97,11 @@ export function WalletDetailPage() {
         </ul>
       </section>
 
-      <div className="flex flex-col gap-2">
-        <Link
-          to={`/plus/wallets/${id}/edit`}
-          className={buttonPrimary + " inline-flex items-center justify-center"}
-        >
-          {t("common.edit")}
-        </Link>
-        <Link
-          to={`/plus/wallets/${id}/reconcile`}
-          className={buttonSecondary + " inline-flex items-center justify-center"}
-        >
-          {t("reconcile.open")}
-        </Link>
-        {wallet.archived ? (
-          <button
-            type="button"
-            className={buttonSecondary}
-            onClick={() => setWalletArchived(id, false)}
-          >
-            {t("common.restore")}
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={buttonSecondary}
-            onClick={() => setWalletArchived(id, true)}
-          >
-            {t("common.archive")}
-          </button>
-        )}
-        <button type="button" className={buttonDanger} onClick={remove}>
-          {t("common.delete")}
-        </button>
-        {error ? (
-          <p role="alert" className="text-red-700 dark:text-red-400">
-            {error}
-          </p>
-        ) : null}
-      </div>
+      {error ? (
+        <p role="alert" className="text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }

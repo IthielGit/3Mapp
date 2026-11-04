@@ -18,7 +18,9 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "undo": "Undo",
-    "back": "Back"
+    "back": "Back",
+    "wallet": "Wallet",
+    "more": "More actions"
   },
   "nav": {
     "home": "Home",
@@ -425,7 +427,7 @@
     "manage": "Manage"
   },
   "stats": {
-    "title": "Statistics",
+    "title": "Analytics",
     "uncategorised": "Uncategorised",
     "savingsRate": "Savings rate",
     "dailyAverage": "Average spending / day",
@@ -436,7 +438,18 @@
     "balanceCurve": "Balance over time",
     "top10": "Top 10 expenses",
     "byWallet": "By wallet",
-    "vsPrevious": "vs. previous period: {{change}}"
+    "vsPrevious": "vs. previous period: {{change}}",
+    "unit": "Unit: {{currency}}",
+    "dataset": "Data",
+    "representation": "Chart type",
+    "repr": {
+      "donut": "Ring",
+      "bars": "Bars",
+      "line": "Line"
+    },
+    "chartAria": "Chart of the period values",
+    "values": "Show values",
+    "allWallets": "All wallets"
   },
   "importExport": {
     "title": "Import / Export",

@@ -18,7 +18,9 @@
     "moveUp": "Monter",
     "moveDown": "Descendre",
     "undo": "Annuler",
-    "back": "Retour"
+    "back": "Retour",
+    "wallet": "Portefeuille",
+    "more": "Plus d’actions"
   },
   "nav": {
     "home": "Accueil",
@@ -425,7 +427,7 @@
     "manage": "Gérer"
   },
   "stats": {
-    "title": "Statistiques",
+    "title": "Analyses",
     "uncategorised": "Sans catégorie",
     "savingsRate": "Taux d'épargne",
     "dailyAverage": "Dépense moyenne / jour",
@@ -436,7 +438,18 @@
     "balanceCurve": "Évolution du solde",
     "top10": "Top 10 des dépenses",
     "byWallet": "Par portefeuille",
-    "vsPrevious": "vs. période précédente : {{change}}"
+    "vsPrevious": "vs. période précédente : {{change}}",
+    "unit": "Unité : {{currency}}",
+    "dataset": "Donnée",
+    "representation": "Représentation",
+    "repr": {
+      "donut": "Anneau",
+      "bars": "Barres",
+      "line": "Courbe"
+    },
+    "chartAria": "Graphique des valeurs de la période",
+    "values": "Voir les valeurs",
+    "allWallets": "Tous les portefeuilles"
   },
   "importExport": {
     "title": "Import / Export",

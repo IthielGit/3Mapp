@@ -4,7 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
-import { buttonDanger, buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { ActionMenu, DetailHeader } from "../../components/DetailHeader";
 import { budgetState } from "../../domain/budget";
 import { contains } from "../../domain/period";
 import { formatMoney } from "../../lib/money";
@@ -46,7 +46,18 @@ export function BudgetDetailPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{budget.name}</h1>
+      <DetailHeader
+        title={budget.name}
+        backTo="/budgets"
+        actions={
+          <ActionMenu
+            items={[
+              { label: t("common.edit"), to: `/budgets/${id}/edit` },
+              { label: t("common.delete"), onSelect: () => void remove(), danger: true },
+            ]}
+          />
+        }
+      />
       <p className="text-sm text-slate-500">
         {t(`budgets.periods.${budget.period}`)} ·{" "}
         {t("budgets.alertAt", { percent: budget.alertThreshold })}
@@ -86,21 +97,6 @@ export function BudgetDetailPage() {
           ))}
         </ul>
       </section>
-
-      <div className="grid grid-cols-2 gap-2">
-        <Link
-          to={`/budgets/${id}/edit`}
-          className={buttonSecondary + " inline-flex items-center justify-center"}
-        >
-          {t("common.edit")}
-        </Link>
-        <button type="button" className={buttonDanger} onClick={() => void remove()}>
-          {t("common.delete")}
-        </button>
-      </div>
-      <Link to="/budgets" className={buttonPrimary + " inline-flex items-center justify-center"}>
-        {t("common.back")}
-      </Link>
     </section>
   );
 }

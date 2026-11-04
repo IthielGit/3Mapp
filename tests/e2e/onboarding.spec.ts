@@ -14,6 +14,8 @@ test("archivage puis restauration d'un portefeuille", async ({ page }) => {
   await page.getByRole("link", { name: "Paramètres" }).click();
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: /Espèces/ }).click();
-  await page.getByRole("button", { name: "Archiver" }).click();
-  await expect(page.getByRole("button", { name: "Restaurer" })).toBeVisible();
+  await page.getByRole("button", { name: "Plus d’actions" }).click();
+  await page.getByRole("menuitem", { name: "Archiver" }).click();
+  await page.getByRole("button", { name: "Plus d’actions" }).click();
+  await expect(page.getByRole("menuitem", { name: "Restaurer" })).toBeVisible();
 });

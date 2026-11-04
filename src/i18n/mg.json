@@ -18,7 +18,9 @@
     "moveUp": "Miakatra",
     "moveDown": "Midina",
     "undo": "Hamerina",
-    "back": "Miverina"
+    "back": "Miverina",
+    "wallet": "Kitapo vola",
+    "more": "Hetsika hafa"
   },
   "nav": {
     "home": "Fandraisana",
@@ -425,7 +427,7 @@
     "manage": "Hanitsy"
   },
   "stats": {
-    "title": "Statistika",
+    "title": "Fandinihana",
     "uncategorised": "Tsy misy sokajy",
     "savingsRate": "Tahan'ny tahiry",
     "dailyAverage": "Fandaniana antonony isan'andro",
@@ -436,7 +438,18 @@
     "balanceCurve": "Fivoaran'ny tahiry",
     "top10": "Fandaniana 10 lehibe indrindra",
     "byWallet": "Isaky ny kitapo vola",
-    "vsPrevious": "vs. vanim-potoana talohy: {{change}}"
+    "vsPrevious": "vs. vanim-potoana talohy: {{change}}",
+    "unit": "Vola: {{currency}}",
+    "dataset": "Angon-drakitra",
+    "representation": "Endrika sary",
+    "repr": {
+      "donut": "Bozaka",
+      "bars": "Tsanganana",
+      "line": "Tsipika"
+    },
+    "chartAria": "Sary ny vidin'ny vanim-potoana",
+    "values": "Jereo ny vidin'ny",
+    "allWallets": "Kitapo vola rehetra"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",

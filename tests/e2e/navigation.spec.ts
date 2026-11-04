@@ -10,7 +10,7 @@ test("navigation entre les 5 pages sur mobile", async ({ page }) => {
 
   const tabs: Array<[string, string]> = [
     ["Transactions", "Transactions"],
-    ["Analyses", "Statistiques"],
+    ["Analyses", "Analyses"],
     ["Budgets", "Budgets"],
     ["Paramètres", "Paramètres"],
     ["Accueil", "Accueil"],
