@@ -144,7 +144,7 @@ export function HomePage() {
       <h1 className="sr-only">{t("nav.home")}</h1>
 
       {/* En-tête : salutation à gauche, réglages ronds à droite. */}
-      <header className="sticky top-0 z-20 -mx-4 flex items-center justify-between bg-canvas px-4 pb-2 pt-1 dark:bg-page">
+      <header className="sticky top-0 z-20 -mx-4 -mt-4 flex items-center justify-between bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
