@@ -89,7 +89,10 @@
     "confirmReplace": "Je comprends que les données actuelles seront effacées.",
     "restore": "Restaurer",
     "restored": "Restauration terminée : {{count}} enregistrements traités.",
-    "goHome": "Aller à l'accueil"
+    "goHome": "Aller à l'accueil",
+    "shareButton": "Partager vers Google Drive, OneDrive, Dropbox…",
+    "shareHint": "Le partage utilise les applications de votre téléphone : aucun compte n'est à configurer dans l'app. Gardez le fichier sur un espace de stockage en ligne pour le retrouver si le téléphone est perdu.",
+    "shared": "Sauvegarde partagée."
   },
   "onboarding": {
     "restoreLink": "J'ai déjà une sauvegarde : la restaurer",

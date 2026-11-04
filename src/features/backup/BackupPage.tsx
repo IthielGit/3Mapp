@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { db } from "../../db/database";
 import { buttonPrimary, buttonSecondary, Field, inputClass } from "../../components/FormControls";
 import { downloadBlob } from "../../lib/download";
+import { canShareFiles, shareFile } from "../../lib/share";
 import { MIN_PASSWORD_LENGTH } from "./backup-format";
 import {
   backupFileName,
@@ -69,7 +70,11 @@ export function BackupPage() {
     setRestored(undefined);
   }
 
-  async function onExport() {
+  /**
+   * « download » enregistre le fichier ; « share » ouvre la feuille de partage du téléphone
+   * (Google Drive, OneDrive, Dropbox, e-mail…). Aucun compte ni clé n'est nécessaire dans l'app.
+   */
+  async function onExport(target: "download" | "share") {
     setMessage(undefined);
     setError(undefined);
     setBusy(true);
@@ -78,10 +83,18 @@ export function BackupPage() {
       const file = await createBackup(db, now);
       const encrypted = password.length > 0;
       const text = await serializeBackup(file, encrypted ? password : undefined);
-      downloadBlob(new Blob([text], { type: "application/json" }), backupFileName(now, encrypted));
+      const name = backupFileName(now, encrypted);
+      const blob = new Blob([text], { type: "application/json" });
+
+      if (target === "share") {
+        const shared = await shareFile(blob, name);
+        if (!shared) return; // l'utilisateur a fermé la feuille de partage
+      } else {
+        downloadBlob(blob, name);
+      }
       await markBackupDone(db, now);
       setPassword("");
-      setMessage(t("backup.exported"));
+      setMessage(t(target === "share" ? "backup.shared" : "backup.exported"));
     } catch (err) {
       setError(errorText(err, t("errors.generic")));
     } finally {
@@ -182,10 +195,23 @@ export function BackupPage() {
             type="button"
             className={buttonPrimary}
             disabled={busy}
-            onClick={() => void onExport()}
+            onClick={() => void onExport("download")}
           >
             {t("backup.exportButton")}
           </button>
+          {canShareFiles() ? (
+            <>
+              <button
+                type="button"
+                className={buttonSecondary}
+                disabled={busy}
+                onClick={() => void onExport("share")}
+              >
+                {t("backup.shareButton")}
+              </button>
+              <p className="text-sm text-slate-500">{t("backup.shareHint")}</p>
+            </>
+          ) : null}
         </section>
       ) : null}
 
