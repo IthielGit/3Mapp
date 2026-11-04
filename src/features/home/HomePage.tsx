@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
+import { backupReminder } from "../../domain/backup";
 import { convertedSum } from "../../domain/fx";
 import { periodSummary, transactionsIn } from "../../domain/stats";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
@@ -32,6 +33,11 @@ export function HomePage() {
 
   const pendingCount =
     useLiveQuery(() => db.transactions.where("status").equals("pending").count(), []) ?? 0;
+  const lastBackupAt = useLiveQuery(
+    async () => (await db.settings.toCollection().first())?.lastBackupAt,
+    [],
+  );
+  const backupState = backupReminder(lastBackupAt, new Date(), transactions.length > 0);
   const active = wallets.filter((w) => !w.archived);
   const balances = useMemo(() => computeBalances(active, transactions), [active, transactions]);
   const inBase = active.filter((w) => w.includeInTotal);
@@ -53,6 +59,14 @@ export function HomePage() {
   return (
     <section className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">{t("nav.home")}</h1>
+      {backupState !== "none" ? (
+        <Link
+          to="/plus/backup"
+          className="rounded-lg bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+        >
+          {t("home.backupReminder")}
+        </Link>
+      ) : null}
       {pendingCount > 0 ? (
         <Link
           to="/plus/recurring"

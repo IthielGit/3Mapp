@@ -59,9 +59,40 @@
     "rates": "Devises et taux",
     "debts": "Dettes et prêts",
     "security": "Sécurité",
-    "recurring": "Récurrences et modèles"
+    "recurring": "Récurrences et modèles",
+    "backup": "Sauvegarde et restauration"
+  },
+  "backup": {
+    "title": "Sauvegarde et restauration",
+    "intro": "Vos données restent sur cet appareil. Une sauvegarde est un fichier que vous gardez en lieu sûr.",
+    "reminder": "Sauvegarde recommandée : aucune sauvegarde récente.",
+    "lastBackup": "Dernière sauvegarde : {{date}}",
+    "noBackup": "Aucune sauvegarde pour le moment.",
+    "persistedYes": "Stockage protégé : le navigateur ne purgera pas ces données.",
+    "persistedNo": "Stockage non protégé : sauvegardez régulièrement.",
+    "exportTitle": "Sauvegarder",
+    "passwordLabel": "Mot de passe de chiffrement (optionnel)",
+    "passwordHint": "Sans mot de passe, le fichier n'est pas chiffré. Avec un mot de passe, {{min}} caractères minimum.",
+    "exportButton": "Télécharger la sauvegarde",
+    "exported": "Sauvegarde téléchargée.",
+    "importTitle": "Restaurer",
+    "chooseFile": "Choisir un fichier de sauvegarde",
+    "encryptedNotice": "Ce fichier est chiffré. Saisissez son mot de passe pour l'ouvrir.",
+    "decryptPasswordLabel": "Mot de passe du fichier",
+    "decrypt": "Déchiffrer",
+    "preview": "Sauvegarde du {{date}} : {{count}} enregistrements.",
+    "modeLegend": "Mode de restauration",
+    "modeMerge": "Fusionner avec les données actuelles",
+    "modeMergeHint": "Ajoute les éléments absents et garde les plus récents. Vos réglages actuels sont conservés.",
+    "modeReplace": "Remplacer toutes les données",
+    "modeReplaceHint": "Efface les données de cet appareil avant la restauration.",
+    "confirmReplace": "Je comprends que les données actuelles seront effacées.",
+    "restore": "Restaurer",
+    "restored": "Restauration terminée : {{count}} enregistrements traités.",
+    "goHome": "Aller à l'accueil"
   },
   "onboarding": {
+    "restoreLink": "J'ai déjà une sauvegarde : la restaurer",
     "progress": "Progression de la configuration",
     "slide1": {
       "title": "Suivez votre argent",
@@ -354,6 +385,7 @@
     "next": "Période suivante"
   },
   "home": {
+    "backupReminder": "Sauvegarde recommandée : aucune sauvegarde récente.",
     "totalBalance": "Solde total",
     "income": "Revenus",
     "expense": "Dépenses",

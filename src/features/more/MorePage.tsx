@@ -52,6 +52,9 @@ export function MorePage() {
         <Link to="/plus/import" className={LINK_CLASS}>
           {t("more.import")}
         </Link>
+        <Link to="/plus/backup" className={LINK_CLASS}>
+          {t("more.backup")}
+        </Link>
       </nav>
 
       <fieldset className="flex flex-col gap-2">

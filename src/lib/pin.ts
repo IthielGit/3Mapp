@@ -3,21 +3,11 @@
  * Tout passe par Web Crypto.
  */
 
-const ITERATIONS = 210_000;
+import { fromBase64, toBase64 } from "./base64";
+
+/** Nombre d'itérations PBKDF2 : partagé avec la sauvegarde chiffrée (SPEC §5.14). */
+export const PBKDF2_ITERATIONS = 210_000;
 const HASH_BYTES = 32;
-
-function toBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (const b of bytes) binary += String.fromCharCode(b);
-  return btoa(binary);
-}
-
-function fromBase64(text: string): Uint8Array<ArrayBuffer> {
-  const binary = atob(text);
-  const out = new Uint8Array(new ArrayBuffer(binary.length));
-  for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
-  return out;
-}
 
 export function randomSalt(): string {
   const salt = new Uint8Array(16);
@@ -39,7 +29,12 @@ export async function hashPin(pin: string, saltBase64: string): Promise<string> 
     ["deriveBits"],
   );
   const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: fromBase64(saltBase64), iterations: ITERATIONS, hash: "SHA-256" },
+    {
+      name: "PBKDF2",
+      salt: fromBase64(saltBase64),
+      iterations: PBKDF2_ITERATIONS,
+      hash: "SHA-256",
+    },
     material,
     HASH_BYTES * 8,
   );

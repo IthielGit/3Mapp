@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import { ColorPicker, IconPicker } from "../../components/Pickers";
@@ -61,6 +61,15 @@ export function OnboardingPage() {
         max={totalSteps}
         aria-label={t("onboarding.progress")}
       />
+
+      {step === 0 ? (
+        <Link
+          to="/restore"
+          className="text-sm font-medium text-brand-700 underline dark:text-brand-100"
+        >
+          {t("onboarding.restoreLink")}
+        </Link>
+      ) : null}
 
       {isSlide && slideKey ? (
         <div className="flex flex-1 flex-col gap-3">

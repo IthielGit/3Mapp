@@ -22,11 +22,14 @@ import { WalletDetailPage } from "./features/wallets/WalletDetailPage";
 import { ImportExportPage } from "./features/import-export/ImportExportPage";
 import { CategoriesPage } from "./features/categories/CategoriesPage";
 import { CategoryFormPage } from "./features/categories/CategoryFormPage";
+import { BackupPage } from "./features/backup/BackupPage";
 
 export default function App() {
   return (
     <Routes>
       <Route path="onboarding" element={<OnboardingPage />} />
+      {/* Restauration sur un navigateur vierge : accessible avant l'onboarding (SPEC §5.14). */}
+      <Route path="restore" element={<BackupPage />} />
       <Route
         element={
           <RequireOnboarding>
@@ -49,6 +52,7 @@ export default function App() {
         <Route path="plus/wallets/:id" element={<WalletDetailPage />} />
         <Route path="plus/wallets/:id/edit" element={<WalletFormPage />} />
         <Route path="plus/import" element={<ImportExportPage />} />
+        <Route path="plus/backup" element={<BackupPage />} />
         <Route path="plus/recurring" element={<RecurringPage />} />
         <Route path="plus/recurring/new" element={<RecurringFormPage />} />
         <Route path="plus/recurring/:id" element={<RecurringDetailPage />} />

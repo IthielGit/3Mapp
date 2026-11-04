@@ -29,6 +29,8 @@ export const settingsSchema = baseEntity.extend({
   pinLockedUntil: isoDateTime.optional(),
   hideAmounts: z.boolean().optional(),
   biometricCredentialId: z.string().optional(),
+  /** Date de la dernière sauvegarde téléchargée (rappel après 7 jours, SPEC §5.14). */
+  lastBackupAt: isoDateTime.optional(),
 });
 
 export const currencySchema = baseEntity.extend({
