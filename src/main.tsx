@@ -7,6 +7,10 @@ import { SecurityProvider } from "./features/security/SecurityProvider";
 import { ThemeProvider } from "./lib/theme";
 import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
 import "./i18n";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
+import "@fontsource/inter/latin-700.css";
 import "./index.css";
 
 // Mise à jour : le bandeau « Nouvelle version disponible » propose de recharger (SPEC §5.17).

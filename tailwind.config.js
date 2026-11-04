@@ -4,23 +4,37 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        // Inter, hébergée dans l'app (@fontsource) pour fonctionner hors ligne.
+        sans: [
+          "Inter",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif",
+        ],
+      },
       colors: {
-        // Couleur de marque : teal. Nuances complètes pour fonds, bordures et textes.
+        // Palette « bleu calme » : marque, boutons, liens, onglets actifs.
+        // brand-700 (#1E40AF) est la couleur principale ; le texte clair s'utilise en mode sombre.
         brand: {
-          50: "#f0fdfa",
-          100: "#ccfbf1",
-          200: "#99f6e4",
-          300: "#5eead4",
-          400: "#2dd4bf",
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
-          800: "#115e59",
-          900: "#134e4a",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#1d4ed8",
+          700: "#1e40af",
+          800: "#1e3a8a",
+          900: "#172554",
         },
-        // Sémantique : revenus et dépenses (contrastes AA sur fond clair et sombre).
-        income: { DEFAULT: "#0369a1", dark: "#38bdf8" },
-        expense: { DEFAULT: "#be123c", dark: "#fb7185" },
+        // Sémantique : revenus (vert profit), dépenses (rouge alerte). Variantes pour le mode sombre.
+        income: { DEFAULT: "#047857", dark: "#34d399" },
+        expense: { DEFAULT: "#b91c1c", dark: "#f87171" },
       },
       transitionTimingFunction: {
         // Courbes fortes (et non les « ease » intégrées, trop molles) : sortie rapide pour l'interface.

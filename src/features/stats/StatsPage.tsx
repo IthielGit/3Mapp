@@ -33,7 +33,7 @@ import { PeriodPicker, periodLabel } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 
 const PALETTE = [
-  "#0f766e",
+  "#1e40af",
   "#0369a1",
   "#d97706",
   "#dc2626",
@@ -283,7 +283,7 @@ export function StatsPage() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="balance" stroke="#0f766e" dot={false} />
+                <Line type="monotone" dataKey="balance" stroke="#1e40af" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>

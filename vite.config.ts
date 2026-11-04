@@ -27,7 +27,7 @@ export default defineConfig({
         scope: "/",
         display: "standalone",
         background_color: "#f8fafc",
-        theme_color: "#0f766e",
+        theme_color: "#1e40af",
         icons: [
           { src: "icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
           { src: "icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
@@ -49,7 +49,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest,woff2}"],
         navigateFallback: "/index.html",
       },
     }),
