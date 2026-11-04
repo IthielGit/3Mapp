@@ -71,7 +71,8 @@
       "manage": "Fitantanana",
       "data": "Angona sy fiarovana",
       "appearance": "Endrika"
-    }
+    },
+    "budgets": "Tetibola"
   },
   "backup": {
     "title": "Fitehirizana sy famerenana",
@@ -209,7 +210,7 @@
     "sortOldest": "Ny taloha indrindra aloha",
     "income": "Fidiram-bola",
     "expense": "Fandaniana",
-    "net": "Net (tena)",
+    "net": "Ny sisa",
     "type": "Karazana",
     "types": {
       "expense": "Fandaniana",
@@ -420,7 +421,7 @@
     "totalBalance": "Tahiry rehetra",
     "income": "Fidiram-bola",
     "expense": "Fandaniana",
-    "net": "Net (tena)",
+    "net": "Ny sisa",
     "recent": "Fifanakalozana farany",
     "seeAll": "Jereo rehetra",
     "noTransactions": "Tsy misy fifanakalozana amin'izao fotoana izao.",
@@ -437,7 +438,12 @@
     "expenseCard": "Fandaniana (andro 7)",
     "dailyCheck": "Fampidirana androany",
     "dailyHint": "Soraty ny fandaniana androany.",
-    "startEntry": "Hanomboka"
+    "startEntry": "Hanomboka",
+    "budgetsTitle": "Tetibola",
+    "budgetsEmpty": "Mamorona tetibola iray hanaraka ny fandaniana.",
+    "budgetOf": "amin’ny {{amount}}",
+    "budgetLeft": "Mbola {{amount}}",
+    "budgetOver": "Mihoatra {{amount}}"
   },
   "stats": {
     "title": "Fandinihana",

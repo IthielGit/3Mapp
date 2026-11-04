@@ -8,6 +8,8 @@ import { Area, AreaChart, Bar, BarChart, ReferenceLine, ResponsiveContainer } fr
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
+import { budgetStates } from "../../domain/budget";
+import { usePeriodSettings } from "../stats/period-state";
 import { convertedSum } from "../../domain/fx";
 import { dailyExpenses, dailyTotals } from "../../domain/home-series";
 import { Skeleton } from "../../components/PwaComponents";
@@ -75,6 +77,23 @@ export function HomePage() {
     () => computeBalances(active, transactions, cutoff),
     [active, transactions, cutoff],
   );
+  const budgets = useLiveQuery(() => db.budgets.toArray(), []) ?? EMPTY;
+  const periodSettings = usePeriodSettings();
+  const budgetRows = useMemo(() => {
+    const now = new Date();
+    const states = budgetStates(
+      budgets.filter((b) => !b.archived),
+      transactions,
+      now,
+      periodSettings,
+    );
+    return budgets
+      .filter((b) => !b.archived)
+      .flatMap((budget) => {
+        const state = states.get(budget.id);
+        return state ? [{ budget, state }] : [];
+      });
+  }, [budgets, transactions, periodSettings]);
   const converted = convertedSum(
     active
       .filter((w) => w.includeInTotal)
@@ -290,6 +309,70 @@ export function HomePage() {
           {t("home.startEntry")}
         </Link>
       </div>
+
+      {/* Budgets : où en est chaque budget sur sa période en cours. */}
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
+          <Link
+            to="/budgets"
+            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+          >
+            {t("home.manage")}
+          </Link>
+        </div>
+        {budgetRows.length === 0 ? (
+          <Link
+            to="/budgets/new"
+            className="rounded-card border border-dashed border-slate-300 p-4 text-sm text-slate-600 dark:border-white/15 dark:text-muted"
+          >
+            {t("home.budgetsEmpty")}
+          </Link>
+        ) : (
+          <ul className="flex flex-col divide-y divide-slate-200 rounded-card border border-slate-200 bg-white px-4 dark:divide-white/10 dark:border-white/15 dark:bg-card">
+            {budgetRows.slice(0, 3).map(({ budget, state }) => {
+              const width = Math.min(100, Math.max(0, state.percent));
+              const barColor =
+                state.status === "exceeded"
+                  ? "bg-expense dark:bg-expense-dark"
+                  : state.status === "threshold"
+                    ? "bg-amber-500"
+                    : "bg-income dark:bg-income-dark";
+              return (
+                <li key={budget.id} className="py-4">
+                  <Link to={`/budgets/${budget.id}`} className="flex flex-col gap-1.5">
+                    <div className="flex items-baseline justify-between gap-3 text-sm">
+                      <span className="truncate font-medium text-ink dark:text-fg">
+                        {budget.name}
+                      </span>
+                      <span
+                        className="shrink-0 tabular-nums text-slate-600 dark:text-muted"
+                        data-amount
+                      >
+                        {formatMoney(state.spent, budget.currency)} /{" "}
+                        {formatMoney(state.available, budget.currency)}
+                      </span>
+                    </div>
+                    <div
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.min(100, state.percent)}
+                      aria-label={budget.name}
+                      className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
+                    >
+                      <div
+                        className={`h-full rounded-full ${barColor}`}
+                        style={{ width: `${width}%` }}
+                      />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       {/* Portefeuilles puis transactions récentes. */}
       <section className="flex flex-col gap-3">

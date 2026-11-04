@@ -71,7 +71,8 @@
       "manage": "Gestion",
       "data": "Données et sécurité",
       "appearance": "Apparence"
-    }
+    },
+    "budgets": "Budgets"
   },
   "backup": {
     "title": "Sauvegarde et restauration",
@@ -209,7 +210,7 @@
     "sortOldest": "Plus anciennes d'abord",
     "income": "Revenus",
     "expense": "Dépenses",
-    "net": "Net",
+    "net": "Ce qui vous reste",
     "type": "Type",
     "types": {
       "expense": "Dépense",
@@ -420,7 +421,7 @@
     "totalBalance": "Solde total",
     "income": "Revenus",
     "expense": "Dépenses",
-    "net": "Net",
+    "net": "Ce qui vous reste",
     "recent": "Dernières transactions",
     "seeAll": "Tout voir",
     "noTransactions": "Aucune transaction pour le moment.",
@@ -437,7 +438,12 @@
     "expenseCard": "Dépenses (7 jours)",
     "dailyCheck": "Saisie du jour",
     "dailyHint": "Notez vos dépenses d'aujourd'hui.",
-    "startEntry": "Commencer"
+    "startEntry": "Commencer",
+    "budgetsTitle": "Budgets",
+    "budgetsEmpty": "Créez un budget pour suivre vos dépenses.",
+    "budgetOf": "sur {{amount}}",
+    "budgetLeft": "Reste {{amount}}",
+    "budgetOver": "Dépassé de {{amount}}"
   },
   "stats": {
     "title": "Analyses",

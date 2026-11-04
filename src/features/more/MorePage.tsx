@@ -85,6 +85,9 @@ export function MorePage() {
             <NavRow to="/plus/debts" icon="balance">
               {t("more.debts")}
             </NavRow>
+            <NavRow to="/budgets" icon="donut">
+              {t("more.budgets")}
+            </NavRow>
             <NavRow to="/plus/rates" icon="exchange">
               {t("more.rates")}
             </NavRow>
