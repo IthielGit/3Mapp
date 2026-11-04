@@ -300,9 +300,9 @@ export function HomePage() {
             {t("home.manage")}
           </Link>
         </div>
-        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul className="grid grid-cols-2 gap-3">
           {active.map((w) => (
-            <li key={w.id} className="snap-start">
+            <li key={w.id}>
               <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
             </li>
           ))}

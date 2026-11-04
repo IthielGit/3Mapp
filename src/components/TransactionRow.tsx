@@ -64,7 +64,7 @@ export function WalletCard({ wallet, balance }: { wallet: Wallet; balance: numbe
   return (
     <Link
       to={`/plus/wallets/${wallet.id}`}
-      className="flex min-w-[9.5rem] flex-col gap-2 rounded-card p-3 text-white shadow-sm"
+      className="flex min-w-0 flex-col gap-2 rounded-card p-3 text-white shadow-sm"
       style={{ backgroundColor: wallet.color }}
     >
       <span aria-hidden="true" className="text-2xl">

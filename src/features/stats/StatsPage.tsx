@@ -38,6 +38,11 @@ import { PeriodPicker, periodLabel } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 
 /** Donnée principale : quelle question on pose au graphique. */
+/** Nom de catégorie raccourci pour tenir dans la colonne des libellés. */
+function shortName(name: string): string {
+  return name.length > 13 ? `${name.slice(0, 12)}…` : name;
+}
+
 type Dataset = "categories" | "weeks" | "balance" | "savings";
 /** Représentation : anneau (parts d'un total), barres (comparer), courbe (évolution). */
 type Repr = "donut" | "bars" | "line";
@@ -407,20 +412,27 @@ export function StatsPage() {
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               ) : dataset === "categories" ? (
-                <BarChart data={categoryData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
-                  <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} interval={0} />
-                  <YAxis
+                <BarChart data={categoryData} layout="vertical" margin={{ left: 4, right: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} horizontal={false} />
+                  <XAxis
+                    type="number"
                     tickFormatter={compactAmount}
                     tick={{ fill: tick, fontSize: 11 }}
-                    width={52}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={104}
+                    interval={0}
+                    tickFormatter={shortName}
+                    tick={{ fill: tick, fontSize: 11 }}
                   />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Bar
                     dataKey="value"
                     name={t("home.expense")}
                     fill="#1a1a1b"
-                    radius={[6, 6, 0, 0]}
+                    radius={[0, 6, 6, 0]}
                   />
                 </BarChart>
               ) : dataset === "weeks" && repr === "line" ? (
