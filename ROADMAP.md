@@ -75,12 +75,12 @@ une app utilisable dès la phase 4, puis enrichie.
 **Prompt :** « Implémente SPEC §5.14 : sauvegarde JSON complète (avec pièces jointes), chiffrement AES-GCM optionnel, restauration avec aperçu (fusion ou remplacement), rappel de sauvegarde, `navigator.storage.persist()`. »
 **Critères :** sauvegarde puis restauration sur un navigateur vierge donne exactement les mêmes soldes.
 
-## Phase 12 — Google Drive
+## Phase 12 — Partage de la sauvegarde vers le cloud (sans coût)
 
-**Prompt :** « Ajoute la sauvegarde Google Drive (appDataFolder) avec Google Identity Services : connexion, envoi, liste des versions, restauration, sauvegarde automatique après modifications. Le client ID est en variable d'environnement, jamais dans le code. »
-**Critères :** aller-retour réussi ; déconnexion révoque le jeton.
+**Prompt :** « Ajoute le partage de la sauvegarde via la feuille de partage native (Web Share API) : l'utilisateur envoie le fichier vers Google Drive, OneDrive, Dropbox ou e-mail. Aucun compte, aucune clé ni identifiant dans l'application. Le bouton n'apparaît que si le navigateur sait partager un fichier. La restauration reprend le fichier depuis le même cloud via le sélecteur. »
+**Critères :** partage d'une sauvegarde puis restauration du fichier reçu donne les mêmes soldes ; une feuille fermée sans envoi ne déclenche aucune erreur ; aucune dépendance ni clé d'API ajoutée.
 
-> Prérequis : créer un projet Google Cloud, activer l'API Drive, créer un client ID OAuth « Application Web ».
+> Remplace l'ancienne approche Google Drive (appDataFolder, Google Identity Services), abandonnée car elle nécessitait un projet Google Cloud et des identifiants.
 
 ## Phase 13 — Finitions
 
