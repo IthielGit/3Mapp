@@ -369,6 +369,7 @@ export function StatsPage() {
                   />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Line
+                    isAnimationActive={false}
                     type="monotone"
                     dataKey="cumulative"
                     stroke="#1a1a1b"
@@ -387,7 +388,12 @@ export function StatsPage() {
                     width={52}
                   />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
-                  <Bar dataKey="net" name={t("stats.savedPerMonth")} radius={[6, 6, 0, 0]}>
+                  <Bar
+                    isAnimationActive={false}
+                    dataKey="net"
+                    name={t("stats.savedPerMonth")}
+                    radius={[6, 6, 0, 0]}
+                  >
                     {savingsRows.map((row) => (
                       <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : "#1a1a1b"} />
                     ))}
@@ -429,6 +435,7 @@ export function StatsPage() {
                   />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Bar
+                    isAnimationActive={false}
                     dataKey="value"
                     name={t("home.expense")}
                     fill="#1a1a1b"
@@ -447,6 +454,7 @@ export function StatsPage() {
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Line
+                    isAnimationActive={false}
                     type="monotone"
                     dataKey="income"
                     stroke="#1a1a1b"
@@ -454,6 +462,7 @@ export function StatsPage() {
                     dot={false}
                   />
                   <Line
+                    isAnimationActive={false}
                     type="monotone"
                     dataKey="expense"
                     stroke="#ee4444"
@@ -473,12 +482,14 @@ export function StatsPage() {
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Bar
+                    isAnimationActive={false}
                     dataKey="income"
                     fill="#8e8e96"
                     name={t("home.income")}
                     radius={[6, 6, 0, 0]}
                   />
                   <Bar
+                    isAnimationActive={false}
                     dataKey="expense"
                     fill="#ee4444"
                     name={t("home.expense")}
@@ -496,6 +507,7 @@ export function StatsPage() {
                   />
                   <Tooltip formatter={(v) => fmt(Number(v))} />
                   <Line
+                    isAnimationActive={false}
                     type="monotone"
                     dataKey="balance"
                     stroke="#1a1a1b"

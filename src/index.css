@@ -28,7 +28,7 @@ a {
 }
 
 button:not(:disabled) {
-  transition-property: transform;
+  transition-property: transform, color, background-color;
   transition-duration: 160ms;
   transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -71,6 +71,38 @@ main > * {
   main > * {
     animation-name: page-in;
     animation-duration: 180ms;
+  }
+}
+
+/* Menu « ⋯ » : apparaît depuis son bouton (coin haut-droit), sans toucher aux autres éléments. */
+@keyframes menu-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.menu-pop {
+  transform-origin: top right;
+  animation: menu-pop 150ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-pop {
+    animation-name: menu-fade;
   }
 }
 

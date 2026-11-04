@@ -9,7 +9,7 @@ interface BottomSheetProps {
 }
 
 /** Durée de sortie : la feuille reste montée le temps de glisser vers le bas. */
-const EXIT_MS = 260;
+const EXIT_MS = 320;
 
 /**
  * Feuille modale en bas d'écran. Entrée et sortie par glissement depuis le bord (la sortie suit

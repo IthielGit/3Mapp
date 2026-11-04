@@ -61,7 +61,7 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
       {open ? (
         <ul
           role="menu"
-          className="absolute right-0 top-12 z-30 min-w-[200px] overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-card"
+          className="menu-pop absolute right-0 top-12 z-30 min-w-[200px] overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-card"
         >
           {items.map((item) => (
             <li key={item.label} role="none">
