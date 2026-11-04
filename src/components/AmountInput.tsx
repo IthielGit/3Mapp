@@ -50,8 +50,8 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
   else if (expression.trim() !== "") result = "…";
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col rounded-lg border border-slate-300 p-3 dark:border-slate-700">
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-col rounded-lg border border-slate-300 px-3 py-2 dark:border-slate-700">
         <label htmlFor="amount-expression" className="text-sm text-slate-500">
           {label}
         </label>
@@ -69,20 +69,20 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
         </output>
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-1.5">
         {KEYS.flat().map((key) => (
           <button
             key={key}
             type="button"
             onClick={() => press(key)}
             aria-label={key === "⌫" ? "Effacer" : key}
-            className="min-h-[52px] rounded-lg border border-slate-300 text-xl font-medium dark:border-slate-700"
+            className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-slate-700"
           >
             {key}
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5">
         <button
           type="button"
           onClick={() => onExpressionChange("")}

@@ -1,26 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BottomNav } from "./BottomNav";
 import { UpdateBanner } from "./PwaComponents";
+import { HeaderSlotsContext } from "./header-slots";
 import { generateDueOccurrences } from "../features/recurring/recurring-service";
 import { useAppPreferences } from "../features/settings/app-preferences";
 
 /** Destinations de la barre basse : pas de bouton retour sur ces écrans racines. */
 const ROOTS = ["/", "/transactions", "/calendar", "/stats"];
 
-/** Bouton retour rond, en haut, sur tous les écrans qui ne sont pas une destination racine. */
-function BackBar() {
+/**
+ * Ligne d'en-tête des écrans secondaires : bouton retour rond à gauche, titre de l'écran
+ * à sa hauteur, actions (menu « ⋯ ») à droite.
+ */
+function HeaderRow({
+  onTitleSlot,
+  onActionsSlot,
+}: {
+  onTitleSlot: (el: HTMLDivElement | null) => void;
+  onActionsSlot: (el: HTMLDivElement | null) => void;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   return (
-    <div className="-mx-4 mb-2 flex items-center px-4">
+    <div className="-mx-4 mb-3 flex min-h-11 items-center gap-3 px-4">
       <button
         type="button"
         aria-label={t("common.back")}
         onClick={() => (location.key !== "default" ? navigate(-1) : navigate("/"))}
-        className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
       >
         <svg
           aria-hidden="true"
@@ -35,6 +45,8 @@ function BackBar() {
           <path d="M15 5l-7 7 7 7" />
         </svg>
       </button>
+      <div ref={onTitleSlot} className="flex min-w-0 flex-1 items-center" />
+      <div ref={onActionsSlot} className="flex shrink-0 items-center justify-end" />
     </div>
   );
 }
@@ -49,14 +61,20 @@ export function AppLayout() {
     void generateDueOccurrences().catch(() => undefined);
   }, []);
 
-  const showBack = !ROOTS.includes(location.pathname);
+  const showHeader = !ROOTS.includes(location.pathname);
+  const [titleSlot, setTitleSlot] = useState<HTMLElement | null>(null);
+  const [actionsSlot, setActionsSlot] = useState<HTMLElement | null>(null);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col">
-      <main className="flex-1 px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
-        {showBack ? <BackBar /> : null}
-        <Outlet />
-      </main>
+      <HeaderSlotsContext.Provider value={{ titleSlot, actionsSlot }}>
+        <main className="flex-1 px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
+          {showHeader ? (
+            <HeaderRow onTitleSlot={setTitleSlot} onActionsSlot={setActionsSlot} />
+          ) : null}
+          <Outlet />
+        </main>
+      </HeaderSlotsContext.Provider>
       <BottomNav />
       <UpdateBanner />
     </div>

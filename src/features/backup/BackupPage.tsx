@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -152,7 +153,7 @@ export function BackupPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">{t("backup.title")}</h1>
+      <PageTitle className="text-2xl font-bold">{t("backup.title")}</PageTitle>
       <p className="text-sm text-slate-600 dark:text-muted">{t("backup.intro")}</p>
 
       {reminder !== "none" ? (

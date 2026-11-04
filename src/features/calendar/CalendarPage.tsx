@@ -126,7 +126,7 @@ export function CalendarPage() {
               <span className="tabular-nums">{format(day, "d")}</span>
               {group ? (
                 <span
-                  className={`max-w-full truncate text-[10px] font-semibold tabular-nums ${
+                  className={`max-w-full truncate text-[11px] font-semibold tabular-nums ${
                     isSelected
                       ? "text-white dark:text-ink"
                       : net < 0

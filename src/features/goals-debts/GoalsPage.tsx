@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -33,7 +34,7 @@ function GoalList() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("goals.title")}</h1>
+        <PageTitle className="text-2xl font-bold">{t("goals.title")}</PageTitle>
         <button type="button" className={buttonPrimary} onClick={() => setCreating((c) => !c)}>
           {t("common.add")}
         </button>
@@ -96,12 +97,13 @@ function GoalForm({ onDone }: { onDone: () => void }) {
   const [target, setTarget] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [error, setError] = useState<string | undefined>();
+  const [nameError, setNameError] = useState<string | undefined>();
   const currency: CurrencyCode = wallets[0]?.currency ?? "MGA";
 
   async function save() {
     setError(undefined);
     const amount = parseMoney(target, currency);
-    if (name.trim() === "") return setError(t("errors.required"));
+    if (name.trim() === "") return setNameError(t("errors.required"));
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     await createGoal({
       name: name.trim(),
@@ -115,8 +117,15 @@ function GoalForm({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
-      <Field label={t("common.name")}>
-        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+      <Field label={t("common.name")} error={nameError}>
+        <input
+          className={inputClass}
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError(undefined);
+          }}
+        />
       </Field>
       <Field label={`${t("goals.target")} (${currency})`}>
         <input
@@ -192,9 +201,9 @@ function GoalDetail({ id }: { id: string }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-bold">
         {goal.icon} {goal.name}
-      </h1>
+      </PageTitle>
       <p className="text-lg">
         {formatMoney(p.saved, goal.currency)} / {formatMoney(goal.targetAmount, goal.currency)} ·{" "}
         {p.percent} %

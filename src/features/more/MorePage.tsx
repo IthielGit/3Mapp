@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -52,7 +53,7 @@ export function MorePage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">{t("pages.more.title")}</h1>
+      <PageTitle className="text-2xl font-bold">{t("pages.more.title")}</PageTitle>
 
       <PreferencesSection />
 

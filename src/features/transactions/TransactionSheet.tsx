@@ -250,7 +250,7 @@ export function TransactionSheet({
       title={transaction ? t("transactions.editTitle") : t("transactions.newTitle")}
       onClose={onClose}
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <div
           role="radiogroup"
           aria-label={t("transactions.type")}
@@ -293,7 +293,7 @@ export function TransactionSheet({
         />
 
         {!transaction && type !== "adjustment" ? (
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <div className="flex flex-col gap-2">
             <label className="flex min-h-[44px] items-center gap-3">
               <input
                 type="checkbox"
@@ -359,24 +359,24 @@ export function TransactionSheet({
           </div>
         ) : null}
 
-        <Field
-          label={type === "transfer" ? t("transactions.fromWallet") : t("transactions.wallet")}
-        >
-          <select
-            className={inputClass}
-            value={effectiveWalletId}
-            onChange={(e) => setWalletId(e.target.value)}
+        <div className="grid grid-cols-2 gap-3">
+          <Field
+            label={type === "transfer" ? t("transactions.fromWallet") : t("transactions.wallet")}
           >
-            {activeWallets.map((w) => (
-              <option key={w.id} value={w.id}>
-                {w.name} ({w.currency})
-              </option>
-            ))}
-          </select>
-        </Field>
+            <select
+              className={inputClass}
+              value={effectiveWalletId}
+              onChange={(e) => setWalletId(e.target.value)}
+            >
+              {activeWallets.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name} ({w.currency})
+                </option>
+              ))}
+            </select>
+          </Field>
 
-        {type === "transfer" ? (
-          <>
+          {type === "transfer" ? (
             <Field label={t("transactions.toWallet")}>
               <select
                 className={inputClass}
@@ -393,6 +393,29 @@ export function TransactionSheet({
                   ))}
               </select>
             </Field>
+          ) : (
+            <Field label={t("common.category")}>
+              <select
+                className={inputClass}
+                value={categoryId}
+                onChange={(e) => {
+                  setCategoryId(e.target.value);
+                  setSubcategoryId("");
+                }}
+              >
+                <option value="">—</option>
+                {categoryOptions.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.icon} {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
+        </div>
+
+        {type === "transfer" ? (
+          <div className="grid grid-cols-2 gap-3">
             {crossCurrency && targetWallet ? (
               <Field label={t("transactions.receivedAmount", { currency: targetWallet.currency })}>
                 <input
@@ -411,61 +434,47 @@ export function TransactionSheet({
                 onChange={(e) => setFeeExpr(e.target.value)}
               />
             </Field>
-          </>
+          </div>
         ) : null}
 
-        {type === "expense" || type === "income" ? (
-          <>
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={categoryId}
-                onChange={(e) => {
-                  setCategoryId(e.target.value);
-                  setSubcategoryId("");
-                }}
-              >
-                <option value="">—</option>
-                {categoryOptions.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.icon} {c.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            {subcategories.length > 0 ? (
-              <Field label={t("transactions.subcategory")}>
-                <select
-                  className={inputClass}
-                  value={subcategoryId}
-                  onChange={(e) => setSubcategoryId(e.target.value)}
-                >
-                  <option value="">—</option>
-                  {subcategories.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            ) : null}
-          </>
+        {(type === "expense" || type === "income") && subcategories.length > 0 ? (
+          <Field label={t("transactions.subcategory")}>
+            <select
+              className={inputClass}
+              value={subcategoryId}
+              onChange={(e) => setSubcategoryId(e.target.value)}
+            >
+              <option value="">—</option>
+              {subcategories.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </Field>
         ) : null}
 
-        <Field label={t("transactions.date")}>
-          <input
-            type="datetime-local"
-            className={inputClass}
-            value={dateLocal}
-            onChange={(e) => setDateLocal(e.target.value)}
-          />
-        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label={t("transactions.date")}>
+            <input
+              type="datetime-local"
+              className={inputClass}
+              value={dateLocal}
+              onChange={(e) => setDateLocal(e.target.value)}
+            />
+          </Field>
+          <Field label={t("transactions.memo")}>
+            <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
+          </Field>
+        </div>
 
-        <Field label={t("transactions.memo")}>
-          <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
-        </Field>
+        {error ? (
+          <p role="alert" className="text-red-700 dark:text-red-400">
+            {error}
+          </p>
+        ) : null}
 
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <label
             className={buttonSecondary + " inline-flex cursor-pointer items-center justify-center"}
           >
@@ -478,37 +487,31 @@ export function TransactionSheet({
               onChange={(e) => void onFiles(e.target.files)}
             />
           </label>
-          {attachmentIds.length > 0 ? (
-            <p className="text-sm text-slate-500">
-              {t("transactions.attachmentCount", { count: attachmentIds.length })}
-            </p>
-          ) : null}
-          {attachmentIds.map((id) => (
-            <button
-              key={id}
-              type="button"
-              className="self-start text-sm text-red-700 underline"
-              onClick={() => void detach(id)}
-            >
-              {t("transactions.removeAttachment")}
-            </button>
-          ))}
+          <button
+            type="button"
+            className={buttonPrimary}
+            onClick={() => void save()}
+            disabled={saving}
+          >
+            {t("common.save")}
+          </button>
         </div>
 
-        {error ? (
-          <p role="alert" className="text-red-700 dark:text-red-400">
-            {error}
-          </p>
+        {attachmentIds.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+            <span>{t("transactions.attachmentCount", { count: attachmentIds.length })}</span>
+            {attachmentIds.map((id) => (
+              <button
+                key={id}
+                type="button"
+                className="text-red-700 underline"
+                onClick={() => void detach(id)}
+              >
+                {t("transactions.removeAttachment")}
+              </button>
+            ))}
+          </div>
         ) : null}
-
-        <button
-          type="button"
-          className={buttonPrimary}
-          onClick={() => void save()}
-          disabled={saving}
-        >
-          {t("common.save")}
-        </button>
 
         {transaction ? (
           <div className="grid grid-cols-2 gap-2">

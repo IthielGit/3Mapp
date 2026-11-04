@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { HeaderActions, PageTitle } from "./PageHeader";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -95,7 +96,8 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
 }
 
 /**
- * En-tête des écrans de détail : retour rond à gauche, titre centré, menu « ⋯ » à droite.
+ * En-tête des écrans de détail : le titre et le menu « ⋯ » sont placés dans la ligne d'en-tête
+ * de AppLayout, à la hauteur du bouton retour.
  */
 export function DetailHeader({
   title,
@@ -103,19 +105,15 @@ export function DetailHeader({
   children,
 }: {
   title: string;
-  backTo?: string;
   actions?: ReactNode;
   children?: ReactNode;
 }) {
   return (
     <header className="flex flex-col gap-1">
-      <div className="grid grid-cols-[2.75rem_1fr_2.75rem] items-center gap-2">
-        <span aria-hidden="true" className="h-11 w-11" />
-        <h1 className="truncate text-center text-lg font-semibold text-ink dark:text-fg">
-          {title}
-        </h1>
-        <div className="flex justify-end">{actions}</div>
-      </div>
+      <PageTitle className="truncate text-lg font-semibold text-ink dark:text-fg">
+        {title}
+      </PageTitle>
+      <HeaderActions>{actions}</HeaderActions>
       {children}
     </header>
   );

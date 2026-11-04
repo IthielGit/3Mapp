@@ -48,7 +48,6 @@ export function BudgetDetailPage() {
     <section className="flex flex-col gap-4">
       <DetailHeader
         title={budget.name}
-        backTo="/budgets"
         actions={
           <ActionMenu
             items={[

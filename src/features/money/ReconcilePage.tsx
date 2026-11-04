@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -54,7 +55,9 @@ export function ReconcilePage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{t("reconcile.title", { name: wallet.name })}</h1>
+      <PageTitle className="text-2xl font-bold">
+        {t("reconcile.title", { name: wallet.name })}
+      </PageTitle>
       <p>
         {t("reconcile.computed")} : <strong>{formatMoney(computed, currency)}</strong>
       </p>

@@ -54,11 +54,7 @@ export function WalletDetailPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <DetailHeader
-        title={wallet.name}
-        backTo="/plus/wallets"
-        actions={<ActionMenu items={walletActions} />}
-      >
+      <DetailHeader title={wallet.name} actions={<ActionMenu items={walletActions} />}>
         <p className="text-center text-sm text-slate-500 dark:text-muted">
           {wallet.icon} {t(`groups.${wallet.group}`)}
           {wallet.archived ? ` · ${t("wallets.archivedBadge")}` : ""}

@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -69,84 +70,89 @@ export function RecurringFormPage() {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{t("recurring.newTitle")}</h1>
+    <section className="flex flex-col gap-3">
+      <PageTitle className="text-2xl font-bold">{t("recurring.newTitle")}</PageTitle>
 
-      <Field label={t("transactions.type")}>
-        <select
-          className={inputClass}
-          value={type}
-          onChange={(e) => setType(e.target.value as TxType)}
-        >
-          {(["expense", "income", "transfer"] as const).map((tp) => (
-            <option key={tp} value={tp}>
-              {t(`transactions.types.${tp}`)}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label={`${t("transactions.amount")} (${currency})`}>
-        <input
-          inputMode="decimal"
-          className={inputClass}
-          value={amountText}
-          onChange={(e) => setAmountText(e.target.value)}
-        />
-      </Field>
-      <Field label={t("transactions.wallet")}>
-        <select
-          className={inputClass}
-          value={effectiveWallet}
-          onChange={(e) => setWalletId(e.target.value)}
-        >
-          {active.map((w) => (
-            <option key={w.id} value={w.id}>
-              {w.name} ({w.currency})
-            </option>
-          ))}
-        </select>
-      </Field>
-      {type === "transfer" ? (
-        <Field label={t("transactions.toWallet")}>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t("transactions.type")}>
           <select
             className={inputClass}
-            value={toWalletId}
-            onChange={(e) => setToWalletId(e.target.value)}
+            value={type}
+            onChange={(e) => setType(e.target.value as TxType)}
           >
-            <option value="">—</option>
-            {active
-              .filter((w) => w.id !== effectiveWallet)
-              .map((w) => (
-                <option key={w.id} value={w.id}>
-                  {w.name}
-                </option>
-              ))}
+            {(["expense", "income", "transfer"] as const).map((tp) => (
+              <option key={tp} value={tp}>
+                {t(`transactions.types.${tp}`)}
+              </option>
+            ))}
           </select>
         </Field>
-      ) : null}
-      {type !== "transfer" ? (
-        <Field label={t("common.category")}>
+        <Field label={`${t("transactions.amount")} (${currency})`}>
+          <input
+            inputMode="decimal"
+            className={inputClass}
+            value={amountText}
+            onChange={(e) => setAmountText(e.target.value)}
+          />
+        </Field>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t("transactions.wallet")}>
           <select
             className={inputClass}
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
+            value={effectiveWallet}
+            onChange={(e) => setWalletId(e.target.value)}
           >
-            <option value="">—</option>
-            {categories
-              .filter((c) => c.kind === kind && !c.archived)
-              .map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.icon} {c.name}
-                </option>
-              ))}
+            {active.map((w) => (
+              <option key={w.id} value={w.id}>
+                {w.name} ({w.currency})
+              </option>
+            ))}
           </select>
         </Field>
-      ) : null}
+        {type === "transfer" ? (
+          <Field label={t("transactions.toWallet")}>
+            <select
+              className={inputClass}
+              value={toWalletId}
+              onChange={(e) => setToWalletId(e.target.value)}
+            >
+              <option value="">—</option>
+              {active
+                .filter((w) => w.id !== effectiveWallet)
+                .map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
+                ))}
+            </select>
+          </Field>
+        ) : (
+          <Field label={t("common.category")}>
+            <select
+              className={inputClass}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+            >
+              <option value="">—</option>
+              {categories
+                .filter((c) => c.kind === kind && !c.archived)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.icon} {c.name}
+                  </option>
+                ))}
+            </select>
+          </Field>
+        )}
+      </div>
+
       <Field label={t("transactions.memo")}>
         <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
       </Field>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         <Field label={t("recurring.every_label")}>
           <input
             inputMode="numeric"
@@ -170,44 +176,48 @@ export function RecurringFormPage() {
         </Field>
       </div>
 
-      <Field label={t("recurring.startDate")}>
-        <input
-          type="datetime-local"
-          className={inputClass}
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-      </Field>
-      <Field label={t("recurring.endDate")}>
-        <input
-          type="date"
-          className={inputClass}
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
-      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t("recurring.startDate")}>
+          <input
+            type="datetime-local"
+            className={inputClass}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </Field>
+        <Field label={t("recurring.endDate")}>
+          <input
+            type="date"
+            className={inputClass}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </Field>
+      </div>
 
-      {unit === "month" || unit === "year" ? (
-        <label className="flex min-h-[44px] items-center gap-3">
+      <div className="grid grid-cols-2 gap-3">
+        {unit === "month" || unit === "year" ? (
+          <label className="flex min-h-[44px] items-center gap-2">
+            <input
+              type="checkbox"
+              className="h-5 w-5 shrink-0"
+              checked={lastDay}
+              onChange={(e) => setLastDay(e.target.checked)}
+            />
+            {t("recurring.lastDay")}
+          </label>
+        ) : null}
+
+        <label className="flex min-h-[44px] items-center gap-2">
           <input
             type="checkbox"
-            className="h-5 w-5"
-            checked={lastDay}
-            onChange={(e) => setLastDay(e.target.checked)}
+            className="h-5 w-5 shrink-0"
+            checked={autoPost}
+            onChange={(e) => setAutoPost(e.target.checked)}
           />
-          {t("recurring.lastDay")}
+          {t("recurring.autoPost")}
         </label>
-      ) : null}
-
-      <label className="flex min-h-[44px] items-center gap-3">
-        <input
-          type="checkbox"
-          className="h-5 w-5"
-          checked={autoPost}
-          onChange={(e) => setAutoPost(e.target.checked)}
-        />
-        {t("recurring.autoPost")}
-      </label>
+      </div>
 
       {error ? (
         <p role="alert" className="text-red-700 dark:text-red-400">

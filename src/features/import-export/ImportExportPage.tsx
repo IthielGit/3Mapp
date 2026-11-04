@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -104,7 +105,7 @@ export function ImportExportPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">{t("importExport.title")}</h1>
+      <PageTitle className="text-2xl font-bold">{t("importExport.title")}</PageTitle>
 
       <section className="flex flex-col gap-3">
         <h2 className="font-semibold">{t("importExport.importTitle")}</h2>

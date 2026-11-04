@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -39,6 +40,7 @@ export function CategoryFormPage() {
   const [subName, setSubName] = useState("");
   const [mergeTarget, setMergeTarget] = useState("");
   const [error, setError] = useState<string | undefined>();
+  const [nameError, setNameError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!id) return;
@@ -69,7 +71,7 @@ export function CategoryFormPage() {
 
   async function save() {
     setError(undefined);
-    if (name.trim() === "") return setError(t("errors.required"));
+    if (name.trim() === "") return setNameError(t("errors.required"));
     if (existing) {
       await updateCategory(existing.id, { name: name.trim(), icon, color });
       navigate("/plus/categories");
@@ -111,12 +113,19 @@ export function CategoryFormPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-bold">
         {existing ? t("categories.editTitle") : t("categories.newTitle")}
-      </h1>
+      </PageTitle>
 
-      <Field label={t("common.name")}>
-        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+      <Field label={t("common.name")} error={nameError}>
+        <input
+          className={inputClass}
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError(undefined);
+          }}
+        />
       </Field>
 
       <Field label={t("categories.kind")}>

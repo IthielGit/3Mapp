@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -29,7 +30,7 @@ export function BudgetsPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">{t("budgets.title")}</h1>
+        <PageTitle className="text-2xl font-bold">{t("budgets.title")}</PageTitle>
         <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
           {t("common.add")}
         </Link>

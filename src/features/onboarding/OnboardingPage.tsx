@@ -25,6 +25,7 @@ export function OnboardingPage() {
   const [color, setColor] = useState("#0f766e");
   const [balanceText, setBalanceText] = useState("0");
   const [error, setError] = useState<string | undefined>();
+  const [nameError, setNameError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
   const SETUP_STEPS = 3;
@@ -32,7 +33,7 @@ export function OnboardingPage() {
 
   async function finish() {
     setError(undefined);
-    if (name.trim() === "") return setError(t("errors.required"));
+    if (name.trim() === "") return setNameError(t("errors.required"));
     const initialBalance = parseMoney(balanceText || "0", currency);
     if (initialBalance === null) return setError(t("errors.invalidAmount"));
 
@@ -105,7 +106,7 @@ export function OnboardingPage() {
             >
               {Object.values(CURRENCIES).map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.code} — {c.name}
+                  {c.code} · {c.symbol}
                 </option>
               ))}
             </select>
@@ -117,11 +118,14 @@ export function OnboardingPage() {
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{t("onboarding.walletTitle")}</h1>
           <p className="text-slate-600 dark:text-muted">{t("onboarding.walletHint")}</p>
-          <Field label={t("common.name")}>
+          <Field label={t("common.name")} error={nameError}>
             <input
               className={inputClass}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError(undefined);
+              }}
               placeholder={t("onboarding.walletPlaceholder")}
             />
           </Field>

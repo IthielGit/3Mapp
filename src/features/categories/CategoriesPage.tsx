@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -22,7 +23,7 @@ export function CategoriesPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">{t("categories.title")}</h1>
+        <PageTitle className="text-2xl font-bold">{t("categories.title")}</PageTitle>
         <Link
           to={`/plus/categories/new?kind=${kind}`}
           className={buttonPrimary + " inline-flex items-center"}

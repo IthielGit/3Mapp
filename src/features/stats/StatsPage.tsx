@@ -257,7 +257,7 @@ export function StatsPage() {
         aria-labelledby="stats-chart-title"
         className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-card"
       >
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-2">
           <div className="flex flex-col">
             <h2 id="stats-chart-title" className="font-semibold text-ink dark:text-fg">
               {dataset === "categories"
@@ -272,7 +272,7 @@ export function StatsPage() {
               {t("stats.unit", { currency: baseCurrency })}
             </span>
           </div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <label className="sr-only" htmlFor="stats-dataset">
               {t("stats.dataset")}
             </label>
@@ -404,6 +404,7 @@ export function StatsPage() {
                     ))}
                   </Pie>
                   <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               ) : dataset === "categories" ? (
                 <BarChart data={categoryData}>

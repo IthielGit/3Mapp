@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -29,7 +30,7 @@ export function RecurringPage() {
   return (
     <section className="flex flex-col gap-6">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">{t("recurring.title")}</h1>
+        <PageTitle className="text-2xl font-bold">{t("recurring.title")}</PageTitle>
         <Link to="/plus/recurring/new" className={buttonPrimary + " inline-flex items-center"}>
           {t("common.add")}
         </Link>
@@ -145,7 +146,9 @@ export function RecurringDetailPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{r.memo || t(`transactions.types.${r.type}`)}</h1>
+      <PageTitle className="text-2xl font-bold">
+        {r.memo || t(`transactions.types.${r.type}`)}
+      </PageTitle>
       <p className="text-sm text-slate-500">
         {formatMoney(r.amount, r.currency)} ·{" "}
         {t("recurring.every", {

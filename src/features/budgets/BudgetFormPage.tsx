@@ -1,3 +1,4 @@
+import { PageTitle } from "../../components/PageHeader";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -32,6 +33,7 @@ export function BudgetFormPage() {
   const [rollover, setRollover] = useState(false);
   const [threshold, setThreshold] = useState("80");
   const [error, setError] = useState<string | undefined>();
+  const [nameError, setNameError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!id) return;
@@ -61,7 +63,7 @@ export function BudgetFormPage() {
 
   async function save() {
     setError(undefined);
-    if (name.trim() === "") return setError(t("errors.required"));
+    if (name.trim() === "") return setNameError(t("errors.required"));
     const amount = parseMoney(amountText, currency);
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     if (categoryIds.length === 0) return setError(t("budgets.needCategory"));
@@ -92,104 +94,118 @@ export function BudgetFormPage() {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">
+    <section className="flex flex-col gap-3">
+      <PageTitle className="text-2xl font-bold">
         {existing ? t("budgets.editTitle") : t("budgets.newTitle")}
-      </h1>
+      </PageTitle>
 
-      <Field label={t("common.name")}>
-        <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
-      </Field>
-      <Field label={`${t("budgets.amount")} (${currency})`}>
+      <Field label={t("common.name")} error={nameError}>
         <input
-          inputMode="decimal"
           className={inputClass}
-          value={amountText}
-          onChange={(e) => setAmountText(e.target.value)}
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError(undefined);
+          }}
         />
       </Field>
-      <Field label={t("budgets.periodLabel")}>
-        <select
-          className={inputClass}
-          value={period}
-          onChange={(e) => setPeriod(e.target.value as Budget["period"])}
-        >
-          {(["week", "month", "year", "custom"] as const).map((p) => (
-            <option key={p} value={p}>
-              {t(`budgets.periods.${p}`)}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label={t("budgets.startDate")}>
-        <input
-          type="date"
-          className={inputClass}
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-      </Field>
-      {period === "custom" ? (
-        <Field label={t("budgets.endDate")}>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={`${t("budgets.amount")} (${currency})`}>
+          <input
+            inputMode="decimal"
+            className={inputClass}
+            value={amountText}
+            onChange={(e) => setAmountText(e.target.value)}
+          />
+        </Field>
+        <Field label={t("budgets.periodLabel")}>
+          <select
+            className={inputClass}
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as Budget["period"])}
+          >
+            {(["week", "month", "year", "custom"] as const).map((p) => (
+              <option key={p} value={p}>
+                {t(`budgets.periods.${p}`)}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t("budgets.startDate")}>
           <input
             type="date"
             className={inputClass}
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
           />
         </Field>
-      ) : null}
+        {period === "custom" ? (
+          <Field label={t("budgets.endDate")}>
+            <input
+              type="date"
+              className={inputClass}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </Field>
+        ) : null}
+      </div>
 
-      <fieldset className="flex flex-col gap-2">
+      <fieldset className="grid grid-cols-2 gap-x-3 gap-y-0">
         <legend className="mb-1 text-sm font-medium">{t("budgets.categories")}</legend>
         {expenseCategories.map((c) => (
-          <label key={c.id} className="flex min-h-[44px] items-center gap-3">
+          <label key={c.id} className="flex min-h-[44px] items-center gap-2">
             <input
               type="checkbox"
-              className="h-5 w-5"
+              className="h-5 w-5 shrink-0"
               checked={categoryIds.includes(c.id)}
               onChange={() => setCategoryIds((ids) => toggle(ids, c.id))}
             />
-            {c.icon} {c.name}
+            <span className="truncate">
+              {c.icon} {c.name}
+            </span>
           </label>
         ))}
       </fieldset>
 
-      <fieldset className="flex flex-col gap-2">
+      <fieldset className="grid grid-cols-2 gap-x-3 gap-y-0">
         <legend className="mb-1 text-sm font-medium">{t("budgets.walletsOptional")}</legend>
         {wallets
           .filter((w) => !w.archived && w.currency === currency)
           .map((w) => (
-            <label key={w.id} className="flex min-h-[44px] items-center gap-3">
+            <label key={w.id} className="flex min-h-[44px] items-center gap-2">
               <input
                 type="checkbox"
-                className="h-5 w-5"
+                className="h-5 w-5 shrink-0"
                 checked={walletIds.includes(w.id)}
                 onChange={() => setWalletIds((ids) => toggle(ids, w.id))}
               />
-              {w.name}
+              <span className="truncate">{w.name}</span>
             </label>
           ))}
       </fieldset>
 
-      <label className="flex min-h-[44px] items-center gap-3">
-        <input
-          type="checkbox"
-          className="h-5 w-5"
-          checked={rollover}
-          onChange={(e) => setRollover(e.target.checked)}
-        />
-        {t("budgets.rollover")}
-      </label>
-
-      <Field label={t("budgets.threshold")}>
-        <input
-          inputMode="numeric"
-          className={inputClass}
-          value={threshold}
-          onChange={(e) => setThreshold(e.target.value)}
-        />
-      </Field>
+      <div className="grid grid-cols-2 items-end gap-3">
+        <Field label={t("budgets.threshold")}>
+          <input
+            inputMode="numeric"
+            className={inputClass}
+            value={threshold}
+            onChange={(e) => setThreshold(e.target.value)}
+          />
+        </Field>
+        <label className="flex min-h-[44px] items-center gap-2">
+          <input
+            type="checkbox"
+            className="h-5 w-5 shrink-0"
+            checked={rollover}
+            onChange={(e) => setRollover(e.target.checked)}
+          />
+          {t("budgets.rollover")}
+        </label>
+      </div>
 
       {error ? (
         <p role="alert" className="text-red-700 dark:text-red-400">
