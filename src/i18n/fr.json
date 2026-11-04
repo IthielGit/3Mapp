@@ -29,7 +29,8 @@
     "budgets": "Budgets",
     "more": "Paramètres",
     "quickAdd": "Nouvelle transaction",
-    "calendar": "Calendrier"
+    "calendar": "Calendrier",
+    "main": "Navigation principale"
   },
   "pages": {
     "home": {
@@ -546,8 +547,24 @@
     "reminderUnsupported": "Ce navigateur ne permet pas les notifications.",
     "reminderTitle": "Pensez à noter vos dépenses",
     "reminderBody": "Ajoutez les transactions de la journée.",
-    "weekdays": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
-    "weekdaysSun": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
+    "weekdays": [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche"
+    ],
+    "weekdaysSun": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ]
   },
   "repeat": {
     "label": "Répéter (récurrence)",

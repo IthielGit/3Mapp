@@ -29,7 +29,8 @@
     "budgets": "Tetibola",
     "more": "Fikirana",
     "quickAdd": "Fampidirana vaovao",
-    "calendar": "Kalandrie"
+    "calendar": "Kalandrie",
+    "main": "Fandaharana fototra"
   },
   "pages": {
     "home": {
@@ -546,8 +547,24 @@
     "reminderUnsupported": "Tsy mamela fampahafantarana ity mpitety ity.",
     "reminderTitle": "Tsarovy ny fandaniana",
     "reminderBody": "Ampidiro ny raharaha an'androany.",
-    "weekdays": ["Alatsinainy", "Talata", "Alarobia", "Alakamisy", "Zoma", "Sabotsy", "Lahadiny"],
-    "weekdaysSun": ["Lahadiny", "Alatsinainy", "Talata", "Alarobia", "Alakamisy", "Zoma", "Sabotsy"]
+    "weekdays": [
+      "Alatsinainy",
+      "Talata",
+      "Alarobia",
+      "Alakamisy",
+      "Zoma",
+      "Sabotsy",
+      "Lahadiny"
+    ],
+    "weekdaysSun": [
+      "Lahadiny",
+      "Alatsinainy",
+      "Talata",
+      "Alarobia",
+      "Alakamisy",
+      "Zoma",
+      "Sabotsy"
+    ]
   },
   "repeat": {
     "label": "Averina (fanamarinana)",

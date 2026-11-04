@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BottomNav } from "./BottomNav";
+import { BottomNav, SideNav } from "./BottomNav";
 import { UpdateBanner } from "./PwaComponents";
 import { HeaderSlotsContext } from "./header-slots";
 import { generateDueOccurrences } from "../features/recurring/recurring-service";
@@ -66,13 +66,16 @@ export function AppLayout() {
   const [actionsSlot, setActionsSlot] = useState<HTMLElement | null>(null);
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-lg flex-col">
+    <div className="mx-auto flex min-h-dvh max-w-lg flex-col md:max-w-none md:flex-row">
+      <SideNav />
       <HeaderSlotsContext.Provider value={{ titleSlot, actionsSlot }}>
-        <main className="flex-1 px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
-          {showHeader ? (
-            <HeaderRow onTitleSlot={setTitleSlot} onActionsSlot={setActionsSlot} />
-          ) : null}
-          <Outlet />
+        <main className="flex-1 px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))] md:px-10 md:pb-10 md:pt-8">
+          <div className="mx-auto w-full md:max-w-5xl">
+            {showHeader ? (
+              <HeaderRow onTitleSlot={setTitleSlot} onActionsSlot={setActionsSlot} />
+            ) : null}
+            <Outlet />
+          </div>
         </main>
       </HeaderSlotsContext.Provider>
       <BottomNav />

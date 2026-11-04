@@ -32,7 +32,7 @@ export function PeriodPicker({ state, period, onChange, onShift }: PeriodPickerP
             role="radio"
             aria-checked={state.kind === kind}
             onClick={() => onChange({ kind, anchor: new Date(), custom: undefined })}
-            className={`min-h-[40px] rounded-md text-xs font-medium ${state.kind === kind ? "bg-white shadow dark:bg-fg dark:text-ink" : ""}`}
+            className={`min-h-[44px] rounded-md text-sm font-medium ${state.kind === kind ? "bg-white shadow dark:bg-fg dark:text-ink" : ""}`}
           >
             {t(`period.kinds.${kind}`)}
           </button>

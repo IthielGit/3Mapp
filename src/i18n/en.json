@@ -29,7 +29,8 @@
     "budgets": "Budgets",
     "more": "Settings",
     "quickAdd": "New transaction",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "main": "Main navigation"
   },
   "pages": {
     "home": {
@@ -546,8 +547,24 @@
     "reminderUnsupported": "This browser does not support notifications.",
     "reminderTitle": "Remember to log your expenses",
     "reminderBody": "Add today's transactions.",
-    "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    "weekdaysSun": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    "weekdays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "weekdaysSun": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ]
   },
   "repeat": {
     "label": "Repeat (recurring)",

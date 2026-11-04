@@ -35,7 +35,7 @@ import { Field, buttonSecondary, inputClass } from "../../components/FormControl
 import { useTheme } from "../../lib/theme-context";
 import { compactAmount } from "../../lib/compact";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
-import { PeriodPicker, periodLabel } from "./PeriodPicker";
+import { PeriodPicker } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 
 /** Donnée principale : quelle question on pose au graphique. */
@@ -224,13 +224,10 @@ export function StatsPage() {
           onShift={(d) => setState(shiftPeriod(state, settings, d))}
         />
       ) : null}
-      {dataset !== "savings" ? (
-        <p className="text-center text-sm text-slate-500 dark:text-muted">{periodLabel(period)}</p>
-      ) : null}
 
       {/* Indicateur principal : le solde net de la période, avec sa variation. */}
       <div className="flex flex-col items-center gap-1 text-center">
-        <p className="text-sm text-slate-500 dark:text-muted">{t("home.net")}</p>
+        <p className="text-sm text-slate-600 dark:text-muted">{t("home.net")}</p>
         <p
           className={`text-4xl font-semibold tabular-nums ${
             summary.net < 0 ? "text-accent" : "text-ink dark:text-fg"
@@ -240,13 +237,13 @@ export function StatsPage() {
           {formatMoney(summary.net, baseCurrency)}
         </p>
         {delta(summary.net, before.net) ? (
-          <p className="text-xs text-slate-500 dark:text-muted">
+          <p className="text-sm text-slate-600 dark:text-muted">
             {t("stats.vsPrevious", { change: delta(summary.net, before.net) })}
           </p>
         ) : null}
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="flex flex-col gap-2">
         <Card
           label={t("home.income")}
           icon="arrowUp"
@@ -686,12 +683,12 @@ function Card({
   icon: IconName;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-card border border-slate-200 p-3 dark:border-white/15 dark:bg-card">
-      <p className="flex min-h-[2rem] items-start gap-1 text-xs leading-4 text-slate-500 dark:text-muted">
-        <Icon name={icon} className="h-3.5 w-3.5" />
+    <div className="flex min-h-[3rem] items-center justify-between gap-3 rounded-card border border-slate-200 px-4 py-3 dark:border-white/15 dark:bg-card">
+      <p className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-muted">
+        <Icon name={icon} className="h-4 w-4" />
         {label}
       </p>
-      <p className={`text-[13px] font-semibold tabular-nums ${tone}`} data-amount>
+      <p className={`text-base font-semibold tabular-nums ${tone}`} data-amount>
         {value}
       </p>
     </div>
