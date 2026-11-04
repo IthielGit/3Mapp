@@ -88,7 +88,7 @@ export function BottomNav() {
       aria-label={t("nav.home")}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] dark:border-white/15 dark:bg-card"
     >
-      <ul className="mx-auto grid max-w-lg grid-cols-5 items-center">
+      <ul className="mx-auto grid max-w-lg grid-cols-[1fr_1fr_3.5rem_1fr_1fr] items-center">
         {LEFT.map((item) => (
           <li key={item.to}>{tab(item)}</li>
         ))}
