@@ -428,7 +428,8 @@
     "byMonth": "Fidiram-bola sy fandaniana isan-volana ({{year}})",
     "balanceCurve": "Fivoaran'ny tahiry",
     "top10": "Fandaniana 10 lehibe indrindra",
-    "byWallet": "Isaky ny kitapo vola"
+    "byWallet": "Isaky ny kitapo vola",
+    "vsPrevious": "vs. vanim-potoana talohy: {{change}}"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",

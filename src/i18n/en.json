@@ -428,7 +428,8 @@
     "byMonth": "Income and expenses by month ({{year}})",
     "balanceCurve": "Balance over time",
     "top10": "Top 10 expenses",
-    "byWallet": "By wallet"
+    "byWallet": "By wallet",
+    "vsPrevious": "vs. previous period: {{change}}"
   },
   "importExport": {
     "title": "Import / Export",

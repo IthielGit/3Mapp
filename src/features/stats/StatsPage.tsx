@@ -34,7 +34,7 @@ import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from 
 
 const PALETTE = [
   "#0f766e",
-  "#2563eb",
+  "#0369a1",
   "#d97706",
   "#dc2626",
   "#7c3aed",
@@ -153,11 +153,13 @@ export function StatsPage() {
           label={t("home.income")}
           value={formatMoney(summary.income, baseCurrency)}
           delta={delta(summary.income, before.income)}
+          tone="text-income dark:text-income-dark"
         />
         <Card
           label={t("home.expense")}
           value={formatMoney(summary.expense, baseCurrency)}
           delta={delta(summary.expense, before.expense)}
+          tone="text-expense dark:text-expense-dark"
         />
         <Card label={t("home.net")} value={formatMoney(summary.net, baseCurrency)} />
         <Card
@@ -349,16 +351,25 @@ function Card({
   label,
   value,
   delta: change,
+  tone = "",
 }: {
   label: string;
   value: string;
   delta?: string | undefined;
+  tone?: string;
 }) {
+  const { t } = useTranslation();
   return (
-    <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="font-semibold">{value}</p>
-      {change ? <p className="text-xs text-slate-500">vs. période précédente : {change}</p> : null}
+    <div className="flex flex-col gap-1 rounded-card border border-slate-200 p-3 shadow-sm dark:border-slate-700">
+      <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
+      <p className={`text-lg font-semibold ${tone}`} data-amount>
+        {value}
+      </p>
+      {change ? (
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {t("stats.vsPrevious", { change })}
+        </p>
+      ) : null}
     </div>
   );
 }

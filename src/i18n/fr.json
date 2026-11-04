@@ -428,7 +428,8 @@
     "byMonth": "Revenus et dépenses par mois ({{year}})",
     "balanceCurve": "Évolution du solde",
     "top10": "Top 10 des dépenses",
-    "byWallet": "Par portefeuille"
+    "byWallet": "Par portefeuille",
+    "vsPrevious": "vs. période précédente : {{change}}"
   },
   "importExport": {
     "title": "Import / Export",
