@@ -248,7 +248,12 @@
     "resetFilters": "Averina",
     "summary": "Fintinana",
     "description": "Famaritana",
-    "note": "Note"
+    "note": "Note",
+    "netWhen": {
+      "month": "amin’ny volana",
+      "thirty": "andro 30 farany",
+      "all": "amin’ny ankapobeny"
+    }
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",
@@ -443,7 +448,8 @@
     "budgetsEmpty": "Mamorona tetibola iray hanaraka ny fandaniana.",
     "budgetOf": "amin’ny {{amount}}",
     "budgetLeft": "Mbola {{amount}}",
-    "budgetOver": "Mihoatra {{amount}}"
+    "budgetOver": "Mihoatra {{amount}}",
+    "netThisMonth": "Ny sisa amin’ity volana"
   },
   "stats": {
     "title": "Fandinihana",
@@ -488,7 +494,8 @@
       "month": "amin’ity volana",
       "year": "amin’ity taona",
       "custom": "amin’ity vanim-potoana"
-    }
+    },
+    "currentBalanceHint": "Vola ao amin’ny kaontinao"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",

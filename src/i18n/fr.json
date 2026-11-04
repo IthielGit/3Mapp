@@ -248,7 +248,12 @@
     "resetFilters": "Réinitialiser",
     "summary": "Synthèse",
     "description": "Description",
-    "note": "Note"
+    "note": "Note",
+    "netWhen": {
+      "month": "ce mois-ci",
+      "thirty": "30 derniers jours",
+      "all": "au total"
+    }
   },
   "errors": {
     "required": "Ce champ est obligatoire.",
@@ -443,7 +448,8 @@
     "budgetsEmpty": "Créez un budget pour suivre vos dépenses.",
     "budgetOf": "sur {{amount}}",
     "budgetLeft": "Reste {{amount}}",
-    "budgetOver": "Dépassé de {{amount}}"
+    "budgetOver": "Dépassé de {{amount}}",
+    "netThisMonth": "Ce qui vous reste ce mois-ci"
   },
   "stats": {
     "title": "Analyses",
@@ -488,7 +494,8 @@
       "month": "ce mois-ci",
       "year": "cette année",
       "custom": "sur cette période"
-    }
+    },
+    "currentBalanceHint": "Argent dans vos portefeuilles"
   },
   "importExport": {
     "title": "Import / Export",

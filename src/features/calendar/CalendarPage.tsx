@@ -99,7 +99,7 @@ export function CalendarPage() {
         <div>
           <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
             <Icon name="equal" className="h-3 w-3" />
-            {t("home.net")}
+            {t("home.netThisMonth")}
           </p>
           <p className="font-semibold tabular-nums text-ink dark:text-fg" data-amount>
             {formatMoney(monthTotals.net, baseCurrency)}

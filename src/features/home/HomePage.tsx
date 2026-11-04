@@ -296,20 +296,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Carte d'action : saisie du jour. */}
-      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
-        <div className="flex min-w-0 flex-col">
-          <span className="font-semibold text-ink dark:text-fg">{t("home.dailyCheck")}</span>
-          <span className="text-sm text-slate-500 dark:text-muted">{t("home.dailyHint")}</span>
-        </div>
-        <Link
-          to="/transactions/new"
-          className="flex min-h-[44px] shrink-0 items-center rounded-full bg-ink px-5 font-semibold text-white dark:bg-white dark:text-ink"
-        >
-          {t("home.startEntry")}
-        </Link>
-      </div>
-
       {/* Budgets : où en est chaque budget sur sa période en cours. */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">

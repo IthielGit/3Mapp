@@ -304,7 +304,7 @@ export function TransactionsPage() {
         className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
       >
         <div className="flex flex-col">
-          <p className="text-sm text-[#64748B] dark:text-muted">{t("transactions.net")}</p>
+          <p className="text-sm text-[#64748B] dark:text-muted">{`${t("transactions.net")} ${t(`transactions.netWhen.${period}`)}`}</p>
           <p
             className={`text-3xl font-bold tabular-nums ${
               summary.net < 0

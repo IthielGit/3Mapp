@@ -284,6 +284,7 @@ export function StatsPage() {
       {/* Solde actuel : total des portefeuilles inclus dans le total, à la date du jour. */}
       <div className="flex flex-col items-center gap-1 text-center">
         <p className="text-sm text-slate-600 dark:text-muted">{t("stats.currentBalance")}</p>
+        <p className="text-xs text-slate-500 dark:text-muted">{t("stats.currentBalanceHint")}</p>
         <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
           {formatMoney(currentBalance, baseCurrency)}
         </p>
@@ -299,26 +300,44 @@ export function StatsPage() {
           aria-label={`${t("home.income")} ${formatMoney(summary.income, baseCurrency)} · ${t("home.expense")} ${formatMoney(summary.expense, baseCurrency)}`}
           className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
         >
-          <div className="h-full bg-income dark:bg-income-dark" style={{ width: `${flowShare.income}%` }} />
-          <div className="h-full bg-expense dark:bg-expense-dark" style={{ width: `${flowShare.expense}%` }} />
+          <div
+            className="h-full bg-income dark:bg-income-dark"
+            style={{ width: `${flowShare.income}%` }}
+          />
+          <div
+            className="h-full bg-expense dark:bg-expense-dark"
+            style={{ width: `${flowShare.expense}%` }}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-0.5">
             <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
-              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-income dark:bg-income-dark" />
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 rounded-full bg-income dark:bg-income-dark"
+              />
               {t("home.income")}
             </p>
-            <p className="text-base font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
+            <p
+              className="text-base font-semibold tabular-nums text-income dark:text-income-dark"
+              data-amount
+            >
               {formatMoney(summary.income, baseCurrency)}
             </p>
           </div>
           <div className="flex flex-col items-end gap-0.5 text-right">
             <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
               {t("home.expense")}
-              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-expense dark:bg-expense-dark" />
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 rounded-full bg-expense dark:bg-expense-dark"
+              />
             </p>
-            <p className="text-base font-semibold tabular-nums text-expense dark:text-expense-dark" data-amount>
+            <p
+              className="text-base font-semibold tabular-nums text-expense dark:text-expense-dark"
+              data-amount
+            >
               {formatMoney(summary.expense, baseCurrency)}
             </p>
           </div>
@@ -760,4 +779,3 @@ function delta(current: number, previous: number): string | undefined {
   const pct = Math.round(((current - previous) * 1000) / Math.abs(previous)) / 10;
   return `${pct > 0 ? "+" : ""}${pct} %`;
 }
-

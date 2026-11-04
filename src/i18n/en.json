@@ -248,7 +248,12 @@
     "resetFilters": "Reset",
     "summary": "Summary",
     "description": "Description",
-    "note": "Note"
+    "note": "Note",
+    "netWhen": {
+      "month": "this month",
+      "thirty": "last 30 days",
+      "all": "in total"
+    }
   },
   "errors": {
     "required": "This field is required.",
@@ -443,7 +448,8 @@
     "budgetsEmpty": "Create a budget to track your spending.",
     "budgetOf": "of {{amount}}",
     "budgetLeft": "{{amount}} left",
-    "budgetOver": "Over by {{amount}}"
+    "budgetOver": "Over by {{amount}}",
+    "netThisMonth": "What is left this month"
   },
   "stats": {
     "title": "Analytics",
@@ -488,7 +494,8 @@
       "month": "this month",
       "year": "this year",
       "custom": "over this period"
-    }
+    },
+    "currentBalanceHint": "Money in your wallets"
   },
   "importExport": {
     "title": "Import / Export",
