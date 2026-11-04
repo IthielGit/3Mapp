@@ -231,7 +231,7 @@ export function TransactionsPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="sticky top-0 z-20 -mx-4 flex flex-col gap-4 bg-canvas px-4 pb-3 pt-1 dark:bg-page">
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-col gap-4 bg-canvas px-4 pb-3 pt-5 dark:bg-page">
         <header className="flex items-center justify-between gap-2">
           <h1 className="text-xl font-semibold text-[#172033] dark:text-fg">
             {t("transactions.title")}
