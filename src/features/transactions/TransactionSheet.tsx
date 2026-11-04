@@ -32,6 +32,14 @@ import {
 type TxType = Transaction["type"];
 const TYPES: TxType[] = ["expense", "income", "transfer", "adjustment"];
 
+/**
+ * Types proposés : l'ajustement n'est pas proposé pour une nouvelle transaction (il vient de la
+ * réconciliation). Il reste affiché quand on modifie un ajustement existant.
+ */
+function typeOptionsFor(editing: TxType | undefined): TxType[] {
+  return editing === "adjustment" ? TYPES : TYPES.filter((tp) => tp !== "adjustment");
+}
+
 /** Couleur de l'onglet actif : sémantique (dépense rouge, revenu bleu, virement teal). */
 const TYPE_ACTIVE: Record<TxType, string> = {
   expense: "bg-expense text-white shadow",
@@ -63,6 +71,7 @@ export function TransactionSheet({
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
   const [type, setType] = useState<TxType>(initial?.type ?? defaultType ?? "expense");
+  const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
   const [repeat, setRepeat] = useState(false);
   const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
@@ -245,9 +254,9 @@ export function TransactionSheet({
         <div
           role="radiogroup"
           aria-label={t("transactions.type")}
-          className="grid grid-cols-4 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800"
+          className={`grid ${typeOptions.length === 4 ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800`}
         >
-          {TYPES.map((tp) => (
+          {typeOptions.map((tp) => (
             <button
               key={tp}
               type="button"
