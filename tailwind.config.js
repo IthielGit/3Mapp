@@ -22,6 +22,11 @@ export default {
         income: { DEFAULT: "#0369a1", dark: "#38bdf8" },
         expense: { DEFAULT: "#be123c", dark: "#fb7185" },
       },
+      transitionTimingFunction: {
+        // Courbes fortes (et non les « ease » intégrées, trop molles) : sortie rapide pour l'interface.
+        drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
+        "out-strong": "cubic-bezier(0.23, 1, 0.32, 1)",
+      },
       borderRadius: {
         card: "1rem",
       },
