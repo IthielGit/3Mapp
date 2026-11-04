@@ -25,7 +25,8 @@
     "transactions": "Transactions",
     "stats": "Stats",
     "budgets": "Budgets",
-    "more": "Plus"
+    "more": "Plus",
+    "quickAdd": "Nouvelle transaction"
   },
   "pages": {
     "home": {
