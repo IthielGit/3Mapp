@@ -79,6 +79,30 @@ button:not(:disabled):active {
   transform: scale(0.97);
 }
 
+/* Surfaces cliquables (cartes, lignes) : même retour à l’appui que les boutons. */
+.pressable {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pressable:active {
+  transform: scale(0.98);
+}
+
+/* Barres de progression : l’échelle plutôt que la largeur (pas de mise en page pendant l’animation). */
+.progress-fill {
+  transform-origin: left;
+  transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable:active {
+    transform: none;
+  }
+  .progress-fill {
+    transition: none;
+  }
+}
+
 /* Entrée de page : un léger glissement et un fondu, sans toucher aux éléments fixes. */
 @keyframes page-in {
   from {

@@ -78,7 +78,10 @@ export function BudgetsPage() {
                   aria-label={b.name}
                   className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
                 >
-                  <div className={`h-full ${barColor}`} style={{ width: `${width}%` }} />
+                  <div
+                    className={`progress-fill h-full ${barColor}`}
+                    style={{ transform: `scaleX(${width / 100})` }}
+                  />
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>

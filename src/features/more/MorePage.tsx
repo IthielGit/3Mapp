@@ -16,7 +16,7 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
     <li>
       <Link
         to={to}
-        className="flex min-h-[52px] items-center justify-between gap-3 px-4 font-medium focus-visible:outline-2 focus-visible:outline-brand-700"
+        className="pressable flex min-h-[52px] items-center justify-between gap-3 px-4 font-medium focus-visible:outline-2 focus-visible:outline-brand-700"
       >
         <span className="flex items-center gap-3">
           <span

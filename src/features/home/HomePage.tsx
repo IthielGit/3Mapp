@@ -326,7 +326,7 @@ export function HomePage() {
                     : "bg-income dark:bg-income-dark";
               return (
                 <li key={budget.id} className="py-4">
-                  <Link to={`/budgets/${budget.id}`} className="flex flex-col gap-1.5">
+                  <Link to={`/budgets/${budget.id}`} className="pressable flex flex-col gap-1.5">
                     <div className="flex items-baseline justify-between gap-3 text-sm">
                       <span className="truncate font-medium text-ink dark:text-fg">
                         {budget.name}
@@ -348,8 +348,8 @@ export function HomePage() {
                       className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
                     >
                       <div
-                        className={`h-full rounded-full ${barColor}`}
-                        style={{ width: `${width}%` }}
+                        className={`progress-fill h-full rounded-full ${barColor}`}
+                        style={{ transform: `scaleX(${width / 100})` }}
                       />
                     </div>
                   </Link>

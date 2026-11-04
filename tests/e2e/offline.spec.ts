@@ -29,3 +29,26 @@ test("hors ligne : l'app se charge depuis le cache et affiche les données local
 
   await context.setOffline(false);
 });
+
+test("hors ligne : les pages principales s'ouvrent directement depuis le cache", async ({
+  page,
+  context,
+}) => {
+  await completeOnboardingUi(page, "Compte BNI");
+  await page.reload();
+  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), null, {
+    timeout: 30_000,
+  });
+
+  await context.setOffline(true);
+  for (const [path, heading] of [
+    ["/transactions", "Transactions"],
+    ["/stats", "Analyses"],
+    ["/plus", "Paramètres"],
+    ["/budgets", "Budgets"],
+  ] as const) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+  }
+  await context.setOffline(false);
+});
