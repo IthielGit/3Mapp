@@ -28,7 +28,8 @@
     "stats": "Fandinihana",
     "budgets": "Tetibola",
     "more": "Fikirana",
-    "quickAdd": "Fampidirana vaovao"
+    "quickAdd": "Fampidirana vaovao",
+    "calendar": "Kalandrie"
   },
   "pages": {
     "home": {
@@ -424,7 +425,16 @@
     "missingRate": "Tahan-vidiny tsy hita ho an'ny {{currencies}} : tsy ampidirina amin'ny totaly ireo tahiry ireo.",
     "overview": "Fanoharana ankapobeny",
     "wallets": "Kitapo vola",
-    "manage": "Hanitsy"
+    "manage": "Hanitsy",
+    "hello": "Manao ahoana",
+    "upcoming": "Ho avy",
+    "noUpcoming": "Tsy misy ho avy.",
+    "overviewTitle": "Fanoharana ankapobeny",
+    "balanceCard": "Vola",
+    "expenseCard": "Fandaniana (andro 7)",
+    "dailyCheck": "Fampidirana androany",
+    "dailyHint": "Soraty ny fandaniana androany.",
+    "startEntry": "Hanomboka"
   },
   "stats": {
     "title": "Fandinihana",
@@ -449,7 +459,13 @@
     },
     "chartAria": "Sary ny vidin'ny vanim-potoana",
     "values": "Jereo ny vidin'ny",
-    "allWallets": "Kitapo vola rehetra"
+    "allWallets": "Kitapo vola rehetra",
+    "savings": "Tahiry",
+    "monthsCount": "volana {{count}}",
+    "savedOver": "Voa-tahiry nandritra ny volana {{count}}",
+    "savingsDuration": "Halaviran'ny tahiry",
+    "cumulative": "Fitambarana",
+    "savedPerMonth": "Tahiry isam-bolana"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",
@@ -540,5 +556,8 @@
     "year": "taona",
     "hint": "Ho noforonina ho azy ny manaraka.",
     "unit": "Unité"
+  },
+  "calendar": {
+    "empty": "Tsy misy raharaha androany."
   }
 }

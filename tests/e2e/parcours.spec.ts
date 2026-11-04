@@ -35,7 +35,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await completeOnboardingUi(page, "Compte BNI");
 
   // Second portefeuille.
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: "Ajouter" }).click();
   await page.getByLabel("Nom").fill("Mobile Money");
@@ -52,7 +52,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await expect(page.getByTestId("transaction-list")).toContainText("2 000");
 
   // Le solde du portefeuille de destination passe à 2 000.
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByRole("link", { name: "Portefeuilles" }).click();
   await page.getByRole("link", { name: /Mobile Money/ }).click();
   await expect(page.getByText("2 000").first()).toBeVisible();
@@ -62,7 +62,7 @@ test("budget dépassé : une dépense au-delà du plafond est signalée", async 
   await completeOnboardingUi(page, "Compte BNI");
 
   // Budget « Courses » de 50 000 sur la catégorie Alimentation.
-  await goToTab(page, "Budgets");
+  await await page.goto("/budgets");
   await page.getByRole("link", { name: "Ajouter" }).click();
   await page.getByLabel("Nom").fill("Courses");
   await page.getByLabel(/Montant/).fill("50000");
@@ -79,6 +79,6 @@ test("budget dépassé : une dépense au-delà du plafond est signalée", async 
   await expect(page.getByTestId("transaction-list")).toContainText("60");
 
   // Le budget affiche le dépassement.
-  await goToTab(page, "Budgets");
+  await await page.goto("/budgets");
   await expect(page.getByText(/Dépassé de/)).toBeVisible();
 });

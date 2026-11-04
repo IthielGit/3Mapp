@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /** Action d'un menu : un lien (to) ou une action (onSelect). */
@@ -99,7 +99,6 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
  */
 export function DetailHeader({
   title,
-  backTo,
   actions,
   children,
 }: {
@@ -108,30 +107,10 @@ export function DetailHeader({
   actions?: ReactNode;
   children?: ReactNode;
 }) {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
   return (
     <header className="flex flex-col gap-1">
       <div className="grid grid-cols-[2.75rem_1fr_2.75rem] items-center gap-2">
-        <button
-          type="button"
-          aria-label={t("common.back")}
-          onClick={() => (backTo ? navigate(backTo) : navigate(-1))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M15 5l-7 7 7 7" />
-          </svg>
-        </button>
+        <span aria-hidden="true" className="h-11 w-11" />
         <h1 className="truncate text-center text-lg font-semibold text-ink dark:text-fg">
           {title}
         </h1>

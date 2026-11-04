@@ -28,7 +28,8 @@
     "stats": "Analytics",
     "budgets": "Budgets",
     "more": "Settings",
-    "quickAdd": "New transaction"
+    "quickAdd": "New transaction",
+    "calendar": "Calendar"
   },
   "pages": {
     "home": {
@@ -424,7 +425,16 @@
     "missingRate": "Missing rate for {{currencies}}: these balances are not included in the total.",
     "overview": "Overview",
     "wallets": "Wallets",
-    "manage": "Manage"
+    "manage": "Manage",
+    "hello": "Hello",
+    "upcoming": "Upcoming",
+    "noUpcoming": "No upcoming payment.",
+    "overviewTitle": "Overview",
+    "balanceCard": "Balance",
+    "expenseCard": "Expenses (7 days)",
+    "dailyCheck": "Daily entry",
+    "dailyHint": "Log today's expenses.",
+    "startEntry": "Start"
   },
   "stats": {
     "title": "Analytics",
@@ -449,7 +459,13 @@
     },
     "chartAria": "Chart of the period values",
     "values": "Show values",
-    "allWallets": "All wallets"
+    "allWallets": "All wallets",
+    "savings": "Savings",
+    "monthsCount": "{{count}} months",
+    "savedOver": "Saved over {{count}} months",
+    "savingsDuration": "Savings period",
+    "cumulative": "Cumulative",
+    "savedPerMonth": "Saved per month"
   },
   "importExport": {
     "title": "Import / Export",
@@ -540,5 +556,8 @@
     "year": "year(s)",
     "hint": "The next occurrence will be created automatically.",
     "unit": "Unit"
+  },
+  "calendar": {
+    "empty": "No transaction this day."
   }
 }

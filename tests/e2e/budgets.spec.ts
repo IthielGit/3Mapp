@@ -3,10 +3,7 @@ import { completeOnboardingUi } from "./helpers";
 
 test("créer un budget par catégorie et le voir avec son reste", async ({ page }) => {
   await completeOnboardingUi(page, "Compte BNI");
-  await page
-    .getByRole("navigation", { name: "Accueil" })
-    .getByRole("link", { name: "Budgets" })
-    .click();
+  await page.goto("/budgets");
   await page.getByRole("link", { name: "Ajouter" }).click();
 
   await page.getByLabel("Nom").fill("Courses");

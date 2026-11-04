@@ -28,7 +28,8 @@
     "stats": "Analyses",
     "budgets": "Budgets",
     "more": "Paramètres",
-    "quickAdd": "Nouvelle transaction"
+    "quickAdd": "Nouvelle transaction",
+    "calendar": "Calendrier"
   },
   "pages": {
     "home": {
@@ -424,7 +425,16 @@
     "missingRate": "Taux manquant pour {{currencies}} : ces soldes ne sont pas inclus dans le total.",
     "overview": "Vue d’ensemble",
     "wallets": "Portefeuilles",
-    "manage": "Gérer"
+    "manage": "Gérer",
+    "hello": "Bonjour",
+    "upcoming": "Échéances à venir",
+    "noUpcoming": "Aucune échéance prévue.",
+    "overviewTitle": "Vue d'ensemble",
+    "balanceCard": "Solde",
+    "expenseCard": "Dépenses (7 jours)",
+    "dailyCheck": "Saisie du jour",
+    "dailyHint": "Notez vos dépenses d'aujourd'hui.",
+    "startEntry": "Commencer"
   },
   "stats": {
     "title": "Analyses",
@@ -449,7 +459,13 @@
     },
     "chartAria": "Graphique des valeurs de la période",
     "values": "Voir les valeurs",
-    "allWallets": "Tous les portefeuilles"
+    "allWallets": "Tous les portefeuilles",
+    "savings": "Épargne",
+    "monthsCount": "{{count}} mois",
+    "savedOver": "Économisé sur {{count}} mois",
+    "savingsDuration": "Durée de l'épargne",
+    "cumulative": "Cumul",
+    "savedPerMonth": "Épargne du mois"
   },
   "importExport": {
     "title": "Import / Export",
@@ -540,5 +556,8 @@
     "year": "an(s)",
     "hint": "La prochaine occurrence sera créée automatiquement.",
     "unit": "Unité"
+  },
+  "calendar": {
+    "empty": "Aucune transaction ce jour."
   }
 }

@@ -12,6 +12,9 @@ function page(load: () => Promise<{ default: ComponentType }>): ComponentType {
   return lazy(load);
 }
 
+const CalendarPage = page(() =>
+  import("./features/calendar/CalendarPage").then((m) => ({ default: m.CalendarPage })),
+);
 const HomePage = page(() =>
   import("./features/home/HomePage").then((m) => ({ default: m.HomePage })),
 );
@@ -116,6 +119,7 @@ export default function App() {
           <Route path="transactions" element={<TransactionsPage />} />
           <Route path="transactions/new" element={<TransactionsPage />} />
           <Route path="transactions/:id/edit" element={<TransactionsPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="budgets" element={<BudgetsPage />} />
           <Route path="budgets/new" element={<BudgetFormPage />} />

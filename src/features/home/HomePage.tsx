@@ -2,10 +2,13 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
+import { addDays, format } from "date-fns";
+import { Area, AreaChart, Bar, BarChart, ResponsiveContainer } from "recharts";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
 import { convertedSum } from "../../domain/fx";
+import { dailyExpenses, dailyTotals } from "../../domain/home-series";
 import { EmptyState, Skeleton } from "../../components/PwaComponents";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
@@ -14,8 +17,8 @@ import { useBalanceCutoff } from "../settings/balance-cutoff";
 const EMPTY: never[] = [];
 const PREVIEW = 5;
 
-/** Icône ronde du bouton secondaire (récurrences : échéances en attente). */
-function RoundIcon() {
+/** Engrenage des réglages (tracé ISC, Lucide), en haut à droite. */
+function GearIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -23,19 +26,27 @@ function RoundIcon() {
       className="h-5 w-5"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.9}
+      strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3" />
-      <path d="M18 3v4h-4M6 21v-4h4" />
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 }
 
+/** Les N derniers jours (AAAA-MM-JJ), du plus ancien au plus récent. */
+function lastDays(count: number): string[] {
+  const today = new Date();
+  return Array.from({ length: count }, (_, i) =>
+    format(addDays(today, i - count + 1), "yyyy-MM-dd"),
+  );
+}
+
 /**
- * Tableau de bord : marque et action secondaire en haut, solde total centré, cartes de
- * portefeuilles en défilement horizontal, et un panneau d'aperçu des transactions récentes.
+ * Accueil : en-tête (salutation, réglages), échéances à venir en cartes défilantes,
+ * vue d'ensemble avec deux mini-graphiques, carte d'action, puis portefeuilles et transactions.
  */
 export function HomePage() {
   const { t } = useTranslation();
@@ -46,6 +57,7 @@ export function HomePage() {
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
+  const recurring = useLiveQuery(() => db.recurring.toArray(), []) ?? EMPTY;
   const baseCurrency: CurrencyCode =
     useLiveQuery(async () => (await db.settings.toArray())[0]?.baseCurrency, []) ?? "MGA";
   const pendingCount =
@@ -73,76 +85,210 @@ export function HomePage() {
     baseCurrency,
     rates,
   );
-  const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
+
+  // Échéances : récurrences actives, de la plus proche à la plus lointaine.
+  const upcoming = useMemo(
+    () =>
+      recurring
+        .filter((r) => !r.archived && !r.paused)
+        .sort((a, b) => a.nextDate.localeCompare(b.nextDate))
+        .slice(0, 6),
+    [recurring],
+  );
+
+  // Vue d'ensemble : solde sur 30 jours, dépenses sur 7 jours.
+  // Mini-graphiques : mêmes règles que le solde et les dépenses affichés (voir domain/home-series).
+  const days30 = useMemo(() => lastDays(30), []);
+  const days7 = useMemo(() => days30.slice(-7), [days30]);
+  const evolution = useMemo(
+    () =>
+      dailyTotals(active, transactions, days30, baseCurrency, rates, cutoff).map((minor) => ({
+        balance: minor / 100,
+      })),
+    [active, transactions, days30, baseCurrency, rates, cutoff],
+  );
+  const expenseMinor = useMemo(
+    () => dailyExpenses(transactions, days7, baseCurrency),
+    [transactions, days7, baseCurrency],
+  );
+  const weekExpenses = days7.map((day, i) => ({ day, value: (expenseMinor[i] ?? 0) / 100 }));
+  const weekTotalMinor = expenseMinor.reduce((sum, v) => sum + v, 0);
+
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const walletName = (id: string | undefined) => active.find((w) => w.id === id)?.name ?? "";
+  const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
 
   return (
-    <section className="-mx-4 flex flex-col">
+    <section className="-mx-4 flex flex-col gap-5 px-4">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
-      {/* En-tête : marque à gauche, action secondaire ronde à droite. */}
-      <header className="flex items-center justify-between px-4 pb-2 pt-1">
-        <span className="flex items-center gap-2 text-lg font-semibold text-ink dark:text-fg">
-          <span aria-hidden="true" className="inline-block h-6 w-6 rounded-md bg-accent" />
-          {t("app.title")}
-        </span>
+      {/* En-tête : salutation à gauche, réglages ronds à droite. */}
+      <header className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-lg font-semibold text-white dark:bg-white dark:text-ink"
+          >
+            {t("app.title").charAt(0)}
+          </span>
+          <div className="flex flex-col">
+            <span className="font-semibold text-ink dark:text-fg">{t("home.hello")}</span>
+            <span className="text-sm text-slate-500 dark:text-muted">{t("app.title")}</span>
+          </div>
+        </div>
         <Link
-          to="/plus/recurring"
-          aria-label={t("more.recurring")}
-          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+          to="/plus"
+          aria-label={t("nav.more")}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
         >
-          <RoundIcon />
-          {pendingCount > 0 ? (
-            <span
-              aria-hidden="true"
-              className="absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full bg-accent"
-            />
-          ) : null}
+          <GearIcon />
         </Link>
       </header>
 
-      {backupState !== "none" || pendingCount > 0 ? (
-        <div className="flex flex-col gap-2 px-4">
-          {backupState !== "none" ? (
-            <Link
-              to="/plus/backup"
-              className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
-            >
-              {t("home.backupReminder")}
-            </Link>
-          ) : null}
-          {pendingCount > 0 ? (
-            <Link
-              to="/plus/recurring"
-              className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
-            >
-              {t("home.pendingBanner", { count: pendingCount })}
-            </Link>
-          ) : null}
-        </div>
+      {backupState !== "none" ? (
+        <Link
+          to="/plus/backup"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+        >
+          {t("home.backupReminder")}
+        </Link>
+      ) : null}
+      {pendingCount > 0 ? (
+        <Link
+          to="/plus/recurring"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+        >
+          {t("home.pendingBanner", { count: pendingCount })}
+        </Link>
       ) : null}
 
-      {/* Indicateur principal, centré sous l'en-tête. */}
-      <div className="flex flex-col items-center gap-1 px-4 pb-6 pt-4 text-center">
-        <p className="text-sm text-slate-500 dark:text-muted">{t("home.totalBalance")}</p>
-        {loading ? (
-          <Skeleton className="h-11 w-48" />
+      {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
+          <Link
+            to="/plus/recurring"
+            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+          >
+            {t("home.seeAll")}
+          </Link>
+        </div>
+        {upcoming.length === 0 ? (
+          <EmptyState icon="📅" title={t("home.noUpcoming")} />
         ) : (
-          <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-            {formatMoney(converted.total, baseCurrency)}
-          </p>
+          <ul className="-mr-4 flex snap-x gap-3 overflow-x-auto pb-1 pr-8">
+            {upcoming.map((r) => {
+              const due = new Date(r.nextDate);
+              return (
+                <li key={r.id} className="snap-start">
+                  <Link
+                    to={`/plus/recurring/${r.id}`}
+                    className="flex w-[15rem] flex-col justify-between gap-6 rounded-3xl bg-ink p-5 text-white shadow-md"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-semibold">{format(due, "d MMM")}</span>
+                      <span className="text-sm opacity-80">
+                        {format(due, "EEEE")} · {format(due, "HH:mm")}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg"
+                      >
+                        {categoryById.get(r.categoryId ?? "")?.icon ?? "↻"}
+                      </span>
+                      <div className="flex min-w-0 flex-col">
+                        <span className="truncate font-medium">
+                          {r.memo || t(`transactions.types.${r.type}`)}
+                        </span>
+                        <span className="truncate text-sm opacity-80">
+                          {walletName(r.walletId)}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         )}
-        {converted.missing.length > 0 ? (
-          <p className="text-xs text-amber-700 dark:text-amber-400">
-            {t("home.missingRate", { currencies: converted.missing.join(", ") })}
-          </p>
-        ) : null}
+      </section>
+
+      {/* Vue d'ensemble : deux cartes, chacune avec un mini-graphique. */}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+            <span className="text-sm font-medium text-slate-600 dark:text-muted">
+              {t("home.balanceCard")}
+            </span>
+            {loading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : (
+              <span
+                className="text-lg font-semibold tabular-nums text-ink dark:text-fg"
+                data-amount
+              >
+                {formatMoney(converted.total, baseCurrency)}
+              </span>
+            )}
+            <div className="h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={evolution}>
+                  <Area
+                    type="monotone"
+                    dataKey="balance"
+                    stroke="#047857"
+                    fill="#04785722"
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+            <span className="text-sm font-medium text-slate-600 dark:text-muted">
+              {t("home.expenseCard")}
+            </span>
+            <span className="text-lg font-semibold tabular-nums text-expense dark:text-expense-dark">
+              {formatMoney(weekTotalMinor, baseCurrency)}
+            </span>
+            <div className="h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={weekExpenses}>
+                  <Bar
+                    dataKey="value"
+                    fill="#ee4444"
+                    radius={[4, 4, 0, 0]}
+                    isAnimationActive={false}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Carte d'action : saisie du jour. */}
+      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+        <div className="flex min-w-0 flex-col">
+          <span className="font-semibold text-ink dark:text-fg">{t("home.dailyCheck")}</span>
+          <span className="text-sm text-slate-500 dark:text-muted">{t("home.dailyHint")}</span>
+        </div>
+        <Link
+          to="/transactions/new"
+          className="flex min-h-[44px] shrink-0 items-center rounded-full bg-ink px-5 font-semibold text-white dark:bg-white dark:text-ink"
+        >
+          {t("home.startEntry")}
+        </Link>
       </div>
 
-      {/* Cartes de portefeuilles : la suivante reste entrevue au bord. */}
+      {/* Portefeuilles puis transactions récentes. */}
       <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between px-4">
+        <div className="flex items-center justify-between">
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
           <Link
             to="/plus/wallets"
@@ -151,7 +297,7 @@ export function HomePage() {
             {t("home.manage")}
           </Link>
         </div>
-        <ul className="flex snap-x gap-3 overflow-x-auto pl-4 pr-10 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
           {active.map((w) => (
             <li key={w.id} className="snap-start">
               <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
@@ -160,12 +306,7 @@ export function HomePage() {
         </ul>
       </section>
 
-      {/* Panneau : coins supérieurs arrondis, recouvre légèrement le bas des cartes. */}
-      <section className="relative z-10 -mt-5 flex flex-col gap-1 rounded-t-3xl bg-white px-4 pb-4 pt-3 shadow-[0_-8px_24px_rgba(26,26,27,0.06)] dark:bg-card">
-        <span
-          aria-hidden="true"
-          className="mx-auto mb-2 h-1 w-12 rounded-full bg-slate-300 dark:bg-raised"
-        />
+      <section className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
           <Link

@@ -5,7 +5,7 @@ test("touche de zéros : « 00 » choisi dans Paramètres apparaît sur le clavi
   page,
 }) => {
   await completeOnboardingUi(page, "Compte BNI");
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByLabel("Touche zéros du clavier").selectOption("2");
 
   await page
@@ -39,8 +39,9 @@ test("récurrence à la création : la case crée une récurrence visible", asyn
     await page.getByRole("button", { name: key, exact: true }).click();
   }
   await page.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByRole("link", { name: "Récurrences et modèles" }).click();
   await expect(page.getByText("Aucune récurrence")).toHaveCount(0);
 });

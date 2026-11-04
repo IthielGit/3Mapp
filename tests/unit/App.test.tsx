@@ -51,7 +51,7 @@ describe("navigation mobile", () => {
   it("affiche les 5 onglets de la barre basse", async () => {
     renderAt("/");
     const nav = await screen.findByRole("navigation", { name: "Accueil" }, { timeout: 8000 });
-    for (const label of ["Accueil", "Transactions", "Analyses", "Budgets", "Paramètres"]) {
+    for (const label of ["Accueil", "Transactions", "Calendrier", "Analyses"]) {
       expect(nav).toHaveTextContent(label);
     }
     // Premier chargement à froid d'une page à la demande (lazy) : plus long que le délai par défaut.

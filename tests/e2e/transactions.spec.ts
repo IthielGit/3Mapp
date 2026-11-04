@@ -16,7 +16,7 @@ test("saisir une dépense au clavier puis la retrouver dans la liste", async ({ 
 });
 
 test("liste virtualisée : 5 000 lignes de démo, peu d’éléments rendus", async ({ page }) => {
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByRole("button", { name: "Générer 5 000 transactions de démo" }).click();
   await expect(page.getByText("5000 transactions de démo ajoutées.")).toBeVisible({
     timeout: 60_000,

@@ -9,7 +9,7 @@ const CSV = [
 
 test("import CSV puis second import identique : doublons détectés", async ({ page }) => {
   await completeOnboardingUi(page, "Compte BNI");
-  await page.getByRole("link", { name: "Paramètres" }).click();
+  await page.goto("/plus");
   await page.getByRole("link", { name: "Import / Export" }).click();
 
   await page.getByLabel("Choisir un fichier CSV").setInputFiles({

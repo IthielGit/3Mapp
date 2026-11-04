@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { addMonths, format, startOfMonth } from "date-fns";
+import { fr } from "date-fns/locale";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -35,7 +37,7 @@ import { PeriodPicker, periodLabel } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 
 /** Donnée principale : quelle question on pose au graphique. */
-type Dataset = "categories" | "weeks" | "balance";
+type Dataset = "categories" | "weeks" | "balance" | "savings";
 /** Représentation : anneau (parts d'un total), barres (comparer), courbe (évolution). */
 type Repr = "donut" | "bars" | "line";
 
@@ -44,6 +46,7 @@ const REPRS: Record<Dataset, Repr[]> = {
   categories: ["donut", "bars"],
   weeks: ["bars", "line"],
   balance: ["line"],
+  savings: ["bars", "line"],
 };
 
 const PALETTE = [
@@ -73,6 +76,7 @@ export function StatsPage() {
   const [repr, setRepr] = useState<Repr>("donut");
   const [walletFilter, setWalletFilter] = useState<string | undefined>(undefined);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [savingsMonths, setSavingsMonths] = useState<3 | 6 | 12>(6);
 
   const period = currentPeriod(state, settings);
   const previous = previousPeriod(period, state.kind, settings);
@@ -139,17 +143,49 @@ export function StatsPage() {
     [scopedWallets, transactions, dayKeys, baseCurrency],
   );
 
+  const savingsRows = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: savingsMonths }, (_, i) => {
+      const from = startOfMonth(addMonths(today, i - savingsMonths + 1));
+      const month = { from, to: startOfMonth(addMonths(from, 1)) };
+      const sum = periodSummary(
+        transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
+        month,
+      );
+      return {
+        name: format(from, "MMM yy", { locale: fr }),
+        net: toMajor(sum.net),
+        income: sum.income,
+        expense: sum.expense,
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactions, baseCurrency, savingsMonths, walletFilter]);
+  const savingsCumulative = savingsRows.reduce<{ name: string; cumulative: number }[]>(
+    (acc, row) => {
+      const previous = acc[acc.length - 1]?.cumulative ?? 0;
+      return [...acc, { name: row.name, cumulative: previous + row.net }];
+    },
+    [],
+  );
+  const savedMinor = savingsRows.reduce((sum, row) => sum + Math.round(row.net * 100), 0);
+  const savingsIncome = savingsRows.reduce((sum, row) => sum + row.income, 0);
+  const savingsRate =
+    savingsIncome > 0 ? Math.round((savedMinor * 1000) / savingsIncome) / 10 : null;
+
   const categoryData = slices.map((s) => ({ name: s.name, value: toMajor(s.amount) }));
   const top = topExpenses(inPeriod, 10);
   const activeWallets = wallets.filter((w) => !w.archived && w.currency === baseCurrency);
 
   // Données du graphique principal et valeurs exactes (liste accessible).
   const hasData =
-    dataset === "categories"
-      ? categoryData.length > 0
-      : dataset === "weeks"
-        ? weekData.some((w) => w.income > 0 || w.expense > 0)
-        : evolution.length > 0;
+    dataset === "savings"
+      ? savingsRows.some((r) => r.income > 0 || r.expense > 0)
+      : dataset === "categories"
+        ? categoryData.length > 0
+        : dataset === "weeks"
+          ? weekData.some((w) => w.income > 0 || w.expense > 0)
+          : evolution.length > 0;
 
   const fmt = (value: number) => formatMoney(Math.round(value * 100), baseCurrency);
   const grid = resolved === "dark" ? "#303036" : "#e4e4ea";
@@ -168,13 +204,17 @@ export function StatsPage() {
         {t("stats.title")}
       </h1>
 
-      <PeriodPicker
-        state={state}
-        period={period}
-        onChange={setState}
-        onShift={(d) => setState(shiftPeriod(state, settings, d))}
-      />
-      <p className="text-center text-sm text-slate-500 dark:text-muted">{periodLabel(period)}</p>
+      {dataset !== "savings" ? (
+        <PeriodPicker
+          state={state}
+          period={period}
+          onChange={setState}
+          onShift={(d) => setState(shiftPeriod(state, settings, d))}
+        />
+      ) : null}
+      {dataset !== "savings" ? (
+        <p className="text-center text-sm text-slate-500 dark:text-muted">{periodLabel(period)}</p>
+      ) : null}
 
       {/* Indicateur principal : le solde net de la période, avec sa variation. */}
       <div className="flex flex-col items-center gap-1 text-center">
@@ -223,7 +263,9 @@ export function StatsPage() {
                 ? t("stats.byCategory")
                 : dataset === "weeks"
                   ? t("stats.byWeek")
-                  : t("stats.balanceCurve")}
+                  : dataset === "savings"
+                    ? t("stats.savings")
+                    : t("stats.balanceCurve")}
             </h2>
             <span className="text-xs text-slate-500 dark:text-muted">
               {t("stats.unit", { currency: baseCurrency })}
@@ -242,6 +284,7 @@ export function StatsPage() {
               <option value="categories">{t("stats.byCategory")}</option>
               <option value="weeks">{t("stats.byWeek")}</option>
               <option value="balance">{t("stats.balanceCurve")}</option>
+              <option value="savings">{t("stats.savings")}</option>
             </select>
             {REPRS[dataset].length > 1 ? (
               <div role="radiogroup" aria-label={t("stats.representation")} className="flex gap-1">
@@ -266,6 +309,42 @@ export function StatsPage() {
           </div>
         </div>
 
+        {dataset === "savings" ? (
+          <div className="flex flex-col gap-3">
+            <div role="radiogroup" aria-label={t("stats.savingsDuration")} className="flex gap-1">
+              {([3, 6, 12] as const).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  role="radio"
+                  aria-checked={savingsMonths === n}
+                  onClick={() => setSavingsMonths(n)}
+                  className={`min-h-[32px] rounded-full px-3 text-xs font-medium ${
+                    savingsMonths === n
+                      ? "bg-ink text-white dark:bg-white dark:text-ink"
+                      : "text-slate-600 dark:text-muted"
+                  }`}
+                >
+                  {t("stats.monthsCount", { count: n })}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              <p className="text-sm text-slate-500 dark:text-muted">
+                {t("stats.savedOver", { count: savingsMonths })}
+              </p>
+              <p
+                className={`text-3xl font-semibold tabular-nums ${savedMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                data-amount
+              >
+                {formatMoney(savedMinor, baseCurrency)}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-muted">
+                {t("stats.savingsRate")} : {savingsRate === null ? "—" : `${savingsRate} %`}
+              </p>
+            </div>
+          </div>
+        ) : null}
         {!hasData ? (
           <p className="py-10 text-center text-sm text-slate-500 dark:text-muted">
             {t("stats.noExpenses")}
@@ -273,7 +352,34 @@ export function StatsPage() {
         ) : (
           <div className="h-64" role="img" aria-label={t("stats.chartAria")}>
             <ResponsiveContainer width="100%" height="100%">
-              {dataset === "categories" && repr === "donut" ? (
+              {dataset === "savings" && repr === "line" ? (
+                <LineChart data={savingsCumulative}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
+                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Line
+                    type="monotone"
+                    dataKey="cumulative"
+                    stroke="#1a1a1b"
+                    strokeWidth={2}
+                    dot={false}
+                    name={t("stats.cumulative")}
+                  />
+                </LineChart>
+              ) : dataset === "savings" ? (
+                <BarChart data={savingsRows}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
+                  <YAxis tick={{ fill: tick, fontSize: 11 }} width={48} />
+                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Bar dataKey="net" name={t("stats.savedPerMonth")} radius={[6, 6, 0, 0]}>
+                    {savingsRows.map((row) => (
+                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : "#1a1a1b"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              ) : dataset === "categories" && repr === "donut" ? (
                 <PieChart>
                   <Pie
                     data={categoryData}
@@ -375,7 +481,9 @@ export function StatsPage() {
                   ? categoryData.map((d) => ({ label: d.name, value: d.value }))
                   : dataset === "weeks"
                     ? weekData.map((d) => ({ label: d.name, value: d.expense }))
-                    : evolution.map((d) => ({ label: d.name, value: d.balance }))
+                    : dataset === "savings"
+                      ? savingsRows.map((d) => ({ label: d.name, value: d.net }))
+                      : evolution.map((d) => ({ label: d.name, value: d.balance }))
                 ).map((row) => (
                   <tr key={row.label} className="border-t border-slate-200 dark:border-slate-700">
                     <td className="py-1">{row.label}</td>
