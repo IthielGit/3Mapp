@@ -61,6 +61,13 @@ describe("parseMoney", () => {
     expect(parseMoney("1,500", "MGA")).toBe(1500);
   });
 
+  it("MGA : zéros après la virgule acceptés (export CSV « -375000.00 »)", () => {
+    expect(parseMoney("-375000.00", "MGA")).toBe(-375000);
+    expect(parseMoney("1200000.00", "MGA")).toBe(1200000);
+    expect(parseMoney("12.00", "EUR")).toBe(1200);
+    expect(parseMoney("12.10", "MGA")).toBeNull();
+  });
+
   it("négatifs", () => {
     expect(parseMoney("-3", "MGA")).toBe(-3);
     expect(parseMoney(`${MINUS}12,30`, "EUR")).toBe(-1230);

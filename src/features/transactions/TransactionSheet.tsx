@@ -370,7 +370,7 @@ export function TransactionSheet({
           </div>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <Field
             label={type === "transfer" ? t("transactions.fromWallet") : t("transactions.wallet")}
           >
@@ -465,7 +465,7 @@ export function TransactionSheet({
           </Field>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-3">
           <Field label={t("transactions.date")}>
             <input
               type="datetime-local"

@@ -278,10 +278,23 @@ export function TransactionsPage() {
           ) : null}
           <button
             type="button"
-            className="font-medium text-accent"
+            className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-accent"
             onClick={() => setOldestFirst((o) => !o)}
+            aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+            title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
           >
-            {oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d={oldestFirst ? "M12 19V5M6 11l6-6 6 6" : "M12 5v14M6 13l6 6 6-6"} />
+            </svg>
           </button>
         </div>
       </div>

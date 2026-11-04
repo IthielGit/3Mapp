@@ -131,10 +131,14 @@ export function parseMoney(input: string, code: CurrencyCode): Minor | null {
     }
   }
 
-  if (fracDigits.length > decimals) return null;
-  if (decimals === 0 && fracDigits.length > 0 && /[^0]/.test(fracDigits)) return null;
+  if (decimals === 0) {
+    // Devise sans décimales : seuls des zéros après le séparateur sont tolérés (« 375000.00 »).
+    if (!/^0*$/.test(fracDigits)) return null;
+  } else if (fracDigits.length > decimals) {
+    return null;
+  }
 
-  const padded = fracDigits.padEnd(decimals, "0");
+  const padded = decimals === 0 ? "" : fracDigits.padEnd(decimals, "0");
   const value = Number(intDigits + padded);
   if (!Number.isSafeInteger(value)) return null;
   return sign * value;
