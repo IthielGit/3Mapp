@@ -33,6 +33,7 @@ import { contains, localDayKey, previousPeriod, splitPeriods } from "../../domai
 import { computeBalances } from "../../domain/balance";
 import { convertedSum } from "../../domain/fx";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
+import { upTo } from "../../domain/cutoff";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Field, buttonSecondary, inputClass } from "../../components/FormControls";
 import { useTheme } from "../../lib/theme-context";
@@ -109,10 +110,11 @@ export function StatsPage() {
   const keepWallet = (tx: { walletId: string; toWalletId?: string | undefined }) =>
     walletFilter === undefined || tx.walletId === walletFilter || tx.toWalletId === walletFilter;
 
+  const totalsCutoff = useBalanceCutoff();
   const inPeriod = useMemo(
-    () => transactionsIn(transactions, period, baseCurrency).filter(keepWallet),
+    () => upTo(transactionsIn(transactions, period, baseCurrency), totalsCutoff).filter(keepWallet),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [transactions, period, baseCurrency, walletFilter],
+    [transactions, period, baseCurrency, walletFilter, totalsCutoff],
   );
   const inPrevious = useMemo(
     () => transactionsIn(transactions, previous, baseCurrency).filter(keepWallet),

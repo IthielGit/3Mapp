@@ -113,7 +113,8 @@
     "goHome": "Go to home",
     "shareButton": "Share to Google Drive, OneDrive, Dropbox…",
     "shareHint": "Sharing uses your phone's apps: no account needs to be set up in the app. Keep the file in online storage so you can recover it if your phone is lost.",
-    "shared": "Backup shared."
+    "shared": "Backup shared.",
+    "sharedFallback": "Sharing was blocked, so the file was downloaded. You can add it to Google Drive from your downloads."
   },
   "onboarding": {
     "restoreLink": "I already have a backup: restore it",
@@ -375,7 +376,8 @@
     "endDate": "End (optional)",
     "lastDay": "Always on the last day of the month",
     "autoPost": "Create directly as confirmed (otherwise as pending)",
-    "invalidInterval": "The interval must be a whole number of at least 1."
+    "invalidInterval": "The interval must be a whole number of at least 1.",
+    "editTitle": "Edit recurring"
   },
   "templates": {
     "label": "Template",

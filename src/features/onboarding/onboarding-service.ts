@@ -46,6 +46,7 @@ export async function completeOnboarding(
       await createRepository(database.settings, settingsSchema).create({
         baseCurrency: input.baseCurrency,
         monthStartDay: 1,
+        ignoreFutureBalance: true,
         weekStartDay: 1,
         language: input.language,
         theme: "system",

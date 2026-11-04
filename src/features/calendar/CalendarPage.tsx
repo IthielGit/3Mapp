@@ -11,6 +11,8 @@ import { totals } from "../../domain/totals";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { compactAmount } from "../../lib/compact";
 import { usePeriodSettings } from "../stats/period-state";
+import { upTo } from "../../domain/cutoff";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
 
@@ -44,75 +46,84 @@ export function CalendarPage() {
     format(addDays(gridStart, i), "EEE", { locale }),
   );
   const monthKey = format(cursor, "yyyy-MM");
+  const calendarCutoff = useBalanceCutoff();
   const monthTotals = totals(
-    inBase.filter((tx) => format(new Date(tx.date), "yyyy-MM") === monthKey),
+    upTo(
+      inBase.filter((tx) => format(new Date(tx.date), "yyyy-MM") === monthKey),
+      calendarCutoff,
+    ),
   );
   const dayGroup = byDay.get(selected);
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
-        {t("nav.calendar")}
-      </h1>
+      <div className="sticky top-0 z-20 -mx-4 flex flex-col gap-4 bg-canvas px-4 pb-3 pt-1 dark:bg-page">
+        <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
+          {t("nav.calendar")}
+        </h1>
 
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          aria-label={t("common.previous")}
-          onClick={() => setCursor((c) => addMonths(c, -1))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
-        >
-          ‹
-        </button>
-        <p className="font-semibold capitalize text-ink dark:text-fg">
-          {format(cursor, "MMMM yyyy", { locale })}
-        </p>
-        <button
-          type="button"
-          aria-label={t("common.next")}
-          onClick={() => setCursor((c) => addMonths(c, 1))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
-        >
-          ›
-        </button>
-      </div>
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            aria-label={t("common.previous")}
+            onClick={() => setCursor((c) => addMonths(c, -1))}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+          >
+            ‹
+          </button>
+          <p className="font-semibold capitalize text-ink dark:text-fg">
+            {format(cursor, "MMMM yyyy", { locale })}
+          </p>
+          <button
+            type="button"
+            aria-label={t("common.next")}
+            onClick={() => setCursor((c) => addMonths(c, 1))}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+          >
+            ›
+          </button>
+        </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center text-sm">
-        <div>
-          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
-            <Icon name="arrowUp" className="h-3 w-3" />
-            {t("home.income")}
-          </p>
-          <p className="font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
-            {formatMoney(monthTotals.income, baseCurrency)}
-          </p>
+        <div className="grid grid-cols-3 gap-2 text-center text-sm">
+          <div>
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+              <Icon name="arrowUp" className="h-3 w-3" />
+              {t("home.income")}
+            </p>
+            <p className="font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
+              {formatMoney(monthTotals.income, baseCurrency)}
+            </p>
+          </div>
+          <div>
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+              <Icon name="arrowDown" className="h-3 w-3" />
+              {t("home.expense")}
+            </p>
+            <p
+              className="font-semibold tabular-nums text-expense dark:text-expense-dark"
+              data-amount
+            >
+              {formatMoney(monthTotals.expense, baseCurrency)}
+            </p>
+          </div>
+          <div>
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+              <Icon name="equal" className="h-3 w-3" />
+              {t("home.netThisMonth")}
+            </p>
+            <p className="font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+              {formatMoney(monthTotals.net, baseCurrency)}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
-            <Icon name="arrowDown" className="h-3 w-3" />
-            {t("home.expense")}
-          </p>
-          <p className="font-semibold tabular-nums text-expense dark:text-expense-dark" data-amount>
-            {formatMoney(monthTotals.expense, baseCurrency)}
-          </p>
-        </div>
-        <div>
-          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
-            <Icon name="equal" className="h-3 w-3" />
-            {t("home.netThisMonth")}
-          </p>
-          <p className="font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-            {formatMoney(monthTotals.net, baseCurrency)}
-          </p>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-7 text-center text-xs text-slate-500 dark:text-muted">
-        {weekdays.map((name, i) => (
-          <span key={`${name}-${i}`} className="capitalize">
-            {name}
-          </span>
-        ))}
+        <div className="grid grid-cols-7 text-center text-xs text-slate-500 dark:text-muted">
+          {weekdays.map((name, i) => (
+            <span key={`${name}-${i}`} className="capitalize">
+              {name}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-7 gap-1">

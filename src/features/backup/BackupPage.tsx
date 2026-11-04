@@ -88,7 +88,19 @@ export function BackupPage() {
       const blob = new Blob([text], { type: "application/json" });
 
       if (target === "share") {
-        const shared = await shareFile(blob, name);
+        let shared = false;
+        try {
+          shared = await shareFile(blob, name);
+        } catch (err) {
+          // Le navigateur refuse le partage (« Permission denied ») : souvent parce que l'appui
+          // n'est plus actif après le chiffrement. On enregistre le fichier à la place.
+          if (!(err instanceof DOMException && err.name === "NotAllowedError")) throw err;
+          downloadBlob(blob, name);
+          await markBackupDone(db, now);
+          setPassword("");
+          setMessage(t("backup.sharedFallback"));
+          return;
+        }
         if (!shared) return; // l'utilisateur a fermé la feuille de partage
       } else {
         downloadBlob(blob, name);

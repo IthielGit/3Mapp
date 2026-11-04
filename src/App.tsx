@@ -137,6 +137,7 @@ export default function App() {
           <Route path="plus/backup" element={<BackupPage />} />
           <Route path="plus/recurring" element={<RecurringPage />} />
           <Route path="plus/recurring/new" element={<RecurringFormPage />} />
+          <Route path="plus/recurring/:id/edit" element={<RecurringFormPage />} />
           <Route path="plus/recurring/:id" element={<RecurringDetailPage />} />
           <Route path="plus/goals" element={<GoalsPage />} />
           <Route path="plus/goals/:id" element={<GoalsPage />} />

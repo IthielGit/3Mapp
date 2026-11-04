@@ -182,6 +182,12 @@ export function RecurringDetailPage() {
       </section>
 
       <div className="grid grid-cols-2 gap-2">
+        <Link
+          to={`/plus/recurring/${id}/edit`}
+          className={`${buttonSecondary} inline-flex items-center justify-center`}
+        >
+          {t("common.edit")}
+        </Link>
         <button
           type="button"
           className={buttonSecondary}

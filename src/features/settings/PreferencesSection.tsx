@@ -85,20 +85,6 @@ export function PreferencesSection() {
           </select>
         </Field>
 
-        <Field label={t("prefs.monthStart")}>
-          <select
-            className={inputClass}
-            value={settings.monthStartDay}
-            onChange={(e) => void change({ monthStartDay: Number(e.target.value) })}
-          >
-            {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
-              <option key={day} value={day}>
-                {t("prefs.monthDay", { day })}
-              </option>
-            ))}
-          </select>
-        </Field>
-
         <Field label={t("prefs.keypadZeros")}>
           <select
             className={inputClass}

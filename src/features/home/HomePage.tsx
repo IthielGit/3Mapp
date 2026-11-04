@@ -16,6 +16,7 @@ import { Skeleton } from "../../components/PwaComponents";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
+import { upTo } from "../../domain/cutoff";
 
 const EMPTY: never[] = [];
 const PREVIEW = 2;
@@ -128,8 +129,8 @@ export function HomePage() {
     [active, transactions, days30, baseCurrency, rates, cutoff],
   );
   const expenseMinor = useMemo(
-    () => dailyExpenses(transactions, days7, baseCurrency),
-    [transactions, days7, baseCurrency],
+    () => dailyExpenses(upTo(transactions, cutoff), days7, baseCurrency),
+    [transactions, days7, baseCurrency, cutoff],
   );
   const weekExpenses = days7.map((day, i) => ({ day, value: (expenseMinor[i] ?? 0) / 100 }));
   const weekTotalMinor = expenseMinor.reduce((sum, v) => sum + v, 0);
@@ -143,7 +144,7 @@ export function HomePage() {
       <h1 className="sr-only">{t("nav.home")}</h1>
 
       {/* En-tête : salutation à gauche, réglages ronds à droite. */}
-      <header className="flex items-center justify-between">
+      <header className="sticky top-0 z-20 -mx-4 flex items-center justify-between bg-canvas px-4 pb-2 pt-1 dark:bg-page">
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"

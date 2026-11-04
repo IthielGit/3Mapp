@@ -1,6 +1,6 @@
 import { PageTitle } from "../../components/PageHeader";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -9,7 +9,8 @@ import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../compone
 import { parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
-import { createRecurring } from "./recurring-service";
+import { createRecurring, updateRecurring } from "./recurring-service";
+import { minorToPlainText } from "../../lib/amount-text";
 
 const EMPTY: never[] = [];
 type TxType = Recurring["type"];
@@ -35,6 +36,27 @@ export function RecurringFormPage() {
   const [autoPost, setAutoPost] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
+  // Modification : pré-remplit le formulaire avec la récurrence existante (une seule fois).
+  const { id: editId } = useParams();
+  const existing = useLiveQuery(() => (editId ? db.recurring.get(editId) : undefined), [editId]);
+  const [prefilled, setPrefilled] = useState(!editId);
+  useEffect(() => {
+    if (prefilled || !existing) return;
+    setType(existing.type);
+    setWalletId(existing.walletId);
+    setToWalletId(existing.toWalletId ?? "");
+    setAmountText(minorToPlainText(existing.amount, existing.currency));
+    setCategoryId(existing.categoryId ?? "");
+    setMemo(existing.memo);
+    setUnit(existing.frequency.unit);
+    setInterval(String(existing.frequency.interval));
+    setStartDate(format(new Date(existing.startDate), "yyyy-MM-ddTHH:mm"));
+    setEndDate(existing.endDate ? format(new Date(existing.endDate), "yyyy-MM-dd") : "");
+    setLastDay(existing.dayOfMonthRule === "last_day");
+    setAutoPost(existing.autoPost);
+    setPrefilled(true);
+  }, [existing, prefilled]);
+
   const effectiveWallet = walletId || active[0]?.id || "";
   const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";
   const kind = type === "income" ? "income" : "expense";
@@ -47,7 +69,7 @@ export function RecurringFormPage() {
     if (!Number.isInteger(every) || every < 1) return setError(t("recurring.invalidInterval"));
     const isCategorised = type === "expense" || type === "income";
     try {
-      await createRecurring({
+      const input = {
         draft: {
           type,
           amount,
@@ -58,11 +80,15 @@ export function RecurringFormPage() {
           attachmentIds: [],
         },
         frequency: { unit, interval: every },
-        startDate: new Date(startDate).toISOString(),
         endDate: endDate ? new Date(`${endDate}T23:59`).toISOString() : undefined,
         dayOfMonthRule: (lastDay ? "last_day" : "same_day") as DayRule,
         autoPost,
-      });
+      };
+      if (editId) {
+        await updateRecurring(editId, input);
+      } else {
+        await createRecurring({ ...input, startDate: new Date(startDate).toISOString() });
+      }
       navigate("/plus/recurring", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errors.generic"));
@@ -71,7 +97,9 @@ export function RecurringFormPage() {
 
   return (
     <section className="flex flex-col gap-3">
-      <PageTitle className="text-2xl font-bold">{t("recurring.newTitle")}</PageTitle>
+      <PageTitle className="text-2xl font-bold">
+        {editId ? t("recurring.editTitle") : t("recurring.newTitle")}
+      </PageTitle>
 
       <div className="grid grid-cols-2 gap-3">
         <Field label={t("transactions.type")}>
@@ -182,6 +210,7 @@ export function RecurringFormPage() {
             type="datetime-local"
             className={inputClass}
             value={startDate}
+            disabled={Boolean(editId)}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </Field>

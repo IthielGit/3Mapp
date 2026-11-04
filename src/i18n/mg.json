@@ -104,7 +104,8 @@
     "goHome": "Mankany amin'ny fandraisana",
     "shareButton": "Hizara amin'ny Google Drive, OneDrive, Dropbox…",
     "shareHint": "Ny fizarana dia mampiasa ny fampiharana eo amin'ny finday-nao : tsy misy kaonty tokony ho apetraka ao amin'ny app. Tazomy eo amin'ny toerana fitahirizana an-tserasera ny rakitra mba hahitana azy raha very ny finday.",
-    "shared": "Voazara ny fitehirizana."
+    "shared": "Voazara ny fitehirizana.",
+    "sharedFallback": "Tsy nisokatra ny fizarana ka voaray ny rakitra. Ampidiro any amin’ny Google Drive ianao avy amin’ny fandraisana."
   },
   "pwa": {
     "updateAvailable": "Misy version vaovao.",
@@ -375,7 +376,8 @@
     "endDate": "Famaranana (safidy)",
     "lastDay": "Mandrakariva ny andro farany amin'ny volana",
     "autoPost": "Mamorona ho nekena mivantana (raha tsy izany dia miandry)",
-    "invalidInterval": "Ny elanelana dia tokony ho isa feno 1 farafahakeliny."
+    "invalidInterval": "Ny elanelana dia tokony ho isa feno 1 farafahakeliny.",
+    "editTitle": "Hanova ny fandoavana mandavaka"
   },
   "templates": {
     "label": "Modely",

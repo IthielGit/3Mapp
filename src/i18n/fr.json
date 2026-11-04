@@ -104,7 +104,8 @@
     "goHome": "Aller à l'accueil",
     "shareButton": "Partager vers Google Drive, OneDrive, Dropbox…",
     "shareHint": "Le partage utilise les applications de votre téléphone : aucun compte n'est à configurer dans l'app. Gardez le fichier sur un espace de stockage en ligne pour le retrouver si le téléphone est perdu.",
-    "shared": "Sauvegarde partagée."
+    "shared": "Sauvegarde partagée.",
+    "sharedFallback": "Le partage n'a pas pu s'ouvrir : le fichier a été téléchargé. Vous pouvez ensuite l'ajouter à Google Drive depuis vos téléchargements."
   },
   "pwa": {
     "updateAvailable": "Nouvelle version disponible.",
@@ -375,7 +376,8 @@
     "endDate": "Fin (facultatif)",
     "lastDay": "Toujours le dernier jour du mois",
     "autoPost": "Créer directement comme validée (sinon en attente)",
-    "invalidInterval": "L'intervalle doit être un entier d'au moins 1."
+    "invalidInterval": "L'intervalle doit être un entier d'au moins 1.",
+    "editTitle": "Modifier la récurrence"
   },
   "templates": {
     "label": "Modèle",

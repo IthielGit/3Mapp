@@ -31,6 +31,8 @@ import {
   type RemovedBundle,
 } from "./transaction-service";
 import { TransactionSheet } from "./TransactionSheet";
+import { upTo } from "../../domain/cutoff";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustment"];
 type Period = "all" | "month" | "thirty";
@@ -100,9 +102,16 @@ export function TransactionsPage() {
     return oldestFirst ? [...filtered].reverse() : filtered;
   }, [transactions, filters, periodBounds, query, categoryNames, oldestFirst]);
 
+  const totalsCutoff = useBalanceCutoff();
   const summary = useMemo(
-    () => totals(visible.filter((t) => t.currency === baseCurrency)),
-    [visible, baseCurrency],
+    () =>
+      totals(
+        upTo(
+          visible.filter((t) => t.currency === baseCurrency),
+          totalsCutoff,
+        ),
+      ),
+    [visible, baseCurrency, totalsCutoff],
   );
 
   const rows: Row[] = useMemo(() => {
@@ -222,120 +231,125 @@ export function TransactionsPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-semibold text-[#172033] dark:text-fg">
-          {t("transactions.title")}
-        </h1>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={openFilters}
-            aria-label={t("transactions.filters")}
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#64748B] active:bg-slate-100 dark:text-muted"
-          >
-            <FilterIcon />
-            {activeFilterCount > 0 ? (
-              <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0F8178] px-1 text-[10px] font-semibold text-white">
-                {activeFilterCount}
-              </span>
-            ) : null}
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectMode((m) => !m)}
-            aria-pressed={selectMode}
-            className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
-              selectMode ? "bg-accent text-white" : "text-accent"
-            }`}
-          >
-            {selectMode ? t("transactions.selectDone") : t("transactions.select")}
-          </button>
-        </div>
-      </header>
-
-      <label className="relative block">
-        <span className="sr-only">{t("transactions.search")}</span>
-        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#64748B]" />
-        <input
-          type="search"
-          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-white/15 dark:bg-card dark:text-fg"
-          placeholder={t("transactions.searchPlaceholder")}
-          aria-label={t("transactions.search")}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </label>
-
-      <div className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-[#64748B] dark:text-muted">
-          {t("transactions.count", { count: visible.length })}
-        </span>
-        <div className="flex items-center gap-3">
-          {activeFilterCount > 0 ? (
-            <button type="button" className="font-medium text-accent" onClick={resetAll}>
-              {t("transactions.resetFilters")}
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-accent"
-            onClick={() => setOldestFirst((o) => !o)}
-            aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
-            title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <div className="sticky top-0 z-20 -mx-4 flex flex-col gap-4 bg-canvas px-4 pb-3 pt-1 dark:bg-page">
+        <header className="flex items-center justify-between gap-2">
+          <h1 className="text-xl font-semibold text-[#172033] dark:text-fg">
+            {t("transactions.title")}
+          </h1>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={openFilters}
+              aria-label={t("transactions.filters")}
+              className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#64748B] active:bg-slate-100 dark:text-muted"
             >
-              <path d={oldestFirst ? "M12 19V5M6 11l6-6 6 6" : "M12 5v14M6 13l6 6 6-6"} />
-            </svg>
-          </button>
-        </div>
-      </div>
+              <FilterIcon />
+              {activeFilterCount > 0 ? (
+                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0F8178] px-1 text-[10px] font-semibold text-white">
+                  {activeFilterCount}
+                </span>
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectMode((m) => !m)}
+              aria-pressed={selectMode}
+              className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
+                selectMode ? "bg-accent text-white" : "text-accent"
+              }`}
+            >
+              {selectMode ? t("transactions.selectDone") : t("transactions.select")}
+            </button>
+          </div>
+        </header>
 
-      <section
-        aria-label={t("transactions.summary")}
-        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
-      >
-        <div className="flex flex-col">
-          <p className="text-sm text-[#64748B] dark:text-muted">{`${t("transactions.net")} ${t(`transactions.netWhen.${period}`)}`}</p>
-          <p
-            className={`text-3xl font-bold tabular-nums ${
-              summary.net < 0
-                ? "text-[#DC2626] dark:text-red-400"
-                : summary.net > 0
-                  ? "text-[#15803D] dark:text-emerald-400"
-                  : "text-[#172033] dark:text-fg"
-            }`}
-            data-amount
-          >
-            {formatMoney(summary.net, baseCurrency)}
-          </p>
+        <label className="relative block">
+          <span className="sr-only">{t("transactions.search")}</span>
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#64748B]" />
+          <input
+            type="search"
+            className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-white/15 dark:bg-card dark:text-fg"
+            placeholder={t("transactions.searchPlaceholder")}
+            aria-label={t("transactions.search")}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
+
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <span className="text-[#64748B] dark:text-muted">
+            {t("transactions.count", { count: visible.length })}
+          </span>
+          <div className="flex items-center gap-3">
+            {activeFilterCount > 0 ? (
+              <button type="button" className="font-medium text-accent" onClick={resetAll}>
+                {t("transactions.resetFilters")}
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-accent"
+              onClick={() => setOldestFirst((o) => !o)}
+              aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+              title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d={oldestFirst ? "M12 19V5M6 11l6-6 6 6" : "M12 5v14M6 13l6 6 6-6"} />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-white/15">
+
+        <section
+          aria-label={t("transactions.summary")}
+          className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
+        >
           <div className="flex flex-col">
-            <p className="text-[#64748B] dark:text-muted">{t("transactions.income")}</p>
+            <p className="text-sm text-[#64748B] dark:text-muted">{`${t("transactions.net")} ${t(`transactions.netWhen.${period}`)}`}</p>
             <p
-              className="font-semibold tabular-nums text-[#15803D] dark:text-emerald-400"
+              className={`text-3xl font-bold tabular-nums ${
+                summary.net < 0
+                  ? "text-[#DC2626] dark:text-red-400"
+                  : summary.net > 0
+                    ? "text-[#15803D] dark:text-emerald-400"
+                    : "text-[#172033] dark:text-fg"
+              }`}
               data-amount
             >
-              {formatMoney(summary.income, baseCurrency)}
+              {formatMoney(summary.net, baseCurrency)}
             </p>
           </div>
-          <div className="flex flex-col">
-            <p className="text-[#64748B] dark:text-muted">{t("transactions.expense")}</p>
-            <p className="font-semibold tabular-nums text-[#DC2626] dark:text-red-400" data-amount>
-              {formatMoney(summary.expense, baseCurrency)}
-            </p>
+          <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-white/15">
+            <div className="flex flex-col">
+              <p className="text-[#64748B] dark:text-muted">{t("transactions.income")}</p>
+              <p
+                className="font-semibold tabular-nums text-[#15803D] dark:text-emerald-400"
+                data-amount
+              >
+                {formatMoney(summary.income, baseCurrency)}
+              </p>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-[#64748B] dark:text-muted">{t("transactions.expense")}</p>
+              <p
+                className="font-semibold tabular-nums text-[#DC2626] dark:text-red-400"
+                data-amount
+              >
+                {formatMoney(summary.expense, baseCurrency)}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {message ? (
         <p role="status" className="text-sm text-slate-600 dark:text-muted">

@@ -163,3 +163,50 @@ export async function postponePending(
 export async function ignorePending(id: string, database: AppDatabase = defaultDb): Promise<void> {
   await database.transactions.delete(id);
 }
+
+/**
+ * Modifie une récurrence existante (montant, portefeuilles, catégorie, mémo, fréquence, fin, validation auto).
+ * La date de premier passage ne change pas : les occurrences déjà créées restent intactes,
+ * et la prochaine date est recalculée à partir de l'index courant.
+ */
+export async function updateRecurring(
+  id: string,
+  input: Omit<RecurringInput, "startDate">,
+  database: AppDatabase = defaultDb,
+): Promise<Recurring> {
+  const existing = await database.recurring.get(id);
+  if (!existing) throw new RuleError("Récurrence introuvable");
+  const record = await validateDraft(
+    { ...input.draft, date: existing.startDate, status: "posted" },
+    database,
+    { isNew: true },
+  );
+  const nextDate = occurrenceDate(
+    new Date(existing.startDate),
+    input.frequency,
+    existing.occurrenceIndex,
+    input.dayOfMonthRule,
+  );
+  const candidate = {
+    ...existing,
+    type: record.type,
+    amount: record.amount,
+    currency: record.currency,
+    walletId: record.walletId,
+    toWalletId: record.toWalletId,
+    categoryId: record.categoryId,
+    subcategoryId: record.subcategoryId,
+    memo: record.memo,
+    frequency: input.frequency,
+    endDate: input.endDate || undefined,
+    dayOfMonthRule: input.dayOfMonthRule,
+    autoPost: input.autoPost,
+    nextDate: nextDate.toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  const parsed = recurringSchema.safeParse(candidate);
+  if (!parsed.success)
+    throw new RuleError(parsed.error.issues[0]?.message ?? "Récurrence invalide");
+  await database.recurring.put(parsed.data);
+  return parsed.data;
+}
