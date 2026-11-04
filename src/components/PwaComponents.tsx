@@ -40,7 +40,7 @@ export function InstallCard() {
   if (state === "installed" || state === "unavailable") return null;
 
   return (
-    <section className="flex flex-col gap-2 rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+    <section className="flex flex-col gap-2 rounded-lg border border-slate-200 p-4 dark:border-white/15">
       <h2 className="font-semibold">{t("pwa.installTitle")}</h2>
       {state === "available" ? (
         <>
@@ -90,7 +90,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
+    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-white/15">
       <span aria-hidden="true" className="text-4xl">
         {icon}
       </span>

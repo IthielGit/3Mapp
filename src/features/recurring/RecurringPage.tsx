@@ -45,7 +45,7 @@ export function RecurringPage() {
           {pending.map((tx) => (
             <li
               key={tx.id}
-              className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+              className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
             >
               <div className="flex justify-between gap-2">
                 <span>
@@ -89,7 +89,7 @@ export function RecurringPage() {
           {recurring.map((r) => (
             <li
               key={r.id}
-              className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+              className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
             >
               <Link to={`/plus/recurring/${r.id}`} className="flex flex-col">
                 <span className="font-medium">

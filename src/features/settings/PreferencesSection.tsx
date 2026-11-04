@@ -59,7 +59,7 @@ export function PreferencesSection() {
       <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
         {t("prefs.title")}
       </h2>
-      <div className="flex flex-col gap-4 rounded-card border border-slate-200 p-4 dark:border-slate-700">
+      <div className="flex flex-col gap-4 rounded-card border border-slate-200 p-4 dark:border-white/15">
         <Field label={t("prefs.language")}>
           <select
             className={inputClass}
@@ -125,7 +125,7 @@ export function PreferencesSection() {
           </span>
         </label>
 
-        <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+        <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
           <label className="flex min-h-[44px] items-start gap-3">
             <input
               type="checkbox"

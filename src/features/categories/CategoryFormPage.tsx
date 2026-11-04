@@ -160,7 +160,7 @@ export function CategoryFormPage() {
 
       {existing ? (
         <>
-          <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+          <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
             <h2 className="font-semibold">{t("categories.subcategories")}</h2>
             <ul className="flex flex-col gap-2">
               {(subcategories ?? []).map((sub) => (
@@ -199,7 +199,7 @@ export function CategoryFormPage() {
             </div>
           </section>
 
-          <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+          <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
             <h2 className="font-semibold">{t("categories.merge")}</h2>
             <p className="text-sm text-slate-500">{t("categories.mergeHint")}</p>
             <select

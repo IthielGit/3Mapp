@@ -177,7 +177,7 @@ export function BackupPage() {
       </div>
 
       {settings ? (
-        <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+        <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
           <h2 className="font-semibold">{t("backup.exportTitle")}</h2>
           <Field label={t("backup.passwordLabel")}>
             <input
@@ -216,7 +216,7 @@ export function BackupPage() {
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
         <h2 className="font-semibold">{t("backup.importTitle")}</h2>
         <input
           type="file"
@@ -259,7 +259,7 @@ export function BackupPage() {
             </p>
             <fieldset className="flex flex-col gap-2">
               <legend className="mb-1 text-sm font-medium">{t("backup.modeLegend")}</legend>
-              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
                 <input
                   type="radio"
                   name="restore-mode"
@@ -273,7 +273,7 @@ export function BackupPage() {
                   <span className="text-sm text-slate-500">{t("backup.modeMergeHint")}</span>
                 </span>
               </label>
-              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
                 <input
                   type="radio"
                   name="restore-mode"

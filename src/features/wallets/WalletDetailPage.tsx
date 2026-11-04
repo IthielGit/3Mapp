@@ -61,7 +61,7 @@ export function WalletDetailPage() {
         </p>
       </DetailHeader>
 
-      <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+      <div className="rounded-lg border border-slate-200 p-4 dark:border-white/15">
         <p className="text-sm text-slate-500">{t("wallets.balance")}</p>
         <p className="text-2xl font-semibold">{formatMoney(balance, wallet.currency)}</p>
         <p className="mt-2 text-sm text-slate-500">
@@ -79,7 +79,7 @@ export function WalletDetailPage() {
             <li key={tx.id}>
               <Link
                 to={`/transactions/${tx.id}/edit`}
-                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-white/15"
               >
                 <span className="text-sm">
                   {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}

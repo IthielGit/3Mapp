@@ -96,6 +96,8 @@ const transactionFields = {
   categoryId: z.uuid().optional(),
   subcategoryId: z.uuid().optional(),
   memo: z.string(),
+  /** Note libre (texte) : les médias restent dans attachmentIds. */
+  note: z.string().max(5000).optional(),
   attachmentIds: z.array(z.uuid()),
   recurringId: z.uuid().optional(),
   debtId: z.uuid().optional(),

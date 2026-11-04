@@ -1,3 +1,4 @@
+import { Icon } from "../../components/Icon";
 import { useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -78,19 +79,28 @@ export function CalendarPage() {
 
       <div className="grid grid-cols-3 gap-2 text-center text-sm">
         <div>
-          <p className="text-xs text-slate-500 dark:text-muted">{t("home.income")}</p>
+          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <Icon name="arrowUp" className="h-3 w-3" />
+            {t("home.income")}
+          </p>
           <p className="font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
             {formatMoney(monthTotals.income, baseCurrency)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 dark:text-muted">{t("home.expense")}</p>
+          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <Icon name="arrowDown" className="h-3 w-3" />
+            {t("home.expense")}
+          </p>
           <p className="font-semibold tabular-nums text-expense dark:text-expense-dark" data-amount>
             {formatMoney(monthTotals.expense, baseCurrency)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 dark:text-muted">{t("home.net")}</p>
+          <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <Icon name="equal" className="h-3 w-3" />
+            {t("home.net")}
+          </p>
           <p className="font-semibold tabular-nums text-ink dark:text-fg" data-amount>
             {formatMoney(monthTotals.net, baseCurrency)}
           </p>
@@ -142,7 +152,7 @@ export function CalendarPage() {
         })}
       </div>
 
-      <section className="flex flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-card">
+      <section className="flex flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card">
         <p className="font-semibold capitalize text-ink dark:text-fg">
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
         </p>

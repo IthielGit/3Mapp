@@ -73,7 +73,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
           shown ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-700">
+        <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-white/15">
           <h2 id={titleId} className="text-lg font-semibold">
             {title}
           </h2>

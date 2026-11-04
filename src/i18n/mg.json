@@ -244,7 +244,9 @@
     "deleted": "Voafafa ny fifanakalozana {{count}}.",
     "add": "Ampio fifanakalozana",
     "resetFilters": "Averina",
-    "summary": "Fintinana"
+    "summary": "Fintinana",
+    "description": "Famaritana",
+    "note": "Note"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

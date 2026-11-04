@@ -43,7 +43,7 @@ export function CategoriesPage() {
             className={`min-h-[44px] rounded-lg border font-medium ${
               kind === k
                 ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised"
-                : "border-slate-300 dark:border-slate-700"
+                : "border-slate-300 dark:border-white/15"
             }`}
           >
             {t(`categories.${k}`)}
@@ -57,7 +57,7 @@ export function CategoriesPage() {
         {active.map((category, index) => (
           <li
             key={category.id}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
           >
             <Link
               to={`/plus/categories/${category.id}/edit`}
@@ -104,7 +104,7 @@ export function CategoriesPage() {
             {archived.map((category) => (
               <li
                 key={category.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
               >
                 <span>
                   {category.icon} {category.name}

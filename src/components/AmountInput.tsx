@@ -51,7 +51,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col rounded-lg border border-slate-300 px-3 py-2 dark:border-slate-700">
+      <div className="flex flex-col rounded-lg border border-slate-300 px-3 py-2 dark:border-white/15">
         <label htmlFor="amount-expression" className="text-sm text-slate-500">
           {label}
         </label>
@@ -76,7 +76,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
             type="button"
             onClick={() => press(key)}
             aria-label={key === "⌫" ? "Effacer" : key}
-            className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-slate-700"
+            className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15"
           >
             {key}
           </button>
@@ -86,7 +86,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
         <button
           type="button"
           onClick={() => onExpressionChange("")}
-          className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-slate-700"
+          className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15"
         >
           C
         </button>
@@ -94,7 +94,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
           type="button"
           onClick={() => press(zeroKey)}
           aria-label={zeroKey}
-          className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-slate-700"
+          className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-white/15"
         >
           {zeroKey}
         </button>
@@ -102,7 +102,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
           type="button"
           onClick={equals}
           disabled={minor === null}
-          className="min-h-[44px] rounded-lg bg-brand-700 font-semibold text-white disabled:opacity-50"
+          className="min-h-[44px] rounded-lg bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink dark:disabled:bg-raised dark:disabled:text-muted dark:disabled:opacity-100"
         >
           =
         </button>

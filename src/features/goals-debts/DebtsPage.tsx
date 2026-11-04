@@ -45,7 +45,7 @@ function DebtList() {
             role="tab"
             aria-selected={tab === d}
             onClick={() => setTab(d)}
-            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised" : "border-slate-300 dark:border-slate-700"}`}
+            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised" : "border-slate-300 dark:border-white/15"}`}
           >
             {t(`debts.tabs.${d}`)}
           </button>
@@ -68,7 +68,7 @@ function DebtList() {
             <li key={d.id}>
               <Link
                 to={`/plus/debts/${d.id}`}
-                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-white/15"
               >
                 <span>
                   <span className="font-medium">{d.counterparty}</span>
@@ -123,7 +123,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
       <Field label={direction === "borrowed" ? t("debts.creditor") : t("debts.debtor")}>
         <input
           className={inputClass}
@@ -231,7 +231,7 @@ function DebtDetail({ id }: { id: string }) {
       </div>
 
       {state.remaining > 0 ? (
-        <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+        <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
           <Field label={`${t("debts.payment")} (${debt.currency})`}>
             <input
               inputMode="decimal"
@@ -306,7 +306,7 @@ function DebtDetail({ id }: { id: string }) {
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 p-2 dark:border-slate-700">
+    <div className="rounded-lg border border-slate-200 p-2 dark:border-white/15">
       <p className="text-slate-500">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>

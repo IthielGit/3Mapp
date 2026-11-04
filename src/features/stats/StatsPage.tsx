@@ -1,3 +1,4 @@
+import { Icon, type IconName } from "../../components/Icon";
 import { useMemo, useState } from "react";
 import { addMonths, format, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -43,6 +44,8 @@ function shortName(name: string): string {
   return name.length > 13 ? `${name.slice(0, 12)}…` : name;
 }
 
+const REPR_ICON: Record<Repr, IconName> = { donut: "donut", bars: "bars", line: "line" };
+
 type Dataset = "categories" | "weeks" | "balance" | "savings";
 /** Représentation : anneau (parts d'un total), barres (comparer), courbe (évolution). */
 type Repr = "donut" | "bars" | "line";
@@ -75,6 +78,9 @@ const toMajor = (minor: number) => minor / 100;
 export function StatsPage() {
   const { t } = useTranslation();
   const { resolved } = useTheme();
+  // Encre des graphiques : noire en clair, claire en sombre (sinon elle disparaît sur le fond).
+  const chartInk = resolved === "dark" ? "#f5f5f7" : "#1a1a1b";
+  const chartPalette = resolved === "dark" ? ["#f5f5f7", ...PALETTE.slice(1)] : PALETTE;
   const settings = usePeriodSettings();
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const [now] = useState(() => new Date());
@@ -243,16 +249,19 @@ export function StatsPage() {
       <div className="grid grid-cols-3 gap-2">
         <Card
           label={t("home.income")}
+          icon="arrowUp"
           value={formatMoney(summary.income, baseCurrency)}
           tone="text-income dark:text-income-dark"
         />
         <Card
           label={t("home.expense")}
+          icon="arrowDown"
           value={formatMoney(summary.expense, baseCurrency)}
           tone="text-expense dark:text-expense-dark"
         />
         <Card
           label={t("stats.savingsRate")}
+          icon="percent"
           value={summary.savingsRate === null ? "—" : `${summary.savingsRate} %`}
         />
       </div>
@@ -260,7 +269,7 @@ export function StatsPage() {
       {/* Graphique principal : un seul, avec son titre, son unité et son sélecteur compact. */}
       <section
         aria-labelledby="stats-chart-title"
-        className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-card"
+        className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
       >
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
@@ -283,7 +292,7 @@ export function StatsPage() {
             </label>
             <select
               id="stats-dataset"
-              className="min-h-[36px] rounded-lg border border-slate-300 bg-white px-2 text-sm dark:border-slate-700 dark:bg-raised"
+              className="min-h-[36px] rounded-lg border border-slate-300 bg-white px-2 text-sm dark:border-white/15 dark:bg-raised"
               value={dataset}
               onChange={(e) => chooseDataset(e.target.value as Dataset)}
             >
@@ -301,13 +310,15 @@ export function StatsPage() {
                     role="radio"
                     aria-checked={repr === r}
                     onClick={() => setRepr(r)}
-                    className={`min-h-[32px] rounded-full px-3 text-xs font-medium ${
+                    aria-label={t(`stats.repr.${r}`)}
+                    title={t(`stats.repr.${r}`)}
+                    className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full px-3 text-xs font-medium ${
                       repr === r
                         ? "bg-ink text-white dark:bg-white dark:text-ink"
                         : "text-slate-600 dark:text-muted"
                     }`}
                   >
-                    {t(`stats.repr.${r}`)}
+                    <Icon name={REPR_ICON[r]} className="h-4 w-4" />
                   </button>
                 ))}
               </div>
@@ -372,7 +383,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="cumulative"
-                    stroke="#1a1a1b"
+                    stroke={chartInk}
                     strokeWidth={2}
                     dot={false}
                     name={t("stats.cumulative")}
@@ -395,7 +406,7 @@ export function StatsPage() {
                     radius={[6, 6, 0, 0]}
                   >
                     {savingsRows.map((row) => (
-                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : "#1a1a1b"} />
+                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : chartInk} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -411,7 +422,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                   >
                     {categoryData.map((s, i) => (
-                      <Cell key={s.name} fill={PALETTE[i % PALETTE.length]} />
+                      <Cell key={s.name} fill={chartPalette[i % chartPalette.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(v) => fmt(Number(v))} />
@@ -438,7 +449,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     dataKey="value"
                     name={t("home.expense")}
-                    fill="#1a1a1b"
+                    fill={chartInk}
                     radius={[0, 6, 6, 0]}
                   />
                 </BarChart>
@@ -457,7 +468,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="income"
-                    stroke="#1a1a1b"
+                    stroke={chartInk}
                     name={t("home.income")}
                     dot={false}
                   />
@@ -510,7 +521,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="balance"
-                    stroke="#1a1a1b"
+                    stroke={chartInk}
                     dot={false}
                     strokeWidth={2}
                   />
@@ -536,7 +547,7 @@ export function StatsPage() {
                       ? savingsRows.map((d) => ({ label: d.name, value: d.net }))
                       : evolution.map((d) => ({ label: d.name, value: d.balance }))
                 ).map((row) => (
-                  <tr key={row.label} className="border-t border-slate-200 dark:border-slate-700">
+                  <tr key={row.label} className="border-t border-slate-200 dark:border-white/15">
                     <td className="py-1">{row.label}</td>
                     <td className="py-1 text-right tabular-nums" data-amount>
                       {fmt(row.value)}
@@ -569,7 +580,7 @@ export function StatsPage() {
         <h2 className="font-semibold text-ink dark:text-fg">{t("stats.top10")}</h2>
         <ol className="flex flex-col text-sm">
           {top.map((tx) => (
-            <li key={tx.id} className="border-b border-slate-200 dark:border-slate-800">
+            <li key={tx.id} className="border-b border-slate-200 dark:border-white/15">
               <Link to={`/transactions/${tx.id}/edit`} className="flex justify-between py-2">
                 <span className="truncate">
                   {tx.memo || names.get(tx.categoryId ?? "") || t("transactions.types.expense")}
@@ -603,7 +614,7 @@ export function StatsPage() {
                 .filter((tx) => tx.type === "expense")
                 .reduce((a, tx) => a + tx.amount, 0);
               return (
-                <tr key={w.id} className="border-t border-slate-200 dark:border-slate-700">
+                <tr key={w.id} className="border-t border-slate-200 dark:border-white/15">
                   <td className="py-1">{walletName.get(w.id) ?? w.name}</td>
                   <td className="py-1 text-right tabular-nums">
                     {formatMoney(income, w.currency)}
@@ -663,11 +674,24 @@ function delta(current: number, previous: number): string | undefined {
   return `${pct > 0 ? "+" : ""}${pct} %`;
 }
 
-function Card({ label, value, tone = "" }: { label: string; value: string; tone?: string }) {
+function Card({
+  label,
+  value,
+  tone = "",
+  icon,
+}: {
+  label: string;
+  value: string;
+  tone?: string;
+  icon: IconName;
+}) {
   return (
-    <div className="flex flex-col gap-1 rounded-card border border-slate-200 p-3 dark:border-slate-700 dark:bg-card">
-      <p className="text-xs text-slate-500 dark:text-muted">{label}</p>
-      <p className={`text-base font-semibold tabular-nums ${tone}`} data-amount>
+    <div className="flex flex-col gap-1 rounded-card border border-slate-200 p-3 dark:border-white/15 dark:bg-card">
+      <p className="flex min-h-[2rem] items-start gap-1 text-xs leading-4 text-slate-500 dark:text-muted">
+        <Icon name={icon} className="h-3.5 w-3.5" />
+        {label}
+      </p>
+      <p className={`text-[13px] font-semibold tabular-nums ${tone}`} data-amount>
         {value}
       </p>
     </div>

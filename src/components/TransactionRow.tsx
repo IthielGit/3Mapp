@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { Category, Transaction, Wallet } from "../db/entities";
@@ -46,7 +47,7 @@ export function TransactionRow({ transaction: tx, category, walletName }: Transa
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-medium">{title}</span>
-        <span className="truncate text-sm text-slate-500 dark:text-muted">{subtitle}</span>
+        <span className="truncate text-xs text-slate-500 dark:text-muted">{subtitle}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
         <span className={`font-semibold ${amountClass}`} data-amount>
@@ -60,12 +61,25 @@ export function TransactionRow({ transaction: tx, category, walletName }: Transa
 }
 
 /** Carte de portefeuille : couleur du portefeuille, icône et solde. */
+/** Fond léger : teinte du portefeuille, reflet métallique très discret en diagonale et liseré clair. */
+function glassStyle(color: string): CSSProperties {
+  return {
+    background: [
+      "linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.12) 50%, transparent 65%)",
+      "linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0) 60%)",
+      `linear-gradient(${color}, ${color})`,
+    ].join(", "),
+    border: "1px solid rgba(255,255,255,0.2)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -6px rgba(0,0,0,0.25)",
+  };
+}
+
 export function WalletCard({ wallet, balance }: { wallet: Wallet; balance: number }) {
   return (
     <Link
       to={`/plus/wallets/${wallet.id}`}
-      className="flex min-w-0 flex-col gap-2 rounded-card p-3 text-white shadow-sm"
-      style={{ backgroundColor: wallet.color }}
+      className="flex min-w-0 flex-col gap-2 rounded-card p-3 text-white"
+      style={glassStyle(wallet.color)}
     >
       <span aria-hidden="true" className="text-2xl">
         {wallet.icon}

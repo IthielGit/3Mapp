@@ -102,7 +102,7 @@ export function BudgetDetailPage() {
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 p-2 dark:border-slate-700">
+    <div className="rounded-lg border border-slate-200 p-2 dark:border-white/15">
       <p className="text-slate-500">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>

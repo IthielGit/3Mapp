@@ -35,6 +35,9 @@ import { TransactionSheet } from "./TransactionSheet";
 const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustment"];
 type Period = "all" | "month" | "thirty";
 
+/** Période affichée à l'ouverture et après réinitialisation : le mois en cours. */
+const DEFAULT_PERIOD: Period = "month";
+
 interface Undo {
   bundle: RemovedBundle;
 }
@@ -63,10 +66,10 @@ export function TransactionsPage() {
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<TransactionFilters>({});
-  const [period, setPeriod] = useState<Period>("all");
+  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftFilters, setDraftFilters] = useState<TransactionFilters>({});
-  const [draftPeriod, setDraftPeriod] = useState<Period>("all");
+  const [draftPeriod, setDraftPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [oldestFirst, setOldestFirst] = useState(false);
 
   const [selectMode, setSelectMode] = useState(false);
@@ -145,7 +148,7 @@ export function TransactionsPage() {
 
   function resetAll() {
     setFilters({});
-    setPeriod("all");
+    setPeriod(DEFAULT_PERIOD);
   }
 
   const sheetMode = location.pathname.endsWith("/new") ? "new" : id ? "edit" : null;
@@ -206,7 +209,7 @@ export function TransactionsPage() {
 
   function resetFilters() {
     setDraftFilters({});
-    setDraftPeriod("all");
+    setDraftPeriod(DEFAULT_PERIOD);
   }
 
   const activeFilterCount =
@@ -215,7 +218,7 @@ export function TransactionsPage() {
     (filters.categoryId ? 1 : 0) +
     (filters.minAmount !== undefined ? 1 : 0) +
     (filters.maxAmount !== undefined ? 1 : 0) +
-    (period !== "all" ? 1 : 0);
+    (period !== DEFAULT_PERIOD ? 1 : 0);
 
   return (
     <section className="flex flex-col gap-4">
@@ -242,7 +245,7 @@ export function TransactionsPage() {
             onClick={() => setSelectMode((m) => !m)}
             aria-pressed={selectMode}
             className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
-              selectMode ? "bg-[#0F8178] text-white" : "text-[#0F8178] dark:text-teal-300"
+              selectMode ? "bg-accent text-white" : "text-accent"
             }`}
           >
             {selectMode ? t("transactions.selectDone") : t("transactions.select")}
@@ -255,7 +258,7 @@ export function TransactionsPage() {
         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#64748B]" />
         <input
           type="search"
-          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-slate-700 dark:bg-card dark:text-fg"
+          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-white/15 dark:bg-card dark:text-fg"
           placeholder={t("transactions.searchPlaceholder")}
           aria-label={t("transactions.search")}
           value={query}
@@ -269,17 +272,13 @@ export function TransactionsPage() {
         </span>
         <div className="flex items-center gap-3">
           {activeFilterCount > 0 ? (
-            <button
-              type="button"
-              className="font-medium text-[#0F8178] dark:text-teal-300"
-              onClick={resetAll}
-            >
+            <button type="button" className="font-medium text-accent" onClick={resetAll}>
               {t("transactions.resetFilters")}
             </button>
           ) : null}
           <button
             type="button"
-            className="font-medium text-[#0F8178] dark:text-teal-300"
+            className="font-medium text-accent"
             onClick={() => setOldestFirst((o) => !o)}
           >
             {oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
@@ -289,7 +288,7 @@ export function TransactionsPage() {
 
       <section
         aria-label={t("transactions.summary")}
-        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-card"
+        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
       >
         <div className="flex flex-col">
           <p className="text-sm text-[#64748B] dark:text-muted">{t("transactions.net")}</p>
@@ -306,7 +305,7 @@ export function TransactionsPage() {
             {formatMoney(summary.net, baseCurrency)}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-slate-700">
+        <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-white/15">
           <div className="flex flex-col">
             <p className="text-[#64748B] dark:text-muted">{t("transactions.income")}</p>
             <p
@@ -354,17 +353,17 @@ export function TransactionsPage() {
                 }}
               >
                 {row.kind === "header" ? (
-                  <div className="flex items-center justify-between gap-3 pb-1 pt-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-semibold tabular-nums text-[#172033] dark:text-fg">
+                  <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-100 px-3 py-2 dark:bg-raised">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-bold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
-                      <span className="text-sm capitalize text-[#64748B] dark:text-muted">
+                      <span className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-muted">
                         {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
                       </span>
                     </div>
                     <span
-                      className="text-sm tabular-nums text-[#64748B] dark:text-muted"
+                      className="text-sm font-semibold tabular-nums text-ink dark:text-fg"
                       data-amount
                     >
                       {formatMoney(row.net, row.currency)}
@@ -398,7 +397,7 @@ export function TransactionsPage() {
       </div>
 
       {selectMode ? (
-        <div className="fixed inset-x-0 bottom-16 z-30 mx-auto flex max-w-lg flex-col gap-2 border-t border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-card">
+        <div className="fixed inset-x-0 bottom-16 z-30 mx-auto flex max-w-lg flex-col gap-2 border-t border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card">
           <p className="text-sm">{t("transactions.selectedCount", { count: selected.size })}</p>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -658,7 +657,7 @@ function TransactionRow({
     <button
       type="button"
       onClick={selectMode ? onToggle : onOpen}
-      className="flex min-h-[56px] w-full items-center gap-3 border-b border-[#E2E8F0] py-2.5 text-left active:bg-slate-100 dark:border-slate-800 dark:active:bg-slate-800/60"
+      className="flex min-h-[56px] w-full items-center gap-3 border-b border-[#E2E8F0] py-2.5 text-left active:bg-slate-100 dark:border-white/15 dark:active:bg-slate-800/60"
       aria-pressed={selectMode ? selected : undefined}
     >
       {selectMode ? (

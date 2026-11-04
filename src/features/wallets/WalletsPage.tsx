@@ -57,7 +57,7 @@ export function WalletsPage() {
             {archived.map((wallet) => (
               <li
                 key={wallet.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
               >
                 <span className="flex items-center gap-2">
                   <span aria-hidden="true">{wallet.icon}</span>
@@ -100,7 +100,7 @@ function WalletRow({
 }) {
   const { t } = useTranslation();
   return (
-    <li className="flex items-center gap-2 rounded-card border border-slate-200 p-3 shadow-sm dark:border-slate-700">
+    <li className="flex items-center gap-2 rounded-card border border-slate-200 p-3 shadow-sm dark:border-white/15">
       <Link to={`/plus/wallets/${wallet.id}`} className="flex flex-1 items-center gap-3">
         <span
           aria-hidden="true"

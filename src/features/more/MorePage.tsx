@@ -1,3 +1,4 @@
+import { Icon, type IconName } from "../../components/Icon";
 import { PageTitle } from "../../components/PageHeader";
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
@@ -9,14 +10,22 @@ import { InstallCard } from "../../components/PwaComponents";
 import { PreferencesSection } from "../settings/PreferencesSection";
 
 /** Ligne de liste cliquable avec chevron : pour les pages de réglages et de gestion. */
-function NavRow({ to, children }: { to: string; children: ReactNode }) {
+function NavRow({ to, icon, children }: { to: string; icon: IconName; children: ReactNode }) {
   return (
     <li>
       <Link
         to={to}
         className="flex min-h-[52px] items-center justify-between gap-3 px-4 font-medium focus-visible:outline-2 focus-visible:outline-brand-700"
       >
-        <span>{children}</span>
+        <span className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-ink dark:bg-raised dark:text-fg"
+          >
+            <Icon name={icon} className="h-4 w-4" />
+          </span>
+          {children}
+        </span>
         <span aria-hidden="true" className="text-xl text-slate-400">
           ›
         </span>
@@ -31,7 +40,7 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
       <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
         {title}
       </h2>
-      <div className="rounded-card border border-slate-200 dark:border-slate-700">{children}</div>
+      <div className="rounded-card border border-slate-200 dark:border-white/15">{children}</div>
     </section>
   );
 }
@@ -59,23 +68,41 @@ export function MorePage() {
 
       <Group title={t("more.groups.manage")}>
         <nav aria-label={t("more.groups.manage")}>
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-            <NavRow to="/plus/wallets">{t("more.wallets")}</NavRow>
-            <NavRow to="/plus/categories">{t("more.categories")}</NavRow>
-            <NavRow to="/plus/recurring">{t("more.recurring")}</NavRow>
-            <NavRow to="/plus/goals">{t("more.goals")}</NavRow>
-            <NavRow to="/plus/debts">{t("more.debts")}</NavRow>
-            <NavRow to="/plus/rates">{t("more.rates")}</NavRow>
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+            <NavRow to="/plus/wallets" icon="wallet">
+              {t("more.wallets")}
+            </NavRow>
+            <NavRow to="/plus/categories" icon="tag">
+              {t("more.categories")}
+            </NavRow>
+            <NavRow to="/plus/recurring" icon="repeat">
+              {t("more.recurring")}
+            </NavRow>
+            <NavRow to="/plus/goals" icon="target">
+              {t("more.goals")}
+            </NavRow>
+            <NavRow to="/plus/debts" icon="balance">
+              {t("more.debts")}
+            </NavRow>
+            <NavRow to="/plus/rates" icon="exchange">
+              {t("more.rates")}
+            </NavRow>
           </ul>
         </nav>
       </Group>
 
       <Group title={t("more.groups.data")}>
         <nav aria-label={t("more.groups.data")}>
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-            <NavRow to="/plus/security">{t("more.security")}</NavRow>
-            <NavRow to="/plus/backup">{t("more.backup")}</NavRow>
-            <NavRow to="/plus/import">{t("more.import")}</NavRow>
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+            <NavRow to="/plus/security" icon="shield">
+              {t("more.security")}
+            </NavRow>
+            <NavRow to="/plus/backup" icon="download">
+              {t("more.backup")}
+            </NavRow>
+            <NavRow to="/plus/import" icon="upload">
+              {t("more.import")}
+            </NavRow>
           </ul>
         </nav>
       </Group>

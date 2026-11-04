@@ -19,6 +19,22 @@ body {
 /* Montants : chiffres de largeur fixe, pour que les colonnes ne « dansent » pas. */
 [data-amount] {
   font-variant-numeric: tabular-nums;
+  /* Un montant reste sur une ligne : jamais coupé au milieu de « Ar ». */
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Cellules de grille et champs : ils rétrécissent au lieu de déborder. */
+.grid > *,
+input,
+select,
+textarea {
+  min-width: 0;
+}
+
+/* Contrôles natifs (date, case, listes) suivent le thème sombre. */
+:root.dark {
+  color-scheme: dark;
 }
 
 /* Retour au toucher : un bouton répond immédiatement à l'appui (transition ciblée, pas « all »). */

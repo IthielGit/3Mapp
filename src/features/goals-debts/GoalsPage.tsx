@@ -55,7 +55,7 @@ function GoalList() {
               <li key={g.id}>
                 <Link
                   to={`/plus/goals/${g.id}`}
-                  className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+                  className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
                 >
                   <div className="flex justify-between">
                     <span className="font-medium">
@@ -116,7 +116,7 @@ function GoalForm({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
       <Field label={t("common.name")} error={nameError}>
         <input
           className={inputClass}
@@ -216,7 +216,7 @@ function GoalDetail({ id }: { id: string }) {
             : t("goals.noEstimate")}
       </p>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"

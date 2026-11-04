@@ -20,6 +20,7 @@ export interface TransactionDraft {
   categoryId?: string | undefined;
   subcategoryId?: string | undefined;
   memo: string;
+  note?: string | undefined;
   attachmentIds: string[];
   date: string;
   status: Transaction["status"];
@@ -38,6 +39,7 @@ export function draftFromTransaction(t: Transaction): TransactionDraft {
     categoryId: t.categoryId,
     subcategoryId: t.subcategoryId,
     memo: t.memo,
+    note: t.note,
     attachmentIds: t.attachmentIds,
     date: t.date,
     status: t.status,
@@ -107,6 +109,7 @@ export async function validateDraft(
     categoryId,
     subcategoryId,
     memo: draft.memo.trim(),
+    note: draft.note?.trim() || undefined,
     attachmentIds: draft.attachmentIds,
     date: draft.date,
     status: draft.status,

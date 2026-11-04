@@ -244,7 +244,9 @@
     "deleted": "{{count}} transaction(s) deleted.",
     "add": "Add transaction",
     "resetFilters": "Reset",
-    "summary": "Summary"
+    "summary": "Summary",
+    "description": "Description",
+    "note": "Note"
   },
   "errors": {
     "required": "This field is required.",

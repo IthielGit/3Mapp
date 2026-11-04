@@ -1,3 +1,4 @@
+import { Icon } from "../../components/Icon";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -119,7 +120,7 @@ export function HomePage() {
   const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
 
   return (
-    <section className="-mx-4 flex flex-col gap-2 px-4">
+    <section className="-mx-4 flex flex-col gap-5 px-4">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
       {/* En-tête : salutation à gauche, réglages ronds à droite. */}
@@ -148,7 +149,7 @@ export function HomePage() {
       {backupState !== "none" ? (
         <Link
           to="/plus/backup"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg dark:border-l-4 dark:border-accent"
         >
           {t("home.backupReminder")}
         </Link>
@@ -156,14 +157,14 @@ export function HomePage() {
       {pendingCount > 0 ? (
         <Link
           to="/plus/recurring"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg dark:border-l-4 dark:border-accent"
         >
           {t("home.pendingBanner", { count: pendingCount })}
         </Link>
       ) : null}
 
       {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
           <Link
@@ -174,9 +175,10 @@ export function HomePage() {
           </Link>
         </div>
         {upcoming.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-300 p-3 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-muted">
-            {t("home.noUpcoming")}
-          </p>
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
+            <Icon name="clock" className="h-6 w-6" />
+            <span>{t("home.noUpcoming")}</span>
+          </div>
         ) : (
           <ul className="-mr-4 flex snap-x gap-3 overflow-x-auto pb-1 pr-8">
             {upcoming.map((r) => {
@@ -218,10 +220,10 @@ export function HomePage() {
       </section>
 
       {/* Vue d'ensemble : deux cartes, chacune avec un mini-graphique. */}
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
+          <div className="flex flex-col gap-1 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
             <span className="text-sm font-medium text-slate-600 dark:text-muted">
               {t("home.balanceCard")}
             </span>
@@ -252,7 +254,7 @@ export function HomePage() {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="flex flex-col gap-1 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
+          <div className="flex flex-col gap-1 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
             <span className="text-sm font-medium text-slate-600 dark:text-muted">
               {t("home.expenseCard")}
             </span>
@@ -276,7 +278,7 @@ export function HomePage() {
       </section>
 
       {/* Carte d'action : saisie du jour. */}
-      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
+      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
         <div className="flex min-w-0 flex-col">
           <span className="font-semibold text-ink dark:text-fg">{t("home.dailyCheck")}</span>
           <span className="text-sm text-slate-500 dark:text-muted">{t("home.dailyHint")}</span>
@@ -290,7 +292,7 @@ export function HomePage() {
       </div>
 
       {/* Portefeuilles puis transactions récentes. */}
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
           <Link
@@ -309,7 +311,7 @@ export function HomePage() {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-1">
+      <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
           <Link
@@ -320,9 +322,10 @@ export function HomePage() {
           </Link>
         </div>
         {recent.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-300 p-3 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-muted">
-            {t("home.noTransactions")}
-          </p>
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
+            <Icon name="inbox" className="h-6 w-6" />
+            <span>{t("home.noTransactions")}</span>
+          </div>
         ) : (
           <ul className="flex flex-col">
             {recent.map((tx) => (

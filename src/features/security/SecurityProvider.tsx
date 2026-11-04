@@ -130,7 +130,7 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
               disabled={wait > 0}
               onClick={() => press(key)}
               aria-label={key === "⌫" ? t("common.delete") : key}
-              className="min-h-[60px] rounded-xl border border-slate-300 text-2xl font-medium disabled:opacity-50 dark:border-slate-700"
+              className="min-h-[60px] rounded-xl border border-slate-300 text-2xl font-medium disabled:opacity-50 dark:border-white/15"
             >
               {key}
             </button>

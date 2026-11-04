@@ -1,3 +1,4 @@
+import { Icon, type IconName } from "../../components/Icon";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -40,11 +41,18 @@ function typeOptionsFor(editing: TxType | undefined): TxType[] {
   return editing === "adjustment" ? TYPES : TYPES.filter((tp) => tp !== "adjustment");
 }
 
+const TYPE_ICON: Record<TxType, IconName> = {
+  expense: "minus",
+  income: "plus",
+  transfer: "swap",
+  adjustment: "tune",
+};
+
 /** Couleur de l'onglet actif : sémantique (dépense rouge, revenu bleu, virement teal). */
 const TYPE_ACTIVE: Record<TxType, string> = {
   expense: "bg-expense text-white shadow",
   income: "bg-income text-white shadow",
-  transfer: "bg-brand-700 text-white shadow",
+  transfer: "bg-brand-700 text-white shadow dark:bg-white dark:text-ink",
   adjustment: "bg-slate-700 text-white shadow dark:bg-slate-500",
 };
 
@@ -98,6 +106,7 @@ export function TransactionSheet({
     format(initial ? new Date(initial.date) : new Date(), "yyyy-MM-dd'T'HH:mm"),
   );
   const [memo, setMemo] = useState(initial?.memo ?? "");
+  const [note, setNote] = useState(initial?.note ?? "");
   const [attachmentIds, setAttachmentIds] = useState<string[]>(initial?.attachmentIds ?? []);
   const [error, setError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
@@ -180,6 +189,7 @@ export function TransactionSheet({
       categoryId: isCategorised ? categoryId || undefined : undefined,
       subcategoryId: isCategorised ? subcategoryId || undefined : undefined,
       memo,
+      note: note.trim() || undefined,
       attachmentIds,
       date: new Date(dateLocal).toISOString(),
       status: "posted",
@@ -263,10 +273,11 @@ export function TransactionSheet({
               role="radio"
               aria-checked={type === tp}
               onClick={() => setType(tp)}
-              className={`min-h-[44px] rounded-md text-sm font-semibold transition-colors ${
+              className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-md text-sm font-semibold transition-colors ${
                 type === tp ? TYPE_ACTIVE[tp] : "text-slate-600 dark:text-muted"
               }`}
             >
+              <Icon name={TYPE_ICON[tp]} className="h-4 w-4" />
               {t(`transactions.types.${tp}`)}
             </button>
           ))}
@@ -351,7 +362,7 @@ export function TransactionSheet({
                 role="radio"
                 aria-checked={adjustSign === sign}
                 onClick={() => setAdjustSign(sign)}
-                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-700 bg-brand-50 dark:bg-raised" : "border-slate-300 dark:border-slate-700"}`}
+                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-700 bg-brand-50 dark:bg-raised" : "border-slate-300 dark:border-white/15"}`}
               >
                 {sign === "+" ? t("transactions.increase") : t("transactions.decrease")}
               </button>
@@ -463,18 +474,21 @@ export function TransactionSheet({
               onChange={(e) => setDateLocal(e.target.value)}
             />
           </Field>
-          <Field label={t("transactions.memo")}>
+          <Field label={t("transactions.description")}>
             <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
           </Field>
         </div>
 
-        {error ? (
-          <p role="alert" className="text-red-700 dark:text-red-400">
-            {error}
-          </p>
-        ) : null}
+        <Field label={t("transactions.note")}>
+          <textarea
+            rows={3}
+            className={`${inputClass} min-h-[88px] py-2`}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-2">
           <label
             className={buttonSecondary + " inline-flex cursor-pointer items-center justify-center"}
           >
@@ -487,31 +501,37 @@ export function TransactionSheet({
               onChange={(e) => void onFiles(e.target.files)}
             />
           </label>
-          <button
-            type="button"
-            className={buttonPrimary}
-            onClick={() => void save()}
-            disabled={saving}
-          >
-            {t("common.save")}
-          </button>
+          {attachmentIds.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+              <span>{t("transactions.attachmentCount", { count: attachmentIds.length })}</span>
+              {attachmentIds.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="text-red-700 underline"
+                  onClick={() => void detach(id)}
+                >
+                  {t("transactions.removeAttachment")}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
-        {attachmentIds.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
-            <span>{t("transactions.attachmentCount", { count: attachmentIds.length })}</span>
-            {attachmentIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                className="text-red-700 underline"
-                onClick={() => void detach(id)}
-              >
-                {t("transactions.removeAttachment")}
-              </button>
-            ))}
-          </div>
+        {error ? (
+          <p role="alert" className="text-red-700 dark:text-red-400">
+            {error}
+          </p>
         ) : null}
+
+        <button
+          type="button"
+          className={buttonPrimary}
+          onClick={() => void save()}
+          disabled={saving}
+        >
+          {t("common.save")}
+        </button>
 
         {transaction ? (
           <div className="grid grid-cols-2 gap-2">

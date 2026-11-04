@@ -146,7 +146,7 @@ export function ImportExportPage() {
         ) : null}
 
         {plan ? (
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
             <p>
               {t("importExport.summary", {
                 valid: plan.valid.length,
@@ -203,7 +203,7 @@ export function ImportExportPage() {
         ) : null}
       </section>
 
-      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
         <h2 className="font-semibold">{t("importExport.exportTitle")}</h2>
         <div className="grid grid-cols-3 gap-2">
           <button type="button" className={buttonSecondary} onClick={() => void exportAs("csv")}>

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export function IntroScreen({ onStart }: { onStart: () => void }) {
   const { t } = useTranslation();
   return (
-    <section className="flex min-h-dvh flex-col overflow-hidden bg-[#121214] text-white">
+    <section className="flex min-h-dvh flex-col overflow-hidden bg-[#55504b] text-white">
       <div className="flex flex-1 flex-col justify-end px-6 pb-10 pt-[max(2rem,env(safe-area-inset-top))]">
         <div className="flex flex-col gap-6">
           <span className="flex items-center gap-2 text-lg font-semibold">

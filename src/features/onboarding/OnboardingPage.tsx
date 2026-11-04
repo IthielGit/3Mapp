@@ -69,10 +69,7 @@ export function OnboardingPage() {
       />
 
       {step === 0 ? (
-        <Link
-          to="/restore"
-          className="text-sm font-medium text-brand-700 underline dark:text-teal-300"
-        >
+        <Link to="/restore" className="text-sm font-medium text-brand-700 underline dark:text-fg">
           {t("onboarding.restoreLink")}
         </Link>
       ) : null}

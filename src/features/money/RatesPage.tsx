@@ -97,7 +97,7 @@ export function RatesPage() {
         {sorted.map((r) => (
           <li
             key={r.id}
-            className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+            className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
           >
             <span>
               {format(new Date(r.date), "dd/MM/yyyy")} · 1 {r.from} = {r.rate} {r.to}
