@@ -117,6 +117,12 @@ button:not(:disabled):active {
   outline: none;
 }
 
+/* Pas de rebond au bord de la page : sur iPhone/Android, le rebond fait bouger les blocs collants. */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
 /* Entrée de page : un léger glissement et un fondu, sans toucher aux éléments fixes. */
 @keyframes page-in {
   from {
