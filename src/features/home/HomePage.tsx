@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, format } from "date-fns";
-import { Area, AreaChart, Bar, BarChart, ResponsiveContainer } from "recharts";
+import { Area, AreaChart, Bar, BarChart, ReferenceLine, ResponsiveContainer } from "recharts";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
@@ -236,6 +236,7 @@ export function HomePage() {
             <div className="h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={evolution}>
+                  <ReferenceLine y={0} stroke="#b8b8c0" strokeDasharray="3 3" />
                   <Area
                     type="monotone"
                     dataKey="balance"

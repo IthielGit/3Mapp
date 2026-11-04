@@ -397,6 +397,7 @@ export function StatsPage() {
                     innerRadius={62}
                     outerRadius={92}
                     paddingAngle={2}
+                    isAnimationActive={false}
                   >
                     {categoryData.map((s, i) => (
                       <Cell key={s.name} fill={PALETTE[i % PALETTE.length]} />
