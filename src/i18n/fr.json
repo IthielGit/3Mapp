@@ -407,7 +407,10 @@
     "seeAll": "Tout voir",
     "noTransactions": "Aucune transaction pour le moment.",
     "pendingBanner": "{{count}} transaction(s) récurrente(s) en attente de validation",
-    "missingRate": "Taux manquant pour {{currencies}} : ces soldes ne sont pas inclus dans le total."
+    "missingRate": "Taux manquant pour {{currencies}} : ces soldes ne sont pas inclus dans le total.",
+    "overview": "Vue d’ensemble",
+    "wallets": "Portefeuilles",
+    "manage": "Gérer"
   },
   "stats": {
     "title": "Statistiques",

@@ -407,7 +407,10 @@
     "seeAll": "See all",
     "noTransactions": "No transactions yet.",
     "pendingBanner": "{{count}} recurring transaction(s) awaiting confirmation",
-    "missingRate": "Missing rate for {{currencies}}: these balances are not included in the total."
+    "missingRate": "Missing rate for {{currencies}}: these balances are not included in the total.",
+    "overview": "Overview",
+    "wallets": "Wallets",
+    "manage": "Manage"
   },
   "stats": {
     "title": "Statistics",

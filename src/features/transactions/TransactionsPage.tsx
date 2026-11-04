@@ -241,14 +241,16 @@ export function TransactionsPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center text-sm">
+      <div className="grid grid-cols-3 gap-2 rounded-card border border-slate-200 p-3 text-center text-sm dark:border-slate-700">
         <Summary
           label={t("transactions.income")}
           value={formatMoney(summary.income, baseCurrency)}
+          tone="text-income dark:text-income-dark"
         />
         <Summary
           label={t("transactions.expense")}
           value={formatMoney(summary.expense, baseCurrency)}
+          tone="text-expense dark:text-expense-dark"
         />
         <Summary label={t("transactions.net")} value={formatMoney(summary.net, baseCurrency)} />
       </div>
@@ -286,9 +288,16 @@ export function TransactionsPage() {
                 }}
               >
                 {row.kind === "header" ? (
-                  <div className="flex items-center justify-between py-2 text-sm font-semibold text-slate-500">
-                    <span>{format(new Date(row.day), "EEEE d MMMM", { locale: fr })}</span>
-                    <span>{formatMoney(row.net, row.currency)}</span>
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-200 py-2 dark:border-slate-700">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold">{format(new Date(row.day), "dd")}</span>
+                      <span className="text-sm capitalize text-slate-500 dark:text-slate-400">
+                        {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
+                      </span>
+                    </div>
+                    <span className="font-medium" data-amount>
+                      {formatMoney(row.net, row.currency)}
+                    </span>
                   </div>
                 ) : (
                   <TransactionRow
@@ -544,11 +553,13 @@ export function TransactionsPage() {
   );
 }
 
-function Summary({ label, value }: { label: string; value: string }) {
+function Summary({ label, value, tone = "" }: { label: string; value: string; tone?: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 p-2 dark:border-slate-700">
-      <p className="text-slate-500">{label}</p>
-      <p className="font-semibold">{value}</p>
+    <div className="flex flex-col gap-1">
+      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
+      <p className={`font-semibold ${tone}`} data-amount>
+        {value}
+      </p>
     </div>
   );
 }

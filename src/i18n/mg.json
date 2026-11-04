@@ -407,7 +407,10 @@
     "seeAll": "Jereo rehetra",
     "noTransactions": "Tsy misy fifanakalozana amin'izao fotoana izao.",
     "pendingBanner": "Fifanakalozana miverimberina {{count}} miandry fanamarinana",
-    "missingRate": "Tahan-vidiny tsy hita ho an'ny {{currencies}} : tsy ampidirina amin'ny totaly ireo tahiry ireo."
+    "missingRate": "Tahan-vidiny tsy hita ho an'ny {{currencies}} : tsy ampidirina amin'ny totaly ireo tahiry ireo.",
+    "overview": "Fanoharana ankapobeny",
+    "wallets": "Kitapo vola",
+    "manage": "Hanitsy"
   },
   "stats": {
     "title": "Statistika",
