@@ -23,7 +23,7 @@
   "nav": {
     "home": "Home",
     "transactions": "Transactions",
-    "stats": "Stats",
+    "stats": "Analytics",
     "budgets": "Budgets",
     "more": "Settings",
     "quickAdd": "New transaction"
@@ -45,7 +45,8 @@
       "title": "Settings",
       "theme": "Theme",
       "themeLight": "Light",
-      "themeDark": "Dark"
+      "themeDark": "Dark",
+      "themeSystem": "System"
     }
   },
   "more": {
@@ -131,7 +132,11 @@
     "walletHint": "For example your bank account or your cash.",
     "walletPlaceholder": "E.g. BNI account",
     "balanceTitle": "Opening balance",
-    "finish": "Finish"
+    "finish": "Finish",
+    "introLead": "Finances become",
+    "introAccent": "simple",
+    "introEnd": "!",
+    "introStart": "Get started"
   },
   "groups": {
     "bank": "Bank",
@@ -458,7 +463,8 @@
   },
   "app": {
     "updateAvailable": "New version available",
-    "reload": "Update"
+    "reload": "Update",
+    "title": "Budget"
   },
   "security": {
     "title": "Security",

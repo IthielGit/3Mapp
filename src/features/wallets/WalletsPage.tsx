@@ -110,7 +110,7 @@ function WalletRow({
         </span>
         <span className="flex min-w-0 flex-col">
           <span className="truncate font-semibold">{wallet.name}</span>
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-slate-500 dark:text-muted">
             {t("wallets.balance")} :{" "}
             <span data-amount>{formatMoney(balance, wallet.currency)}</span>
           </span>

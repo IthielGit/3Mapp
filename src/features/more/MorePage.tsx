@@ -27,7 +27,7 @@ function NavRow({ to, children }: { to: string; children: ReactNode }) {
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
         {title}
       </h2>
       <div className="rounded-card border border-slate-200 dark:border-slate-700">{children}</div>
@@ -84,7 +84,7 @@ export function MorePage() {
       <Group title={t("more.groups.appearance")}>
         <fieldset className="flex flex-col">
           <legend className="sr-only">{t("pages.more.theme")}</legend>
-          {(["light", "dark"] as const).map((mode) => (
+          {(["system", "light", "dark"] as const).map((mode) => (
             <label
               key={mode}
               className="flex min-h-[52px] cursor-pointer items-center gap-3 px-4 font-medium"
@@ -97,7 +97,13 @@ export function MorePage() {
                 onChange={() => setTheme(mode)}
                 className="h-5 w-5 accent-brand-700"
               />
-              {t(mode === "light" ? "pages.more.themeLight" : "pages.more.themeDark")}
+              {t(
+                mode === "system"
+                  ? "pages.more.themeSystem"
+                  : mode === "light"
+                    ? "pages.more.themeLight"
+                    : "pages.more.themeDark",
+              )}
             </label>
           ))}
         </fieldset>
@@ -105,7 +111,7 @@ export function MorePage() {
 
       <Group title={t("more.demo")}>
         <div className="flex flex-col gap-2 p-4">
-          <p className="text-sm text-slate-500 dark:text-slate-400">{t("more.demoHint")}</p>
+          <p className="text-sm text-slate-500 dark:text-muted">{t("more.demoHint")}</p>
           <button type="button" className={buttonSecondary} onClick={() => void addDemo()}>
             {t("more.demoButton")}
           </button>

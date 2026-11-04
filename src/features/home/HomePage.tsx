@@ -1,35 +1,44 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
 import { convertedSum } from "../../domain/fx";
-import { groupByDay } from "../../domain/grouping";
-import { periodSummary, transactionsIn } from "../../domain/stats";
 import { EmptyState, Skeleton } from "../../components/PwaComponents";
-import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
-import { PeriodPicker, periodLabel } from "../stats/PeriodPicker";
-import {
-  currentPeriod,
-  shiftPeriod,
-  usePeriodSettings,
-  type PeriodState,
-} from "../stats/period-state";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
-const ROW_LIMIT = 40;
+const PREVIEW = 5;
 
+/** Icône ronde du bouton secondaire (récurrences : échéances en attente). */
+function RoundIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.9}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3" />
+      <path d="M18 3v4h-4M6 21v-4h4" />
+    </svg>
+  );
+}
+
+/**
+ * Tableau de bord : marque et action secondaire en haut, solde total centré, cartes de
+ * portefeuilles en défilement horizontal, et un panneau d'aperçu des transactions récentes.
+ */
 export function HomePage() {
   const { t } = useTranslation();
-  const settings = usePeriodSettings();
-  const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
-  const period = currentPeriod(state, settings);
-
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const walletsLoaded = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
   const loading = walletsLoaded === undefined;
@@ -53,97 +62,96 @@ export function HomePage() {
     () => computeBalances(active, transactions, cutoff),
     [active, transactions, cutoff],
   );
-  const inBase = active.filter((w) => w.includeInTotal);
   const converted = convertedSum(
-    inBase.map((w) => ({
-      amount: balances[w.id] ?? w.initialBalance,
-      currency: w.currency,
-      date: new Date().toISOString(),
-    })),
+    active
+      .filter((w) => w.includeInTotal)
+      .map((w) => ({
+        amount: balances[w.id] ?? w.initialBalance,
+        currency: w.currency,
+        date: new Date().toISOString(),
+      })),
     baseCurrency,
     rates,
   );
-  const summary = periodSummary(transactionsIn(transactions, period, baseCurrency), period);
-  const periodTransactions = transactionsIn(transactions, period, baseCurrency).slice(0, ROW_LIMIT);
-  const days = groupByDay(periodTransactions);
+  const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const walletName = (id: string | undefined) => active.find((w) => w.id === id)?.name ?? "";
 
   return (
-    <section className="flex flex-col gap-5">
+    <section className="-mx-4 flex flex-col">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
-      {backupState !== "none" ? (
-        <Link
-          to="/plus/backup"
-          className="rounded-card bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
-        >
-          {t("home.backupReminder")}
-        </Link>
-      ) : null}
-      {pendingCount > 0 ? (
+      {/* En-tête : marque à gauche, action secondaire ronde à droite. */}
+      <header className="flex items-center justify-between px-4 pb-2 pt-1">
+        <span className="flex items-center gap-2 text-lg font-semibold text-ink dark:text-fg">
+          <span aria-hidden="true" className="inline-block h-6 w-6 rounded-md bg-accent" />
+          {t("app.title")}
+        </span>
         <Link
           to="/plus/recurring"
-          className="rounded-card bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+          aria-label={t("more.recurring")}
+          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
         >
-          {t("home.pendingBanner", { count: pendingCount })}
+          <RoundIcon />
+          {pendingCount > 0 ? (
+            <span
+              aria-hidden="true"
+              className="absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full bg-accent"
+            />
+          ) : null}
         </Link>
+      </header>
+
+      {backupState !== "none" || pendingCount > 0 ? (
+        <div className="flex flex-col gap-2 px-4">
+          {backupState !== "none" ? (
+            <Link
+              to="/plus/backup"
+              className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+            >
+              {t("home.backupReminder")}
+            </Link>
+          ) : null}
+          {pendingCount > 0 ? (
+            <Link
+              to="/plus/recurring"
+              className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+            >
+              {t("home.pendingBanner", { count: pendingCount })}
+            </Link>
+          ) : null}
+        </div>
       ) : null}
 
-      {/* Carte principale : solde total, converti dans la devise de référence. */}
-      <header className="flex flex-col gap-1 rounded-card bg-brand-700 p-5 text-white shadow-sm">
-        <p className="text-sm opacity-90">{t("home.totalBalance")}</p>
+      {/* Indicateur principal, centré sous l'en-tête. */}
+      <div className="flex flex-col items-center gap-1 px-4 pb-6 pt-4 text-center">
+        <p className="text-sm text-slate-500 dark:text-muted">{t("home.totalBalance")}</p>
         {loading ? (
-          <Skeleton className="h-9 w-40 bg-white/30" />
+          <Skeleton className="h-11 w-48" />
         ) : (
-          <p className="text-3xl font-bold" data-amount>
+          <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
             {formatMoney(converted.total, baseCurrency)}
           </p>
         )}
         {converted.missing.length > 0 ? (
-          <p className="text-xs opacity-90">
+          <p className="text-xs text-amber-700 dark:text-amber-400">
             {t("home.missingRate", { currencies: converted.missing.join(", ") })}
           </p>
         ) : null}
-      </header>
+      </div>
 
-      <PeriodPicker
-        state={state}
-        period={period}
-        onChange={setState}
-        onShift={(direction) => setState(shiftPeriod(state, settings, direction))}
-      />
-      <p className="text-center text-sm font-medium text-slate-600 dark:text-slate-300">
-        {periodLabel(period)}
-      </p>
-
-      {/* Vue d'ensemble de la période. */}
-      <section
-        aria-label={t("home.overview")}
-        className="grid grid-cols-3 gap-2 rounded-card border border-slate-200 p-3 text-center dark:border-slate-700"
-      >
-        <Figure
-          label={t("home.income")}
-          value={formatMoney(summary.income, baseCurrency)}
-          tone="text-income dark:text-income-dark"
-        />
-        <Figure
-          label={t("home.expense")}
-          value={formatMoney(summary.expense, baseCurrency)}
-          tone="text-expense dark:text-expense-dark"
-        />
-        <Figure label={t("home.net")} value={formatMoney(summary.net, baseCurrency)} />
-      </section>
-
-      {/* Portefeuilles : défilement horizontal. */}
+      {/* Cartes de portefeuilles : la suivante reste entrevue au bord. */}
       <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">{t("home.wallets")}</h2>
-          <Link to="/plus/wallets" className="text-sm text-brand-700 underline dark:text-brand-300">
+        <div className="flex items-center justify-between px-4">
+          <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
+          <Link
+            to="/plus/wallets"
+            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+          >
             {t("home.manage")}
           </Link>
         </div>
-        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+        <ul className="flex snap-x gap-3 overflow-x-auto pl-4 pr-10 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {active.map((w) => (
             <li key={w.id} className="snap-start">
               <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
@@ -152,60 +160,37 @@ export function HomePage() {
         </ul>
       </section>
 
-      {/* Transactions de la période, groupées par jour. */}
-      <section className="flex flex-col gap-2">
+      {/* Panneau : coins supérieurs arrondis, recouvre légèrement le bas des cartes. */}
+      <section className="relative z-10 -mt-5 flex flex-col gap-1 rounded-t-3xl bg-white px-4 pb-4 pt-3 shadow-[0_-8px_24px_rgba(26,26,27,0.06)] dark:bg-card">
+        <span
+          aria-hidden="true"
+          className="mx-auto mb-2 h-1 w-12 rounded-full bg-slate-300 dark:bg-raised"
+        />
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">{t("home.recent")}</h2>
-          <Link to="/transactions" className="text-sm text-brand-700 underline dark:text-brand-300">
+          <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
+          <Link
+            to="/transactions"
+            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+          >
             {t("home.seeAll")}
           </Link>
         </div>
-
-        {days.length === 0 ? (
+        {recent.length === 0 ? (
           <EmptyState icon="🧾" title={t("home.noTransactions")} />
         ) : (
-          days.map((group) => {
-            const date = new Date(`${group.day}T12:00:00`);
-            return (
-              <section key={group.day} className="flex flex-col">
-                <header className="flex items-center justify-between gap-3 border-b border-slate-200 py-2 dark:border-slate-700">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{format(date, "dd")}</span>
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
-                      {format(date, "EEEE, MMM yyyy")}
-                    </span>
-                  </div>
-                  <span className="font-medium" data-amount>
-                    {formatMoney(group.net, baseCurrency)}
-                  </span>
-                </header>
-                <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {group.items.map((tx) => (
-                    <li key={tx.id}>
-                      <TransactionRow
-                        transaction={tx}
-                        category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
-                        walletName={walletName}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })
+          <ul className="flex flex-col">
+            {recent.map((tx) => (
+              <li key={tx.id}>
+                <TransactionRow
+                  transaction={tx}
+                  category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
+                  walletName={walletName}
+                />
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </section>
-  );
-}
-
-function Figure({ label, value, tone = "" }: { label: string; value: string; tone?: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
-      <p className={`text-sm font-semibold ${tone}`} data-amount>
-        {value}
-      </p>
-    </div>
   );
 }

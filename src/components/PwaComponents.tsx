@@ -23,7 +23,7 @@ export function UpdateBanner() {
           setBusy(true);
           void installUpdate();
         }}
-        className="min-h-[44px] rounded-lg bg-white px-3 font-semibold text-slate-900"
+        className="min-h-[44px] rounded-lg bg-white px-3 font-semibold text-ink"
       >
         {t("pwa.update")}
       </button>
@@ -74,7 +74,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800 ${className}`}
+      className={`animate-pulse rounded-lg bg-slate-200 dark:bg-raised ${className}`}
     />
   );
 }
@@ -94,7 +94,7 @@ export function EmptyState({
       <span aria-hidden="true" className="text-4xl">
         {icon}
       </span>
-      <p className="text-slate-600 dark:text-slate-300">{title}</p>
+      <p className="text-slate-600 dark:text-muted">{title}</p>
       {action}
     </div>
   );

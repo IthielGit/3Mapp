@@ -254,7 +254,7 @@ export function TransactionSheet({
         <div
           role="radiogroup"
           aria-label={t("transactions.type")}
-          className={`grid ${typeOptions.length === 4 ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800`}
+          className={`grid ${typeOptions.length === 4 ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-lg bg-slate-100 p-1 dark:bg-raised`}
         >
           {typeOptions.map((tp) => (
             <button
@@ -264,7 +264,7 @@ export function TransactionSheet({
               aria-checked={type === tp}
               onClick={() => setType(tp)}
               className={`min-h-[44px] rounded-md text-sm font-semibold transition-colors ${
-                type === tp ? TYPE_ACTIVE[tp] : "text-slate-600 dark:text-slate-300"
+                type === tp ? TYPE_ACTIVE[tp] : "text-slate-600 dark:text-muted"
               }`}
             >
               {t(`transactions.types.${tp}`)}
@@ -332,7 +332,7 @@ export function TransactionSheet({
                     </select>
                   </Field>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{t("repeat.hint")}</p>
+                <p className="text-sm text-slate-500 dark:text-muted">{t("repeat.hint")}</p>
               </>
             ) : null}
           </div>
@@ -351,7 +351,7 @@ export function TransactionSheet({
                 role="radio"
                 aria-checked={adjustSign === sign}
                 onClick={() => setAdjustSign(sign)}
-                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-700 bg-brand-50 dark:bg-slate-800" : "border-slate-300 dark:border-slate-700"}`}
+                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-700 bg-brand-50 dark:bg-raised" : "border-slate-300 dark:border-slate-700"}`}
               >
                 {sign === "+" ? t("transactions.increase") : t("transactions.decrease")}
               </button>

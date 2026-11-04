@@ -23,7 +23,7 @@
   "nav": {
     "home": "Fandraisana",
     "transactions": "Fifanakalozan-vola",
-    "stats": "Statistika",
+    "stats": "Fandinihana",
     "budgets": "Tetibola",
     "more": "Fikirana",
     "quickAdd": "Fampidirana vaovao"
@@ -45,7 +45,8 @@
       "title": "Fikirana",
       "theme": "Lohahevitra",
       "themeLight": "Mazava",
-      "themeDark": "Maizina"
+      "themeDark": "Maizina",
+      "themeSystem": "Amin'ny telefaona"
     }
   },
   "more": {
@@ -131,7 +132,11 @@
     "walletHint": "Ohatra : ny kaontinao ao amin'ny banky na ny vola madiozanao.",
     "walletPlaceholder": "Ohatra. Kaonty BNI",
     "balanceTitle": "Tahiry fanombohana",
-    "finish": "Vita"
+    "finish": "Vita",
+    "introLead": "Ny vola dia",
+    "introAccent": "tsotra",
+    "introEnd": "!",
+    "introStart": "Hanomboka"
   },
   "groups": {
     "bank": "Banky",
@@ -458,7 +463,8 @@
   },
   "app": {
     "updateAvailable": "Misy version vaovao",
-    "reload": "Ahavaozina"
+    "reload": "Ahavaozina",
+    "title": "Budget"
   },
   "security": {
     "title": "Fiarovana",

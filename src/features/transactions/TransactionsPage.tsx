@@ -220,7 +220,7 @@ export function TransactionsPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-semibold text-[#172033] dark:text-slate-100">
+        <h1 className="text-xl font-semibold text-[#172033] dark:text-fg">
           {t("transactions.title")}
         </h1>
         <div className="flex items-center gap-1">
@@ -228,7 +228,7 @@ export function TransactionsPage() {
             type="button"
             onClick={openFilters}
             aria-label={t("transactions.filters")}
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#64748B] active:bg-slate-100 dark:text-slate-400"
+            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[#64748B] active:bg-slate-100 dark:text-muted"
           >
             <FilterIcon />
             {activeFilterCount > 0 ? (
@@ -255,7 +255,7 @@ export function TransactionsPage() {
         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#64748B]" />
         <input
           type="search"
-          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          className="h-[46px] w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-base text-[#172033] placeholder:text-[#64748B] focus:border-[#0F8178] focus:outline-none focus:ring-2 focus:ring-[#0F8178]/30 dark:border-slate-700 dark:bg-card dark:text-fg"
           placeholder={t("transactions.searchPlaceholder")}
           aria-label={t("transactions.search")}
           value={query}
@@ -264,7 +264,7 @@ export function TransactionsPage() {
       </label>
 
       <div className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-[#64748B] dark:text-slate-400">
+        <span className="text-[#64748B] dark:text-muted">
           {t("transactions.count", { count: visible.length })}
         </span>
         <div className="flex items-center gap-3">
@@ -289,17 +289,17 @@ export function TransactionsPage() {
 
       <section
         aria-label={t("transactions.summary")}
-        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+        className="flex flex-col gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-card"
       >
         <div className="flex flex-col">
-          <p className="text-sm text-[#64748B] dark:text-slate-400">{t("transactions.net")}</p>
+          <p className="text-sm text-[#64748B] dark:text-muted">{t("transactions.net")}</p>
           <p
             className={`text-3xl font-bold tabular-nums ${
               summary.net < 0
                 ? "text-[#DC2626] dark:text-red-400"
                 : summary.net > 0
                   ? "text-[#15803D] dark:text-emerald-400"
-                  : "text-[#172033] dark:text-slate-100"
+                  : "text-[#172033] dark:text-fg"
             }`}
             data-amount
           >
@@ -308,7 +308,7 @@ export function TransactionsPage() {
         </div>
         <div className="grid grid-cols-2 gap-3 border-t border-[#E2E8F0] pt-3 text-sm dark:border-slate-700">
           <div className="flex flex-col">
-            <p className="text-[#64748B] dark:text-slate-400">{t("transactions.income")}</p>
+            <p className="text-[#64748B] dark:text-muted">{t("transactions.income")}</p>
             <p
               className="font-semibold tabular-nums text-[#15803D] dark:text-emerald-400"
               data-amount
@@ -317,7 +317,7 @@ export function TransactionsPage() {
             </p>
           </div>
           <div className="flex flex-col">
-            <p className="text-[#64748B] dark:text-slate-400">{t("transactions.expense")}</p>
+            <p className="text-[#64748B] dark:text-muted">{t("transactions.expense")}</p>
             <p className="font-semibold tabular-nums text-[#DC2626] dark:text-red-400" data-amount>
               {formatMoney(summary.expense, baseCurrency)}
             </p>
@@ -326,7 +326,7 @@ export function TransactionsPage() {
       </section>
 
       {message ? (
-        <p role="status" className="text-sm text-slate-600 dark:text-slate-300">
+        <p role="status" className="text-sm text-slate-600 dark:text-muted">
           {message}
         </p>
       ) : null}
@@ -356,15 +356,15 @@ export function TransactionsPage() {
                 {row.kind === "header" ? (
                   <div className="flex items-center justify-between gap-3 pb-1 pt-3">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-semibold tabular-nums text-[#172033] dark:text-slate-100">
+                      <span className="text-xl font-semibold tabular-nums text-[#172033] dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
-                      <span className="text-sm capitalize text-[#64748B] dark:text-slate-400">
+                      <span className="text-sm capitalize text-[#64748B] dark:text-muted">
                         {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
                       </span>
                     </div>
                     <span
-                      className="text-sm tabular-nums text-[#64748B] dark:text-slate-400"
+                      className="text-sm tabular-nums text-[#64748B] dark:text-muted"
                       data-amount
                     >
                       {formatMoney(row.net, row.currency)}
@@ -398,7 +398,7 @@ export function TransactionsPage() {
       </div>
 
       {selectMode ? (
-        <div className="fixed inset-x-0 bottom-16 z-30 mx-auto flex max-w-lg flex-col gap-2 border-t border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
+        <div className="fixed inset-x-0 bottom-16 z-30 mx-auto flex max-w-lg flex-col gap-2 border-t border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-card">
           <p className="text-sm">{t("transactions.selectedCount", { count: selected.size })}</p>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -649,7 +649,7 @@ function TransactionRow({
       ? "text-[#DC2626] dark:text-red-400"
       : t.type === "income"
         ? "text-[#15803D] dark:text-emerald-400"
-        : "text-[#172033] dark:text-slate-100";
+        : "text-[#172033] dark:text-fg";
   const details = [time, t.memo, t.type === "transfer" ? "" : walletName]
     .filter(Boolean)
     .join(" · ");
@@ -672,10 +672,10 @@ function TransactionRow({
         </span>
       ) : null}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[15px] font-medium text-[#172033] dark:text-slate-100">
+        <span className="truncate text-[15px] font-medium text-[#172033] dark:text-fg">
           {label}
         </span>
-        <span className="truncate text-sm text-[#64748B] dark:text-slate-400">{details}</span>
+        <span className="truncate text-sm text-[#64748B] dark:text-muted">{details}</span>
       </span>
       <span
         className={`shrink-0 whitespace-nowrap text-[15px] font-semibold tabular-nums ${amountClass}`}

@@ -56,7 +56,7 @@ export function PreferencesSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
         {t("prefs.title")}
       </h2>
       <div className="flex flex-col gap-4 rounded-card border border-slate-200 p-4 dark:border-slate-700">
@@ -119,7 +119,7 @@ export function PreferencesSection() {
           />
           <span className="flex flex-col">
             <span className="font-medium">{t("prefs.ignoreFuture")}</span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+            <span className="text-sm text-slate-500 dark:text-muted">
               {t("prefs.ignoreFutureHint")}
             </span>
           </span>
@@ -135,7 +135,7 @@ export function PreferencesSection() {
             />
             <span className="flex flex-col">
               <span className="font-medium">{t("prefs.reminder")}</span>
-              <span className="text-sm text-slate-500 dark:text-slate-400">
+              <span className="text-sm text-slate-500 dark:text-muted">
                 {t("prefs.reminderHint")}
               </span>
             </span>

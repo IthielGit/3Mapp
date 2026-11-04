@@ -1,9 +1,12 @@
 import { createContext, useContext } from "react";
 
-export type ThemeMode = "light" | "dark";
+/** Choix de l'utilisateur ; « system » suit le réglage du téléphone. */
+export type ThemeMode = "system" | "light" | "dark";
 
 export interface ThemeContextValue {
   theme: ThemeMode;
+  /** Thème réellement affiché après résolution de « system ». */
+  resolved: "light" | "dark";
   setTheme: (theme: ThemeMode) => void;
 }
 

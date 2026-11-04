@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
 export const inputClass =
-  "min-h-[44px] w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-900";
+  "min-h-[44px] w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-card";
 
 export const buttonPrimary =
-  "min-h-[44px] rounded-lg bg-brand-700 px-4 font-semibold text-white disabled:opacity-50";
+  "min-h-[44px] rounded-lg bg-brand-700 px-4 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink";
 
 export const buttonSecondary =
   "min-h-[44px] rounded-lg border border-slate-300 px-4 font-medium dark:border-slate-700";

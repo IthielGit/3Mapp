@@ -153,7 +153,7 @@ export function BackupPage() {
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">{t("backup.title")}</h1>
-      <p className="text-sm text-slate-600 dark:text-slate-400">{t("backup.intro")}</p>
+      <p className="text-sm text-slate-600 dark:text-muted">{t("backup.intro")}</p>
 
       {reminder !== "none" ? (
         <p

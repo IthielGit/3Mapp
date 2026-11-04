@@ -41,7 +41,7 @@ export function CategoriesPage() {
             onClick={() => setKind(k)}
             className={`min-h-[44px] rounded-lg border font-medium ${
               kind === k
-                ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-slate-800"
+                ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised"
                 : "border-slate-300 dark:border-slate-700"
             }`}
           >

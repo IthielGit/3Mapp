@@ -361,12 +361,12 @@ function Card({
   const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-1 rounded-card border border-slate-200 p-3 shadow-sm dark:border-slate-700">
-      <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="text-sm text-slate-500 dark:text-muted">{label}</p>
       <p className={`text-lg font-semibold ${tone}`} data-amount>
         {value}
       </p>
       {change ? (
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-muted">
           {t("stats.vsPrevious", { change })}
         </p>
       ) : null}

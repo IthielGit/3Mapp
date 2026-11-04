@@ -23,7 +23,7 @@
   "nav": {
     "home": "Accueil",
     "transactions": "Transactions",
-    "stats": "Stats",
+    "stats": "Analyses",
     "budgets": "Budgets",
     "more": "Paramètres",
     "quickAdd": "Nouvelle transaction"
@@ -45,7 +45,8 @@
       "title": "Paramètres",
       "theme": "Thème",
       "themeLight": "Clair",
-      "themeDark": "Sombre"
+      "themeDark": "Sombre",
+      "themeSystem": "Système"
     }
   },
   "more": {
@@ -131,7 +132,11 @@
     "walletHint": "Par exemple votre compte bancaire ou votre argent en espèces.",
     "walletPlaceholder": "Ex. Compte BNI",
     "balanceTitle": "Solde de départ",
-    "finish": "Terminer"
+    "finish": "Terminer",
+    "introLead": "Vos finances deviennent",
+    "introAccent": "simples",
+    "introEnd": " !",
+    "introStart": "Commencer"
   },
   "groups": {
     "bank": "Banque",
@@ -458,7 +463,8 @@
   },
   "app": {
     "updateAvailable": "Nouvelle version disponible",
-    "reload": "Mettre à jour"
+    "reload": "Mettre à jour",
+    "title": "Budget"
   },
   "security": {
     "title": "Sécurité",

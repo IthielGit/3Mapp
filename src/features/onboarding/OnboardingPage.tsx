@@ -6,6 +6,7 @@ import { ColorPicker, IconPicker } from "../../components/Pickers";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import { completeOnboarding } from "./onboarding-service";
+import { IntroScreen } from "./IntroScreen";
 import type { Wallet } from "../../db/entities";
 import type { AppLanguage } from "../../i18n";
 
@@ -54,6 +55,9 @@ export function OnboardingPage() {
   const isSlide = step < SLIDES.length;
   const slideKey = SLIDES[step];
 
+  // Première étape : écran d'introduction sombre, puis le parcours de configuration.
+  if (step === 0) return <IntroScreen onStart={() => setStep(1)} />;
+
   return (
     <section className="flex min-h-dvh flex-col gap-6 py-6">
       <progress
@@ -75,7 +79,7 @@ export function OnboardingPage() {
       {isSlide && slideKey ? (
         <div className="flex flex-1 flex-col gap-3">
           <h1 className="text-2xl font-bold">{t(`${slideKey}.title`)}</h1>
-          <p className="text-slate-600 dark:text-slate-300">{t(`${slideKey}.text`)}</p>
+          <p className="text-slate-600 dark:text-muted">{t(`${slideKey}.text`)}</p>
         </div>
       ) : null}
 
@@ -112,7 +116,7 @@ export function OnboardingPage() {
       {step === SLIDES.length + 1 ? (
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{t("onboarding.walletTitle")}</h1>
-          <p className="text-slate-600 dark:text-slate-300">{t("onboarding.walletHint")}</p>
+          <p className="text-slate-600 dark:text-muted">{t("onboarding.walletHint")}</p>
           <Field label={t("common.name")}>
             <input
               className={inputClass}

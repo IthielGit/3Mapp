@@ -52,7 +52,7 @@ export function IconPicker({ value, onChange, label }: IconPickerProps) {
           onClick={() => onChange(icon)}
           className={`flex min-h-[44px] items-center justify-center rounded-lg border text-xl ${
             value === icon
-              ? "border-brand-700 bg-brand-50 dark:bg-slate-800"
+              ? "border-brand-700 bg-brand-50 dark:bg-raised"
               : "border-slate-200 dark:border-slate-700"
           }`}
         >

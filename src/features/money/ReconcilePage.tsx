@@ -68,7 +68,7 @@ export function ReconcilePage() {
         />
       </Field>
       {gap !== null ? (
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+        <p className="text-sm text-slate-600 dark:text-muted">
           {gap === 0
             ? t("reconcile.noGap")
             : t("reconcile.gap", { amount: formatMoney(gap, currency) })}

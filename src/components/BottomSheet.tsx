@@ -69,7 +69,7 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl transition-transform duration-[320ms] ease-drawer motion-reduce:transform-none dark:bg-slate-900 ${
+        className={`relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl transition-transform duration-[320ms] ease-drawer motion-reduce:transform-none dark:bg-card ${
           shown ? "translate-y-0" : "translate-y-full"
         }`}
       >
