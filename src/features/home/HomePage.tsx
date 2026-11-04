@@ -199,37 +199,39 @@ export function HomePage() {
             <span>{t("home.noUpcoming")}</span>
           </div>
         ) : (
-          <ul className="-mr-4 flex snap-x gap-3 overflow-x-auto pb-1 pr-8">
+          <ul className="flex flex-col divide-y divide-slate-200 rounded-card border border-slate-200 bg-white px-4 dark:divide-white/10 dark:border-white/15 dark:bg-card">
             {upcoming.map((r) => {
               const due = new Date(r.nextDate);
+              const income = r.type === "income";
               return (
-                <li key={r.id} className="snap-start">
+                <li key={r.id}>
                   <Link
                     to={`/plus/recurring/${r.id}`}
-                    className="flex w-[14rem] flex-col justify-between gap-3 rounded-3xl bg-ink p-4 text-white shadow-md"
+                    className="pressable flex min-h-[64px] items-center gap-3 py-3"
                   >
-                    <div className="flex flex-col">
-                      <span className="text-2xl font-semibold">{format(due, "d MMM")}</span>
-                      <span className="text-sm opacity-80">
-                        {format(due, "EEEE")} · {format(due, "HH:mm")}
+                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-center leading-none dark:bg-raised">
+                      <span className="text-base font-semibold tabular-nums text-ink dark:text-fg">
+                        {format(due, "d")}
+                      </span>
+                      <span className="mt-0.5 text-[10px] uppercase text-slate-500 dark:text-muted">
+                        {format(due, "MMM")}
+                      </span>
+                    </span>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-sm font-medium text-ink dark:text-fg">
+                        {r.memo || t(`transactions.types.${r.type}`)}
+                      </span>
+                      <span className="truncate text-xs text-slate-500 dark:text-muted">
+                        {walletName(r.walletId)} · {format(due, "HH:mm")}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-lg"
-                      >
-                        {categoryById.get(r.categoryId ?? "")?.icon ?? "↻"}
-                      </span>
-                      <div className="flex min-w-0 flex-col">
-                        <span className="truncate font-medium">
-                          {r.memo || t(`transactions.types.${r.type}`)}
-                        </span>
-                        <span className="truncate text-sm opacity-80">
-                          {walletName(r.walletId)}
-                        </span>
-                      </div>
-                    </div>
+                    <span
+                      className={`shrink-0 text-sm font-semibold tabular-nums ${income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
+                      data-amount
+                    >
+                      {income ? "+" : "−"}
+                      {formatMoney(r.amount, r.currency)}
+                    </span>
                   </Link>
                 </li>
               );
@@ -238,6 +240,7 @@ export function HomePage() {
         )}
       </section>
 
+      {/* Vue d'ensemble
       {/* Vue d'ensemble : deux cartes, chacune avec un mini-graphique. */}
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
