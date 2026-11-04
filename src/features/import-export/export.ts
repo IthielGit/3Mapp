@@ -1,5 +1,4 @@
 import Papa from "papaparse";
-import ExcelJS from "exceljs";
 import { db as defaultDb, type AppDatabase } from "../../db/database";
 import type { Transaction, Wallet } from "../../db/entities";
 import { computeBalances } from "../../domain/balance";
@@ -79,6 +78,8 @@ export async function transactionsToXlsx(
   names: ExportNames,
   wallets: readonly Wallet[],
 ): Promise<Uint8Array> {
+  // Chargé à la demande : ExcelJS est lourd et inutile sans export XLSX.
+  const { default: ExcelJS } = await import("exceljs");
   const workbook = new ExcelJS.Workbook();
   workbook.created = new Date();
 

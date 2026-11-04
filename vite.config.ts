@@ -3,6 +3,11 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  build: {
+    // ExcelJS (≈930 Ko) n'est chargé qu'à l'export XLSX, jamais au démarrage : il est isolé dans
+    // son propre chunk. Le seuil est relevé en conséquence ; le reste du code reste sous 500 Ko.
+    chunkSizeWarningLimit: 1000,
+  },
   plugins: [
     react(),
     VitePWA({

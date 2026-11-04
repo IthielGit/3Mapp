@@ -1,7 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import App from "../../src/App";
+
+// Les pages sont chargées à la demande : on les compile une fois avant les tests, pour que la
+// mesure ne porte que sur la navigation (et non sur la transformation du code sous charge).
+beforeAll(async () => {
+  await Promise.all([
+    import("../../src/features/home/HomePage"),
+    import("../../src/features/budgets/BudgetsPage"),
+    import("../../src/features/more/MorePage"),
+  ]);
+}, 60_000);
 import { db } from "../../src/db/database";
 import { completeOnboarding } from "../../src/features/onboarding/onboarding-service";
 import { ThemeProvider } from "../../src/lib/theme";
@@ -40,20 +50,25 @@ afterEach(async () => {
 describe("navigation mobile", () => {
   it("affiche les 5 onglets de la barre basse", async () => {
     renderAt("/");
-    const nav = await screen.findByRole("navigation", { name: "Accueil" });
+    const nav = await screen.findByRole("navigation", { name: "Accueil" }, { timeout: 8000 });
     for (const label of ["Accueil", "Transactions", "Stats", "Budgets", "Plus"]) {
       expect(nav).toHaveTextContent(label);
     }
-  });
+    // Premier chargement à froid d'une page à la demande (lazy) : plus long que le délai par défaut.
+  }, 20_000);
 
   it("affiche la page Budgets sur /budgets", async () => {
     renderAt("/budgets");
-    expect(await screen.findByRole("heading", { level: 1, name: "Budgets" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Budgets" }, { timeout: 8000 }),
+    ).toBeInTheDocument();
   });
 
   it("redirige une URL inconnue vers l’accueil", async () => {
     renderAt("/inconnue");
-    expect(await screen.findByRole("heading", { level: 1, name: "Accueil" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Accueil" }, { timeout: 8000 }),
+    ).toBeInTheDocument();
   });
 });
 
