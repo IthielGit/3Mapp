@@ -62,7 +62,7 @@ export function BudgetsPage() {
           return (
             <li
               key={b.id}
-              className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+              className="flex flex-col gap-2 rounded-card border border-slate-200 p-4 shadow-sm dark:border-slate-700"
             >
               <Link to={`/budgets/${b.id}`} className="flex flex-col gap-2">
                 <div className="flex justify-between gap-2">
