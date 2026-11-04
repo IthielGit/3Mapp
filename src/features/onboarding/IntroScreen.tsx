@@ -9,7 +9,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
   const { t } = useTranslation();
   return (
     <section className="flex h-dvh flex-col overflow-hidden bg-[#1c1c22] text-white">
-      <div className="flex flex-1 flex-col justify-end px-6 pb-10 pt-[max(2rem,env(safe-area-inset-top))]">
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-end px-6 pb-10 pt-[max(2rem,env(safe-area-inset-top))]">
         <div className="flex flex-col gap-6">
           <span className="flex items-center gap-2 text-lg font-semibold">
             <span aria-hidden="true" className="inline-block h-6 w-6 rounded-md bg-accent" />
@@ -34,7 +34,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         <div className="absolute -bottom-24 left-1/2 h-72 w-[120%] -translate-x-1/2 rounded-[50%] bg-[linear-gradient(160deg,#f5f5f7_0%,#8e8e96_22%,#1a1a1b_48%,#d4d4da_70%,#5c5c64_100%)] opacity-90 blur-[1px]" />
       </div>
 
-      <div className="flex flex-col gap-3 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-3 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onStart}

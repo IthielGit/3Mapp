@@ -218,13 +218,15 @@ export function BackupPage() {
 
       <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
         <h2 className="font-semibold">{t("backup.importTitle")}</h2>
-        <input
-          type="file"
-          accept=".json,application/json"
-          aria-label={t("backup.chooseFile")}
-          onChange={(e) => void onPickFile(e.target.files)}
-          className="min-h-[44px]"
-        />
+        <label className="flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-lg border border-slate-300 px-4 text-center font-medium focus-within:outline focus-within:outline-2 focus-within:outline-accent dark:border-white/15">
+          {t("backup.chooseFile")}
+          <input
+            type="file"
+            accept=".json,application/json"
+            className="sr-only"
+            onChange={(e) => void onPickFile(e.target.files)}
+          />
+        </label>
 
         {encryptedText ? (
           <div className="flex flex-col gap-3">

@@ -60,7 +60,7 @@ export function OnboardingPage() {
   if (step === 0) return <IntroScreen onStart={() => setStep(1)} />;
 
   return (
-    <section className="flex min-h-dvh flex-col gap-6 px-6 py-6">
+    <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-6 px-6 py-6">
       <progress
         className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-slate-200 dark:bg-white/15 [&::-moz-progress-bar]:bg-brand-700 [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:bg-brand-700 dark:[&::-moz-progress-bar]:bg-fg dark:[&::-webkit-progress-value]:bg-fg"
         value={step + 1}

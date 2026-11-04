@@ -471,7 +471,18 @@
     "savedPerMonth": "Saved per month",
     "thisMonth": "This month",
     "lastMonth": "Last month",
-    "nextMonthForecast": "Next month (forecast)"
+    "nextMonthForecast": "Next month (forecast)",
+    "periodFlow": "Income and expenses for the period",
+    "spentMore": "You spent more than you earned {{when}}",
+    "savedMore": "You set aside {{amount}} {{when}}",
+    "currentBalance": "Current balance",
+    "periodWhen": {
+      "day": "today",
+      "week": "this week",
+      "month": "this month",
+      "year": "this year",
+      "custom": "over this period"
+    }
   },
   "importExport": {
     "title": "Import / Export",

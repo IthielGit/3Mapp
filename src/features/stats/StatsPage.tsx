@@ -30,6 +30,9 @@ import {
   transactionsIn,
 } from "../../domain/stats";
 import { contains, localDayKey, previousPeriod, splitPeriods } from "../../domain/period";
+import { computeBalances } from "../../domain/balance";
+import { convertedSum } from "../../domain/fx";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Field, buttonSecondary, inputClass } from "../../components/FormControls";
 import { useTheme } from "../../lib/theme-context";
@@ -119,6 +122,36 @@ export function StatsPage() {
 
   const summary = periodSummary(inPeriod, period);
   const before = periodSummary(inPrevious, previous);
+
+  // Solde actuel : portefeuilles inclus dans le total, convertis dans la devise de base.
+  const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
+  const cutoff = useBalanceCutoff();
+  const currentBalance = useMemo(() => {
+    const active = wallets.filter((w) => !w.archived && w.includeInTotal);
+    const balances = computeBalances(active, transactions, cutoff);
+    return convertedSum(
+      active.map((w) => ({
+        amount: balances[w.id] ?? w.initialBalance,
+        currency: w.currency,
+        date: new Date().toISOString(),
+      })),
+      baseCurrency,
+      rates,
+    ).total;
+  }, [wallets, transactions, cutoff, baseCurrency, rates]);
+
+  // Libellé de période pour les phrases de synthèse (« ce mois-ci », « cette semaine »…).
+  const when = t(`stats.periodWhen.${state.kind}`);
+
+  // Part de chaque flux dans la somme des deux (les deux segments de la barre font 100 %).
+  const flowTotal = summary.income + summary.expense;
+  const flowShare =
+    flowTotal > 0
+      ? {
+          income: (summary.income * 100) / flowTotal,
+          expense: (summary.expense * 100) / flowTotal,
+        }
+      : { income: 0, expense: 0 };
   const slices = expenseByCategory(inPeriod, names, t("stats.uncategorised"));
 
   const weeks = useMemo(() => splitPeriods(period, "week", settings), [period, settings]);
@@ -214,6 +247,17 @@ export function StatsPage() {
   const fmt = (value: number) => formatMoney(Math.round(value * 100), baseCurrency);
   const grid = resolved === "dark" ? "#303036" : "#e4e4ea";
   const tick = resolved === "dark" ? "#b8b8c0" : "#5c5c64";
+  // Infobulles : fond de carte et texte lisibles dans les deux thèmes.
+  const tooltipProps = {
+    contentStyle: {
+      backgroundColor: resolved === "dark" ? "#26262d" : "#ffffff",
+      border: `1px solid ${grid}`,
+      borderRadius: 12,
+      fontSize: 12,
+    },
+    labelStyle: { color: chartInk, fontWeight: 600 },
+    itemStyle: { color: chartInk },
+  };
 
   function chooseDataset(next: Dataset) {
     setDataset(next);
@@ -237,43 +281,60 @@ export function StatsPage() {
         />
       ) : null}
 
-      {/* Indicateur principal : le solde net de la période, avec sa variation. */}
+      {/* Solde actuel : total des portefeuilles inclus dans le total, à la date du jour. */}
       <div className="flex flex-col items-center gap-1 text-center">
-        <p className="text-sm text-slate-600 dark:text-muted">{t("home.net")}</p>
-        <p
-          className={`text-4xl font-semibold tabular-nums ${
-            summary.net < 0 ? "text-accent" : "text-ink dark:text-fg"
-          }`}
-          data-amount
+        <p className="text-sm text-slate-600 dark:text-muted">{t("stats.currentBalance")}</p>
+        <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+          {formatMoney(currentBalance, baseCurrency)}
+        </p>
+      </div>
+
+      {/* Période : une seule barre compare revenus et dépenses ; le sens se lit d'un coup d'œil. */}
+      <section
+        aria-label={t("stats.periodFlow")}
+        className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
+      >
+        <div
+          role="img"
+          aria-label={`${t("home.income")} ${formatMoney(summary.income, baseCurrency)} · ${t("home.expense")} ${formatMoney(summary.expense, baseCurrency)}`}
+          className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
         >
-          {formatMoney(summary.net, baseCurrency)}
+          <div className="h-full bg-income dark:bg-income-dark" style={{ width: `${flowShare.income}%` }} />
+          <div className="h-full bg-expense dark:bg-expense-dark" style={{ width: `${flowShare.expense}%` }} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-0.5">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-income dark:bg-income-dark" />
+              {t("home.income")}
+            </p>
+            <p className="text-base font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
+              {formatMoney(summary.income, baseCurrency)}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-0.5 text-right">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
+              {t("home.expense")}
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-expense dark:bg-expense-dark" />
+            </p>
+            <p className="text-base font-semibold tabular-nums text-expense dark:text-expense-dark" data-amount>
+              {formatMoney(summary.expense, baseCurrency)}
+            </p>
+          </div>
+        </div>
+
+        <p className="border-t border-slate-200 pt-3 text-sm text-slate-600 dark:border-white/15 dark:text-muted">
+          {summary.net < 0
+            ? t("stats.spentMore", { when })
+            : t("stats.savedMore", { amount: formatMoney(summary.net, baseCurrency), when })}
         </p>
         {delta(summary.net, before.net) ? (
-          <p className="text-sm text-slate-600 dark:text-muted">
+          <p className="text-xs text-slate-500 dark:text-muted">
             {t("stats.vsPrevious", { change: delta(summary.net, before.net) })}
           </p>
         ) : null}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Card
-          label={t("home.income")}
-          icon="arrowUp"
-          value={formatMoney(summary.income, baseCurrency)}
-          tone="text-income dark:text-income-dark"
-        />
-        <Card
-          label={t("home.expense")}
-          icon="arrowDown"
-          value={formatMoney(summary.expense, baseCurrency)}
-          tone="text-expense dark:text-expense-dark"
-        />
-        <Card
-          label={t("stats.savingsRate")}
-          icon="percent"
-          value={summary.savingsRate === null ? "—" : `${summary.savingsRate} %`}
-        />
-      </div>
+      </section>
 
       {/* Graphique principal : un seul, avec son titre, son unité et son sélecteur compact. */}
       <section
@@ -404,7 +465,7 @@ export function StatsPage() {
                     tick={{ fill: tick, fontSize: 11 }}
                     width={52}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Line
                     isAnimationActive={false}
                     type="monotone"
@@ -424,7 +485,7 @@ export function StatsPage() {
                     tick={{ fill: tick, fontSize: 11 }}
                     width={52}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Bar
                     isAnimationActive={false}
                     dataKey="net"
@@ -451,7 +512,7 @@ export function StatsPage() {
                       <Cell key={s.name} fill={chartPalette[i % chartPalette.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               ) : dataset === "categories" ? (
@@ -470,7 +531,7 @@ export function StatsPage() {
                     tickFormatter={shortName}
                     tick={{ fill: tick, fontSize: 11 }}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Bar
                     isAnimationActive={false}
                     dataKey="value"
@@ -488,7 +549,7 @@ export function StatsPage() {
                     tick={{ fill: tick, fontSize: 11 }}
                     width={52}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Line
                     isAnimationActive={false}
@@ -516,7 +577,7 @@ export function StatsPage() {
                     tick={{ fill: tick, fontSize: 11 }}
                     width={52}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Legend />
                   <Bar
                     isAnimationActive={false}
@@ -542,7 +603,7 @@ export function StatsPage() {
                     tick={{ fill: tick, fontSize: 11 }}
                     width={52}
                   />
-                  <Tooltip formatter={(v) => fmt(Number(v))} />
+                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
                   <Line
                     isAnimationActive={false}
                     type="monotone"
@@ -700,26 +761,3 @@ function delta(current: number, previous: number): string | undefined {
   return `${pct > 0 ? "+" : ""}${pct} %`;
 }
 
-function Card({
-  label,
-  value,
-  tone = "",
-  icon,
-}: {
-  label: string;
-  value: string;
-  tone?: string;
-  icon: IconName;
-}) {
-  return (
-    <div className="flex min-h-[3rem] items-center justify-between gap-3 rounded-card border border-slate-200 px-4 py-3 dark:border-white/15 dark:bg-card">
-      <p className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-muted">
-        <Icon name={icon} className="h-4 w-4" />
-        {label}
-      </p>
-      <p className={`text-base font-semibold tabular-nums ${tone}`} data-amount>
-        {value}
-      </p>
-    </div>
-  );
-}

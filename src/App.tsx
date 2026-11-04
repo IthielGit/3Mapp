@@ -24,6 +24,9 @@ const OnboardingPage = page(() =>
 const BackupPage = page(() =>
   import("./features/backup/BackupPage").then((m) => ({ default: m.BackupPage })),
 );
+const RestoreScreen = page(() =>
+  import("./features/backup/RestoreScreen").then((m) => ({ default: m.RestoreScreen })),
+);
 const TransactionsPage = page(() =>
   import("./features/transactions/TransactionsPage").then((m) => ({
     default: m.TransactionsPage,
@@ -107,7 +110,7 @@ export default function App() {
       <Routes>
         <Route path="onboarding" element={<OnboardingPage />} />
         {/* Restauration sur un navigateur vierge : accessible avant l'onboarding (SPEC §5.14). */}
-        <Route path="restore" element={<BackupPage />} />
+        <Route path="restore" element={<RestoreScreen />} />
         <Route
           element={
             <RequireOnboarding>

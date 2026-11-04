@@ -471,7 +471,18 @@
     "savedPerMonth": "Tahiry isam-bolana",
     "thisMonth": "Volana androany",
     "lastMonth": "Volana teo",
-    "nextMonthForecast": "Vinavina volana ho avy"
+    "nextMonthForecast": "Vinavina volana ho avy",
+    "periodFlow": "Vola miditra sy mivoaka amin'ny vanim-potoana",
+    "spentMore": "Nandany mihoatra noho ny nidiranao ianao {{when}}",
+    "savedMore": "Nitahiry {{amount}} ianao {{when}}",
+    "currentBalance": "Vola ankehitriny",
+    "periodWhen": {
+      "day": "androany",
+      "week": "amin’ity herinandro",
+      "month": "amin’ity volana",
+      "year": "amin’ity taona",
+      "custom": "amin’ity vanim-potoana"
+    }
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",
