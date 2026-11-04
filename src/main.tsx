@@ -5,12 +5,20 @@ import { registerSW } from "virtual:pwa-register";
 import App from "./App";
 import { SecurityProvider } from "./features/security/SecurityProvider";
 import { ThemeProvider } from "./lib/theme";
+import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
 import "./i18n";
 import "./index.css";
 
-// Le bandeau « Nouvelle version disponible » arrive en Phase 13 ; pour l'instant la mise à jour
-// s'applique à la prochaine ouverture (enregistrement silencieux du service worker).
-registerSW({ immediate: true });
+// Mise à jour : le bandeau « Nouvelle version disponible » propose de recharger (SPEC §5.17).
+const updateServiceWorker = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    publishUpdate(() => updateServiceWorker(true));
+  },
+});
+
+// Mémorise l'invite d'installation du navigateur pour le bouton « Installer l'application ».
+listenForInstallPrompt();
 
 // Demande au navigateur de ne pas purger les données locales (SPEC §2).
 void navigator.storage?.persist?.().catch(() => undefined);

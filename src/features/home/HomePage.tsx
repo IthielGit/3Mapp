@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
+import { EmptyState, Skeleton } from "../../components/PwaComponents";
 import { backupReminder } from "../../domain/backup";
 import { convertedSum } from "../../domain/fx";
 import { periodSummary, transactionsIn } from "../../domain/stats";
@@ -25,7 +26,9 @@ export function HomePage() {
   const period = currentPeriod(state, settings);
 
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
-  const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? EMPTY;
+  const walletsLoaded = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
+  const loading = walletsLoaded === undefined;
+  const wallets = walletsLoaded ?? EMPTY;
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
   const baseCurrency: CurrencyCode =
@@ -77,9 +80,13 @@ export function HomePage() {
       ) : null}
       <header className="flex flex-col gap-1">
         <p className="text-sm text-slate-500">{t("home.totalBalance")}</p>
-        <p className="text-3xl font-bold" data-amount>
-          {formatMoney(totalBalance, baseCurrency)}
-        </p>
+        {loading ? (
+          <Skeleton className="h-9 w-40" />
+        ) : (
+          <p className="text-3xl font-bold" data-amount>
+            {formatMoney(totalBalance, baseCurrency)}
+          </p>
+        )}
         {missingRates.length > 0 ? (
           <p className="text-xs text-amber-700 dark:text-amber-400">
             {t("home.missingRate", { currencies: missingRates.join(", ") })}
@@ -123,7 +130,7 @@ export function HomePage() {
             {t("home.seeAll")}
           </Link>
         </div>
-        {recent.length === 0 ? <p className="text-slate-500">{t("home.noTransactions")}</p> : null}
+        {recent.length === 0 ? <EmptyState icon="🧾" title={t("home.noTransactions")} /> : null}
         <ul className="flex flex-col gap-2">
           {recent.map((tx) => (
             <li key={tx.id}>

@@ -7,6 +7,7 @@ import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../compone
 import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import { completeOnboarding } from "./onboarding-service";
 import type { Wallet } from "../../db/entities";
+import type { AppLanguage } from "../../i18n";
 
 const SLIDES = ["onboarding.slide1", "onboarding.slide2", "onboarding.slide3"] as const;
 const GROUPS: Wallet["group"][] = ["bank", "cash", "mobile", "savings", "credit_card"];
@@ -15,7 +16,7 @@ export function OnboardingPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [language, setLanguage] = useState<"fr" | "en">("fr");
+  const [language, setLanguage] = useState<AppLanguage>("fr");
   const [currency, setCurrency] = useState<CurrencyCode>("MGA");
   const [name, setName] = useState("");
   const [group, setGroup] = useState<Wallet["group"]>("bank");
@@ -65,7 +66,7 @@ export function OnboardingPage() {
       {step === 0 ? (
         <Link
           to="/restore"
-          className="text-sm font-medium text-brand-700 underline dark:text-brand-100"
+          className="text-sm font-medium text-brand-700 underline dark:text-teal-300"
         >
           {t("onboarding.restoreLink")}
         </Link>
@@ -85,10 +86,11 @@ export function OnboardingPage() {
             <select
               className={inputClass}
               value={language}
-              onChange={(e) => setLanguage(e.target.value as "fr" | "en")}
+              onChange={(e) => setLanguage(e.target.value as AppLanguage)}
             >
               <option value="fr">Français</option>
               <option value="en">English</option>
+              <option value="mg">Malagasy</option>
             </select>
           </Field>
           <Field label={t("onboarding.currency")}>

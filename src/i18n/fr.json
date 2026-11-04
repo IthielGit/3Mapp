@@ -94,6 +94,15 @@
     "shareHint": "Le partage utilise les applications de votre téléphone : aucun compte n'est à configurer dans l'app. Gardez le fichier sur un espace de stockage en ligne pour le retrouver si le téléphone est perdu.",
     "shared": "Sauvegarde partagée."
   },
+  "pwa": {
+    "updateAvailable": "Nouvelle version disponible.",
+    "update": "Mettre à jour",
+    "installTitle": "Installer l'application",
+    "installHint": "Ajoutez Money Manager à l'écran d'accueil pour l'ouvrir comme une app, même hors ligne.",
+    "installButton": "Installer l'application",
+    "installDone": "Application installée.",
+    "installIosHint": "Sur iPhone ou iPad : touchez Partager, puis « Sur l'écran d'accueil »."
+  },
   "onboarding": {
     "restoreLink": "J'ai déjà une sauvegarde : la restaurer",
     "progress": "Progression de la configuration",

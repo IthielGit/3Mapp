@@ -7,7 +7,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "prompt",
-      includeAssets: ["icons/icon.svg"],
+      includeAssets: [
+        "icons/icon.svg",
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon-maskable-512.png",
+      ],
       manifest: {
         name: "Gestionnaire de budget",
         short_name: "Budget",
@@ -18,7 +23,17 @@ export default defineConfig({
         display: "standalone",
         background_color: "#f8fafc",
         theme_color: "#0f766e",
-        icons: [{ src: "icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }],
+        icons: [
+          { src: "icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+          { src: "icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: "icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          {
+            src: "icons/icon-maskable-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
         shortcuts: [
           {
             name: "Ajouter une dépense",

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../../lib/theme-context";
 import { buttonSecondary } from "../../components/FormControls";
 import { generateDemoTransactions } from "../demo/demo-data";
+import { InstallCard } from "../../components/PwaComponents";
 
 const LINK_CLASS =
   "flex min-h-[44px] items-center rounded-lg border border-slate-200 px-4 font-medium dark:border-slate-700";
@@ -56,6 +57,8 @@ export function MorePage() {
           {t("more.backup")}
         </Link>
       </nav>
+
+      <InstallCard />
 
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-2 font-medium">{t("pages.more.theme")}</legend>

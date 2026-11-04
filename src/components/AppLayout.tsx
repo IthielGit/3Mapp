@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { BottomNav } from "./BottomNav";
+import { UpdateBanner } from "./PwaComponents";
 import { generateDueOccurrences } from "../features/recurring/recurring-service";
 
 export function AppLayout() {
@@ -15,6 +16,7 @@ export function AppLayout() {
         <Outlet />
       </main>
       <BottomNav />
+      <UpdateBanner />
     </div>
   );
 }
