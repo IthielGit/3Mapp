@@ -5,3 +5,12 @@ playwright-report
 test-results
 *.local
 tests/fixtures/*.csv
+
+# Outils d'assistance locaux (skills, agents, binaires, réglages personnels)
+.agents/
+.claude/skills/
+.claude/agents/
+.claude/settings.local.json
+.codex/
+skills-lock.json
+*.exe
