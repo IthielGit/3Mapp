@@ -9,13 +9,13 @@ import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
 import { convertedSum } from "../../domain/fx";
 import { dailyExpenses, dailyTotals } from "../../domain/home-series";
-import { EmptyState, Skeleton } from "../../components/PwaComponents";
+import { Skeleton } from "../../components/PwaComponents";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
-const PREVIEW = 5;
+const PREVIEW = 2;
 
 /** Engrenage des réglages (tracé ISC, Lucide), en haut à droite. */
 function GearIcon() {
@@ -119,7 +119,7 @@ export function HomePage() {
   const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
 
   return (
-    <section className="-mx-4 flex flex-col gap-5 px-4">
+    <section className="-mx-4 flex flex-col gap-2 px-4">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
       {/* En-tête : salutation à gauche, réglages ronds à droite. */}
@@ -127,7 +127,7 @@ export function HomePage() {
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-lg font-semibold text-white dark:bg-white dark:text-ink"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-lg font-semibold text-white dark:bg-white dark:text-ink"
           >
             {t("app.title").charAt(0)}
           </span>
@@ -163,7 +163,7 @@ export function HomePage() {
       ) : null}
 
       {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
           <Link
@@ -174,7 +174,9 @@ export function HomePage() {
           </Link>
         </div>
         {upcoming.length === 0 ? (
-          <EmptyState icon="📅" title={t("home.noUpcoming")} />
+          <p className="rounded-2xl border border-dashed border-slate-300 p-3 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-muted">
+            {t("home.noUpcoming")}
+          </p>
         ) : (
           <ul className="-mr-4 flex snap-x gap-3 overflow-x-auto pb-1 pr-8">
             {upcoming.map((r) => {
@@ -183,7 +185,7 @@ export function HomePage() {
                 <li key={r.id} className="snap-start">
                   <Link
                     to={`/plus/recurring/${r.id}`}
-                    className="flex w-[15rem] flex-col justify-between gap-6 rounded-3xl bg-ink p-5 text-white shadow-md"
+                    className="flex w-[14rem] flex-col justify-between gap-3 rounded-3xl bg-ink p-4 text-white shadow-md"
                   >
                     <div className="flex flex-col">
                       <span className="text-2xl font-semibold">{format(due, "d MMM")}</span>
@@ -216,10 +218,10 @@ export function HomePage() {
       </section>
 
       {/* Vue d'ensemble : deux cartes, chacune avec un mini-graphique. */}
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+          <div className="flex flex-col gap-1 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
             <span className="text-sm font-medium text-slate-600 dark:text-muted">
               {t("home.balanceCard")}
             </span>
@@ -233,7 +235,7 @@ export function HomePage() {
                 {formatMoney(converted.total, baseCurrency)}
               </span>
             )}
-            <div className="h-16">
+            <div className="h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={evolution}>
                   <ReferenceLine y={0} stroke="#b8b8c0" strokeDasharray="3 3" />
@@ -250,14 +252,14 @@ export function HomePage() {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+          <div className="flex flex-col gap-1 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
             <span className="text-sm font-medium text-slate-600 dark:text-muted">
               {t("home.expenseCard")}
             </span>
             <span className="text-lg font-semibold tabular-nums text-expense dark:text-expense-dark">
               {formatMoney(weekTotalMinor, baseCurrency)}
             </span>
-            <div className="h-16">
+            <div className="h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weekExpenses}>
                   <Bar
@@ -274,7 +276,7 @@ export function HomePage() {
       </section>
 
       {/* Carte d'action : saisie du jour. */}
-      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+      <div className="flex items-center justify-between gap-3 rounded-3xl bg-white p-3 shadow-sm dark:bg-card">
         <div className="flex min-w-0 flex-col">
           <span className="font-semibold text-ink dark:text-fg">{t("home.dailyCheck")}</span>
           <span className="text-sm text-slate-500 dark:text-muted">{t("home.dailyHint")}</span>
@@ -298,7 +300,7 @@ export function HomePage() {
             {t("home.manage")}
           </Link>
         </div>
-        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
+        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {active.map((w) => (
             <li key={w.id} className="snap-start">
               <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
@@ -318,7 +320,9 @@ export function HomePage() {
           </Link>
         </div>
         {recent.length === 0 ? (
-          <EmptyState icon="🧾" title={t("home.noTransactions")} />
+          <p className="rounded-2xl border border-dashed border-slate-300 p-3 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-muted">
+            {t("home.noTransactions")}
+          </p>
         ) : (
           <ul className="flex flex-col">
             {recent.map((tx) => (

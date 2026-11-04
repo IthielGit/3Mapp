@@ -7,7 +7,7 @@ export default {
       fontFamily: {
         // Inter, hébergée dans l'app (@fontsource) pour fonctionner hors ligne.
         sans: [
-          "Inter",
+          "Outfit",
           "system-ui",
           "-apple-system",
           "Segoe UI",
@@ -20,18 +20,28 @@ export default {
       colors: {
         // Palette « bleu calme » : marque, boutons, liens, onglets actifs.
         // brand-700 (#1E40AF) est la couleur principale ; le texte clair s'utilise en mode sombre.
+        // Palette « Cosmo » : noir pour les actions et les textes, gris de fond, rouge en accent ponctuel.
+        // brand-700 (noir) est la couleur d'action principale ; brand-300 (clair) sert aux textes sombres.
         brand: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#1d4ed8",
-          700: "#1e40af",
-          800: "#1e3a8a",
-          900: "#172554",
+          50: "#f5f5f7",
+          100: "#e8e8ec",
+          200: "#d4d4da",
+          300: "#f5f5f7",
+          400: "#8e8e96",
+          500: "#5c5c64",
+          600: "#3f3f45",
+          700: "#1a1a1b",
+          800: "#111112",
+          900: "#0a0a0b",
         },
+        accent: { DEFAULT: "#ee4444", 600: "#d93a3a" },
+        canvas: "#f0f1f6",
+        ink: "#1a1a1b",
+        card: "#1a1a1b",
+        page: "#121214",
+        raised: "#262629",
+        fg: "#f5f5f7",
+        muted: "#b8b8c0",
         // Sémantique : revenus (vert profit), dépenses (rouge alerte). Variantes pour le mode sombre.
         income: { DEFAULT: "#047857", dark: "#34d399" },
         expense: { DEFAULT: "#b91c1c", dark: "#f87171" },
