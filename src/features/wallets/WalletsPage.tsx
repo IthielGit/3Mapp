@@ -97,15 +97,20 @@ function WalletRow({
 }) {
   const { t } = useTranslation();
   return (
-    <li className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+    <li className="flex items-center gap-2 rounded-card border border-slate-200 p-3 shadow-sm dark:border-slate-700">
       <Link to={`/plus/wallets/${wallet.id}`} className="flex flex-1 items-center gap-3">
-        <span aria-hidden="true" className="text-2xl" style={{ color: wallet.color }}>
+        <span
+          aria-hidden="true"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl"
+          style={{ backgroundColor: wallet.color }}
+        >
           {wallet.icon}
         </span>
-        <span className="flex flex-col">
-          <span className="font-medium">{wallet.name}</span>
-          <span className="text-sm text-slate-500">
-            {t("wallets.balance")} : {formatMoney(balance, wallet.currency)}
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-semibold">{wallet.name}</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">
+            {t("wallets.balance")} :{" "}
+            <span data-amount>{formatMoney(balance, wallet.currency)}</span>
           </span>
         </span>
       </Link>

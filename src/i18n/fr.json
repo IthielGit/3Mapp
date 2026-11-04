@@ -61,7 +61,12 @@
     "debts": "Dettes et prêts",
     "security": "Sécurité",
     "recurring": "Récurrences et modèles",
-    "backup": "Sauvegarde et restauration"
+    "backup": "Sauvegarde et restauration",
+    "groups": {
+      "manage": "Gestion",
+      "data": "Données et sécurité",
+      "appearance": "Apparence"
+    }
   },
   "backup": {
     "title": "Sauvegarde et restauration",

@@ -61,7 +61,12 @@
     "debts": "Trosa sy fampindramam-bola",
     "security": "Fiarovana",
     "recurring": "Fihetsiketsehana miverimberina sy modely",
-    "backup": "Fitehirizana sy famerenana"
+    "backup": "Fitehirizana sy famerenana",
+    "groups": {
+      "manage": "Fitantanana",
+      "data": "Angona sy fiarovana",
+      "appearance": "Endrika"
+    }
   },
   "backup": {
     "title": "Fitehirizana sy famerenana",

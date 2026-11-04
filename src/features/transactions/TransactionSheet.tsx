@@ -30,6 +30,14 @@ import {
 type TxType = Transaction["type"];
 const TYPES: TxType[] = ["expense", "income", "transfer", "adjustment"];
 
+/** Couleur de l'onglet actif : sémantique (dépense rouge, revenu bleu, virement teal). */
+const TYPE_ACTIVE: Record<TxType, string> = {
+  expense: "bg-expense text-white shadow",
+  income: "bg-income text-white shadow",
+  transfer: "bg-brand-700 text-white shadow",
+  adjustment: "bg-slate-700 text-white shadow dark:bg-slate-500",
+};
+
 interface TransactionSheetProps {
   transaction?: Transaction | undefined;
   defaultType?: TxType | undefined;
@@ -226,7 +234,9 @@ export function TransactionSheet({
               role="radio"
               aria-checked={type === tp}
               onClick={() => setType(tp)}
-              className={`min-h-[44px] rounded-md text-sm font-medium ${type === tp ? "bg-white shadow dark:bg-slate-700" : ""}`}
+              className={`min-h-[44px] rounded-md text-sm font-semibold transition-colors ${
+                type === tp ? TYPE_ACTIVE[tp] : "text-slate-600 dark:text-slate-300"
+              }`}
             >
               {t(`transactions.types.${tp}`)}
             </button>

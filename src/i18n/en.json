@@ -61,7 +61,12 @@
     "debts": "Debts and loans",
     "security": "Security",
     "recurring": "Recurring items and templates",
-    "backup": "Backup and restore"
+    "backup": "Backup and restore",
+    "groups": {
+      "manage": "Management",
+      "data": "Data and security",
+      "appearance": "Appearance"
+    }
   },
   "pwa": {
     "updateAvailable": "A new version is available.",
