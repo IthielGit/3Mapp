@@ -109,13 +109,18 @@ export function ImportExportPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="font-semibold">{t("importExport.importTitle")}</h2>
-        <p className="text-sm text-slate-500">{t("importExport.importHint")}</p>
-        <input
-          type="file"
-          accept=".csv,.txt,text/csv"
-          aria-label={t("importExport.chooseFile")}
-          onChange={(e) => void onFile(e.target.files)}
-        />
+        <p className="text-sm text-slate-600 dark:text-slate-400">{t("importExport.importHint")}</p>
+        <label
+          className={`${buttonSecondary} flex w-full cursor-pointer items-center justify-center text-center focus-within:outline focus-within:outline-2 focus-within:outline-accent`}
+        >
+          {t("importExport.chooseFile")}
+          <input
+            type="file"
+            accept=".csv,.txt,text/csv"
+            className="sr-only"
+            onChange={(e) => void onFile(e.target.files)}
+          />
+        </label>
 
         {file ? (
           <div className="flex flex-col gap-3">
