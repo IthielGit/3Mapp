@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { BackButton } from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
 
 const TABS = [
@@ -10,8 +11,10 @@ const TABS = [
 export function VisualisationLayout() {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col gap-4">
-      <nav aria-label={t("nav.visualisation")}>
+    <div className="-mx-4 flex flex-col gap-4 px-4">
+      <div className="flex min-h-11 items-center gap-3">
+        <BackButton />
+      <nav aria-label={t("nav.visualisation")} className="min-w-0 flex-1">
         <ul className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-raised">
           {TABS.map((tab) => (
             <li key={tab.to}>
@@ -33,6 +36,7 @@ export function VisualisationLayout() {
           ))}
         </ul>
       </nav>
+      </div>
       <Outlet />
     </div>
   );
