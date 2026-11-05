@@ -23,15 +23,15 @@ export default defineConfig({
         "icons/icon-maskable-512.png",
       ],
       manifest: {
-        name: "Gestionnaire de budget",
-        short_name: "Budget",
+        name: "Fundora",
+        short_name: "Fundora",
         description: "Gestion de finances personnelles, hors ligne.",
         lang: "fr",
         start_url: "/",
         scope: "/",
         display: "standalone",
         background_color: "#f8fafc",
-        theme_color: "#1a1a20",
+        theme_color: "#111827",
         icons: [
           { src: "icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
           { src: "icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },

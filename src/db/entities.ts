@@ -117,6 +117,9 @@ function checkTransactionRules(
   t: { type: string; amount: number; toWalletId?: string | undefined; walletId: string },
   ctx: z.RefinementCtx,
 ): void {
+  if (t.amount === 0) {
+    ctx.addIssue({ code: "custom", path: ["amount"], message: "Montant nul : saisissez un montant" });
+  }
   if (t.type !== "adjustment" && t.amount < 0) {
     ctx.addIssue({ code: "custom", path: ["amount"], message: "Montant négatif pour ce type" });
   }
