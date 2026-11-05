@@ -32,7 +32,7 @@ const WRITE_BATCH = 500;
 const EPOCH = "1970-01-01T00:00:00.000Z";
 
 /** Erreur de synchro, classée pour l'affichage (jamais de message serveur brut dans l'interface). */
-export type SyncErrorCode = "network" | "suspended" | "unknown";
+export type SyncErrorCode = "network" | "suspended" | "unknown" | "foreign";
 
 export class SyncError extends Error {
   readonly code: SyncErrorCode;
@@ -352,6 +352,11 @@ export async function enableSync(
   mode: "merge" | "remote",
   database: AppDatabase = defaultDb,
 ): Promise<SyncReport> {
+  // Jamais de fusion entre comptes : une fusion n'est permise que pour un appareil vide ou déjà lié à ce compte.
+  if (mode === "merge") {
+    const ownership = await checkDeviceOwnership(userId, database);
+    if (ownership === "foreign" || ownership === "unowned") throw new SyncError("foreign");
+  }
   // Changement de compte sur cet appareil : la file et le curseur de l'ancien compte ne valent plus rien.
   const previous = await getState(database);
   const ownerChanged = previous?.userId !== userId;

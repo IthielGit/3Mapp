@@ -103,19 +103,18 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
       }
     }
 
-    async function choose(mode: "merge" | "remote") {
+    /** Seule issue : effacer les données locales (sauvegarde faite) et repartir des données du compte. */
+    async function replaceWithAccount() {
       if (!client || !userId) return;
-      if (mode === "remote") {
-        const confirmed = await askConfirm({
-          message: t("account.device.replaceConfirm"),
-          confirmLabel: t("account.device.replace"),
-          danger: true,
-        });
-        if (!confirmed) return;
-      }
+      const confirmed = await askConfirm({
+        message: t("account.device.replaceConfirm"),
+        confirmLabel: t("account.device.replace"),
+        danger: true,
+      });
+      if (!confirmed) return;
       setBusy(true);
       try {
-        await enableSync(client, userId, mode);
+        await enableSync(client, userId, "remote");
       } catch {
         // Hors ligne : la synchro reprendra au retour du réseau, l'app s'ouvre avec les données locales.
       }
@@ -152,12 +151,7 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
           ) : null}
         </section>
 
-        <button type="button" className={buttonPrimary} disabled={busy} onClick={() => void choose("merge")}>
-          {t("account.device.merge")}
-        </button>
-        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("account.device.mergeHint")}</p>
-
-        <button type="button" className={buttonSecondary} disabled={busy || !backedUp} onClick={() => void choose("remote")}>
+        <button type="button" className={buttonPrimary} disabled={busy || !backedUp} onClick={() => void replaceWithAccount()}>
           {t("account.device.replace")}
         </button>
         <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("account.device.replaceHint")}</p>

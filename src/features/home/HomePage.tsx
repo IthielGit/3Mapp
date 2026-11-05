@@ -20,6 +20,7 @@ import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
 import { BrandMark } from "../../components/BrandMark";
+import { SyncButton } from "../sync/SyncButton";
 import { updatePreferences } from "../settings/preferences-service";
 import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 
@@ -292,13 +293,16 @@ export function HomePage() {
             </span>
           </div>
         </div>
-        <Link
-          to="/plus"
-          aria-label={t("nav.more")}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
-        >
-          <GearIcon />
-        </Link>
+        <div className="flex items-center gap-2">
+          <SyncButton />
+          <Link
+            to="/plus"
+            aria-label={t("nav.more")}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+          >
+            <GearIcon />
+          </Link>
+        </div>
       </header>
 
       {/* Saisie en retard : un portefeuille sans mouvement ni réconciliation depuis trop longtemps. */}

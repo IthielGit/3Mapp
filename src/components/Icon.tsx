@@ -112,6 +112,14 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M12 8v4l2.5 2.5" />
     </>
   ),
+  sync: (
+    <>
+      <path d="M20 11a8 8 0 0 0-14-4" />
+      <path d="M4 4v4h4" />
+      <path d="M4 13a8 8 0 0 0 14 4" />
+      <path d="M20 20v-4h-4" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof PATHS;
