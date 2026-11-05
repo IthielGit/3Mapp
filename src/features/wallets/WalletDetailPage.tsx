@@ -77,33 +77,38 @@ export function WalletDetailPage() {
           <p className="text-neutral-600 dark:text-muted">{t("wallets.noMovements")}</p>
         ) : null}
         <ul className="flex flex-col gap-2">
-          {(movements ?? []).slice(0, 30).map((tx) => (
-            <li key={tx.id}>
-              <Link
-                to={`/transactions/${tx.id}`}
-                className="flex justify-between rounded-lg border border-neutral-200 p-3 dark:border-white/15"
-              >
-                <span className="text-sm">
-                  {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}
-                  {t(`transactions.types.${tx.type}`)}
-                  {tx.memo ? ` · ${tx.memo}` : ""}
-                </span>
-                <span
-                  className={`font-medium tabular-nums ${
-                    tx.type === "expense"
-                      ? "text-expense dark:text-expense-dark"
-                      : tx.type === "income" || (tx.type === "adjustment" && tx.amount > 0)
-                        ? "text-income dark:text-income-dark"
-                        : ""
-                  }`}
-                  data-amount
+          {(movements ?? []).slice(0, 30).map((tx) => {
+            // Une réconciliation négative est une perte (dépense), une positive un gain (revenu).
+            const outflow = tx.type === "expense" || (tx.type === "adjustment" && tx.amount < 0);
+            const inflow = tx.type === "income" || (tx.type === "adjustment" && tx.amount > 0);
+            return (
+              <li key={tx.id}>
+                <Link
+                  to={`/transactions/${tx.id}`}
+                  className="flex justify-between rounded-lg border border-neutral-200 p-3 dark:border-white/15"
                 >
-                  {tx.type === "expense" ? "−" : tx.type === "income" ? "+" : ""}
-                  {formatMoney(tx.amount, tx.currency)}
-                </span>
-              </Link>
-            </li>
-          ))}
+                  <span className="text-sm">
+                    {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}
+                    {t(`transactions.types.${tx.type}`)}
+                    {tx.memo ? ` · ${tx.memo}` : ""}
+                  </span>
+                  <span
+                    className={`font-medium tabular-nums ${
+                      outflow
+                        ? "text-expense dark:text-expense-dark"
+                        : inflow
+                          ? "text-income dark:text-income-dark"
+                          : ""
+                    }`}
+                    data-amount
+                  >
+                    {outflow ? "−" : inflow ? "+" : ""}
+                    {formatMoney(Math.abs(tx.amount), tx.currency)}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </section>
 

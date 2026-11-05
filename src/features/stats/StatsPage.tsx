@@ -27,7 +27,7 @@ import {
   topExpenses,
   transactionsIn,
 } from "../../domain/stats";
-import { isEarning, isSpending } from "../../domain/totals";
+import { countedAmount, isEarning, isSpending } from "../../domain/totals";
 import {
   contains,
   localDayKey,
@@ -717,10 +717,10 @@ export function StatsPage() {
               const own = inPeriod.filter((tx) => tx.walletId === w.id);
               const income = own
                 .filter((tx) => isEarning(tx))
-                .reduce((a, tx) => a + tx.amount, 0);
+                .reduce((a, tx) => a + countedAmount(tx), 0);
               const expense = own
                 .filter((tx) => isSpending(tx))
-                .reduce((a, tx) => a + tx.amount, 0);
+                .reduce((a, tx) => a + countedAmount(tx), 0);
               return (
                 <tr key={w.id} className="border-t border-neutral-200 dark:border-white/15">
                   <td className="py-1">{walletName.get(w.id) ?? w.name}</td>

@@ -126,7 +126,7 @@ Mode sombre, i18n fr/en/mg, états vides illustrés, squelettes de chargement, r
 
 1. Solde wallet = `initialBalance` + Σ(revenus) − Σ(dépenses) ± Σ(ajustements) + Σ(virements entrants) − Σ(virements sortants) − Σ(frais), en ne comptant que `status = posted`.
 2. Les virements n'entrent jamais dans les revenus/dépenses des statistiques ni du taux d'épargne.
-3. Les ajustements sont affichés séparément et exclus des statistiques par défaut (option pour les inclure).
+3. Un ajustement (réconciliation) positif compte en revenu, un ajustement négatif en dépense, dans les totaux, le taux d'épargne et les statistiques. Il reste identifiable comme ajustement dans les mouvements.
 4. Un budget ne compte que les dépenses `posted` des catégories choisies, dans sa période.
 5. Supprimer un wallet/une catégorie utilisés est interdit : proposer l'archivage ou la réaffectation.
 6. Toute opération destructrice est annulable ou précédée d'une confirmation.

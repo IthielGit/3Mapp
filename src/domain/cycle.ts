@@ -13,7 +13,7 @@ import { convertedSum } from "./fx";
 import { contains, type Period } from "./period";
 import { upcomingOccurrences } from "./recurrence";
 import { upTo } from "./cutoff";
-import { isEarning, isSpending } from "./totals";
+import { countedAmount, isEarning, isSpending } from "./totals";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -61,8 +61,9 @@ export function cycleSummary(
   return { period, income, expense, savedToGoals, debtsPaid, saved, available, daysLeft };
 }
 
+/** Somme des montants comptés (positifs) : un ajustement négatif compte pour son montant absolu. */
 function sumOf(list: readonly { amount: Minor }[]): Minor {
-  return list.reduce((sum, t) => sum + t.amount, 0);
+  return list.reduce((sum, t) => sum + countedAmount(t), 0);
 }
 
 export interface RestInput {
