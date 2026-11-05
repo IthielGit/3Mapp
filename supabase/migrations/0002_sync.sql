@@ -3,7 +3,7 @@
 -- La fusion suit « le plus récent gagne » : une écriture n'écrase une ligne serveur que si son updated_at est plus récent.
 
 -- Un compte suspendu ne lit ni n'écrit rien (SPEC §5.14 : blocage côté serveur).
-create function public.is_active_user()
+create or replace function public.is_active_user()
 returns boolean
 language sql
 stable
@@ -58,9 +58,22 @@ create policy "sync_records: suppression de ses lignes si actif"
   to authenticated
   using (user_id = auth.uid() and public.is_active_user());
 
+-- Mise à jour de last_sync_at par une fonction dédiée : les utilisateurs n'ont pas le droit de modifier profiles.
+create or replace function public.mark_synced()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.profiles set last_sync_at = now() where id = auth.uid();
+$$;
+
+revoke all on function public.mark_synced() from public, anon;
+grant execute on function public.mark_synced() to authenticated;
+
 -- Envoi par lots. Une ligne n'est remplacée que si la version reçue est plus récente que celle du serveur.
 -- Le serveur fixe changed_at : c'est le curseur de lecture des autres appareils.
-create function public.sync_push(p_records jsonb)
+create or replace function public.sync_push(p_records jsonb)
 returns integer
 language plpgsql
 security invoker
@@ -92,7 +105,7 @@ begin
 
   get diagnostics affected = row_count;
 
-  update public.profiles set last_sync_at = now() where id = auth.uid();
+  perform public.mark_synced();
   return affected;
 end;
 $$;
