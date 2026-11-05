@@ -227,8 +227,8 @@ export function HomePage() {
                     to={`/plus/recurring/${r.id}`}
                     className="pressable flex min-h-[64px] items-center gap-3 py-3"
                   >
-                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-center leading-none dark:bg-raised">
-                      <span className="text-base font-semibold tabular-nums text-ink dark:text-fg">
+                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-amber-100 text-center leading-none dark:bg-amber-900/40">
+                      <span className="text-base font-semibold tabular-nums text-amber-900 dark:text-amber-100">
                         {format(due, "d")}
                       </span>
                       <span className="mt-0.5 text-[10px] uppercase text-slate-500 dark:text-muted">
@@ -263,8 +263,8 @@ export function HomePage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
-            <span className="text-sm font-medium text-slate-600 dark:text-muted">
+          <div className="flex flex-col gap-1 rounded-3xl bg-teal-50 p-4 shadow-sm dark:bg-teal-900/40">
+            <span className="text-sm font-medium text-teal-800 dark:text-teal-200">
               {t("home.balanceCard")}
             </span>
             {loading ? (
@@ -294,8 +294,8 @@ export function HomePage() {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="flex flex-col gap-1 rounded-3xl bg-white p-4 shadow-sm dark:bg-raised">
-            <span className="text-sm font-medium text-slate-600 dark:text-muted">
+          <div className="flex flex-col gap-1 rounded-3xl bg-rose-50 p-4 shadow-sm dark:bg-rose-900/30">
+            <span className="text-sm font-medium text-rose-800 dark:text-rose-200">
               {t("home.expenseCard")}
             </span>
             <span className="text-lg font-semibold tabular-nums text-expense dark:text-expense-dark">
