@@ -782,8 +782,13 @@
       "error": {
         "network": "No connection: sync will resume when the network is back.",
         "suspended": "Account suspended: sync is blocked.",
-        "unknown": "Sync failed. Retrying automatically."
-      }
+        "unknown": "Sync failed. Retrying automatically.",
+        "foreign": "Merge refused: this device's data belongs to another account."
+      },
+      "button": "Sync now",
+      "buttonBusy": "Syncing",
+      "buttonError": "Sync error: tap to retry",
+      "buttonPending": "{{count}} change(s) to send: tap to sync"
     },
     "screen": {
       "welcomeTitle": "Welcome back",
@@ -802,10 +807,8 @@
     "haveAccount": "Already have an account?",
     "device": {
       "title": "Data on this device",
-      "bodyForeign": "This device holds data linked to another account. It will not be sent without your agreement.",
-      "bodyUnowned": "This device already holds data that is not linked to this account.",
-      "merge": "Merge with this account",
-      "mergeHint": "This device's data joins the account; the most recent version wins.",
+      "bodyForeign": "This device holds data from another account. It cannot be merged into this account.",
+      "bodyUnowned": "This device holds data that is not linked to any account. It cannot be merged into this account.",
       "replace": "Use this account only",
       "replaceHint": "This device's data is erased and replaced by the account's data.",
       "backupTitle": "1. Back up first",

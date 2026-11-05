@@ -178,6 +178,8 @@ describe("envoi et réception", () => {
       },
     ]);
     await db.reconciliations.put(recon(id, "2026-01-09T00:00:00.000Z"));
+    // Les données locales appartiennent déjà à ce compte : la fusion est permise.
+    await db.syncState.put({ id: "state", enabled: false, userId: USER });
     setSyncTracking(false);
     await enableSync(server.client, USER, "merge", db);
 
@@ -272,5 +274,22 @@ describe("changement de compte sur un appareil", () => {
     await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
     expect(await checkDeviceOwnership("B-USER", db)).toBe("foreign");
     expect(await checkDeviceOwnership("A-USER", db)).toBe("ok");
+  });
+});
+
+describe("jamais de fusion entre comptes", () => {
+  it("refuse la fusion quand les données appartiennent à un autre compte", async () => {
+    const server = fakeServer();
+    await db.syncState.put({ id: "state", enabled: false, userId: "A-USER" });
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+    await expect(enableSync(server.client, "B-USER", "merge", db)).rejects.toMatchObject({ code: "foreign" });
+    expect(server.rows.size).toBe(0);
+  });
+
+  it("refuse la fusion quand les données n'ont aucun propriétaire", async () => {
+    const server = fakeServer();
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+    await expect(enableSync(server.client, USER, "merge", db)).rejects.toMatchObject({ code: "foreign" });
+    expect(server.rows.size).toBe(0);
   });
 });

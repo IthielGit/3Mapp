@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { PageTitle } from "../../components/PageHeader";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { HelpTip } from "../../components/HelpTip";
 import { askConfirm } from "../../components/confirm-service";
 import { format } from "date-fns";
-import { db } from "../../db/database";
-import { SYNC_STATE_ID } from "../../db/sync-tracking";
-import { ensureSync, SyncError, type SyncErrorCode } from "../sync/sync-engine";
+import { useSyncStatus } from "../sync/useSyncStatus";
 import { useAccount } from "./AccountProvider";
 import { signOutAndClear } from "./sign-out";
 
@@ -16,10 +13,8 @@ import { signOutAndClear } from "./sign-out";
 export function AccountPage() {
   const { t } = useTranslation();
   const account = useAccount();
-  const state = useLiveQuery(() => db.syncState.get(SYNC_STATE_ID), []);
-  const pending = useLiveQuery(() => db.syncOutbox.count(), [], 0);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<SyncErrorCode | undefined>();
+  const sync = useSyncStatus();
+  const [signingOut, setSigningOut] = useState(false);
 
   if (account.status !== "signedIn") {
     return (
@@ -31,35 +26,25 @@ export function AccountPage() {
   }
 
   const client = account.client;
-  const userId = account.session.user.id;
-  const lastSyncError = state?.lastError as SyncErrorCode | undefined;
-
-  async function syncNow() {
-    setBusy(true);
-    setError(undefined);
-    try {
-      await ensureSync(client, userId);
-    } catch (err) {
-      setError(err instanceof SyncError ? err.code : "unknown");
-    } finally {
-      setBusy(false);
-    }
-  }
+  const state = sync.state;
+  const pending = sync.pending;
+  const busy = sync.busy || signingOut;
+  const syncNow = () => sync.syncNow();
 
   async function signOut() {
-    const lost = pending ?? 0;
+    const lost = pending;
     const confirmed = await askConfirm({
       message:
         t("account.signOutConfirm") + (lost > 0 ? " " + t("account.signOutLost", { count: lost }) : ""),
       confirmLabel: t("account.signOut"),
     });
     if (!confirmed) return;
-    setBusy(true);
+    setSigningOut(true);
     await signOutAndClear(client);
-    setBusy(false);
+    setSigningOut(false);
   }
 
-  const shownError = error ?? lastSyncError;
+  const shownError = sync.error;
 
   return (
     <section className="flex flex-col gap-4">

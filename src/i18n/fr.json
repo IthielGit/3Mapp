@@ -782,8 +782,13 @@
       "error": {
         "network": "Pas de connexion : la synchronisation reprendra au retour du réseau.",
         "suspended": "Compte suspendu : la synchronisation est bloquée.",
-        "unknown": "La synchronisation a échoué. Nouvel essai automatique."
-      }
+        "unknown": "La synchronisation a échoué. Nouvel essai automatique.",
+        "foreign": "Fusion refusée : les données de cet appareil appartiennent à un autre compte."
+      },
+      "button": "Synchroniser maintenant",
+      "buttonBusy": "Synchronisation en cours",
+      "buttonError": "Erreur de synchronisation : appuyer pour réessayer",
+      "buttonPending": "{{count}} modification(s) à envoyer : appuyer pour synchroniser"
     },
     "screen": {
       "welcomeTitle": "Bon retour",
@@ -802,10 +807,8 @@
     "haveAccount": "Déjà un compte ?",
     "device": {
       "title": "Données sur cet appareil",
-      "bodyForeign": "Cet appareil contient des données liées à un autre compte. Elles ne seront pas envoyées sans votre accord.",
-      "bodyUnowned": "Cet appareil contient déjà des données qui ne sont pas liées à ce compte.",
-      "merge": "Fusionner avec ce compte",
-      "mergeHint": "Les données de cet appareil rejoignent le compte ; la version la plus récente l'emporte.",
+      "bodyForeign": "Cet appareil contient des données d'un autre compte. Elles ne peuvent pas être fusionnées avec ce compte.",
+      "bodyUnowned": "Cet appareil contient des données qui ne sont liées à aucun compte. Elles ne peuvent pas être fusionnées avec ce compte.",
       "replace": "Utiliser seulement ce compte",
       "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte.",
       "backupTitle": "1. Sauvegardez d'abord",
