@@ -112,6 +112,14 @@ export function payStatus(
   if (!payCategoryId) return { kind: "unset" };
   const windowStart = addDays(period.from, -EARLY_DAYS);
   const windowEnd = addDays(period.to, -EARLY_DAYS);
+  // Pas de « en retard » sans historique : il faut avoir déjà reçu une paie avant ce cycle.
+  const hasHistory = transactions.some(
+    (t) =>
+      t.type === "income" &&
+      t.status === "posted" &&
+      t.categoryId === payCategoryId &&
+      new Date(t.date).getTime() < windowStart.getTime(),
+  );
   const pays = transactions
     .filter(
       (t) =>
@@ -127,7 +135,7 @@ export function payStatus(
     return { kind: "received", amount: sumOf(pays), date: new Date(first.date) };
   }
   const daysSincePay = Math.floor((now.getTime() - period.from.getTime()) / DAY_MS);
-  if (daysSincePay < LATE_DAYS) return { kind: "expected", date: period.from };
+  if (daysSincePay < LATE_DAYS || !hasHistory) return { kind: "expected", date: period.from };
   return { kind: "late", date: period.from, daysLate: daysSincePay };
 }
 

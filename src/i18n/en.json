@@ -678,6 +678,7 @@
     "addPay": "Add my pay",
     "plannedSaving": "Planned left this month: {{amount}}",
     "savedToGoals": "Saved for goals: {{amount}}",
-    "debtsPaid": "Debts and loans: {{amount}}"
+    "debtsPaid": "Debts and loans: {{amount}}",
+    "noStartBalance": "Enter the starting balance of your accounts."
   }
 }

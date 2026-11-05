@@ -124,7 +124,7 @@ describe("statut de la paie (payStatus)", () => {
   });
 
   it("pas reçue plus de 3 jours après le jour de paie : en retard", () => {
-    const s = payStatus([], PAY, period, at(2026, 2, 3));
+    const s = payStatus([tx({ type: "income", amount: 500_000, categoryId: PAY, date: new Date(2026, 0, 27, 12).toISOString() })], PAY, period, at(2026, 2, 3));
     expect(s.kind).toBe("late");
     if (s.kind === "late") expect(s.daysLate).toBe(4);
   });

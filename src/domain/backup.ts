@@ -16,9 +16,14 @@ export function backupReminder(
   lastBackupAt: string | undefined,
   now: Date,
   hasData: boolean,
+  firstDataAt?: string | undefined,
 ): BackupReminder {
   if (!hasData) return "none";
-  if (!lastBackupAt) return "never";
+  if (!lastBackupAt) {
+    // Pas de rappel dans les premiers jours d’usage : on laisse le temps de saisir.
+    if (firstDataAt && now.getTime() - new Date(firstDataAt).getTime() < BACKUP_REMINDER_DAYS * DAY_MS) return "none";
+    return "never";
+  }
   const last = new Date(lastBackupAt).getTime();
   if (Number.isNaN(last)) return "never";
   return now.getTime() - last > BACKUP_REMINDER_DAYS * DAY_MS ? "stale" : "none";

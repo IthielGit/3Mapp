@@ -79,7 +79,8 @@ export function HomePage() {
     [],
   );
 
-  const backupState = backupReminder(lastBackupAt, new Date(), transactions.length > 0);
+  const firstDataAt = transactions.length > 0 ? transactions[transactions.length - 1]?.date : undefined;
+  const backupState = backupReminder(lastBackupAt, new Date(), transactions.length > 0, firstDataAt);
   const active = wallets.filter((w) => !w.archived);
   const cutoff = useBalanceCutoff();
   const balances = useMemo(
@@ -351,7 +352,9 @@ export function HomePage() {
           <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
           {cycle.available < 0 ? (
             <p className="text-sm font-medium text-ink dark:text-fg">
-              {t("cycle.negativeBalance")}{" "}
+              {active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0)
+                ? t("cycle.noStartBalance")
+                : t("cycle.negativeBalance")}{" "}
               <Link to="/plus/wallets" className="underline">
                 {t("cycle.checkAccounts")}
               </Link>

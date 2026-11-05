@@ -678,6 +678,7 @@
     "addPay": "Ampidiro ny karamako",
     "plannedSaving": "Sisa andrasana amin’io volana: {{amount}}",
     "savedToGoals": "Tahiry natao ho an’ny tanjona: {{amount}}",
-    "debtsPaid": "Trosa sy andraikitra: {{amount}}"
+    "debtsPaid": "Trosa sy andraikitra: {{amount}}",
+    "noStartBalance": "Ampidiro ny vola niandohana amin’ny kaontinao."
   }
 }
