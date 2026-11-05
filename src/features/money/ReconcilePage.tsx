@@ -31,6 +31,8 @@ export function ReconcilePage() {
         ),
       [id],
     ) ?? EMPTY;
+  // Instant de la page, lu une seule fois : évite un appel impur pendant le rendu.
+  const [nowMs] = useState(() => Date.now());
   const [real, setReal] = useState("");
   const [memo, setMemo] = useState("");
   const [undetailed, setUndetailed] = useState(false);
@@ -46,7 +48,7 @@ export function ReconcilePage() {
   const gap = realValue === null ? null : realValue - computed;
   // Début de la période que couvre l'écart : dernier mouvement ou dernière réconciliation connus.
   const since = lastKnownActivity(wallet, transactions, history);
-  const sinceDays = Math.floor((Date.now() - since.getTime()) / (24 * 60 * 60 * 1000));
+  const sinceDays = Math.floor((nowMs - since.getTime()) / (24 * 60 * 60 * 1000));
 
   async function reconcile() {
     setError(undefined);

@@ -6,8 +6,7 @@ import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { askConfirm } from "../../components/confirm-service";
 import { useAccount } from "../account/AccountProvider";
 import { signOutAndClear } from "../account/sign-out";
-import { createBackup, markBackupDone, serializeBackup, backupFileName } from "../backup/backup-service";
-import { downloadBlob } from "../../lib/download";
+import { downloadLocalBackup } from "../backup/export-backup";
 import { checkDeviceOwnership, enableSync, ensureSync } from "./sync-engine";
 import type { DeviceOwnership } from "../../domain/sync";
 
@@ -90,11 +89,7 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
       setBackupError(false);
       setBusy(true);
       try {
-        const now = new Date();
-        const file = await createBackup(db, now);
-        const text = await serializeBackup(file);
-        downloadBlob(new Blob([text], { type: "application/json" }), backupFileName(now, false));
-        await markBackupDone(db, now);
+        await downloadLocalBackup(db);
         setBackedUp(true);
       } catch {
         setBackupError(true);

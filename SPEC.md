@@ -4,7 +4,7 @@
 
 Application de finances personnelles : suivre dépenses, revenus, virements, budgets, objectifs
 d'épargne et dettes, avec statistiques, import/export et sauvegarde. Webapp installable (PWA),
-fonctionne hors ligne, données locales.
+fonctionne hors ligne une fois connecté. Un compte est obligatoire ; les données sont synchronisées avec le compte (§5.18).
 
 ## 2. Contraintes propres à une webapp (à connaître avant de coder)
 
@@ -15,7 +15,7 @@ fonctionne hors ligne, données locales.
 | Biométrie                    | WebAuthn (passkey locale) possible mais variable                                     | PIN obligatoire, biométrie en option si supportée                                                         |
 | Widget d'accueil             | Impossible en PWA                                                                    | Remplacé par **raccourcis d'app** (manifest `shortcuts`) : « Ajouter une dépense », « Ajouter un revenu » |
 | Stockage                     | IndexedDB peut être purgé par le navigateur                                          | Demander `navigator.storage.persist()` + rappels de sauvegarde                                            |
-| Sauvegarde carte SD          | Inexistante                                                                          | Export/Import de fichier JSON + Google Drive (appDataFolder)                                              |
+| Sauvegarde carte SD          | Inexistante                                                                          | Export/Import de fichier JSON ; synchro par compte (§5.18)                                              |
 
 ## 3. Modèle d'argent
 
@@ -112,11 +112,24 @@ Sur un portefeuille : l'utilisateur saisit le solde réel ; l'app calcule l'éca
 
 ### 5.14 Sauvegarde et restauration
 
-JSON complet (toutes tables + pièces jointes en base64 ou ZIP), chiffrement optionnel par mot de passe (AES-GCM, PBKDF2), restauration avec aperçu et mode « fusion » ou « remplacement ». Google Drive : connexion OAuth (Google Identity Services), dossier `appDataFolder`, sauvegarde manuelle et automatique, liste et restauration de versions. Rappel si dernière sauvegarde > 7 jours.
+JSON complet (toutes tables + pièces jointes en base64), chiffrement optionnel par mot de passe (AES-GCM, PBKDF2), restauration avec aperçu et mode « fusion » ou « remplacement ». Rappel si dernière sauvegarde > 7 jours. Export RGPD : la page Compte télécharge une sauvegarde complète de l'appareil.
+
+Restauration en « remplacement » alors que la synchro est active : les versions restaurées reçoivent la date de restauration, pour l'emporter sur celles du compte. Les données du compte absentes du fichier restent sur le compte et reviennent à la synchronisation.
+
+Google Drive n'est pas utilisé : la sauvegarde passe par le téléchargement de fichier et le partage natif (Web Share).
 
 ### 5.15 Sécurité
 
-PIN 4–6 chiffres (hash PBKDF2 + sel), verrouillage à l'ouverture et après délai en arrière-plan, limitation d'essais avec temporisation croissante, biométrie WebAuthn optionnelle, option « masquer les montants » sur l'accueil.
+PIN 4–6 chiffres (hash PBKDF2 + sel), verrouillage à l'ouverture et après délai en arrière-plan, limitation d'essais avec temporisation croissante, biométrie WebAuthn optionnelle, option « masquer les montants » sur l'accueil. Le PIN et la biométrie ne quittent jamais l'appareil (hors de la synchronisation). Le verrouillage PIN ne chiffre pas IndexedDB.
+
+### 5.18 Comptes, synchronisation et administration
+
+- **Compte obligatoire** : sans compte connecté, seul l'écran de connexion est accessible. Sans configuration du service de comptes, l'application reste fermée. Connexion par e-mail et mot de passe, ou Google. Inscription libre, sans validation.
+- **Synchronisation** : automatique (démarrage, retour du réseau, retour au premier plan, minute, 3 s après une modification). Bouton manuel « Synchroniser maintenant » sur l'accueil et dans la page Compte. Conflits : la version la plus récente l'emporte. Les données sont envoyées en clair au service (sans chiffrement de bout en bout) ; seul le compte connecté y accède.
+- **Pas de fusion entre comptes** : si l'appareil contient des données d'un autre compte, ou sans propriétaire, elles ne sont jamais envoyées au compte connecté. La seule issue : télécharger une sauvegarde, puis effacer les données de l'appareil (ou se déconnecter, qui efface aussi, après la même sauvegarde).
+- **Suspension** : un compte suspendu est refusé par le serveur et bloqué sur l'appareil. Limite : hors ligne, le blocage repose sur le dernier statut connu de l'appareil ; il ne constitue pas une garantie de sécurité.
+- **Console super administrateur** : le super administrateur voit la liste des comptes, le contenu synchronisé de chaque compte (lecture seule), suspend, réactive et supprime un compte. Chaque consultation et chaque action est journalisée. Un administrateur ne peut pas modifier son propre compte. Les utilisateurs en sont informés à l'inscription.
+- **Droits de l'utilisateur (RGPD)** : exporter toutes ses données (sauvegarde complète de l'appareil), supprimer définitivement son compte et ses données serveur. La suppression ne touche l'appareil qu'après la suppression serveur ; un échec réseau n'efface rien.
 
 ### 5.16 Réglages
 

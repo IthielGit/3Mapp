@@ -819,6 +819,20 @@
       "needBackup": "Téléchargez d'abord une sauvegarde pour pouvoir effacer les données de cet appareil.",
       "replaceConfirm": "Effacer les données de cet appareil et utiliser seulement ce compte ? Sans votre sauvegarde, elles seront perdues.",
       "signOutConfirm": "Se déconnecter efface les données de cet appareil. Continuer ?"
+    },
+    "privacy": {
+      "export": "Exporter mes données",
+      "exportError": "L'export n'a pas pu être créé. Réessayez.",
+      "deleteTitle": "Supprimer mon compte",
+      "deleteHint": "Supprime définitivement votre compte, vos données sur le serveur et celles de cet appareil. Exportez vos données avant si vous voulez les garder.",
+      "delete": "Supprimer définitivement mon compte",
+      "deleteConfirm": "Supprimer définitivement votre compte et toutes vos données ? Cette action est irréversible. Avez-vous exporté vos données ?",
+      "consent": "Un administrateur peut consulter les données de votre compte.",
+      "error": {
+        "network": "Suppression impossible sans connexion. Rien n'a été effacé.",
+        "unknown": "La suppression a échoué. Rien n'a été effacé. Réessayez."
+      },
+      "consentTitle": "Vos données"
     }
   },
   "admin": {
