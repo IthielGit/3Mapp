@@ -18,7 +18,7 @@ export function accountRedirectUrl(): string {
 }
 
 const fieldClass =
-  "h-11 w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-4 text-base text-ink placeholder:text-neutral-500 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-white/15 dark:bg-raised dark:text-fg dark:focus:bg-raised";
+  "h-11 [@media(max-height:720px)]:h-10 w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-4 text-base text-ink placeholder:text-neutral-500 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-white/15 dark:bg-raised dark:text-fg dark:focus:bg-raised";
 
 /** Champ avec libellé au-dessus, comme sur les écrans de connexion modernes. */
 function LabeledField({ label, children }: { label: string; children: ReactNode }) {
@@ -87,12 +87,14 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
       {/* Zone d'accueil : marque et promesse, sans photo ni illustration externe. */}
       <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-200/60 dark:bg-brand-dark/10" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-300/40 dark:bg-brand-dark/10" />
-      <header className="relative flex flex-col items-center gap-1.5 px-6 pb-2 pt-6 text-center [@media(max-height:720px)]:hidden">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-md dark:bg-card">
-          <BrandMark size={32} />
+      <header className="relative flex items-center gap-3 px-6 pb-1 pt-4 text-left [@media(min-height:720px)]:flex-col [@media(min-height:720px)]:gap-2 [@media(min-height:720px)]:pb-2 [@media(min-height:720px)]:pt-8 [@media(min-height:720px)]:text-center">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md dark:bg-card [@media(min-height:720px)]:h-16 [@media(min-height:720px)]:w-16 [@media(min-height:720px)]:rounded-2xl">
+          <BrandMark size={28} className="h-6 w-6 [@media(min-height:720px)]:h-9 [@media(min-height:720px)]:w-9" />
         </div>
-        <p className="text-2xl font-semibold text-ink dark:text-fg">Fundora</p>
-        <p className="max-w-xs text-xs text-neutral-600 dark:text-muted">{t("account.gate.tagline")}</p>
+        <div className="flex flex-col">
+          <p className="text-lg font-semibold text-ink dark:text-fg [@media(min-height:720px)]:text-2xl">Fundora</p>
+          <p className="text-xs text-neutral-600 dark:text-muted">{t("account.gate.tagline")}</p>
+        </div>
       </header>
 
       <section className="relative mx-auto mt-auto w-full max-w-md rounded-t-[2rem] bg-white px-6 pb-4 pt-5 shadow-[0_-8px_30px_rgba(11,18,32,0.08)] dark:bg-card">
@@ -166,7 +168,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
                   onChange={(e) => setConfirm(e.target.value)}
                 />
               </LabeledField>
-              <p className="text-sm text-neutral-600 dark:text-muted">{t("account.passwordHint")}</p>
+              <p className="text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden">{t("account.passwordHint")}</p>
             </>
           ) : (
             <div className="flex justify-end">
@@ -201,7 +203,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
           </button>
         </form>
 
-        <div className="my-4 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500">
+        <div className="my-3 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500">
           <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
           {t("account.or")}
           <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
