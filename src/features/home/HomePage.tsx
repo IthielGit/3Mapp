@@ -19,6 +19,7 @@ import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
 import { updatePreferences } from "../settings/preferences-service";
+import type { Category } from "../../db/entities";
 
 const EMPTY: never[] = [];
 const EMPTY_DEBTS: never[] = [];
@@ -227,6 +228,15 @@ export function HomePage() {
     await updatePreferences({ payIncomeCategoryId: categoryId });
   }
 
+  /** Question de paie sans suggestion : le jour de paie et la catégorie de revenu sont enregistrés ensemble. */
+  const incomeCategories = useMemo(
+    () => categories.filter((c) => c.kind === "income" && !c.archived).sort((a, b) => a.name.localeCompare(b.name)),
+    [categories],
+  );
+  async function savePaySetup(day: number, categoryId: string) {
+    await updatePreferences({ monthStartDay: day, payIncomeCategoryId: categoryId });
+  }
+
   // Échéances : récurrences actives, de la plus proche à la plus lointaine.
   const upcoming = useMemo(
     () =>
@@ -325,7 +335,13 @@ export function HomePage() {
         </div>
 
         {/* La question de paie, en une ligne sur la carte. */}
-        {cycleView.pay.kind === "unset" && !(cycleView.suggestedPay && !suggestionHidden) ? null : (
+        {cycleView.pay.kind === "unset" && !(cycleView.suggestedPay && !suggestionHidden) ? (
+          <PaySetup
+            monthStartDay={monthStartDay}
+            incomeCategories={incomeCategories}
+            onSave={savePaySetup}
+          />
+        ) : (
           <div className="rounded-2xl bg-white/15 p-3 text-sm">{payLine(cycleView.pay)}</div>
         )}
 
@@ -570,5 +586,76 @@ export function HomePage() {
         )}
       </section>
     </section>
+  );
+}
+
+const PAY_DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+
+/** Carte « Quand touchez-vous votre paie ? » : affichée tant que la paie n'est pas définie. */
+function PaySetup({
+  monthStartDay,
+  incomeCategories,
+  onSave,
+}: {
+  monthStartDay: number;
+  incomeCategories: Category[];
+  onSave: (day: number, categoryId: string) => Promise<void>;
+}) {
+  const { t } = useTranslation();
+  const [day, setDay] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState("");
+  const [saving, setSaving] = useState(false);
+  const selectClass =
+    "min-h-[44px] w-full rounded-xl bg-white px-3 text-base font-medium text-ink [color-scheme:light] outline-none focus:bg-slate-100";
+
+  return (
+    <form
+      className="flex flex-col gap-3 rounded-2xl bg-white/15 p-3 text-sm"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!categoryId || saving) return;
+        setSaving(true);
+        void onSave(day ?? monthStartDay, categoryId).finally(() => setSaving(false));
+      }}
+    >
+      <p className="font-semibold text-white">{t("cycle.paySetupTitle")}</p>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="flex flex-col gap-1 text-xs font-medium text-white">
+          {t("cycle.paySetupDay")}
+          <select className={selectClass} value={day ?? monthStartDay} onChange={(e) => setDay(Number(e.target.value))}>
+            {PAY_DAYS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-xs font-medium text-white">
+          {t("cycle.paySetupCategory")}
+          <select className={selectClass} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+            <option value="">{t("cycle.paySetupPick")}</option>
+            {incomeCategories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {incomeCategories.length === 0 ? (
+        <Link to="/plus/categories/new" className="inline-flex min-h-[44px] items-center text-white underline">
+          {t("cycle.paySetupNoCategory")}
+        </Link>
+      ) : (
+        <p className="text-xs text-white">{t("cycle.paySetupHint")}</p>
+      )}
+      <button
+        type="submit"
+        disabled={!categoryId || saving}
+        className="min-h-[44px] rounded-xl bg-white font-semibold text-[#0a4f4a] disabled:opacity-60"
+      >
+        {t("cycle.paySetupSave")}
+      </button>
+    </form>
   );
 }

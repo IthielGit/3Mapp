@@ -694,6 +694,13 @@
     "noStartBalance": "Ampidiro ny vola niandohana amin’ny kaontinao.",
     "empty": "Ampio vola miditra na fandaniana iray mba hahitana ny azo lanjaina.",
     "accountsCount": "Kaonty voaisa : {{count}}",
-    "setStartBalances": "Ampidiro ny soldy voalohany"
+    "setStartBalances": "Ampidiro ny soldy voalohany",
+    "paySetupTitle": "Oviana no mandray ny karamanao?",
+    "paySetupDay": "Andro amin’ny volana",
+    "paySetupCategory": "Azo avy amin’ny",
+    "paySetupPick": "Misafidiana…",
+    "paySetupHint": "Raha tsy misy andro maharitra: avelao 1, ary manaraka ny volana kalandrier ny cycle-nao.",
+    "paySetupNoCategory": "Mamorona sokajy vola miditra aloha",
+    "paySetupSave": "Tehirizo"
   }
 }

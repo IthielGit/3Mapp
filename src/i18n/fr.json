@@ -694,6 +694,13 @@
     "noStartBalance": "Indiquez le solde de départ de vos comptes.",
     "empty": "Ajoutez un revenu ou une dépense pour voir combien vous pouvez dépenser.",
     "accountsCount": "Comptes pris en compte : {{count}}",
-    "setStartBalances": "Renseigner les soldes de départ"
+    "setStartBalances": "Renseigner les soldes de départ",
+    "paySetupTitle": "Quand touchez-vous votre paie ?",
+    "paySetupDay": "Jour du mois",
+    "paySetupCategory": "Revenu concerné",
+    "paySetupPick": "Choisir…",
+    "paySetupHint": "Si vous n’avez pas de jour fixe, laissez 1 : le cycle suit le mois calendaire.",
+    "paySetupNoCategory": "Créez d’abord une catégorie de revenu",
+    "paySetupSave": "Enregistrer"
   }
 }

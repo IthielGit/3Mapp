@@ -694,6 +694,13 @@
     "noStartBalance": "Enter the starting balance of your accounts.",
     "empty": "Add an income or an expense to see how much you can spend.",
     "accountsCount": "Accounts counted: {{count}}",
-    "setStartBalances": "Enter opening balances"
+    "setStartBalances": "Enter opening balances",
+    "paySetupTitle": "When do you get paid?",
+    "paySetupDay": "Day of the month",
+    "paySetupCategory": "Income it comes from",
+    "paySetupPick": "Choose…",
+    "paySetupHint": "No fixed day? Leave 1: your month then follows the calendar month.",
+    "paySetupNoCategory": "First create an income category",
+    "paySetupSave": "Save"
   }
 }
