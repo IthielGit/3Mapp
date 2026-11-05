@@ -799,6 +799,15 @@
     "hide": "Masquer",
     "or": "ou",
     "noAccount": "Pas encore de compte ?",
-    "haveAccount": "Déjà un compte ?"
+    "haveAccount": "Déjà un compte ?",
+    "device": {
+      "title": "Données sur cet appareil",
+      "bodyForeign": "Cet appareil contient des données liées à un autre compte. Elles ne seront pas envoyées sans votre accord.",
+      "bodyUnowned": "Cet appareil contient déjà des données qui ne sont pas liées à ce compte.",
+      "merge": "Fusionner avec ce compte",
+      "mergeHint": "Les données de cet appareil rejoignent le compte ; la version la plus récente l'emporte.",
+      "replace": "Utiliser seulement ce compte",
+      "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte."
+    }
   }
 }

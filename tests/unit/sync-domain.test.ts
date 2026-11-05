@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   SETTINGS_DEVICE_FIELDS,
   chunk,
+  deviceOwnership,
   outboxKey,
   overlapSince,
   shouldApplyRemote,
@@ -65,5 +66,15 @@ describe("lots et curseur", () => {
 describe("liste des tables suivies", () => {
   it("couvre exactement les tables de sauvegarde", () => {
     expect([...SYNCED_TABLES].sort()).toEqual([...TABLE_NAMES].sort());
+  });
+});
+
+describe("propriété des données de l'appareil", () => {
+  it("distingue vide, lié au compte, lié à un autre compte, et sans propriétaire", () => {
+    expect(deviceOwnership(undefined, 0, "A")).toBe("empty");
+    expect(deviceOwnership({ userId: "A" }, 3, "A")).toBe("ok");
+    expect(deviceOwnership({ userId: "B" }, 3, "A")).toBe("foreign");
+    expect(deviceOwnership(undefined, 3, "A")).toBe("unowned");
+    expect(deviceOwnership({}, 1, "A")).toBe("unowned");
   });
 });

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AppDatabase } from "../../src/db/database";
 import { discardPending, setSyncTracking } from "../../src/db/sync-tracking";
-import { disableSync, enableSync, ensureSync, runSync } from "../../src/features/sync/sync-engine";
+import { checkDeviceOwnership, disableSync, enableSync, ensureSync, runSync } from "../../src/features/sync/sync-engine";
 import { decodeRecord, encodeRecord } from "../../src/features/sync/sync-records";
 
 type Row = Record<string, unknown>;
@@ -250,5 +250,27 @@ describe("synchronisation du compte connecté", () => {
     const report = await ensureSync(server.client, USER, db);
     expect(report.pushed).toBe(1);
     expect(server.rows.has("reconciliations|33333333-3333-4333-8333-333333333333")).toBe(true);
+  });
+});
+
+describe("changement de compte sur un appareil", () => {
+  it("remet le curseur à zéro et ne relit pas l'historique de l'ancien compte", async () => {
+    const server = fakeServer();
+    await enableSync(server.client, "A-USER", "merge", db);
+    await db.syncState.update("state", { cursor: "2031-01-01T00:00:00.000Z" });
+
+    await enableSync(server.client, "B-USER", "merge", db);
+
+    const state = await db.syncState.get("state");
+    expect(state?.userId).toBe("B-USER");
+    expect(state?.cursor).not.toBe("2031-01-01T00:00:00.000Z");
+  });
+
+  it("signale les données d'un autre compte avant toute synchro", async () => {
+    const server = fakeServer();
+    await enableSync(server.client, "A-USER", "merge", db);
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+    expect(await checkDeviceOwnership("B-USER", db)).toBe("foreign");
+    expect(await checkDeviceOwnership("A-USER", db)).toBe("ok");
   });
 });

@@ -799,6 +799,15 @@
     "hide": "Hide",
     "or": "or",
     "noAccount": "No account yet?",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "device": {
+      "title": "Data on this device",
+      "bodyForeign": "This device holds data linked to another account. It will not be sent without your agreement.",
+      "bodyUnowned": "This device already holds data that is not linked to this account.",
+      "merge": "Merge with this account",
+      "mergeHint": "This device's data joins the account; the most recent version wins.",
+      "replace": "Use this account only",
+      "replaceHint": "This device's data is erased and replaced by the account's data."
+    }
   }
 }
