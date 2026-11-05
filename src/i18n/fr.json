@@ -768,7 +768,7 @@
       "title": "Connexion",
       "intro": "Un compte est nécessaire pour utiliser Fundora. Vos données sont synchronisées avec votre compte et restent accessibles sur vos appareils.",
       "unconfigured": "Fundora nécessite un compte, mais le service de comptes n'est pas configuré sur cette version. Contactez le support.",
-      "tagline": "Votre budget, clair et sous contrôle. Vos données suivent votre compte sur tous vos appareils."
+      "tagline": "Votre budget, clair et sous contrôle."
     },
     "signOutConfirm": "Vos données seront effacées de cet appareil. Elles restent sur votre compte si elles ont été synchronisées.",
     "signOutLost": "{{count}} modification(s) non envoyée(s) seront perdues.",

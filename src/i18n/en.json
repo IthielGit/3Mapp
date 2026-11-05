@@ -768,7 +768,7 @@
       "title": "Sign in",
       "intro": "An account is required to use Fundora. Your data syncs with your account and stays available on your devices.",
       "unconfigured": "Fundora requires an account, but the account service is not configured in this version. Contact support.",
-      "tagline": "Your budget, clear and under control. Your data follows your account on all your devices."
+      "tagline": "Your budget, clear and under control."
     },
     "signOutConfirm": "Your data will be erased from this device. It stays on your account if it was synced.",
     "signOutLost": "{{count}} unsent change(s) will be lost.",
