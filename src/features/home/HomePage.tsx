@@ -346,10 +346,10 @@ export function HomePage() {
         </h2>
 
         <div className="flex flex-col gap-1">
+          <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
           <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
             {formatMoney(cycle.available, baseCurrency)}
           </p>
-          <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
           {cycle.available < 0 ? (
             <p className="text-sm font-medium text-ink dark:text-fg">
               {active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0)
@@ -368,23 +368,47 @@ export function HomePage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-1 border-t border-slate-200 pt-3 dark:border-white/15">
+        {/* La réponse à « combien puis-je dépenser ? » et « combien ai-je mis de côté ? ». */}
+        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
           {cycle.available >= 0 && restView.overdrawn ? (
-            <p className="text-sm font-semibold text-ink dark:text-fg">
+            <p className="text-base font-semibold text-ink dark:text-fg">
               {t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })}
             </p>
           ) : cycle.available >= 0 ? (
-            <p className="text-sm font-semibold text-ink dark:text-fg">
+            <p className="text-base font-semibold text-ink dark:text-fg">
               {t("cycle.perDay", {
                 amount: formatMoney(restView.perDay, baseCurrency),
                 date: format(cycle.period.to, "d MMM", { locale: cycleLocale }),
               })}
             </p>
           ) : null}
+          <p className="text-sm text-ink dark:text-fg">
+            {cycle.saved >= 0
+              ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
+              : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
-          <p className="text-xs font-medium text-slate-600 dark:text-muted">{t("cycle.thisMonth")}</p>
+        {/* Détail replié : entrées, sorties et versements, pour qui veut vérifier. */}
+        <details className="group flex flex-col gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 dark:text-muted [&::-webkit-details-marker]:hidden">
+            {t("cycle.thisMonth")}
+            <svg
+              aria-hidden="true"
+              focusable="false"
+              viewBox="0 0 20 20"
+              className="h-4 w-4 transition-transform group-open:rotate-180"
+            >
+              <path
+                d="M5 8l5 5 5-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </summary>
           <dl className="grid grid-cols-2 gap-2 text-center">
             <div className="flex flex-col gap-0.5">
               <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
@@ -415,11 +439,6 @@ export function HomePage() {
               {t("cycle.debtsPaid", { amount: formatMoney(cycle.debtsPaid, baseCurrency) })}
             </p>
           ) : null}
-          <p className="text-sm text-ink dark:text-fg">
-            {cycle.saved >= 0
-              ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
-              : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
-          </p>
           {cycleView.plannedSaving !== undefined ? (
             <p className="text-xs text-slate-600 dark:text-muted">
               {t("cycle.plannedSaving", {
@@ -427,7 +446,7 @@ export function HomePage() {
               })}
             </p>
           ) : null}
-        </div>
+        </details>
 
         <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 text-xs text-slate-600 dark:border-white/15 dark:text-muted">
           {payLine(cycleView.pay)}
