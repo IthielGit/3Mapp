@@ -37,6 +37,11 @@ export async function deleteRate(id: string, database: AppDatabase = defaultDb):
 
 /* ---------- Réconciliation (SPEC §5.12) ---------- */
 
+export interface ReconcileOptions {
+  /** Écart dont le détail est inconnu : ne compte ni en revenu ni en dépense (solde corrigé quand même). */
+  undetailed?: boolean;
+}
+
 /**
  * Réconcilie un portefeuille : l'utilisateur donne son solde réel ; si l'écart n'est pas nul,
  * une transaction `adjustment` est créée pour le combler. L'opération est historisée.
@@ -49,6 +54,7 @@ export async function reconcileWallet(
   now = new Date(),
   database: AppDatabase = defaultDb,
   cutoff?: Date,
+  options: ReconcileOptions = {},
 ): Promise<Reconciliation> {
   return database.transaction(
     "rw",
@@ -78,6 +84,7 @@ export async function reconcileWallet(
             attachmentIds: [],
             date: now.toISOString(),
             status: "posted",
+            undetailed: options.undetailed === true,
           },
           database,
         );

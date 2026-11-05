@@ -426,7 +426,12 @@
     "done": "Réconciliation enregistrée.",
     "history": "Historique",
     "noHistory": "Aucune réconciliation pour le moment.",
-    "defaultMemo": "Réconciliation"
+    "defaultMemo": "Réconciliation",
+    "since": "Dernière activité connue : {{date}} (il y a {{days}} jours). L'écart couvre cette période.",
+    "addMovement": "Ajouter un mouvement manquant",
+    "undetailed": "Écart non détaillé : ne compte ni en revenu ni en dépense",
+    "undetailedHint": "À utiliser quand le détail de la période n'est pas connu, par exemple après plusieurs mois sans saisie.",
+    "undetailedMemo": "Écart non détaillé"
   },
   "rates": {
     "title": "Devises et taux",
@@ -452,6 +457,8 @@
     "next": "Période suivante"
   },
   "home": {
+    "staleWallet": "Aucune saisie depuis {{days}} jours sur {{name}}.",
+    "staleAction": "Réconcilier",
     "backupReminder": "Sauvegarde recommandée : aucune sauvegarde récente.",
     "totalBalance": "Solde total",
     "income": "Revenus",

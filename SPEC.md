@@ -101,6 +101,10 @@ Secteurs par catégorie (dépenses/revenus) avec drill-down vers les transaction
 
 Sur un portefeuille : l'utilisateur saisit le solde réel ; l'app calcule l'écart et propose de créer une transaction `adjustment` (avec mémo). Historique des réconciliations.
 
+- La page affiche la dernière activité connue (création, dernier mouvement ou dernière réconciliation) : l'écart couvre cette période. Un lien permet d'ajouter un mouvement manquant avant de réconcilier.
+- « Écart non détaillé » (case à cocher) : l'ajustement modifie le solde sans compter en revenu ni en dépense. À utiliser quand le détail d'une longue période sans saisie est inconnu.
+- Accueil : si un portefeuille actif n'a ni mouvement ni réconciliation depuis plus de 30 jours, un bandeau propose de réconcilier.
+
 ### 5.13 Import / Export
 
 - **Import CSV** : détection d'encodage et de séparateur, assistant de correspondance des colonnes, aperçu et rapport d'erreurs, détection des doublons (date+montant+wallet+mémo), création automatique des portefeuilles/catégories manquants. **Format natif prévu** : `Date, Type, Category, Amount, Currency, Memo, Wallet` où les virements sont une ligne unique avec `Wallet = "A -> B"` et montant positif ; dates `MM/DD/YYYY, HH:mm`.
