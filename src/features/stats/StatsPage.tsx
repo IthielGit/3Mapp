@@ -409,7 +409,7 @@ export function StatsPage() {
                     title={t(`stats.repr.${r}`)}
                     className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full px-3 text-xs font-medium ${
                       repr === r
-                        ? "bg-ink text-white dark:bg-white dark:text-ink"
+                        ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink"
                         : "text-slate-600 dark:text-muted"
                     }`}
                   >
@@ -433,7 +433,7 @@ export function StatsPage() {
                   onClick={() => setSavingsMonths(n)}
                   className={`min-h-[32px] rounded-full px-3 text-xs font-medium ${
                     savingsMonths === n
-                      ? "bg-ink text-white dark:bg-white dark:text-ink"
+                      ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink"
                       : "text-slate-600 dark:text-muted"
                   }`}
                 >
@@ -669,7 +669,7 @@ export function StatsPage() {
         >
           {t("transactions.filters")}
           {activeFilterCount > 0 ? (
-            <span className="ml-2 rounded-full bg-ink px-2 text-xs text-white dark:bg-white dark:text-ink">
+            <span className="ml-2 rounded-full bg-brand-700 px-2 text-xs text-white dark:bg-brand-300 dark:text-ink">
               {activeFilterCount}
             </span>
           ) : null}

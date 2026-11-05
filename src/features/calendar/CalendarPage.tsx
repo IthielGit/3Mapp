@@ -140,7 +140,7 @@ export function CalendarPage() {
                 aria-label={`${format(day, "d MMMM", { locale })}${group ? `, ${formatMoney(net, baseCurrency)}` : ""}`}
                 onClick={() => setSelected(key)}
                 className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
-                  isSelected ? "bg-ink text-white dark:bg-white dark:text-ink" : ""
+                  isSelected ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink" : ""
                 } ${inMonth ? "text-ink dark:text-fg" : "text-slate-400 dark:text-slate-600"}`}
               >
                 <span className="tabular-nums">{format(day, "d")}</span>
