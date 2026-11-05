@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
 import { buttonPrimary, buttonSecondary, buttonDanger } from "../../components/FormControls";
+import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { formatMoney } from "../../lib/money";
 import {
   ignorePending,
@@ -138,6 +139,14 @@ export function RecurringDetailPage() {
   if (r === undefined) return null;
   if (!r) return <p>{t("recurring.notFound")}</p>;
 
+  const recurringActions: MenuItem[] = [
+    {
+      label: r.paused ? t("recurring.resume") : t("recurring.pause"),
+      onSelect: () => void setRecurringPaused(id, !r.paused),
+    },
+    { label: t("common.delete"), onSelect: () => void remove(), danger: true },
+  ];
+
   async function remove() {
     if (!window.confirm(t("recurring.deleteConfirm"))) return;
     await deleteRecurring(id);
@@ -146,9 +155,10 @@ export function RecurringDetailPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-semibold">
-        {r.memo || t(`transactions.types.${r.type}`)}
-      </PageTitle>
+      <DetailHeader
+        title={r.memo || t(`transactions.types.${r.type}`)}
+        actions={<ActionMenu items={recurringActions} />}
+      />
       <p className="text-sm text-slate-600 dark:text-muted">
         {formatMoney(r.amount, r.currency)} ·{" "}
         {t("recurring.every", {
@@ -181,24 +191,12 @@ export function RecurringDetailPage() {
         </ul>
       </section>
 
-      <div className="grid grid-cols-2 gap-2">
-        <Link
-          to={`/plus/recurring/${id}/edit`}
-          className={`${buttonSecondary} inline-flex items-center justify-center`}
-        >
-          {t("common.edit")}
-        </Link>
-        <button
-          type="button"
-          className={buttonSecondary}
-          onClick={() => void setRecurringPaused(id, !r.paused)}
-        >
-          {r.paused ? t("recurring.resume") : t("recurring.pause")}
-        </button>
-        <button type="button" className={buttonDanger} onClick={() => void remove()}>
-          {t("common.delete")}
-        </button>
-      </div>
+      <Link
+        to={`/plus/recurring/${id}/edit`}
+        className={`${buttonPrimary} inline-flex w-full items-center justify-center`}
+      >
+        {t("common.edit")}
+      </Link>
     </section>
   );
 }
