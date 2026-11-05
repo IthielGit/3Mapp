@@ -90,6 +90,9 @@ export function TransactionSheet({
   const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
   const [repeat, setRepeat] = useState(false);
+  // Dépense et revenu : seuls le montant et la catégorie sont visibles ; le reste est sous « Plus de détails ».
+  const [showDetails, setShowDetails] = useState(false);
+  const hidden = (type === "expense" || type === "income") && !showDetails && !transaction;
   const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
   const [repeatEvery, setRepeatEvery] = useState(1);
   const [amountExpr, setAmountExpr] = useState(
@@ -232,6 +235,24 @@ export function TransactionSheet({
   }
   const missing = missingField();
 
+  const walletField = (
+          <Field
+            label={type === "transfer" ? t("transactions.fromWallet") : t("transactions.wallet")}
+          >
+            <select
+              className={inputClass}
+              value={effectiveWalletId}
+              onChange={(e) => setWalletId(e.target.value)}
+            >
+              {activeWallets.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name} ({w.currency})
+                </option>
+              ))}
+            </select>
+          </Field>
+  );
+
   return (
     <BottomSheet
       open
@@ -322,51 +343,10 @@ export function TransactionSheet({
           </button>
         )}
 
-        {!transaction && type !== "adjustment" ? (
-          <div className="flex flex-col gap-2">
-            <label className="flex min-h-[44px] items-center gap-3">
-              <input
-                type="checkbox"
-                className="h-5 w-5 accent-brand-700"
-                checked={repeat}
-                onChange={(e) => setRepeat(e.target.checked)}
-              />
-              <span className="font-medium">{t("repeat.label")}</span>
-            </label>
-            {repeat ? (
-              <>
-                <div className="grid grid-cols-2 gap-2">
-                  <Field label={t("repeat.every")}>
-                    <input
-                      type="number"
-                      min={1}
-                      max={99}
-                      inputMode="numeric"
-                      className={inputClass}
-                      value={repeatEvery}
-                      onChange={(e) =>
-                        setRepeatEvery(Math.max(1, Math.min(99, Number(e.target.value) || 1)))
-                      }
-                    />
-                  </Field>
-                  <Field label={t("repeat.unit")}>
-                    <select
-                      className={inputClass}
-                      value={repeatUnit}
-                      onChange={(e) => setRepeatUnit(e.target.value as Frequency["unit"])}
-                    >
-                      <option value="day">{t("repeat.day")}</option>
-                      <option value="week">{t("repeat.week")}</option>
-                      <option value="month">{t("repeat.month")}</option>
-                      <option value="year">{t("repeat.year")}</option>
-                    </select>
-                  </Field>
-                </div>
-                <p className="text-sm text-slate-600 dark:text-muted">{t("repeat.hint")}</p>
-              </>
-            ) : null}
-          </div>
-        ) : null}
+
+        <Field label={t("transactions.description")}>
+          <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
+        </Field>
 
         {type === "adjustment" ? (
           <div
@@ -390,21 +370,7 @@ export function TransactionSheet({
         ) : null}
 
         <div className="flex flex-col gap-3">
-          <Field
-            label={type === "transfer" ? t("transactions.fromWallet") : t("transactions.wallet")}
-          >
-            <select
-              className={inputClass}
-              value={effectiveWalletId}
-              onChange={(e) => setWalletId(e.target.value)}
-            >
-              {activeWallets.map((w) => (
-                <option key={w.id} value={w.id}>
-                  {w.name} ({w.currency})
-                </option>
-              ))}
-            </select>
-          </Field>
+          {type === "transfer" ? walletField : null}
 
           {type === "transfer" ? (
             <Field label={t("transactions.toWallet")}>
@@ -503,28 +469,90 @@ export function TransactionSheet({
           </Field>
         ) : null}
 
-        <div className="flex flex-col gap-3">
-          <Field label={t("transactions.date")}>
-            <input
-              type="datetime-local"
-              className={inputClass}
-              value={dateLocal}
-              onChange={(e) => setDateLocal(e.target.value)}
-            />
-          </Field>
-          <Field label={t("transactions.description")}>
-            <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
-          </Field>
-        </div>
+        {hidden ? (
+          <button
+            type="button"
+            aria-expanded={false}
+            onClick={() => setShowDetails(true)}
+            className="flex min-h-[44px] items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm font-medium text-slate-600 dark:border-white/15 dark:text-muted"
+          >
+            {t("transactions.moreDetails")}
+          </button>
+        ) : (
+          <div className="flex flex-col gap-3">
+        {!transaction && type !== "adjustment" && !hidden ? (
+          <div className="flex flex-col gap-2">
+            <label className="flex min-h-[44px] items-center gap-3">
+              <input
+                type="checkbox"
+                className="h-5 w-5 accent-brand-700"
+                checked={repeat}
+                onChange={(e) => setRepeat(e.target.checked)}
+              />
+              <span className="font-medium">{t("repeat.label")}</span>
+            </label>
+            {repeat ? (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label={t("repeat.every")}>
+                    <input
+                      type="number"
+                      min={1}
+                      max={99}
+                      inputMode="numeric"
+                      className={inputClass}
+                      value={repeatEvery}
+                      onChange={(e) =>
+                        setRepeatEvery(Math.max(1, Math.min(99, Number(e.target.value) || 1)))
+                      }
+                    />
+                  </Field>
+                  <Field label={t("repeat.unit")}>
+                    <select
+                      className={inputClass}
+                      value={repeatUnit}
+                      onChange={(e) => setRepeatUnit(e.target.value as Frequency["unit"])}
+                    >
+                      <option value="day">{t("repeat.day")}</option>
+                      <option value="week">{t("repeat.week")}</option>
+                      <option value="month">{t("repeat.month")}</option>
+                      <option value="year">{t("repeat.year")}</option>
+                    </select>
+                  </Field>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-muted">{t("repeat.hint")}</p>
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
-        <Field label={t("transactions.note")}>
-          <textarea
-            rows={3}
-            className={`${inputClass} min-h-[88px] py-2`}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-        </Field>
+            {type !== "transfer" ? walletField : null}
+            <Field label={t("transactions.date")}>
+              <input
+                type="date"
+                className={inputClass}
+                value={dateLocal.slice(0, 10)}
+                onChange={(e) => setDateLocal(`${e.target.value}T${dateLocal.slice(11, 16) || "12:00"}`)}
+              />
+            </Field>
+            <Field label={t("transactions.time")}>
+              <input
+                type="time"
+                className={inputClass}
+                value={dateLocal.slice(11, 16)}
+                onChange={(e) => setDateLocal(`${dateLocal.slice(0, 10)}T${e.target.value}`)}
+              />
+            </Field>
+            <Field label={t("transactions.noteOptional")}>
+              <textarea
+                rows={3}
+                className={`${inputClass} min-h-[88px] py-2`}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </Field>
+          </div>
+        )}
 
         {error ? (
           <p role="alert" className="text-red-700 dark:text-red-400">

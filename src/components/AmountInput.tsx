@@ -1,9 +1,18 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 import { db } from "../db/database";
 import { expressionToMinor } from "../lib/calc";
 import { minorToPlainText } from "../lib/amount-text";
 import { formatMoney, type CurrencyCode, type Minor } from "../lib/money";
+
+// Pavé de chiffres : le mode par défaut. "000" devient "00" selon le réglage.
+const DIGIT_KEYS = [
+  ["1", "2", "3"],
+  ["4", "5", "6"],
+  ["7", "8", "9"],
+  [",", "0", "000"],
+] as const;
 
 const KEYS = [
   ["7", "8", "9", "÷"],
@@ -31,6 +40,9 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
   const zeros =
     useLiveQuery(async () => (await db.settings.toCollection().first())?.keypadZeros, []) ?? 3;
   const zeroKey = zeros === 2 ? "00" : "000";
+  const { t } = useTranslation();
+  // Opérations (+ − × ÷) masquées par défaut : on les ouvre seulement si on en a besoin.
+  const [calc, setCalc] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   // Position du curseur ; null = fin de l'expression. La réf sert aux gestionnaires, l'état au rendu.
@@ -143,44 +155,79 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
         </output>
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5">
-        {KEYS.flat().map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => press(key)}
-            aria-label={key === "⌫" ? "Effacer" : key}
-            className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15"
-          >
-            {key}
+      {calc ? (
+        <>
+          <div className="grid grid-cols-4 gap-1.5">
+            {KEYS.flat().map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => press(key)}
+                aria-label={key === "⌫" ? t("transactions.erase") : key}
+                className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15"
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-4 gap-1.5">
+            <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15">
+              C
+            </button>
+            <button
+              type="button"
+              onClick={() => press(zeroKey)}
+              aria-label={zeroKey}
+              className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-white/15"
+            >
+              {zeroKey}
+            </button>
+            <button
+              type="button"
+              onClick={equals}
+              disabled={minor === null}
+              className="min-h-[44px] rounded-lg bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink dark:disabled:bg-raised dark:disabled:text-muted dark:disabled:opacity-100"
+            >
+              =
+            </button>
+            <button
+              type="button"
+              onClick={() => setCalc(false)}
+              className="min-h-[44px] rounded-lg border border-slate-300 text-sm font-medium dark:border-white/15"
+            >
+              {t("transactions.digits")}
+            </button>
+          </div>
+        </>
+      ) : (
+        // Mode par défaut : chiffres seulement. Les opérations sont derrière « + − × ÷ ».
+        <div className="grid grid-cols-3 gap-1.5">
+          {DIGIT_KEYS.flat().map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => press(key === "000" ? zeroKey : key)}
+              aria-label={key === "000" ? zeroKey : key}
+              className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium tabular-nums dark:border-white/15"
+            >
+              {key === "000" ? zeroKey : key}
+            </button>
+          ))}
+          <button type="button" onClick={() => press("⌫")} aria-label={t("transactions.erase")} className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15">
+            ⌫
           </button>
-        ))}
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        <button
-          type="button"
-          onClick={clear}
-          className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15"
-        >
-          C
-        </button>
-        <button
-          type="button"
-          onClick={() => press(zeroKey)}
-          aria-label={zeroKey}
-          className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-white/15"
-        >
-          {zeroKey}
-        </button>
-        <button
-          type="button"
-          onClick={equals}
-          disabled={minor === null}
-          className="min-h-[44px] rounded-lg bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink dark:disabled:bg-raised dark:disabled:text-muted dark:disabled:opacity-100"
-        >
-          =
-        </button>
-      </div>
+          <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15">
+            C
+          </button>
+          <button
+            type="button"
+            onClick={() => setCalc(true)}
+            className="min-h-[44px] rounded-lg border border-slate-300 text-sm font-medium dark:border-white/15"
+          >
+            {t("transactions.calc")}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

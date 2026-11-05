@@ -15,8 +15,10 @@ export function VisualisationLayout() {
         <ul className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-raised">
           {TABS.map((tab) => (
             <li key={tab.to}>
+              {/* replace : changer d’onglet ne crée pas d’entrée dans l’historique, donc « retour » quitte l’écran. */}
               <NavLink
                 to={tab.to}
+                replace
                 className={({ isActive }) =>
                   `flex min-h-[44px] items-center justify-center rounded-lg text-sm font-medium transition-colors ${
                     isActive

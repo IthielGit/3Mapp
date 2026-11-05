@@ -29,3 +29,12 @@ test("pas de défilement horizontal sur mobile", async ({ page }) => {
   );
   expect(overflow).toBe(false);
 });
+
+test("retour quitte Visualisation au lieu de passer de Calendrier à Analyses", async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Accueil" }).getByRole("link", { name: "Visualisation" }).click();
+  await page.getByRole("navigation", { name: "Visualisation" }).getByRole("link", { name: "Analyses" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Analyses" })).toBeVisible();
+  await page.getByRole("button", { name: "Retour" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
+});

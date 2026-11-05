@@ -279,7 +279,13 @@
     "chooseCategory": "Choose a category",
     "categoryRequired": "Choose a category, or create one.",
     "newCategory": "New category",
-    "amountRequired": "Enter an amount greater than 0."
+    "amountRequired": "Enter an amount greater than 0.",
+    "moreDetails": "More details",
+    "time": "Time",
+    "calc": "+ − × ÷",
+    "digits": "123",
+    "erase": "Erase",
+    "noteOptional": "Note (optional)"
   },
   "errors": {
     "required": "This field is required.",

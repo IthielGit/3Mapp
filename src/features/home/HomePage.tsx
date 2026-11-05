@@ -309,10 +309,10 @@ export function HomePage() {
         </div>
         <Link
           to="/plus"
-          aria-label={t("nav.more")}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
+          className="flex h-11 items-center gap-2 rounded-full bg-white px-3 text-sm font-medium text-ink shadow-sm dark:bg-raised dark:text-fg"
         >
           <GearIcon />
+          <span>{t("nav.more")}</span>
         </Link>
       </header>
 

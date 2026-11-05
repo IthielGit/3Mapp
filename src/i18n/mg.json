@@ -279,7 +279,13 @@
     "chooseCategory": "Misafidy sokajy",
     "categoryRequired": "Misafidiana sokajy, na mamorona iray.",
     "newCategory": "Sokajy vaovao",
-    "amountRequired": "Ampidiro ny vola mihoatra ny 0."
+    "amountRequired": "Ampidiro ny vola mihoatra ny 0.",
+    "moreDetails": "Antsipiriany",
+    "time": "Ora",
+    "calc": "+ − × ÷",
+    "digits": "123",
+    "erase": "Fafao",
+    "noteOptional": "Fanamarihana (tsy voatery)"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",
