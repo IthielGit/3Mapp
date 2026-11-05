@@ -155,12 +155,12 @@ export function CalendarPage() {
                 }}
                 className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
                   isSelected ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink" : ""
-                } ${inMonth ? "text-ink dark:text-fg" : "text-slate-400 dark:text-slate-600"}`}
+                } ${inMonth ? "text-ink dark:text-fg" : "text-slate-600 dark:text-muted"}`}
               >
                 <span className="tabular-nums">{format(day, "d")}</span>
                 {group ? (
                   <span
-                    className={`max-w-full truncate text-[11px] font-semibold tabular-nums ${
+                    className={`max-w-full truncate text-xs font-semibold tabular-nums ${
                       isSelected
                         ? "text-white dark:text-ink"
                         : net < 0
