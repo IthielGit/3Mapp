@@ -2,7 +2,12 @@ import Papa from "papaparse";
 import { transactionSchema, type Transaction } from "../../db/entities";
 import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { CURRENCIES, parseMoney, type CurrencyCode, type Minor } from "../../lib/money";
-import { parseNativeDate, splitTransferWallets } from "./csv-format";
+import {
+  isAmbiguousDate,
+  parseNativeDate,
+  splitTransferWallets,
+  type DateOrder,
+} from "./csv-format";
 
 export type ImportField = "date" | "type" | "category" | "amount" | "currency" | "memo" | "wallet";
 export const IMPORT_FIELDS: ImportField[] = [
@@ -29,6 +34,8 @@ export interface ParsedRow {
   memo: string;
   walletName: string;
   toWalletName: string;
+  /** La date peut se lire dans les deux sens (ex. 02/11/2026) : l'ordre choisi a été appliqué. */
+  dateAmbiguous: boolean;
   errors: string[];
 }
 
@@ -127,13 +134,22 @@ export function buildRows(
   file: ParsedFile,
   mapping: Mapping,
   baseCurrency: CurrencyCode,
+  dateOrder: DateOrder = "dmy",
 ): ParsedRow[] {
   return file.rows.map((raw, index) => {
     const errors: string[] = [];
     const line = index + 2; // ligne 1 = en-tête
 
-    const date = parseNativeDate(cell(raw, file.headers, mapping.date)) ?? "";
-    if (date === "") errors.push("Date invalide (attendu : MM/DD/YYYY, HH:mm)");
+    const dateRaw = cell(raw, file.headers, mapping.date);
+    const date = parseNativeDate(dateRaw, dateOrder) ?? "";
+    if (date === "") {
+      errors.push(
+        dateOrder === "dmy"
+          ? "Date invalide (attendu : JJ/MM/AAAA, HH:mm)"
+          : "Date invalide (attendu : MM/JJ/AAAA, HH:mm)",
+      );
+    }
+    const dateAmbiguous = isAmbiguousDate(dateRaw);
 
     const typeRaw = normalise(cell(raw, file.headers, mapping.type));
     const type =
@@ -177,6 +193,7 @@ export function buildRows(
       memo: cell(raw, file.headers, mapping.memo),
       walletName,
       toWalletName,
+      dateAmbiguous,
       errors,
     };
   });

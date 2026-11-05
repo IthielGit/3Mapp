@@ -29,6 +29,8 @@ import {
   transactionsToXlsx,
 } from "./export";
 
+import type { DateOrder } from "./csv-format";
+
 export function ImportExportPage() {
   const { t } = useTranslation();
   const settings = useLiveQuery(() => db.settings.toArray(), []);
@@ -40,6 +42,7 @@ export function ImportExportPage() {
   const [plan, setPlan] = useState<ImportPlan | undefined>();
   const [result, setResult] = useState<ImportResult | undefined>();
   const [message, setMessage] = useState<string | undefined>();
+  const [dateOrder, setDateOrder] = useState<DateOrder>("dmy");
 
   async function onFile(fileList: FileList | null) {
     const picked = fileList?.[0];
@@ -55,13 +58,22 @@ export function ImportExportPage() {
 
   const mappingComplete = REQUIRED_FIELDS.every((f) => mapping[f]);
 
-  async function preview() {
+  async function preview(order: DateOrder = dateOrder) {
     if (!file) return;
     setResult(undefined);
-    const rows = buildRows(file, mapping, baseCurrency);
+    const rows = buildRows(file, mapping, baseCurrency, order);
     const existing = await existingSignatures();
     setPlan(planImport(rows, existing));
   }
+
+  function changeDateOrder(order: DateOrder) {
+    setDateOrder(order);
+    if (plan) void preview(order);
+  }
+
+  const ambiguousCount = plan
+    ? [...plan.valid, ...plan.invalid, ...plan.duplicates].filter((r) => r.dateAmbiguous).length
+    : 0;
 
   async function runImport() {
     if (!plan) return;
@@ -139,6 +151,25 @@ export function ImportExportPage() {
                 onChange={(column) => setMapping((m) => ({ ...m, [field]: column }))}
               />
             ))}
+            <fieldset className="flex flex-col gap-2">
+              <legend className="mb-1 text-sm font-medium">{t("importExport.dateOrderLegend")}</legend>
+              {(["dmy", "mdy"] as const).map((order) => (
+                <label
+                  key={order}
+                  className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 dark:border-white/15"
+                >
+                  <input
+                    type="radio"
+                    name="date-order"
+                    value={order}
+                    checked={dateOrder === order}
+                    onChange={() => changeDateOrder(order)}
+                    className="h-5 w-5"
+                  />
+                  <span>{t(`importExport.dateOrder.${order}`)}</span>
+                </label>
+              ))}
+            </fieldset>
             <button
               type="button"
               className={buttonSecondary}
@@ -159,6 +190,11 @@ export function ImportExportPage() {
                 invalid: plan.invalid.length,
               })}
             </p>
+            {ambiguousCount > 0 ? (
+              <p role="status" className="rounded-lg bg-amber-100 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+                {t("importExport.dateAmbiguous", { count: ambiguousCount })}
+              </p>
+            ) : null}
             <ul className="flex flex-col gap-1 text-sm">
               {plan.valid.slice(0, 10).map((row) => (
                 <li key={row.line}>

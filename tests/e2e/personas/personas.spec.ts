@@ -284,9 +284,13 @@ test("persona 3 — petit commerçant : import CSV et cohérence des totaux", as
     });
     await page.getByRole("button", { name: "Aperçu" }).click();
     await j.shot(page, "p3-01-apercu");
-    const preview = await page.getByRole("status").or(page.locator("body")).innerText();
+    const preview = await page.locator("main").innerText();
     const match = preview.match(/\d+ transaction\(s\) à importer[^\n]*/);
     j.note("note", "aperçu", match ? match[0] : "texte d'aperçu non trouvé");
+    // 02/11 et 03/11 se lisent dans les deux sens : l'avertissement doit apparaître.
+    if (!preview.includes("peuvent se lire dans les deux sens")) {
+      j.note("gêne", "aperçu", "pas d'avertissement pour les dates ambiguës (02/11, 03/11)");
+    }
     await page.getByRole("button", { name: /Importer \d+ transaction/ }).click();
     await expect(page.getByRole("status")).toContainText("créée");
     j.note("note", "import", (await page.getByRole("status").innerText()).trim());
@@ -325,13 +329,13 @@ test("persona 4 — salarié payé vers le 28 : budgets et périodes", async ({ 
   const j = new Journal(testInfo);
   await completeOnboardingUi(page, "Compte BNI");
 
-  // Dates au format attendu par l'import (MM/DD) : 11/01/2026 = 1er novembre 2026.
+  // Dates au format JJ/MM/AAAA (défaut de l import) : 01/11/2026 = 1er novembre 2026.
   const csv = [
     "Date,Type,Category,Amount,Currency,Memo,Wallet",
-    '"11/01/2026, 09:00",income,Salaire,1200000,MGA,Salaire,Compte BNI',
-    '"11/02/2026, 12:00",expense,Alimentation,250000,MGA,Courses semaine,Compte BNI',
-    '"11/03/2026, 12:00",expense,Transport,80000,MGA,Carburant,Compte BNI',
-    '"11/04/2026, 09:00",expense,Loyer,500000,MGA,Loyer novembre,Compte BNI',
+    '"01/11/2026, 09:00",income,Salaire,1200000,MGA,Salaire,Compte BNI',
+    '"02/11/2026, 12:00",expense,Alimentation,250000,MGA,Courses semaine,Compte BNI',
+    '"03/11/2026, 12:00",expense,Transport,80000,MGA,Carburant,Compte BNI',
+    '"04/11/2026, 09:00",expense,Loyer,500000,MGA,Loyer novembre,Compte BNI',
   ].join("\n");
 
   await j.step("importer les opérations du mois", async () => {

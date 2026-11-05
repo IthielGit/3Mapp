@@ -502,7 +502,7 @@
   "importExport": {
     "title": "Hampiditra / Hamoaka",
     "importTitle": "Hampiditra rakitra CSV",
-    "importHint": "Endrika fototra : Date, Type, Category, Amount, Currency, Memo, Wallet. Ny daty dia soratana MM/DD/YYYY, HH:mm. Ny fifindrana vola dia andalana iray « A -> B ».",
+    "importHint": "Endrika fototra : Date, Type, Category, Amount, Currency, Memo, Wallet. Ny daty dia azo soratana JJ/MM/AAAA, MM/JJ/AAAA na AAAA-MM-JJ, miaraka amin’ny ora raha tiana. Ny fifindrana vola dia andalana iray « A -> B ».",
     "chooseFile": "Misafidiana rakitra CSV",
     "separator": "Tapa-kevitra voafantina : {{separator}}",
     "preview": "Topi-maso",
@@ -520,7 +520,13 @@
       "currency": "Vola",
       "memo": "Memo",
       "wallet": "Kitapo vola"
-    }
+    },
+    "dateOrderLegend": "Filaharana ny daty ao amin’ny rakitra",
+    "dateOrder": {
+      "dmy": "JJ/MM/AAAA (ohatra 28/10/2026)",
+      "mdy": "MM/JJ/AAAA (ohatra 10/28/2026)"
+    },
+    "dateAmbiguous": "Daty {{count}} azo vakina amin’ny fomba roa. Jereo ny filaharana voafidy etsy ambony alohan’ny hampidirana."
   },
   "app": {
     "updateAvailable": "Misy version vaovao",

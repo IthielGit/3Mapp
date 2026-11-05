@@ -3,6 +3,7 @@ import { AppDatabase } from "../../src/db/database";
 import { computeBalances } from "../../src/domain/balance";
 import {
   formatNativeDate,
+  isAmbiguousDate,
   parseNativeDate,
   splitTransferWallets,
 } from "../../src/features/import-export/csv-format";
@@ -37,17 +38,33 @@ afterEach(async () => {
 const HEADER = "Date,Type,Category,Amount,Currency,Memo,Wallet";
 
 describe("format natif", () => {
-  it("dates MM/DD/YYYY, HH:mm (aller-retour)", () => {
+  it("export AAAA-MM-JJ HH:mm, réimportable sans ambiguïté (aller-retour)", () => {
     const iso = new Date(2026, 1, 3, 14, 5).toISOString();
-    expect(formatNativeDate(iso)).toBe("02/03/2026, 14:05");
-    expect(parseNativeDate("02/03/2026, 14:05")).toBe(iso);
-    expect(parseNativeDate("02/03/2026")).toBe(new Date(2026, 1, 3, 0, 0).toISOString());
+    expect(formatNativeDate(iso)).toBe("2026-02-03 14:05");
+    expect(parseNativeDate("2026-02-03 14:05")).toBe(iso);
+    expect(parseNativeDate("2026-02-03")).toBe(new Date(2026, 1, 3, 0, 0).toISOString());
+    expect(parseNativeDate("2026-02-30")).toBeNull();
   });
 
   it("refuse les dates impossibles", () => {
-    expect(parseNativeDate("02/31/2026")).toBeNull();
-    expect(parseNativeDate("13/01/2026")).toBeNull();
+    expect(parseNativeDate("31/02/2026")).toBeNull();
+    expect(parseNativeDate("13/13/2026")).toBeNull();
     expect(parseNativeDate("pas une date")).toBeNull();
+  });
+
+  it("import JJ/MM/AAAA par défaut ; MM/JJ/AAAA sur demande", () => {
+    expect(parseNativeDate("28/10/2026")).toBe(new Date(2026, 9, 28).toISOString());
+    expect(parseNativeDate("02/11/2026")).toBe(new Date(2026, 10, 2).toISOString());
+    expect(parseNativeDate("02/11/2026", "mdy")).toBe(new Date(2026, 1, 11).toISOString());
+    expect(parseNativeDate("10/28/2026", "mdy")).toBe(new Date(2026, 9, 28).toISOString());
+    expect(parseNativeDate("10/28/2026", "dmy")).toBeNull();
+  });
+
+  it("signale les dates ambiguës seulement quand les deux nombres sont ≤ 12 et différents", () => {
+    expect(isAmbiguousDate("02/11/2026")).toBe(true);
+    expect(isAmbiguousDate("28/10/2026")).toBe(false);
+    expect(isAmbiguousDate("05/05/2026")).toBe(false);
+    expect(isAmbiguousDate("2026-11-02")).toBe(false);
   });
 
   it("virement « A -> B »", () => {
@@ -84,14 +101,14 @@ describe("lignes et erreurs", () => {
     const file = parseCsvText(
       [HEADER, '"02/03/2026, 10:00",expense,Food,-12,MGA,Bon,BNI'].join("\n"),
     );
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
     expect(rows[0]?.errors).toEqual([]);
     expect(rows[0]?.amount).toBe(12);
   });
 
   it("montant avec décimales non admises par la devise : erreur, pas d’arrondi silencieux", () => {
     const file = parseCsvText([HEADER, "02/03/2026,expense,,12.5,MGA,,BNI"].join("\n"));
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
     expect(rows[0]?.errors.length).toBeGreaterThan(0);
   });
 
@@ -99,7 +116,7 @@ describe("lignes et erreurs", () => {
     const file = parseCsvText(
       [HEADER, "02/03/2026,unknown,,100,MGA,,BNI", "02/03/2026,transfer,,100,MGA,,BNI"].join("\n"),
     );
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
     expect(rows[0]?.errors.length).toBeGreaterThan(0);
     expect(rows[1]?.errors.length).toBeGreaterThan(0);
   });
@@ -197,7 +214,7 @@ describe("import, doublons et aller-retour", () => {
     const csv = transactionsToCsv(await db.transactions.toArray(), names);
 
     const file = parseCsvText(csv);
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
     const result = await executeImport(planImport(rows, await existingSignatures(other)), other);
     expect(result.created).toBe(4);
     expect(result.invalid).toHaveLength(0);
@@ -219,7 +236,7 @@ describe("import, doublons et aller-retour", () => {
     const names = await loadExportNames(db);
     const csv = transactionsToCsv(await db.transactions.toArray(), names);
     const file = parseCsvText(csv);
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
 
     const first = await executeImport(planImport(rows, await existingSignatures(other)), other);
     expect(first.created).toBe(4);
@@ -232,7 +249,7 @@ describe("import, doublons et aller-retour", () => {
   it("doublons à l’intérieur du même fichier détectés", () => {
     const line = '"02/03/2026, 10:00",expense,Food,1000,MGA,Bon,BNI';
     const file = parseCsvText([HEADER, line, line].join("\n"));
-    const rows = buildRows(file, autoMapping(file.headers), "MGA");
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
     const plan = planImport(rows, []);
     expect(plan.valid).toHaveLength(1);
     expect(plan.duplicates).toHaveLength(1);

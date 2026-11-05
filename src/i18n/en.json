@@ -502,7 +502,7 @@
   "importExport": {
     "title": "Import / Export",
     "importTitle": "Import a CSV file",
-    "importHint": "Native format: Date, Type, Category, Amount, Currency, Memo, Wallet. Dates are written MM/DD/YYYY, HH:mm. A transfer is a single line \"A -> B\".",
+    "importHint": "Native format: Date, Type, Category, Amount, Currency, Memo, Wallet. Dates can be written DD/MM/YYYY, MM/DD/YYYY or YYYY-MM-DD, with an optional time. A transfer is a single line \"A -> B\".",
     "chooseFile": "Choose a CSV file",
     "separator": "Detected separator: {{separator}}",
     "preview": "Preview",
@@ -520,7 +520,13 @@
       "currency": "Currency",
       "memo": "Memo",
       "wallet": "Wallet"
-    }
+    },
+    "dateOrderLegend": "Date order in the file",
+    "dateOrder": {
+      "dmy": "DD/MM/YYYY (e.g. 28/10/2026)",
+      "mdy": "MM/DD/YYYY (e.g. 10/28/2026)"
+    },
+    "dateAmbiguous": "{{count}} date(s) could be read either way. Check the order chosen above before importing."
   },
   "app": {
     "updateAvailable": "New version available",

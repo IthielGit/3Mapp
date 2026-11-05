@@ -502,7 +502,7 @@
   "importExport": {
     "title": "Import / Export",
     "importTitle": "Importer un fichier CSV",
-    "importHint": "Format natif : Date, Type, Category, Amount, Currency, Memo, Wallet. Les dates s'écrivent MM/DD/YYYY, HH:mm. Un virement est une seule ligne « A -> B ».",
+    "importHint": "Format natif : Date, Type, Category, Amount, Currency, Memo, Wallet. Les dates peuvent s’écrire JJ/MM/AAAA, MM/JJ/AAAA ou AAAA-MM-JJ, avec l’heure en option. Un virement est une seule ligne « A -> B ».",
     "chooseFile": "Choisir un fichier CSV",
     "separator": "Séparateur détecté : {{separator}}",
     "preview": "Aperçu",
@@ -520,7 +520,13 @@
       "currency": "Devise",
       "memo": "Mémo",
       "wallet": "Portefeuille"
-    }
+    },
+    "dateOrderLegend": "Ordre des dates dans le fichier",
+    "dateOrder": {
+      "dmy": "JJ/MM/AAAA (ex. 28/10/2026)",
+      "mdy": "MM/JJ/AAAA (ex. 10/28/2026)"
+    },
+    "dateAmbiguous": "{{count}} date(s) peuvent se lire dans les deux sens. Vérifiez l’ordre choisi ci-dessus avant d’importer."
   },
   "app": {
     "updateAvailable": "Nouvelle version disponible",
