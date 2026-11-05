@@ -11,10 +11,14 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Finitions : anneau de focus visible, sélection et curseur aux couleurs de la marque. */
+/* Anneau de focus : couleur de marque (le rouge reste réservé aux suppressions et à l'expression négative). */
 :focus-visible {
-  outline: 2px solid #ee4444;
+  outline: 2px solid #0f766e;
   outline-offset: 2px;
+}
+
+:root.dark :focus-visible {
+  outline-color: #f5f5f7;
 }
 
 ::selection {

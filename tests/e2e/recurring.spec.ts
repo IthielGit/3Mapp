@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, pickFoodCategory } from "./helpers";
 
 test("récurrence passée : rattrapée à l’ouverture, puis validée depuis « En attente »", async ({
   page,
@@ -13,6 +13,7 @@ test("récurrence passée : rattrapée à l’ouverture, puis validée depuis «
   await page.getByLabel("Mémo").fill("Loyer");
   await page.getByLabel("Premier passage").fill("2026-01-05T09:00");
   await page.getByLabel("Créer directement comme validée (sinon en attente)").uncheck();
+  await pickFoodCategory(page);
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Récurrences" })).toBeVisible();
 
@@ -35,6 +36,7 @@ test("récurrence modifiable : montant et mémo mis à jour depuis le détail", 
   await page.getByLabel(/Montant/).fill("50000");
   await page.getByLabel("Mémo").fill("Abonnement");
   await page.getByLabel("Premier passage").fill("2026-02-01T09:00");
+  await pickFoodCategory(page);
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Récurrences" })).toBeVisible();
 

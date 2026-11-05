@@ -273,7 +273,8 @@
     "amountTapToEnter": "Toucher pour saisir le montant",
     "chooseCategory": "Choisir une catégorie",
     "categoryRequired": "Choisissez une catégorie, ou créez-en une.",
-    "newCategory": "Nouvelle catégorie"
+    "newCategory": "Nouvelle catégorie",
+    "amountRequired": "Saisissez un montant supérieur à 0."
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

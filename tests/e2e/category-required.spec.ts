@@ -8,7 +8,7 @@ test("catégorie obligatoire : refusée sans catégorie, création rapide puis e
   for (const key of ["3", "0", "0", "0"]) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }
-  await page.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(page.getByRole("button", { name: "Enregistrer" })).toBeDisabled();
   await expect(page.getByText("Choisissez une catégorie, ou créez-en une.")).toBeVisible();
   await expect(page).toHaveURL(/transactions\/new/);
 

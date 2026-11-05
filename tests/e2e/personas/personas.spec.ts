@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { devices, expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
-import { completeOnboardingUi, openAmountKeypad } from "../helpers";
+import { completeOnboardingUi, openAmountKeypad, pickFoodCategory } from "../helpers";
 
 // Cinq parcours de test « persona », approuvés avant exécution. Chaque parcours continue même
 // après une difficulté : les constats sont consignés puis rendus dans un rapport joint au test.
@@ -231,6 +231,7 @@ test("persona 2 — jeune actif avec plusieurs comptes et abonnements", async ({
     await page.getByLabel(/Montant/).fill("65000");
     await page.getByLabel("Mémo").fill("Abonnement internet");
     await page.getByLabel("Premier passage").fill("2026-11-01T09:00");
+    await pickFoodCategory(page);
     await page.getByRole("button", { name: "Enregistrer" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Récurrences" })).toBeVisible();
   });

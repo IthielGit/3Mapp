@@ -273,7 +273,8 @@
     "amountTapToEnter": "Tap to enter the amount",
     "chooseCategory": "Choose a category",
     "categoryRequired": "Choose a category, or create one.",
-    "newCategory": "New category"
+    "newCategory": "New category",
+    "amountRequired": "Enter an amount greater than 0."
   },
   "errors": {
     "required": "This field is required.",

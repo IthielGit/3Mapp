@@ -5,7 +5,9 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
+import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
+import { createCategory } from "../categories/category-service";
 import { parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
@@ -27,6 +29,8 @@ export function RecurringFormPage() {
   const [toWalletId, setToWalletId] = useState("");
   const [amountText, setAmountText] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
   const [memo, setMemo] = useState("");
   const [unit, setUnit] = useState<RecurrenceUnit>("month");
   const [interval, setInterval] = useState("1");
@@ -61,6 +65,32 @@ export function RecurringFormPage() {
   const effectiveWallet = walletId || active[0]?.id || "";
   const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";
   const kind = type === "income" ? "income" : "expense";
+
+  /** Crée une catégorie du même genre que la récurrence et la sélectionne. */
+  async function createQuickCategory() {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    try {
+      const created = await createCategory({ name, kind, icon: "🏷️", color: "#64748b", archived: false });
+      setCategoryId(created.id);
+      setNewCategoryName("");
+      setCreatingCategory(false);
+      setError(undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.generic"));
+    }
+  }
+
+  /** Ce qui manque avant d'enregistrer ; null quand le formulaire est complet. */
+  function missingField(): string | null {
+    const amount = parseMoney(amountText, currency);
+    if (amount === null || amount <= 0) return t("transactions.amountRequired");
+    const every = Number(interval);
+    if (!Number.isInteger(every) || every < 1) return t("recurring.invalidInterval");
+    if ((type === "expense" || type === "income") && !categoryId) return t("transactions.categoryRequired");
+    if (type === "transfer" && !toWalletId) return t("transactions.chooseWallet");
+    return null;
+  }
 
   async function save() {
     setError(undefined);
@@ -158,22 +188,59 @@ export function RecurringFormPage() {
             </select>
           </Field>
         ) : (
-          <Field label={t("common.category")}>
-            <select
-              className={inputClass}
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-            >
-              <option value="">—</option>
-              {categories
-                .filter((c) => c.kind === kind && !c.archived)
-                .map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.icon} {c.name}
-                  </option>
-                ))}
-            </select>
-          </Field>
+          <div className="flex flex-col gap-2">
+            <Field label={t("common.category")}>
+              <select
+                className={inputClass}
+                value={categoryId}
+                required
+                onChange={(e) => setCategoryId(e.target.value)}
+              >
+                <option value="" disabled>
+                  {t("transactions.chooseCategory")}
+                </option>
+                {categories
+                  .filter((c) => c.kind === kind && !c.archived)
+                  .sort(byName)
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.icon} {c.name}
+                    </option>
+                  ))}
+              </select>
+            </Field>
+            {creatingCategory ? (
+              <div className="flex gap-2">
+                <input
+                  className={inputClass}
+                  value={newCategoryName}
+                  aria-label={t("common.name")}
+                  placeholder={t("common.name")}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  className={buttonPrimary}
+                  disabled={!newCategoryName.trim()}
+                  onClick={() => void createQuickCategory()}
+                >
+                  {t("common.add")}
+                </button>
+                <button type="button" className={buttonSecondary} onClick={() => setCreatingCategory(false)}>
+                  {t("common.cancel")}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="min-h-[44px] self-start font-medium text-brand-700 dark:text-brand-300"
+                onClick={() => setCreatingCategory(true)}
+              >
+                + {t("transactions.newCategory")}
+              </button>
+            )}
+          </div>
         )}
       </div>
 
@@ -259,7 +326,12 @@ export function RecurringFormPage() {
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}
         </button>
-        <button type="button" className={buttonPrimary} onClick={() => void save()}>
+        <button
+          type="button"
+          className={buttonPrimary}
+          onClick={() => void save()}
+          disabled={missingField() !== null}
+        >
           {t("common.save")}
         </button>
       </div>

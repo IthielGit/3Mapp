@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
+import { byName } from "../../lib/compare";
 import type { Subcategory, Transaction } from "../../db/entities";
 import { RuleError } from "../../db/errors";
 import { BottomSheet } from "../../components/BottomSheet";
@@ -131,7 +132,7 @@ export function TransactionSheet({
   const crossCurrency =
     type === "transfer" && targetWallet !== undefined && targetWallet.currency !== currency;
   const kind = type === "income" ? "income" : "expense";
-  const categoryOptions = categories.filter((c) => !c.archived && c.kind === kind);
+  const categoryOptions = categories.filter((c) => !c.archived && c.kind === kind).sort(byName);
 
   const subcategories =
     useLiveQuery(
@@ -144,7 +145,6 @@ export function TransactionSheet({
 
 
 
-  /** Construit le brouillon ; toute saisie invalide lève une RuleError lisible. */
   /** Crée une catégorie depuis le formulaire et la sélectionne (même genre que la transaction). */
   async function createQuickCategory() {
     const name = newCategoryName.trim();
@@ -161,6 +161,7 @@ export function TransactionSheet({
     }
   }
 
+  /** Construit le brouillon ; toute saisie invalide lève une RuleError lisible. */
   function buildDraft(): TransactionDraft {
     if (!sourceWallet) throw new RuleError(t("transactions.chooseWallet"));
     const amount = expressionToMinor(amountExpr, currency);
@@ -234,6 +235,19 @@ export function TransactionSheet({
     onDuplicate?.(transaction);
   }
 
+  /** Ce qui manque avant d'enregistrer ; null quand le formulaire est complet. */
+  function missingField(): string | null {
+    const value = amountExpr.trim() === "" ? null : expressionToMinor(amountExpr, currency);
+    if (value === null || value <= 0) return t("transactions.amountRequired");
+    try {
+      buildDraft();
+      return null;
+    } catch (err) {
+      return err instanceof Error ? err.message : t("errors.generic");
+    }
+  }
+  const missing = missingField();
+
   return (
     <BottomSheet
       open
@@ -250,14 +264,19 @@ export function TransactionSheet({
         ) : undefined
       }
       footer={
-        <button
-          type="button"
-          className={`${buttonPrimary} w-full`}
-          onClick={() => void save()}
-          disabled={saving}
-        >
-          {t("common.save")}
-        </button>
+        <div className="flex flex-col gap-2">
+          {missing ? (
+            <p className="text-center text-sm text-slate-600 dark:text-muted">{missing}</p>
+          ) : null}
+          <button
+            type="button"
+            className={`${buttonPrimary} w-full`}
+            onClick={() => void save()}
+            disabled={saving || missing !== null}
+          >
+            {t("common.save")}
+          </button>
+        </div>
       }
     >
       <div className="flex flex-col gap-3">

@@ -273,7 +273,8 @@
     "amountTapToEnter": "Tsindrio raha hampidi ny vola",
     "chooseCategory": "Misafidy sokajy",
     "categoryRequired": "Misafidiana sokajy, na mamorona iray.",
-    "newCategory": "Sokajy vaovao"
+    "newCategory": "Sokajy vaovao",
+    "amountRequired": "Ampidiro ny vola mihoatra ny 0."
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
+import { byName } from "../../lib/compare";
 import type { Category } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { setCategoryArchived } from "./category-service";
@@ -17,7 +18,7 @@ export function CategoriesPage() {
   if (!categories) return null;
 
   const ofKind = categories.filter((c) => c.kind === kind);
-  const active = ofKind.filter((c) => !c.archived);
+  const active = ofKind.filter((c) => !c.archived).sort(byName);
   const archived = ofKind.filter((c) => c.archived);
 
   return (

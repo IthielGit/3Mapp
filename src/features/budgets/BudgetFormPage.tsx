@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
+import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import { createBudget, updateBudget, type BudgetInput } from "./budget-service";
@@ -55,7 +56,7 @@ export function BudgetFormPage() {
 
   if (!loaded) return null;
 
-  const expenseCategories = categories.filter((c) => c.kind === "expense" && !c.archived);
+  const expenseCategories = categories.filter((c) => c.kind === "expense" && !c.archived).sort(byName);
 
   function toggle(list: string[], value: string): string[] {
     return list.includes(value) ? list.filter((x) => x !== value) : [...list, value];

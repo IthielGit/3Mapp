@@ -73,8 +73,8 @@ test("montant zéro : la saisie est refusée", async ({ page }) => {
   await page.getByRole("navigation", { name: "Accueil" }).getByRole("link", { name: "Transactions" }).click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   await typeAmount(page, "0");
-  await page.getByRole("button", { name: "Enregistrer" }).click();
-  // Pas de transaction créée : la feuille reste ouverte (pas de navigation vers la liste).
+  // Montant nul : le bouton reste désactivé, rien n'est créé.
+  await expect(page.getByRole("button", { name: "Enregistrer" })).toBeDisabled();
   await expect(page).toHaveURL(/transactions\/new/);
 });
 

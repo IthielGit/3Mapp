@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { endOfMonth, format, startOfMonth, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { db } from "../../db/database";
+import { byName } from "../../lib/compare";
 import type { Transaction } from "../../db/entities";
 import { BottomSheet } from "../../components/BottomSheet";
 import {
@@ -472,7 +473,7 @@ export function TransactionsPage() {
               aria-label={t("transactions.setCategory")}
             >
               <option value="">—</option>
-              {categories.map((c) => (
+              {[...categories].sort(byName).map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -588,7 +589,7 @@ export function TransactionsPage() {
                 }
               >
                 <option value="">{t("transactions.anyCategory")}</option>
-                {categories.map((c) => (
+                {[...categories].sort(byName).map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
