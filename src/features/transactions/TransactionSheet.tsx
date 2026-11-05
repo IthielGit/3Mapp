@@ -282,6 +282,9 @@ export function TransactionSheet({
             </button>
           ))}
         </div>
+        {type === "transfer" ? (
+          <p className="text-sm text-slate-500 dark:text-muted">{t("transactions.transferHint")}</p>
+        ) : null}
 
         {!transaction && templates.length > 0 ? (
           <Field label={t("templates.label")}>
@@ -527,14 +530,17 @@ export function TransactionSheet({
           </p>
         ) : null}
 
-        <button
-          type="button"
-          className={buttonPrimary}
-          onClick={() => void save()}
-          disabled={saving}
-        >
-          {t("common.save")}
-        </button>
+        {/* Enregistrer reste collé en bas de la feuille : toujours visible, sans zone vide dessous. */}
+        <div className="sticky bottom-0 -mx-4 -mb-[max(1rem,env(safe-area-inset-bottom))] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 dark:bg-card">
+          <button
+            type="button"
+            className={buttonPrimary}
+            onClick={() => void save()}
+            disabled={saving}
+          >
+            {t("common.save")}
+          </button>
+        </div>
 
         {transaction ? (
           <div className="grid grid-cols-2 gap-2">

@@ -145,6 +145,7 @@ export function OnboardingPage() {
       {step === SLIDES.length + 2 ? (
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{t("onboarding.balanceTitle")}</h1>
+          <p className="text-slate-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("wallets.initialBalance")}>
             <input
               inputMode="decimal"
@@ -164,7 +165,22 @@ export function OnboardingPage() {
         </div>
       ) : null}
 
-      <div className="mt-auto flex justify-between gap-3">
+      <div className="mt-auto flex flex-col gap-2">
+        {isSlide ? (
+          <button
+            type="button"
+            className="min-h-[44px] self-center px-4 text-sm font-medium text-slate-600 underline dark:text-muted"
+            onClick={() => setStep(SLIDES.length)}
+          >
+            {t("onboarding.skip")}
+          </button>
+        ) : null}
+        {step === SLIDES.length + 1 && name.trim() === "" ? (
+          <p className="text-center text-sm text-slate-600 dark:text-muted">
+            {t("onboarding.nameRequired")}
+          </p>
+        ) : null}
+      <div className="flex justify-between gap-3">
         <button
           type="button"
           className={buttonSecondary}
@@ -187,6 +203,7 @@ export function OnboardingPage() {
             {t("onboarding.finish")}
           </button>
         )}
+      </div>
       </div>
     </section>
   );

@@ -30,7 +30,8 @@
     "more": "Fikirana",
     "quickAdd": "Fampidirana vaovao",
     "calendar": "Kalandrie",
-    "main": "Fandaharana fototra"
+    "main": "Fandaharana fototra",
+    "add": "Ampio"
   },
   "pages": {
     "home": {
@@ -144,7 +145,10 @@
     "introLead": "Ny vola dia",
     "introAccent": "tsotra",
     "introEnd": "!",
-    "introStart": "Hanomboka"
+    "introStart": "Hanomboka",
+    "skip": "Lany",
+    "nameRequired": "Omeo anarana ny kaontinao mba hitohizana.",
+    "balanceHint": "Ny vola efa misy ao amin’ity kaonty ankehitriny. Raha tsy fantatrao, apetraho 0 : azonao ovaina any aoriana."
   },
   "groups": {
     "bank": "Banky",
@@ -259,7 +263,8 @@
     },
     "photoAlt": "Rakitra mifandray {{n}}",
     "removePhoto": "Esorina",
-    "removePhotoN": "Esorina ny rakitra mifandray {{n}}"
+    "removePhotoN": "Esorina ny rakitra mifandray {{n}}",
+    "transferHint": "Fifindrana vola : mamindra vola eo anelanelan’ny kaontinao roa (ohatra banque sy mobile money). Tsy miova ny totalinao."
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

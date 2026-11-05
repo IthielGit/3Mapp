@@ -8,6 +8,8 @@ import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { budgetStates } from "../../domain/budget";
 import { formatMoney } from "../../lib/money";
 import { usePeriodSettings } from "../stats/period-state";
+import { upTo } from "../../domain/cutoff";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
 
@@ -18,13 +20,14 @@ export function BudgetsPage() {
   const [now] = useState(() => new Date());
   const budgets = useLiveQuery(() => db.budgets.toArray(), []) ?? EMPTY;
   const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
+  const cutoff = useBalanceCutoff();
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
   const names = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
 
   const active = budgets.filter((b) => !b.archived);
   const states = useMemo(
-    () => budgetStates(active, transactions, now, settings),
-    [active, transactions, now, settings],
+    () => budgetStates(active, upTo(transactions, cutoff), now, settings),
+    [active, transactions, now, settings, cutoff],
   );
 
   return (

@@ -7,6 +7,8 @@ import { db } from "../../db/database";
 import { ActionMenu, DetailHeader } from "../../components/DetailHeader";
 import { budgetState } from "../../domain/budget";
 import { contains } from "../../domain/period";
+import { upTo } from "../../domain/cutoff";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { formatMoney } from "../../lib/money";
 import { usePeriodSettings } from "../stats/period-state";
 import { deleteBudget } from "./budget-service";
@@ -21,11 +23,13 @@ export function BudgetDetailPage() {
   const [now] = useState(() => new Date());
   const budget = useLiveQuery(() => db.budgets.get(id), [id]);
   const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
+  const cutoff = useBalanceCutoff();
   if (budget === undefined) return null;
   if (!budget) return <p>{t("budgets.notFound")}</p>;
 
-  const state = budgetState(budget, transactions, now, settings);
-  const counted = transactions
+  const visible = upTo(transactions, cutoff);
+  const state = budgetState(budget, visible, now, settings);
+  const counted = visible
     .filter(
       (tx) =>
         tx.type === "expense" &&

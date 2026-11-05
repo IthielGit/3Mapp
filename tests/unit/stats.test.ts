@@ -92,16 +92,16 @@ describe("résumé de période (SPEC §6)", () => {
     tx({ type: "adjustment", amount: -700, date: at(2026, 1, 8) }),
   ];
 
-  it("les virements et ajustements ne comptent pas dans les revenus et dépenses", () => {
+  it("les virements ne comptent pas ; les ajustements modifient le net, pas les revenus ni dépenses", () => {
     const s = periodSummary(transactionsIn(list, period, "MGA"), period, new Date(2026, 0, 31));
     expect(s.income).toBe(1000);
     expect(s.expense).toBe(250);
-    expect(s.net).toBe(750);
+    expect(s.net).toBe(50);
   });
 
   it("taux d’épargne = net / revenus", () => {
     const s = periodSummary(transactionsIn(list, period, "MGA"), period, new Date(2026, 0, 31));
-    expect(s.savingsRate).toBe(75);
+    expect(s.savingsRate).toBe(5);
   });
 
   it("pas de taux d’épargne sans revenus", () => {

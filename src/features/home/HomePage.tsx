@@ -84,7 +84,7 @@ export function HomePage() {
     const now = new Date();
     const states = budgetStates(
       budgets.filter((b) => !b.archived),
-      transactions,
+      upTo(transactions, cutoff),
       now,
       periodSettings,
     );
@@ -94,7 +94,7 @@ export function HomePage() {
         const state = states.get(budget.id);
         return state ? [{ budget, state }] : [];
       });
-  }, [budgets, transactions, periodSettings]);
+  }, [budgets, transactions, periodSettings, cutoff]);
   const converted = convertedSum(
     active
       .filter((w) => w.includeInTotal)
@@ -206,7 +206,7 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
           <Link
             to="/plus/recurring"
-            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
           >
             {t("home.seeAll")}
           </Link>
@@ -323,7 +323,7 @@ export function HomePage() {
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
           <Link
             to="/budgets"
-            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
           >
             {t("home.manage")}
           </Link>
@@ -347,7 +347,10 @@ export function HomePage() {
                     : "bg-income dark:bg-income-dark";
               return (
                 <li key={budget.id} className="py-4">
-                  <Link to={`/budgets/${budget.id}`} className="pressable flex flex-col gap-1.5">
+                  <Link
+                    to={`/budgets/${budget.id}`}
+                    className="pressable flex min-h-[44px] flex-col gap-1.5"
+                  >
                     <div className="flex items-baseline justify-between gap-3 text-sm">
                       <span className="truncate font-medium text-ink dark:text-fg">
                         {budget.name}
@@ -387,7 +390,7 @@ export function HomePage() {
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
           <Link
             to="/plus/wallets"
-            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
           >
             {t("home.manage")}
           </Link>
@@ -406,7 +409,7 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
           <Link
             to="/transactions"
-            className="text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
           >
             {t("home.seeAll")}
           </Link>

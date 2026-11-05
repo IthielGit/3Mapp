@@ -30,7 +30,8 @@
     "more": "Paramètres",
     "quickAdd": "Nouvelle transaction",
     "calendar": "Calendrier",
-    "main": "Navigation principale"
+    "main": "Navigation principale",
+    "add": "Ajouter"
   },
   "pages": {
     "home": {
@@ -126,7 +127,7 @@
       "text": "Notez vos dépenses, revenus et virements en quelques secondes."
     },
     "slide2": {
-      "title": "Plusieurs portefeuilles",
+      "title": "Plusieurs comptes",
       "text": "Banque, mobile money, espèces : chacun a son solde, et les virements entre eux restent cohérents."
     },
     "slide3": {
@@ -136,7 +137,7 @@
     "settingsTitle": "Langue et devise",
     "language": "Langue",
     "currency": "Devise principale",
-    "walletTitle": "Votre premier portefeuille",
+    "walletTitle": "Votre premier compte",
     "walletHint": "Par exemple votre compte bancaire ou votre argent en espèces.",
     "walletPlaceholder": "Ex. Compte BNI",
     "balanceTitle": "Solde de départ",
@@ -144,7 +145,10 @@
     "introLead": "Vos finances deviennent",
     "introAccent": "simples",
     "introEnd": " !",
-    "introStart": "Commencer"
+    "introStart": "Commencer",
+    "skip": "Passer",
+    "nameRequired": "Donnez un nom à votre compte pour continuer.",
+    "balanceHint": "Le montant déjà disponible sur ce compte aujourd’hui. Si vous ne le connaissez pas, laissez 0 : vous pourrez le corriger plus tard."
   },
   "groups": {
     "bank": "Banque",
@@ -259,7 +263,8 @@
     },
     "photoAlt": "Pièce jointe {{n}}",
     "removePhoto": "Retirer",
-    "removePhotoN": "Retirer la pièce jointe {{n}}"
+    "removePhotoN": "Retirer la pièce jointe {{n}}",
+    "transferHint": "Virement : déplacer de l’argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas."
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

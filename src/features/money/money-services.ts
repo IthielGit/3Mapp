@@ -2,6 +2,7 @@ import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { RuleError } from "../../db/errors";
 import { exchangeRateSchema, reconciliationSchema, type Reconciliation } from "../../db/entities";
 import { walletBalance } from "../../domain/balance";
+import { upTo } from "../../domain/cutoff";
 import type { CurrencyCode, Minor } from "../../lib/money";
 import { createTransaction } from "../transactions/transaction-service";
 
@@ -47,6 +48,7 @@ export async function reconcileWallet(
   memo: string,
   now = new Date(),
   database: AppDatabase = defaultDb,
+  cutoff?: Date,
 ): Promise<Reconciliation> {
   return database.transaction(
     "rw",
@@ -61,7 +63,8 @@ export async function reconcileWallet(
       const wallet = await database.wallets.get(walletId);
       if (!wallet) throw new RuleError("Portefeuille introuvable");
       const transactions = await database.transactions.toArray();
-      const computedBalance = walletBalance(wallet, transactions);
+      // Même règle que l'écran : les mouvements à venir ne comptent pas si l'option est activée.
+      const computedBalance = walletBalance(wallet, upTo(transactions, cutoff));
       const adjustment = realBalance - computedBalance;
 
       let transactionId: string | undefined;

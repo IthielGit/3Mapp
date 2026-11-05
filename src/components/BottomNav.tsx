@@ -116,7 +116,7 @@ export function BottomNav() {
         {LEFT.map((item) => (
           <li key={item.to}>{tab(item)}</li>
         ))}
-        <li className="flex justify-center">
+        <li className="flex flex-col items-center justify-end pb-1">
           <Link
             to="/transactions/new"
             aria-label={t("nav.quickAdd")}
@@ -124,6 +124,9 @@ export function BottomNav() {
           >
             <span aria-hidden="true">+</span>
           </Link>
+          <span aria-hidden="true" className="mt-1 text-[11px] font-medium text-slate-500 dark:text-muted">
+            {t("nav.add")}
+          </span>
         </li>
         {RIGHT.map((item) => (
           <li key={item.to}>{tab(item)}</li>

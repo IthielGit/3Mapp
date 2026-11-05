@@ -57,7 +57,7 @@ export function CalendarPage() {
 
   return (
     <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-4 bg-canvas px-4 pb-3 pt-5 dark:bg-page">
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
           {t("nav.calendar")}
         </h1>

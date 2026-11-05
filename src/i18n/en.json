@@ -30,7 +30,8 @@
     "more": "Settings",
     "quickAdd": "New transaction",
     "calendar": "Calendar",
-    "main": "Main navigation"
+    "main": "Main navigation",
+    "add": "Add"
   },
   "pages": {
     "home": {
@@ -126,7 +127,7 @@
       "text": "Record your expenses, income and transfers in seconds."
     },
     "slide2": {
-      "title": "Multiple wallets",
+      "title": "Several accounts",
       "text": "Bank, mobile money, cash: each has its own balance, and transfers between them stay consistent."
     },
     "slide3": {
@@ -136,7 +137,7 @@
     "settingsTitle": "Language and currency",
     "language": "Language",
     "currency": "Main currency",
-    "walletTitle": "Your first wallet",
+    "walletTitle": "Your first account",
     "walletHint": "For example your bank account or your cash.",
     "walletPlaceholder": "E.g. BNI account",
     "balanceTitle": "Opening balance",
@@ -144,7 +145,10 @@
     "introLead": "Finances become",
     "introAccent": "simple",
     "introEnd": "!",
-    "introStart": "Get started"
+    "introStart": "Get started",
+    "skip": "Skip",
+    "nameRequired": "Give your account a name to continue.",
+    "balanceHint": "The amount already available on this account today. If you don’t know it, leave 0: you can correct it later."
   },
   "groups": {
     "bank": "Bank",
@@ -259,7 +263,8 @@
     },
     "photoAlt": "Attachment {{n}}",
     "removePhoto": "Remove",
-    "removePhotoN": "Remove attachment {{n}}"
+    "removePhotoN": "Remove attachment {{n}}",
+    "transferHint": "Transfer: move money between two of your accounts (for example from the bank to mobile money). Your total does not change."
   },
   "errors": {
     "required": "This field is required.",

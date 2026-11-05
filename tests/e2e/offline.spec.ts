@@ -35,6 +35,8 @@ test("hors ligne : les pages principales s'ouvrent directement depuis le cache",
   context,
 }) => {
   await completeOnboardingUi(page, "Compte BNI");
+  // Le service worker doit être installé avant de le faire contrôler la page (comme dans le test ci-dessus).
+  await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
   await page.reload();
   await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), null, {
     timeout: 30_000,

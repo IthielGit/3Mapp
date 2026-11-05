@@ -106,14 +106,14 @@ describe("soldes (domain/balance, SPEC §6.1)", () => {
 });
 
 describe("totaux (domain/totals, SPEC §6.2 et §6.3)", () => {
-  it("exclut virements et ajustements", () => {
+  it("exclut les virements ; les ajustements entrent dans le net seulement", () => {
     const list = [
       tx({ type: "income", amount: 1000, walletId: W1 }),
       tx({ type: "expense", amount: 300, walletId: W1 }),
       tx({ type: "transfer", amount: 5000, walletId: W1, toWalletId: W2 }),
       tx({ type: "adjustment", amount: -700, walletId: W1 }),
     ];
-    expect(totals(list)).toEqual({ income: 1000, expense: 300, net: 700 });
+    expect(totals(list)).toEqual({ income: 1000, expense: 300, net: 0 });
   });
 });
 

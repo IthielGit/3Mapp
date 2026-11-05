@@ -1,5 +1,5 @@
 import { PageTitle } from "../../components/PageHeader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -40,8 +40,9 @@ export function RecurringFormPage() {
   const { id: editId } = useParams();
   const existing = useLiveQuery(() => (editId ? db.recurring.get(editId) : undefined), [editId]);
   const [prefilled, setPrefilled] = useState(!editId);
-  useEffect(() => {
-    if (prefilled || !existing) return;
+  // Mise à jour d'état pendant le rendu (et non dans un effet) : le formulaire est rempli dès que
+  // la récurrence est chargée, une seule fois.
+  if (!prefilled && existing) {
     setType(existing.type);
     setWalletId(existing.walletId);
     setToWalletId(existing.toWalletId ?? "");
@@ -55,7 +56,7 @@ export function RecurringFormPage() {
     setLastDay(existing.dayOfMonthRule === "last_day");
     setAutoPost(existing.autoPost);
     setPrefilled(true);
-  }, [existing, prefilled]);
+  }
 
   const effectiveWallet = walletId || active[0]?.id || "";
   const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";

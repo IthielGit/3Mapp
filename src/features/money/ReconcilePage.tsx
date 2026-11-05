@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { db } from "../../db/database";
 import { RuleError } from "../../db/errors";
 import { walletBalance } from "../../domain/balance";
+import { upTo } from "../../domain/cutoff";
+import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { buttonPrimary, Field, inputClass } from "../../components/FormControls";
 import { formatMoney, parseMoney } from "../../lib/money";
 import { reconcileWallet } from "./money-services";
@@ -31,11 +33,12 @@ export function ReconcilePage() {
   const [memo, setMemo] = useState("");
   const [message, setMessage] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
+  const cutoff = useBalanceCutoff();
 
   if (wallet === undefined) return null;
   if (!wallet) return <p>{t("wallets.notFound")}</p>;
   const currency = wallet.currency;
-  const computed = walletBalance(wallet, transactions);
+  const computed = walletBalance(wallet, upTo(transactions, cutoff));
   const realValue = real.trim() === "" ? null : parseMoney(real, currency);
   const gap = realValue === null ? null : realValue - computed;
 
@@ -44,7 +47,7 @@ export function ReconcilePage() {
     setMessage(undefined);
     if (realValue === null) return setError(t("errors.invalidAmount"));
     try {
-      await reconcileWallet(id, realValue, memo);
+      await reconcileWallet(id, realValue, memo, new Date(), undefined, cutoff);
       setReal("");
       setMemo("");
       setMessage(t("reconcile.done"));
