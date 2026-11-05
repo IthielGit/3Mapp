@@ -347,8 +347,10 @@ export function HomePage() {
           </p>
           {cycleView.pay.kind === "unset" && cycleView.runway ? (
             <p className="text-xs text-slate-600 dark:text-muted">
-              {t("cycle.runway", { days: cycleView.runway.days })} ·{" "}
-              {t(`cycle.confidence.${cycleView.runway.confidence}`)}
+              {t("cycle.runway", { days: cycleView.runway.days })}
+              {cycleView.runway.confidence !== "solid"
+                ? ` · ${t(`cycle.confidence.${cycleView.runway.confidence}`)}`
+                : null}
             </p>
           ) : null}
           {cycleView.plannedSaving !== undefined ? (

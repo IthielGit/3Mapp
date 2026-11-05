@@ -673,8 +673,7 @@
     "runway": "Vous tenez environ {{days}} jours",
     "confidence": {
       "fragile": "estimation fragile : moins de 2 semaines de saisie",
-      "approx": "à peu près : moins d’un mois de saisie",
-      "solid": "sur les 30 derniers jours"
+      "approx": "à peu près : moins d’un mois de saisie"
     }
   }
 }

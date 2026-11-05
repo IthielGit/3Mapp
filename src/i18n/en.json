@@ -673,8 +673,7 @@
     "runway": "You can cover about {{days}} days",
     "confidence": {
       "fragile": "rough estimate: less than 2 weeks of entries",
-      "approx": "approximate: less than a month of entries",
-      "solid": "based on the last 30 days"
+      "approx": "approximate: less than a month of entries"
     }
   }
 }

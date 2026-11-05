@@ -673,8 +673,7 @@
     "runway": "Mety hitana andro {{days}} eo ianao",
     "confidence": {
       "fragile": "tombana tsy azo antoka: latsaky ny 2 herinandro ny fanoratana",
-      "approx": "eo ho eo: latsaky ny iray volana ny fanoratana",
-      "solid": "miorina amin’ny andro 30 farany"
+      "approx": "eo ho eo: latsaky ny iray volana ny fanoratana"
     }
   }
 }
