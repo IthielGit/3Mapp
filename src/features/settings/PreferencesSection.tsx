@@ -50,7 +50,7 @@ export function PreferencesSection() {
     .sort(byName);
   const cycleLast = new Date(cycle.to.getTime() - 1);
 
-  async function changeLanguage(language: "fr" | "en") {
+  async function changeLanguage(language: "fr" | "en" | "mg") {
     await change({ language });
     await i18n.changeLanguage(language);
   }
@@ -85,11 +85,12 @@ export function PreferencesSection() {
         <Field label={t("prefs.language")}>
           <select
             className={inputClass}
-            value={settings.language === "en" ? "en" : "fr"}
+            value={settings.language}
             onChange={(e) => void changeLanguage(e.target.value as "fr" | "en")}
           >
             <option value="fr">{t("prefs.languageFr")}</option>
             <option value="en">{t("prefs.languageEn")}</option>
+            <option value="mg">{t("prefs.languageMg")}</option>
           </select>
         </Field>
 

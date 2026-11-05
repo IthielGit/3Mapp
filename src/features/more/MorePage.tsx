@@ -1,11 +1,9 @@
 import { Icon, type IconName } from "../../components/Icon";
 import { PageTitle } from "../../components/PageHeader";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../lib/theme-context";
-import { buttonSecondary } from "../../components/FormControls";
-import { generateDemoTransactions } from "../demo/demo-data";
 import { InstallCard } from "../../components/PwaComponents";
 import { PreferencesSection } from "../settings/PreferencesSection";
 import { ResetAccountSection } from "../settings/ResetAccountSection";
@@ -49,17 +47,6 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 export function MorePage() {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
-  const [demoMessage, setDemoMessage] = useState<string | undefined>();
-
-  async function addDemo() {
-    setDemoMessage(undefined);
-    try {
-      const count = await generateDemoTransactions(5000);
-      setDemoMessage(t("more.demoDone", { count }));
-    } catch (err) {
-      setDemoMessage(err instanceof Error ? err.message : t("errors.generic"));
-    }
-  }
 
   return (
     <section className="flex flex-col gap-6">
@@ -144,20 +131,6 @@ export function MorePage() {
             </label>
           ))}
         </fieldset>
-      </Group>
-
-      <Group title={t("more.demo")}>
-        <div className="flex flex-col gap-2 p-4">
-          <p className="text-sm text-neutral-600 dark:text-muted">{t("more.demoHint")}</p>
-          <button type="button" className={buttonSecondary} onClick={() => void addDemo()}>
-            {t("more.demoButton")}
-          </button>
-          {demoMessage ? (
-            <p role="status" className="text-sm">
-              {demoMessage}
-            </p>
-          ) : null}
-        </div>
       </Group>
     </section>
   );

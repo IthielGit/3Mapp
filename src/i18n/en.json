@@ -61,10 +61,6 @@
   "more": {
     "wallets": "Wallets",
     "categories": "Categories",
-    "demo": "Demo data",
-    "demoHint": "Adds 5,000 fictitious transactions to test performance. Do not use them with your real data.",
-    "demoButton": "Generate 5,000 demo transactions",
-    "demoDone": "{{count}} demo transactions added.",
     "import": "Import / Export",
     "goals": "Savings goals",
     "rates": "Currencies and rates",
@@ -641,7 +637,8 @@
     "payOnFridayHint": "Example: the 28th is a Saturday, the cycle starts on Friday the 27th.",
     "payIncome": "My pay income",
     "payIncomeNone": "None for now",
-    "payIncomeHint": "Used to know whether your pay has arrived."
+    "payIncomeHint": "Used to know whether your pay has arrived.",
+    "languageMg": "Malagasy"
   },
   "repeat": {
     "label": "Repeat (recurring)",

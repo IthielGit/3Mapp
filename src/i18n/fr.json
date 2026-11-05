@@ -61,10 +61,6 @@
   "more": {
     "wallets": "Portefeuilles",
     "categories": "Catégories",
-    "demo": "Données de démo",
-    "demoHint": "Ajoute 5 000 transactions fictives pour tester les performances. Ne les utilisez pas avec vos vraies données.",
-    "demoButton": "Générer 5 000 transactions de démo",
-    "demoDone": "{{count}} transactions de démo ajoutées.",
     "import": "Import / Export",
     "goals": "Objectifs d'épargne",
     "rates": "Devises et taux",
@@ -641,7 +637,8 @@
     "payOnFridayHint": "Exemple : le 28 est un samedi, le cycle commence le vendredi 27.",
     "payIncome": "Mon revenu de paie",
     "payIncomeNone": "Aucun pour l’instant",
-    "payIncomeHint": "Sert à savoir si votre paie est arrivée."
+    "payIncomeHint": "Sert à savoir si votre paie est arrivée.",
+    "languageMg": "Malagasy"
   },
   "repeat": {
     "label": "Répéter (récurrence)",

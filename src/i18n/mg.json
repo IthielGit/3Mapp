@@ -61,10 +61,6 @@
   "more": {
     "wallets": "Kitapo vola",
     "categories": "Sokajy",
-    "demo": "Angon-drakitra andrana",
-    "demoHint": "Manampy fifanakalozana andrana 5 000 hanandramana ny hahitana ny hafainganam-pandehany. Aza ampiasaina amin'ny angon-drakitra marina.",
-    "demoButton": "Hamorona fifanakalozana andrana 5 000",
-    "demoDone": "Fifanakalozana andrana {{count}} no voampiana.",
     "import": "Hampiditra / Hamoaka",
     "goals": "Tanjon'ny tahiry",
     "rates": "Vola sy tahan'ny vidiny",
@@ -641,7 +637,8 @@
     "payOnFridayHint": "Ohatra: ny 28 dia asabotsy, ny tsikera dia manomboka amin’ny zoma 27.",
     "payIncome": "Ny karamako",
     "payIncomeNone": "Tsy misy mbola",
-    "payIncomeHint": "Ampiasaina hahafantarana raha tonga ny karamanao."
+    "payIncomeHint": "Ampiasaina hahafantarana raha tonga ny karamanao.",
+    "languageMg": "Malagasy"
   },
   "repeat": {
     "label": "Averina (fanamarinana)",
