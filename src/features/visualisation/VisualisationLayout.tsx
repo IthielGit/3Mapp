@@ -24,7 +24,7 @@ export function VisualisationLayout() {
           value={view}
           onChange={(e) => navigate(`/visualisation/${e.target.value}`, { replace: true })}
           // Le menu natif suit le thème (color-scheme) : texte et fond lisibles dans les deux modes.
-          className="cursor-pointer appearance-none rounded-lg bg-transparent px-2 py-1 pr-7 text-center text-xl font-semibold text-ink [color-scheme:light] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2 dark:text-fg dark:[color-scheme:dark]"
+          className="cursor-pointer appearance-none rounded-lg bg-transparent px-2 py-1 pr-7 text-center text-xl font-semibold text-ink [color-scheme:light] outline-none focus:bg-slate-100 dark:text-fg dark:[color-scheme:dark] dark:focus:bg-raised"
         >
           <option value="stats" className="bg-white text-ink dark:bg-card dark:text-fg">
             {t("nav.stats")}
