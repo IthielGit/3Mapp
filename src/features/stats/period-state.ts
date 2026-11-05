@@ -9,6 +9,7 @@ export function usePeriodSettings(): PeriodSettings {
   return {
     monthStartDay: first?.monthStartDay ?? 1,
     weekStartDay: first?.weekStartDay ?? 1,
+    payOnFriday: first?.payOnFriday ?? true,
   };
 }
 

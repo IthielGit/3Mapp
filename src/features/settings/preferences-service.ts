@@ -9,6 +9,8 @@ export type PreferencePatch = Partial<
     | "language"
     | "weekStartDay"
     | "monthStartDay"
+    | "payOnFriday"
+    | "payIncomeCategoryId"
     | "keypadZeros"
     | "ignoreFutureBalance"
     | "reminderEnabled"

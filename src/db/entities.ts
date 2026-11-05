@@ -17,6 +17,10 @@ const isoDateTime = z.iso.datetime();
 export const settingsSchema = baseEntity.extend({
   baseCurrency: currencyCode,
   monthStartDay: z.number().int().min(1).max(31),
+  /** Si le jour de paie tombe un week-end, le cycle commence le vendredi d'avant (défaut : oui). */
+  payOnFriday: z.boolean().optional(),
+  /** Catégorie de revenu qui correspond à la paie (choisie par l'utilisateur, jamais devinée). */
+  payIncomeCategoryId: z.uuid().optional(),
   weekStartDay: z.number().int().min(0).max(6),
   language: z.enum(["fr", "en", "mg"]),
   theme: z.enum(["light", "dark", "system"]),

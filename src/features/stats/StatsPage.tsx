@@ -80,6 +80,7 @@ export function StatsPage() {
   const chartIncome = resolved === "dark" ? "#34d399" : "#10b981";
   const settings = usePeriodSettings();
   const monthStartDay = settings.monthStartDay;
+  const payOnFriday = settings.payOnFriday === true;
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const [now] = useState(() => new Date());
   const [dataset, setDataset] = useState<Dataset>("categories");
@@ -193,7 +194,7 @@ export function StatsPage() {
       const month = periodFor(
         "month",
         addMonths(today, i - savingsMonths + 1),
-        { monthStartDay, weekStartDay: 1 },
+        { monthStartDay, weekStartDay: 1, payOnFriday },
       );
       const sum = periodSummary(
         transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
@@ -207,7 +208,7 @@ export function StatsPage() {
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, baseCurrency, savingsMonths, walletFilter, monthStartDay, toMajor]);
+  }, [transactions, baseCurrency, savingsMonths, walletFilter, monthStartDay, payOnFriday, toMajor]);
   const savingsCumulative = savingsRows.reduce<{ name: string; cumulative: number }[]>(
     (acc, row) => {
       const previous = acc[acc.length - 1]?.cumulative ?? 0;
@@ -219,14 +220,14 @@ export function StatsPage() {
   const monthNets = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 4 }, (_, i) => {
-      const month = periodFor("month", addMonths(today, i - 3), { monthStartDay, weekStartDay: 1 });
+      const month = periodFor("month", addMonths(today, i - 3), { monthStartDay, weekStartDay: 1, payOnFriday });
       return periodSummary(
         transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
         month,
       ).net;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, baseCurrency, walletFilter, monthStartDay]);
+  }, [transactions, baseCurrency, walletFilter, monthStartDay, payOnFriday]);
   const thisMonthMinor = monthNets[3] ?? 0;
   const lastMonthMinor = monthNets[2] ?? 0;
   const forecastMinor = Math.round(monthNets.slice(0, 3).reduce((sum, n) => sum + n, 0) / 3);

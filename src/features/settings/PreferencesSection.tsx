@@ -7,6 +7,7 @@ import i18n from "../../i18n";
 import { db } from "../../db/database";
 import { Field, inputClass } from "../../components/FormControls";
 import { accountingMonth } from "../../domain/period";
+import { byName } from "../../lib/compare";
 import { updatePreferences } from "./preferences-service";
 
 /** Jours de la semaine, lundi d'abord. La valeur est celle de Date.getDay() (dimanche = 0). */
@@ -17,6 +18,7 @@ const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 export function PreferencesSection() {
   const { t } = useTranslation();
   const settings = useLiveQuery(() => db.settings.toCollection().first(), []);
+  const allCategories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const [message, setMessage] = useState<string | undefined>();
 
   if (!settings) return null;
@@ -40,7 +42,11 @@ export function PreferencesSection() {
   }
 
   const locale = i18n.language.startsWith("en") ? enUS : fr;
-  const cycle = accountingMonth(new Date(), settings.monthStartDay);
+  const payOnFriday = settings.payOnFriday !== false;
+  const cycle = accountingMonth(new Date(), settings.monthStartDay, payOnFriday);
+  const incomeCategories = allCategories
+    .filter((c) => c.kind === "income" && !c.archived)
+    .sort(byName);
   const cycleLast = new Date(cycle.to.getTime() - 1);
 
   async function changeLanguage(language: "fr" | "en") {
@@ -119,6 +125,41 @@ export function PreferencesSection() {
             to: format(cycleLast, "d MMM", { locale }),
           })}
         </p>
+
+        {settings.monthStartDay !== 1 ? (
+          <label className="flex min-h-[44px] items-start gap-3">
+            <input
+              type="checkbox"
+              className="mt-1 h-5 w-5 accent-brand-700"
+              checked={payOnFriday}
+              onChange={(e) => void change({ payOnFriday: e.target.checked })}
+            />
+            <span className="flex flex-col">
+              <span className="font-medium">{t("prefs.payOnFriday")}</span>
+              <span className="text-sm text-slate-600 dark:text-muted">
+                {t("prefs.payOnFridayHint")}
+              </span>
+            </span>
+          </label>
+        ) : null}
+
+        <Field label={t("prefs.payIncome")}>
+          <select
+            className={inputClass}
+            value={settings.payIncomeCategoryId ?? ""}
+            onChange={(e) =>
+              void change({ payIncomeCategoryId: e.target.value === "" ? undefined : e.target.value })
+            }
+          >
+            <option value="">{t("prefs.payIncomeNone")}</option>
+            {incomeCategories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.icon} {c.name}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <p className="-mt-2 text-sm text-slate-600 dark:text-muted">{t("prefs.payIncomeHint")}</p>
 
         <Field label={t("prefs.keypadZeros")}>
           <select

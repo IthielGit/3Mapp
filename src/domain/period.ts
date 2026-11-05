@@ -15,6 +15,11 @@ export interface PeriodSettings {
   monthStartDay: number;
   /** Premier jour de la semaine : 0 = dimanche … 6 = samedi. */
   weekStartDay: number;
+  /**
+   * Si le jour de paie tombe un week-end, le cycle commence le vendredi d'avant.
+   * Sans effet quand le jour de début est le 1er (le mois civil reste inchangé).
+   */
+  payOnFriday?: boolean;
 }
 
 const DEFAULT_SETTINGS: PeriodSettings = { monthStartDay: 1, weekStartDay: 1 };
@@ -32,16 +37,34 @@ function monthStart(year: number, month: number, startDay: number): Date {
   return new Date(y, m, Math.min(startDay, daysInMonth(y, m)));
 }
 
+/**
+ * Jour réel de début du cycle du mois `month` (nominal). Avec le vendredi activé, un samedi ou un
+ * dimanche avance au vendredi précédent. Le 1er n'est jamais avancé (mois civil).
+ */
+function payDate(year: number, month: number, startDay: number, payOnFriday: boolean): Date {
+  const day = monthStart(year, month, startDay);
+  if (!payOnFriday || startDay === 1) return day;
+  const weekday = day.getDay();
+  if (weekday === 6) return new Date(day.getFullYear(), day.getMonth(), day.getDate() - 1);
+  if (weekday === 0) return new Date(day.getFullYear(), day.getMonth(), day.getDate() - 2);
+  return day;
+}
+
 /** Mois comptable qui contient `anchor`. Ex. startDay = 28 : le 27 janvier appartient à « 28 déc. – 27 janv. ». */
 export function accountingMonth(
   anchor: Date,
   monthStartDay = DEFAULT_SETTINGS.monthStartDay,
+  payOnFriday = false,
 ): Period {
   const startDay = Math.min(31, Math.max(1, monthStartDay));
-  let from = monthStart(anchor.getFullYear(), anchor.getMonth(), startDay);
-  if (anchor < from) from = monthStart(anchor.getFullYear(), anchor.getMonth() - 1, startDay);
-  const to = monthStart(from.getFullYear(), from.getMonth() + 1, startDay);
-  return { from, to };
+  // Mois nominal du cycle : le début réel peut tomber la veille ou l'avant-veille (vendredi), donc
+  // dans le mois d'avant. On avance ou on recule jusqu'à trouver le cycle qui contient `anchor`.
+  const start = (base: Date) => payDate(base.getFullYear(), base.getMonth(), startDay, payOnFriday);
+  const nominal = (delta: number, base: Date) => new Date(base.getFullYear(), base.getMonth() + delta, 1);
+  let base = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  while (start(base) > anchor) base = nominal(-1, base);
+  while (start(nominal(1, base)) <= anchor) base = nominal(1, base);
+  return { from: start(base), to: start(nominal(1, base)) };
 }
 
 export function weekOf(anchor: Date, weekStartDay = DEFAULT_SETTINGS.weekStartDay): Period {
@@ -91,7 +114,7 @@ export function periodFor(
     case "week":
       return weekOf(anchor, settings.weekStartDay);
     case "month":
-      return accountingMonth(anchor, settings.monthStartDay);
+      return accountingMonth(anchor, settings.monthStartDay, settings.payOnFriday);
     case "year":
       return yearOf(anchor);
   }
@@ -119,17 +142,13 @@ export function splitPeriods(
   settings: PeriodSettings = DEFAULT_SETTINGS,
 ): Period[] {
   const result: Period[] = [];
-  let cursor =
-    step === "week"
-      ? weekOf(period.from, settings.weekStartDay)
-      : accountingMonth(period.from, settings.monthStartDay);
+  const month = (anchor: Date) =>
+    accountingMonth(anchor, settings.monthStartDay, settings.payOnFriday);
+  let cursor = step === "week" ? weekOf(period.from, settings.weekStartDay) : month(period.from);
   while (cursor.from.getTime() < period.to.getTime()) {
     result.push(cursor);
     const anchor = new Date(cursor.to.getTime());
-    cursor =
-      step === "week"
-        ? weekOf(anchor, settings.weekStartDay)
-        : accountingMonth(anchor, settings.monthStartDay);
+    cursor = step === "week" ? weekOf(anchor, settings.weekStartDay) : month(anchor);
   }
   return result;
 }

@@ -10,7 +10,7 @@ import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
 import { budgetStates } from "../../domain/budget";
-import { cycleSummary } from "../../domain/cycle";
+import { cycleOverview, type PayStatus } from "../../domain/cycle";
 import { periodFor } from "../../domain/period";
 import { usePeriodSettings } from "../stats/period-state";
 import { convertedSum } from "../../domain/fx";
@@ -22,6 +22,8 @@ import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
 
 const EMPTY: never[] = [];
+const EMPTY_DEBTS: never[] = [];
+const EMPTY_PAYMENTS: never[] = [];
 const PREVIEW = 2;
 
 /** Engrenage des réglages (tracé ISC, Lucide), en haut à droite. */
@@ -111,30 +113,45 @@ export function HomePage() {
   );
 
   // Mon cycle : du jour de début du mois comptable au suivant, constat sur les transactions validées.
-  const cycle = useMemo(() => {
-    const now = new Date();
-    const period = periodFor("month", now, {
-      monthStartDay: periodSettings.monthStartDay,
-      weekStartDay: 1,
-    });
-    const available = convertedSum(
-      active
-        .filter((w) => w.includeInTotal && w.group !== "savings")
-        .map((w) => ({
-          amount: balances[w.id] ?? w.initialBalance,
-          currency: w.currency,
-          date: now.toISOString(),
-        })),
-      baseCurrency,
+  const debts = useLiveQuery(() => db.debts.toArray(), []) ?? EMPTY_DEBTS;
+  const debtPayments = useLiveQuery(() => db.debtPayments.toArray(), []) ?? EMPTY_PAYMENTS;
+  const payCategoryId = useLiveQuery(
+    async () => (await db.settings.toArray())[0]?.payIncomeCategoryId,
+    [],
+  );
+  // « Maintenant » est recalculé à chaque changement des données, pour que la carte reste à jour.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const cycleNow = useMemo(() => new Date(), [transactions]);
+  const { monthStartDay, payOnFriday } = periodSettings;
+  const cycleView = useMemo(() => {
+    const period = periodFor("month", cycleNow, { monthStartDay, weekStartDay: 1, payOnFriday });
+    return cycleOverview({
+      wallets,
+      transactions,
+      recurring,
+      debts,
+      debtPayments,
       rates,
-    ).total;
-    return cycleSummary(
-      upTo(transactions, now).filter((tx) => tx.currency === baseCurrency),
+      baseCurrency,
       period,
-      now,
-      available,
-    );
-  }, [active, balances, transactions, baseCurrency, rates, periodSettings.monthStartDay]);
+      now: cycleNow,
+      payCategoryId,
+    });
+  }, [
+    wallets,
+    transactions,
+    recurring,
+    debts,
+    debtPayments,
+    rates,
+    baseCurrency,
+    cycleNow,
+    monthStartDay,
+    payOnFriday,
+    payCategoryId,
+  ]);
+  const cycle = cycleView.summary;
+  const restView = cycleView.rest;
   // Les comptes comptés dans « Disponible » sont nommés, pour que l'utilisateur sache ce qui est inclus.
   const countedNames = active
     .filter((w) => w.includeInTotal && w.group !== "savings")
@@ -142,6 +159,26 @@ export function HomePage() {
     .join(", ");
   const cycleLocale = i18n.language.startsWith("en") ? enUS : fr;
   const cycleLastDay = new Date(cycle.period.to.getTime() - 1);
+  function payLine(pay: PayStatus) {
+    const day = (d: Date) => format(d, "d MMM", { locale: cycleLocale });
+    switch (pay.kind) {
+      case "unset":
+        return (
+          <Link to="/plus" className="underline">
+            {t("cycle.paySet")}
+          </Link>
+        );
+      case "received":
+        return t("cycle.payReceived", {
+          amount: formatMoney(pay.amount, baseCurrency),
+          date: day(pay.date),
+        });
+      case "expected":
+        return t("cycle.payExpected", { date: day(pay.date) });
+      case "late":
+        return t("cycle.payLate", { days: pay.daysLate });
+    }
+  }
 
   // Échéances : récurrences actives, de la plus proche à la plus lointaine.
   const upcoming = useMemo(
@@ -282,6 +319,19 @@ export function HomePage() {
             </dd>
           </div>
         </dl>
+        <div className="flex flex-col gap-1 border-t border-slate-200 pt-3 dark:border-white/15">
+          <p className="text-sm font-semibold text-ink dark:text-fg">
+            {restView.overdrawn
+              ? t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })
+              : t("cycle.rest", {
+                  amount: formatMoney(restView.rest, baseCurrency),
+                  perDay: formatMoney(restView.perDay, baseCurrency),
+                })}
+          </p>
+          <p className="text-xs text-slate-600 dark:text-muted">
+            {payLine(cycleView.pay)}
+          </p>
+        </div>
         <p className="text-xs text-slate-600 dark:text-muted">
           {t("cycle.daysLeft", { days: cycle.daysLeft })}
         </p>

@@ -620,7 +620,12 @@
       "Sabotsy"
     ],
     "monthStartPreview": "Ny volana misy azy dia mandeha hatramin’ny {{from}} ka hatramin’ny {{to}}",
-    "monthStartConfirm": "Ny fanovana an’io andro io dia manavao koa ny tsikera lasa. Hitohy?"
+    "monthStartConfirm": "Ny fanovana an’io andro io dia manavao koa ny tsikera lasa. Hitohy?",
+    "payOnFriday": "Raha fialan-kerinandro ny andro, kaontino ny karama amin’ny zoma talohany",
+    "payOnFridayHint": "Ohatra: ny 28 dia asabotsy, ny tsikera dia manomboka amin’ny zoma 27.",
+    "payIncome": "Ny karamako",
+    "payIncomeNone": "Tsy misy mbola",
+    "payIncomeHint": "Ampiasaina hahafantarana raha tonga ny karamanao."
   },
   "repeat": {
     "label": "Averina (fanamarinana)",
@@ -656,6 +661,12 @@
     "expense": "Nivoaka",
     "saved": "Voatahiry",
     "daysLeft": "Andro mijanona: {{days}}",
-    "counted": "Isaina: {{names}}"
+    "counted": "Isaina: {{names}}",
+    "rest": "Mijanona azo ampiasaina: {{amount}} · {{perDay}} isan’andro",
+    "overdrawn": "Mihoatra lavitra {{amount}}",
+    "payReceived": "Karama voaray: {{amount}} tamin’ny {{date}}",
+    "payExpected": "Karama andrasana tamin’ny {{date}}",
+    "payLate": "Karama tara {{days}} andro",
+    "paySet": "Safidio ny karamako"
   }
 }

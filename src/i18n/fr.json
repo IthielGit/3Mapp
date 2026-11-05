@@ -620,7 +620,12 @@
       "Samedi"
     ],
     "monthStartPreview": "Votre mois actuel va du {{from}} au {{to}}",
-    "monthStartConfirm": "Changer ce jour recalcule aussi vos cycles passés. Continuer ?"
+    "monthStartConfirm": "Changer ce jour recalcule aussi vos cycles passés. Continuer ?",
+    "payOnFriday": "Si le jour tombe un week-end, compter la paie le vendredi",
+    "payOnFridayHint": "Exemple : le 28 est un samedi, le cycle commence le vendredi 27.",
+    "payIncome": "Mon revenu de paie",
+    "payIncomeNone": "Aucun pour l’instant",
+    "payIncomeHint": "Sert à savoir si votre paie est arrivée."
   },
   "repeat": {
     "label": "Répéter (récurrence)",
@@ -656,6 +661,12 @@
     "expense": "Sorti",
     "saved": "Mis de côté",
     "daysLeft": "Jours restants : {{days}}",
-    "counted": "Compté : {{names}}"
+    "counted": "Compté : {{names}}",
+    "rest": "Reste à vivre : {{amount}} · {{perDay}} par jour",
+    "overdrawn": "Dépassé de {{amount}}",
+    "payReceived": "Paie reçue : {{amount}} le {{date}}",
+    "payExpected": "Paie attendue le {{date}}",
+    "payLate": "Paie en retard de {{days}} jours",
+    "paySet": "Choisir mon revenu de paie"
   }
 }

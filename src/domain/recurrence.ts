@@ -74,6 +74,23 @@ export function dueOccurrences(spec: RecurrenceSpec, now: Date, limit = 5000): D
   return due;
 }
 
+/**
+ * Occurrences pas encore générées (à partir de `occurrenceIndex`) et antérieures à `until` (exclue).
+ * Sert au reste à vivre : une récurrence hebdomadaire peut compter plusieurs fois avant la paie.
+ */
+export function upcomingOccurrences(spec: RecurrenceSpec, until: Date, limit = 500): Date[] {
+  const start = new Date(spec.startDate);
+  const end = spec.endDate ? new Date(spec.endDate) : undefined;
+  const dates: Date[] = [];
+  for (let index = spec.occurrenceIndex; dates.length < limit; index++) {
+    const date = occurrenceDate(start, spec.frequency, index, spec.dayOfMonthRule);
+    if (date.getTime() >= until.getTime()) break;
+    if (end && date.getTime() > end.getTime()) break;
+    dates.push(date);
+  }
+  return dates;
+}
+
 /** Index de la première occurrence postérieure à `now` : utilisé à la reprise d'une récurrence en pause. */
 export function indexAfter(spec: Omit<RecurrenceSpec, "occurrenceIndex">, now: Date): number {
   const start = new Date(spec.startDate);
