@@ -767,7 +767,8 @@
     "gate": {
       "title": "Sign in",
       "intro": "An account is required to use Fundora. Your data syncs with your account and stays available on your devices.",
-      "unconfigured": "Fundora requires an account, but the account service is not configured in this version. Contact support."
+      "unconfigured": "Fundora requires an account, but the account service is not configured in this version. Contact support.",
+      "tagline": "Your budget, clear and under control. Your data follows your account on all your devices."
     },
     "signOutConfirm": "Your data will be erased from this device. It stays on your account if it was synced.",
     "signOutLost": "{{count}} unsent change(s) will be lost.",
@@ -783,6 +784,21 @@
         "suspended": "Account suspended: sync is blocked.",
         "unknown": "Sync failed. Retrying automatically."
       }
-    }
+    },
+    "screen": {
+      "welcomeTitle": "Welcome back",
+      "welcomeSub": "Sign in to see your finances.",
+      "createTitle": "Create an account",
+      "createSub": "It only takes a few seconds. Your data then syncs."
+    },
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "The two passwords do not match.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "show": "Show",
+    "hide": "Hide",
+    "or": "or",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?"
   }
 }
