@@ -98,10 +98,26 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
       <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-200/60 dark:bg-brand-dark/10" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-300/40 dark:bg-brand-dark/10" />
 
-      {/* Marque : une ligne sur les écrans bas, centrée et plus grande sinon. */}
-      <header className="relative flex items-center gap-3 px-6 pb-1 pt-4 text-left [@media(min-height:720px)]:flex-col [@media(min-height:720px)]:gap-2 [@media(min-height:720px)]:pb-2 [@media(min-height:720px)]:pt-8 [@media(min-height:720px)]:text-center">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md dark:bg-card [@media(min-height:720px)]:h-16 [@media(min-height:720px)]:w-16 [@media(min-height:720px)]:rounded-2xl">
-          <BrandMark size={28} className="h-6 w-6 [@media(min-height:720px)]:h-9 [@media(min-height:720px)]:w-9" />
+      {/* Illustration d'accueil (écrans hauts uniquement) : dessin original, repère de budget en jauge. */}
+      <div aria-hidden="true" className="relative hidden min-h-0 flex-1 items-center justify-center px-8 [@media(min-height:720px)]:flex">
+        <svg viewBox="0 0 320 200" className="h-full max-h-[160px] w-full max-w-[256px]" focusable="false">
+          <circle cx="160" cy="100" r="96" className="fill-brand-100 dark:fill-raised" />
+          <circle cx="160" cy="100" r="66" className="fill-white dark:fill-card" />
+          <circle cx="160" cy="100" r="46" fill="none" strokeWidth="12" className="stroke-neutral-200 dark:stroke-white/10" />
+          <path d="M160 54 A46 46 0 1 1 114 100" fill="none" strokeWidth="12" strokeLinecap="round" className="stroke-brand-600 dark:stroke-brand-dark" />
+          <circle cx="114" cy="100" r="9" fill="#10B0DC" stroke="#0B1220" strokeWidth="2.5" />
+          <rect x="18" y="34" width="92" height="40" rx="14" className="fill-white dark:fill-card" />
+          <rect x="30" y="50" width="44" height="6" rx="3" className="fill-neutral-300 dark:fill-white/20" />
+          <rect x="30" y="62" width="28" height="6" rx="3" className="fill-brand-500" />
+          <rect x="210" y="128" width="92" height="40" rx="14" className="fill-white dark:fill-card" />
+          <rect x="222" y="144" width="44" height="6" rx="3" className="fill-neutral-300 dark:fill-white/20" />
+          <rect x="222" y="156" width="60" height="6" rx="3" className="fill-brand-500" />
+        </svg>
+      </div>
+      {/* Marque : repère et description. Écrans bas : une ligne ; écrans hauts : centrés sous l'illustration. */}
+      <header className="relative flex items-center gap-3 px-6 pb-1 pt-4 text-left [@media(min-height:720px)]:flex-col [@media(min-height:720px)]:gap-1 [@media(min-height:720px)]:pb-3 [@media(min-height:720px)]:pt-0 [@media(min-height:720px)]:text-center">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md dark:bg-card [@media(min-height:720px)]:hidden">
+          <BrandMark size={28} className="h-6 w-6" />
         </div>
         <div className="flex flex-col">
           <p className="text-lg font-semibold text-ink dark:text-fg [@media(min-height:720px)]:text-2xl">Fundora</p>
