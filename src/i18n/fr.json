@@ -651,10 +651,11 @@
   },
   "cycle": {
     "title": "Mon cycle du {{from}} au {{to}}",
-    "available": "Disponible aujourd’hui (hors épargne)",
+    "available": "Disponible",
     "income": "Entré",
     "expense": "Sorti",
     "saved": "Mis de côté",
-    "daysLeft": "Jours restants : {{days}}"
+    "daysLeft": "Jours restants : {{days}}",
+    "counted": "Compté : {{names}}"
   }
 }

@@ -651,10 +651,11 @@
   },
   "cycle": {
     "title": "My cycle from {{from}} to {{to}}",
-    "available": "Available today (excluding savings)",
+    "available": "Available",
     "income": "In",
     "expense": "Out",
     "saved": "Set aside",
-    "daysLeft": "Days left: {{days}}"
+    "daysLeft": "Days left: {{days}}",
+    "counted": "Counted: {{names}}"
   }
 }

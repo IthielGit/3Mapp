@@ -651,10 +651,11 @@
   },
   "cycle": {
     "title": "Ny tsikera-kaleja hatramin’ny {{from}} ka hatramin’ny {{to}}",
-    "available": "Azo ampiasaina androany (tsy anisan’ny tahiry)",
+    "available": "Azo ampiasaina",
     "income": "Nidiran’ny",
     "expense": "Nivoaka",
     "saved": "Voatahiry",
-    "daysLeft": "Andro mijanona: {{days}}"
+    "daysLeft": "Andro mijanona: {{days}}",
+    "counted": "Isaina: {{names}}"
   }
 }

@@ -135,6 +135,11 @@ export function HomePage() {
       available,
     );
   }, [active, balances, transactions, baseCurrency, rates, periodSettings.monthStartDay]);
+  // Les comptes comptés dans « Disponible » sont nommés, pour que l'utilisateur sache ce qui est inclus.
+  const countedNames = active
+    .filter((w) => w.includeInTotal && w.group !== "savings")
+    .map((w) => w.name)
+    .join(", ");
   const cycleLocale = i18n.language.startsWith("en") ? enUS : fr;
   const cycleLastDay = new Date(cycle.period.to.getTime() - 1);
 
@@ -245,7 +250,12 @@ export function HomePage() {
         <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
           {formatMoney(cycle.available, baseCurrency)}
         </p>
-        <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
+        <p className="text-sm text-slate-600 dark:text-muted">
+          {t("cycle.available")}
+          {countedNames ? (
+            <span className="block truncate text-xs">{t("cycle.counted", { names: countedNames })}</span>
+          ) : null}
+        </p>
         <dl className="grid grid-cols-3 gap-2 border-t border-slate-200 pt-3 text-center dark:border-white/15">
           <div className="flex flex-col gap-0.5">
             <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
