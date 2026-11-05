@@ -7,10 +7,12 @@ import { contains, periodFor, type Period, type PeriodSettings } from "./period"
  * dépenses `posted`, dans la devise du budget, des catégories choisies (et des portefeuilles, s'ils sont précisés).
  */
 export function spentIn(
-  budget: Pick<Budget, "categoryIds" | "walletIds" | "currency">,
+  budget: Pick<Budget, "categoryIds" | "walletIds" | "currency" | "startDate">,
   transactions: readonly Transaction[],
   period: Period,
 ): Minor {
+  // Une dépense antérieure à la date de début du budget n'est jamais comptée (première période partielle).
+  const start = new Date(budget.startDate).getTime();
   return sumMinor(
     transactions
       .filter(
@@ -21,6 +23,7 @@ export function spentIn(
           t.categoryId !== undefined &&
           budget.categoryIds.includes(t.categoryId) &&
           (budget.walletIds.length === 0 || budget.walletIds.includes(t.walletId)) &&
+          new Date(t.date).getTime() >= start &&
           contains(period, t.date),
       )
       .map((t) => t.amount),

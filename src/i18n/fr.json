@@ -149,7 +149,11 @@
     "introStart": "Commencer",
     "skip": "Passer",
     "nameRequired": "Donnez un nom à votre compte pour continuer.",
-    "balanceHint": "Le montant déjà disponible sur ce compte aujourd’hui. Si vous ne le connaissez pas, laissez 0 : vous pourrez le corriger plus tard."
+    "balanceHint": "Le montant déjà disponible sur ce compte aujourd’hui. Si vous ne le connaissez pas, laissez 0 : vous pourrez le corriger plus tard.",
+    "payDay": "Quel jour recevez-vous votre salaire ?",
+    "firstDay": "Je ne sais pas (le 1er)",
+    "dayOption": "Le {{day}}",
+    "payDayHint": "Votre mois commencera ce jour-là. Vous pourrez le changer dans les Préférences."
   },
   "groups": {
     "bank": "Banque",
@@ -585,7 +589,7 @@
     "languageFr": "Français",
     "languageEn": "English",
     "weekStart": "Premier jour de la semaine",
-    "monthStart": "Premier jour du mois",
+    "monthStart": "Mon mois commence le",
     "monthDay": "Le {{day}}",
     "keypadZeros": "Touche zéros du clavier",
     "ignoreFuture": "Ignorer le solde futur",
@@ -614,7 +618,9 @@
       "Jeudi",
       "Vendredi",
       "Samedi"
-    ]
+    ],
+    "monthStartPreview": "Votre mois actuel va du {{from}} au {{to}}",
+    "monthStartConfirm": "Changer ce jour recalcule aussi vos cycles passés. Continuer ?"
   },
   "repeat": {
     "label": "Répéter (récurrence)",
@@ -642,5 +648,13 @@
   "forms": {
     "missingName": "Donnez un nom.",
     "missingRate": "Saisissez un taux supérieur à 0."
+  },
+  "cycle": {
+    "title": "Mon cycle du {{from}} au {{to}}",
+    "available": "Disponible aujourd’hui (hors épargne)",
+    "income": "Entré",
+    "expense": "Sorti",
+    "saved": "Mis de côté",
+    "daysLeft": "Jours restants : {{days}}"
   }
 }

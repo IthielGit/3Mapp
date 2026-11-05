@@ -11,6 +11,8 @@ import type { Wallet } from "../../db/entities";
 import type { AppLanguage } from "../../i18n";
 
 const SLIDES = ["onboarding.slide1", "onboarding.slide2", "onboarding.slide3"] as const;
+/** Jours de paie proposés à l'onboarding ; 1 par défaut (« je ne sais pas »). */
+const PAY_DAYS = [1, 5, 10, 15, 25, 28, 29, 30, 31] as const;
 const GROUPS: Wallet["group"][] = ["bank", "cash", "mobile", "savings", "credit_card"];
 
 export function OnboardingPage() {
@@ -19,6 +21,7 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [language, setLanguage] = useState<AppLanguage>("fr");
   const [currency, setCurrency] = useState<CurrencyCode>("MGA");
+  const [monthStartDay, setMonthStartDay] = useState<number>(1);
   const [name, setName] = useState("");
   const [group, setGroup] = useState<Wallet["group"]>("bank");
   const [icon, setIcon] = useState("🏦");
@@ -42,6 +45,7 @@ export function OnboardingPage() {
       await completeOnboarding({
         language,
         baseCurrency: currency,
+        monthStartDay,
         wallet: { name: name.trim(), icon, color, group, currency, initialBalance },
       });
       await i18n.changeLanguage(language);
@@ -108,6 +112,20 @@ export function OnboardingPage() {
               ))}
             </select>
           </Field>
+          <Field label={t("onboarding.payDay")}>
+            <select
+              className={inputClass}
+              value={monthStartDay}
+              onChange={(e) => setMonthStartDay(Number(e.target.value))}
+            >
+              {PAY_DAYS.map((day) => (
+                <option key={day} value={day}>
+                  {day === 1 ? t("onboarding.firstDay") : t("onboarding.dayOption", { day })}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <p className="text-sm text-slate-600 dark:text-muted">{t("onboarding.payDayHint")}</p>
         </div>
       ) : null}
 

@@ -149,7 +149,11 @@
     "introStart": "Get started",
     "skip": "Skip",
     "nameRequired": "Give your account a name to continue.",
-    "balanceHint": "The amount already available on this account today. If you don’t know it, leave 0: you can correct it later."
+    "balanceHint": "The amount already available on this account today. If you don’t know it, leave 0: you can correct it later.",
+    "payDay": "Which day do you get paid?",
+    "firstDay": "Not sure (the 1st)",
+    "dayOption": "The {{day}}",
+    "payDayHint": "Your month will start on this day. You can change it in Preferences."
   },
   "groups": {
     "bank": "Bank",
@@ -585,7 +589,7 @@
     "languageFr": "Français",
     "languageEn": "English",
     "weekStart": "First day of the week",
-    "monthStart": "First day of the month",
+    "monthStart": "My month starts on",
     "monthDay": "Day {{day}}",
     "keypadZeros": "Zero key on the keypad",
     "ignoreFuture": "Ignore future balance",
@@ -614,7 +618,9 @@
       "Thursday",
       "Friday",
       "Saturday"
-    ]
+    ],
+    "monthStartPreview": "Your current month runs from {{from}} to {{to}}",
+    "monthStartConfirm": "Changing this day also recalculates your past cycles. Continue?"
   },
   "repeat": {
     "label": "Repeat (recurring)",
@@ -642,5 +648,13 @@
   "forms": {
     "missingName": "Enter a name.",
     "missingRate": "Enter a rate greater than 0."
+  },
+  "cycle": {
+    "title": "My cycle from {{from}} to {{to}}",
+    "available": "Available today (excluding savings)",
+    "income": "In",
+    "expense": "Out",
+    "saved": "Set aside",
+    "daysLeft": "Days left: {{days}}"
   }
 }

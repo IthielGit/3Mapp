@@ -11,7 +11,7 @@ export interface Period {
 }
 
 export interface PeriodSettings {
-  /** Jour de début du mois comptable, 1 à 28 (SPEC §4). */
+  /** Jour de début du mois comptable, 1 à 31 ; au-delà du dernier jour du mois, c'est le dernier jour (SPEC §4). */
   monthStartDay: number;
   /** Premier jour de la semaine : 0 = dimanche … 6 = samedi. */
   weekStartDay: number;
@@ -37,7 +37,7 @@ export function accountingMonth(
   anchor: Date,
   monthStartDay = DEFAULT_SETTINGS.monthStartDay,
 ): Period {
-  const startDay = Math.min(28, Math.max(1, monthStartDay));
+  const startDay = Math.min(31, Math.max(1, monthStartDay));
   let from = monthStart(anchor.getFullYear(), anchor.getMonth(), startDay);
   if (anchor < from) from = monthStart(anchor.getFullYear(), anchor.getMonth() - 1, startDay);
   const to = monthStart(from.getFullYear(), from.getMonth() + 1, startDay);

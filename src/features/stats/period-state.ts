@@ -7,8 +7,7 @@ export function usePeriodSettings(): PeriodSettings {
   const settings = useLiveQuery(() => db.settings.toArray(), []);
   const first = settings?.[0];
   return {
-    // Le mois suit toujours le calendrier (du 1er au dernier jour) : le réglage « premier jour du mois » est retiré.
-    monthStartDay: 1,
+    monthStartDay: first?.monthStartDay ?? 1,
     weekStartDay: first?.weekStartDay ?? 1,
   };
 }

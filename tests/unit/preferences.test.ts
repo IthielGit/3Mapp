@@ -93,8 +93,10 @@ describe("préférences", () => {
     expect(s?.keypadZeros).toBe(2);
   });
 
-  it("refuse un jour de mois au-delà de 28 (même règle que le schéma)", async () => {
-    await expect(updatePreferences({ monthStartDay: 31 }, db)).rejects.toThrow();
+  it("accepte le 31 et refuse au-delà (même règle que le schéma)", async () => {
+    await updatePreferences({ monthStartDay: 31 }, db);
+    expect((await db.settings.toCollection().first())?.monthStartDay).toBe(31);
+    await expect(updatePreferences({ monthStartDay: 32 }, db)).rejects.toThrow();
   });
 
   it("refuse une heure de rappel invalide", async () => {

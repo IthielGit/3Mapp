@@ -16,7 +16,7 @@ const isoDateTime = z.iso.datetime();
 
 export const settingsSchema = baseEntity.extend({
   baseCurrency: currencyCode,
-  monthStartDay: z.number().int().min(1).max(28),
+  monthStartDay: z.number().int().min(1).max(31),
   weekStartDay: z.number().int().min(0).max(6),
   language: z.enum(["fr", "en", "mg"]),
   theme: z.enum(["light", "dark", "system"]),

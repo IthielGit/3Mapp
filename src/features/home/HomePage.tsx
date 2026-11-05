@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, format } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
 import { Area, AreaChart, Bar, BarChart, ReferenceLine, ResponsiveContainer } from "recharts";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
 import { budgetStates } from "../../domain/budget";
+import { cycleSummary } from "../../domain/cycle";
+import { periodFor } from "../../domain/period";
 import { usePeriodSettings } from "../stats/period-state";
 import { convertedSum } from "../../domain/fx";
 import { dailyExpenses, dailyTotals } from "../../domain/home-series";
@@ -53,7 +56,7 @@ function lastDays(count: number): string[] {
  * vue d'ensemble avec deux mini-graphiques, carte d'action, puis portefeuilles et transactions.
  */
 export function HomePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const walletsLoaded = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
   const loading = walletsLoaded === undefined;
@@ -106,6 +109,34 @@ export function HomePage() {
     baseCurrency,
     rates,
   );
+
+  // Mon cycle : du jour de début du mois comptable au suivant, constat sur les transactions validées.
+  const cycle = useMemo(() => {
+    const now = new Date();
+    const period = periodFor("month", now, {
+      monthStartDay: periodSettings.monthStartDay,
+      weekStartDay: 1,
+    });
+    const available = convertedSum(
+      active
+        .filter((w) => w.includeInTotal && w.group !== "savings")
+        .map((w) => ({
+          amount: balances[w.id] ?? w.initialBalance,
+          currency: w.currency,
+          date: now.toISOString(),
+        })),
+      baseCurrency,
+      rates,
+    ).total;
+    return cycleSummary(
+      upTo(transactions, now).filter((tx) => tx.currency === baseCurrency),
+      period,
+      now,
+      available,
+    );
+  }, [active, balances, transactions, baseCurrency, rates, periodSettings.monthStartDay]);
+  const cycleLocale = i18n.language.startsWith("en") ? enUS : fr;
+  const cycleLastDay = new Date(cycle.period.to.getTime() - 1);
 
   // Échéances : récurrences actives, de la plus proche à la plus lointaine.
   const upcoming = useMemo(
@@ -199,6 +230,52 @@ export function HomePage() {
           {t("home.pendingBanner", { count: pendingCount })}
         </Link>
       ) : null}
+
+      {/* Mon cycle : ce qui est entré, sorti et mis de côté depuis le dernier jour de paie. */}
+      <section
+        aria-labelledby="cycle-title"
+        className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
+      >
+        <h2 id="cycle-title" className="text-sm font-medium text-slate-600 dark:text-muted">
+          {t("cycle.title", {
+            from: format(cycle.period.from, "d MMM", { locale: cycleLocale }),
+            to: format(cycleLastDay, "d MMM", { locale: cycleLocale }),
+          })}
+        </h2>
+        <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+          {formatMoney(cycle.available, baseCurrency)}
+        </p>
+        <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
+        <dl className="grid grid-cols-3 gap-2 border-t border-slate-200 pt-3 text-center dark:border-white/15">
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
+            <dd
+              className="text-sm font-semibold tabular-nums text-income dark:text-income-dark"
+              data-amount
+            >
+              {formatMoney(cycle.income, baseCurrency)}
+            </dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.expense")}</dt>
+            <dd
+              className="text-sm font-semibold tabular-nums text-expense dark:text-expense-dark"
+              data-amount
+            >
+              {formatMoney(cycle.expense, baseCurrency)}
+            </dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.saved")}</dt>
+            <dd className="text-sm font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+              {formatMoney(cycle.saved, baseCurrency)}
+            </dd>
+          </div>
+        </dl>
+        <p className="text-xs text-slate-600 dark:text-muted">
+          {t("cycle.daysLeft", { days: cycle.daysLeft })}
+        </p>
+      </section>
 
       {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
       <section className="flex flex-col gap-3">

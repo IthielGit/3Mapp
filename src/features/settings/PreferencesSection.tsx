@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
 import i18n from "../../i18n";
 import { db } from "../../db/database";
 import { Field, inputClass } from "../../components/FormControls";
+import { accountingMonth } from "../../domain/period";
 import { updatePreferences } from "./preferences-service";
 
 /** Jours de la semaine, lundi d'abord. La valeur est celle de Date.getDay() (dimanche = 0). */
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
+const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 /** Section « Préférences » de l'écran Paramètres (SPEC §5.16). */
 export function PreferencesSection() {
@@ -27,6 +31,17 @@ export function PreferencesSection() {
       setMessage(err instanceof Error ? err.message : t("errors.generic"));
     }
   }
+
+  async function changeMonthStart(day: number) {
+    if (day === settings?.monthStartDay) return;
+    // Le cycle est calculé à la lecture : changer le jour recalcule aussi les cycles passés.
+    if (!window.confirm(t("prefs.monthStartConfirm"))) return;
+    await change({ monthStartDay: day });
+  }
+
+  const locale = i18n.language.startsWith("en") ? enUS : fr;
+  const cycle = accountingMonth(new Date(), settings.monthStartDay);
+  const cycleLast = new Date(cycle.to.getTime() - 1);
 
   async function changeLanguage(language: "fr" | "en") {
     await change({ language });
@@ -84,6 +99,26 @@ export function PreferencesSection() {
             ))}
           </select>
         </Field>
+
+        <Field label={t("prefs.monthStart")}>
+          <select
+            className={inputClass}
+            value={settings.monthStartDay}
+            onChange={(e) => void changeMonthStart(Number(e.target.value))}
+          >
+            {MONTH_DAYS.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <p className="-mt-2 text-sm text-slate-600 dark:text-muted" aria-live="polite">
+          {t("prefs.monthStartPreview", {
+            from: format(cycle.from, "d MMM", { locale }),
+            to: format(cycleLast, "d MMM", { locale }),
+          })}
+        </p>
 
         <Field label={t("prefs.keypadZeros")}>
           <select

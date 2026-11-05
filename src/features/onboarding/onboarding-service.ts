@@ -9,6 +9,8 @@ import { CURRENCIES, type CurrencyCode, type Minor } from "../../lib/money";
 export interface OnboardingInput {
   language: "fr" | "en" | "mg";
   baseCurrency: CurrencyCode;
+  /** Jour de paie / début du mois (1 à 31) ; 1 par défaut. */
+  monthStartDay?: number;
   wallet: {
     name: string;
     icon: string;
@@ -45,7 +47,7 @@ export async function completeOnboarding(
     async () => {
       await createRepository(database.settings, settingsSchema).create({
         baseCurrency: input.baseCurrency,
-        monthStartDay: 1,
+        monthStartDay: input.monthStartDay ?? 1,
         ignoreFutureBalance: true,
         weekStartDay: 1,
         language: input.language,

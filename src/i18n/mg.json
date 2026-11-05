@@ -149,7 +149,11 @@
     "introStart": "Hanomboka",
     "skip": "Lany",
     "nameRequired": "Omeo anarana ny kaontinao mba hitohizana.",
-    "balanceHint": "Ny vola efa misy ao amin’ity kaonty ankehitriny. Raha tsy fantatrao, apetraho 0 : azonao ovaina any aoriana."
+    "balanceHint": "Ny vola efa misy ao amin’ity kaonty ankehitriny. Raha tsy fantatrao, apetraho 0 : azonao ovaina any aoriana.",
+    "payDay": "Andro firy no ahazoanao karama?",
+    "firstDay": "Tsy fantatro (ny 1)",
+    "dayOption": "Ny {{day}}",
+    "payDayHint": "Hanomboka amin’io andro io ny volanao. Azonao ovaina any amin’ny Safidy."
   },
   "groups": {
     "bank": "Banky",
@@ -585,7 +589,7 @@
     "languageFr": "Français",
     "languageEn": "English",
     "weekStart": "Voalohan'ny herinandro",
-    "monthStart": "Voalohan'ny volana",
+    "monthStart": "Ny volako dia manomboka amin’ny",
     "monthDay": "Andro {{day}}",
     "keypadZeros": "Bokotra aotra eo amin'ny kilasy",
     "ignoreFuture": "Tsy raisina ny vola ho avy",
@@ -614,7 +618,9 @@
       "Alakamisy",
       "Zoma",
       "Sabotsy"
-    ]
+    ],
+    "monthStartPreview": "Ny volana misy azy dia mandeha hatramin’ny {{from}} ka hatramin’ny {{to}}",
+    "monthStartConfirm": "Ny fanovana an’io andro io dia manavao koa ny tsikera lasa. Hitohy?"
   },
   "repeat": {
     "label": "Averina (fanamarinana)",
@@ -642,5 +648,13 @@
   "forms": {
     "missingName": "Ampidiro ny anarana.",
     "missingRate": "Ampidiro ny tahan'ny vola mihoatra ny 0."
+  },
+  "cycle": {
+    "title": "Ny tsikera-kaleja hatramin’ny {{from}} ka hatramin’ny {{to}}",
+    "available": "Azo ampiasaina androany (tsy anisan’ny tahiry)",
+    "income": "Nidiran’ny",
+    "expense": "Nivoaka",
+    "saved": "Voatahiry",
+    "daysLeft": "Andro mijanona: {{days}}"
   }
 }

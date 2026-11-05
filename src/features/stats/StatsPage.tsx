@@ -1,6 +1,6 @@
 import { Icon, type IconName } from "../../components/Icon";
 import { useCallback, useMemo, useState } from "react";
-import { addMonths, format, startOfMonth } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -27,7 +27,13 @@ import {
   topExpenses,
   transactionsIn,
 } from "../../domain/stats";
-import { contains, localDayKey, previousPeriod, splitPeriods } from "../../domain/period";
+import {
+  contains,
+  localDayKey,
+  periodFor,
+  previousPeriod,
+  splitPeriods,
+} from "../../domain/period";
 import { computeBalances } from "../../domain/balance";
 import { convertedSum } from "../../domain/fx";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
@@ -73,6 +79,7 @@ export function StatsPage() {
   const chartMain = resolved === "dark" ? "#2dd4bf" : "#0d9488";
   const chartIncome = resolved === "dark" ? "#34d399" : "#10b981";
   const settings = usePeriodSettings();
+  const monthStartDay = settings.monthStartDay;
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const [now] = useState(() => new Date());
   const [dataset, setDataset] = useState<Dataset>("categories");
@@ -182,21 +189,25 @@ export function StatsPage() {
   const savingsRows = useMemo(() => {
     const today = new Date();
     return Array.from({ length: savingsMonths }, (_, i) => {
-      const from = startOfMonth(addMonths(today, i - savingsMonths + 1));
-      const month = { from, to: startOfMonth(addMonths(from, 1)) };
+      // Mois comptable (cycle de paie selon le réglage), pas le mois civil.
+      const month = periodFor(
+        "month",
+        addMonths(today, i - savingsMonths + 1),
+        { monthStartDay, weekStartDay: 1 },
+      );
       const sum = periodSummary(
         transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
         month,
       );
       return {
-        name: format(from, "MMM yy", { locale: fr }),
+        name: format(month.from, "MMM yy", { locale: fr }),
         net: toMajor(sum.net),
         income: sum.income,
         expense: sum.expense,
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, baseCurrency, savingsMonths, walletFilter]);
+  }, [transactions, baseCurrency, savingsMonths, walletFilter, monthStartDay, toMajor]);
   const savingsCumulative = savingsRows.reduce<{ name: string; cumulative: number }[]>(
     (acc, row) => {
       const previous = acc[acc.length - 1]?.cumulative ?? 0;
@@ -208,15 +219,14 @@ export function StatsPage() {
   const monthNets = useMemo(() => {
     const today = new Date();
     return Array.from({ length: 4 }, (_, i) => {
-      const from = startOfMonth(addMonths(today, i - 3));
-      const month = { from, to: startOfMonth(addMonths(from, 1)) };
+      const month = periodFor("month", addMonths(today, i - 3), { monthStartDay, weekStartDay: 1 });
       return periodSummary(
         transactionsIn(transactions, month, baseCurrency).filter(keepWallet),
         month,
       ).net;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions, baseCurrency, walletFilter]);
+  }, [transactions, baseCurrency, walletFilter, monthStartDay]);
   const thisMonthMinor = monthNets[3] ?? 0;
   const lastMonthMinor = monthNets[2] ?? 0;
   const forecastMinor = Math.round(monthNets.slice(0, 3).reduce((sum, n) => sum + n, 0) / 3);
