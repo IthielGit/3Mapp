@@ -631,7 +631,8 @@ export function StatsPage() {
         )}
 
         {/* Valeurs exactes : accessibles au clavier et aux lecteurs d'écran. */}
-        {hasData ? (
+        {/* Pour la répartition en anneau, la liste ci-dessus donne déjà les mêmes valeurs. */}
+        {hasData && !(dataset === "categories" && repr === "donut") ? (
           <details className="text-sm">
             <summary className="cursor-pointer font-medium text-ink dark:text-fg">
               {t("stats.values")}
