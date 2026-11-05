@@ -14,7 +14,7 @@ import { cycleOverview, type PayStatus } from "../../domain/cycle";
 import { periodFor } from "../../domain/period";
 import { usePeriodSettings } from "../stats/period-state";
 import { dailyExpenses } from "../../domain/home-series";
-import { TransactionRow } from "../../components/TransactionRow";
+import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
@@ -429,75 +429,127 @@ export function HomePage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        {upcoming[0] ? (
-          <Link
-            to={`/plus/recurring/${upcoming[0].id}`}
-            className="flex min-h-[44px] items-center justify-between gap-3 border-t border-slate-200 pt-3 text-sm dark:border-white/15"
-          >
-            <span className="min-w-0 truncate">
-              <span className="text-slate-600 dark:text-muted">{t("home.nextDue")} · </span>
-              <span className="font-medium text-ink dark:text-fg">
-                {upcoming[0].memo || t(`transactions.types.${upcoming[0].type}`)}
-              </span>
-              <span className="text-slate-600 dark:text-muted"> · {format(new Date(upcoming[0].nextDate), "d MMM")}</span>
-            </span>
-            <span className="shrink-0 font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-              {formatMoney(upcoming[0].amount, upcoming[0].currency)}
-            </span>
-          </Link>
-        ) : null}
       </section>
 
-      {/* Comptes et budgets : un compte et un budget en vue, le reste dans leurs pages. */}
-      <section className="grid grid-cols-2 gap-3">
-        {budgetRows[0] ? (
+      {/* Comptes : tous les comptes pris en compte, avec leur solde. */}
+      {active.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
+            <Link
+              to="/plus/wallets"
+              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
+            >
+              {t("home.manage")}
+            </Link>
+          </div>
+          <ul className="grid grid-cols-2 gap-3">
+            {active.map((w) => (
+              <li key={w.id} className="min-w-0">
+                <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* Échéances à venir : les trois prochaines récurrences. */}
+      {upcoming.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
+            <Link
+              to="/plus/recurring"
+              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
+            >
+              {t("home.seeAll")}
+            </Link>
+          </div>
+          <ul className="flex flex-col divide-y divide-slate-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
+            {upcoming.slice(0, 3).map((r) => {
+              const due = new Date(r.nextDate);
+              const income = r.type === "income";
+              return (
+                <li key={r.id}>
+                  <Link to={`/plus/recurring/${r.id}`} className="pressable flex min-h-[64px] items-center gap-3 py-3">
+                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-center leading-none dark:bg-raised">
+                      <span className="text-base font-semibold tabular-nums text-ink dark:text-fg">{format(due, "d")}</span>
+                      <span className="mt-0.5 text-[10px] uppercase text-slate-600 dark:text-muted">{format(due, "MMM")}</span>
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-sm font-medium text-ink dark:text-fg">
+                        {r.memo || t(`transactions.types.${r.type}`)}
+                      </span>
+                      <span className="truncate text-xs text-slate-600 dark:text-muted">{walletName(r.walletId)}</span>
+                    </span>
+                    <span
+                      className={`shrink-0 text-sm font-semibold tabular-nums ${income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
+                      data-amount
+                    >
+                      {income ? "+" : "−"}
+                      {formatMoney(r.amount, r.currency)}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* Budgets : les trois premiers, avec ce qui est dépensé et ce qui reste. */}
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
           <Link
-            to={`/budgets/${budgetRows[0].budget.id}`}
-            className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
+            to="/budgets"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
           >
-            <span className="flex items-center gap-3">
-              <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true" className="shrink-0">
-                <circle cx="23" cy="23" r="18" fill="none" className="stroke-slate-200 dark:stroke-white/15" strokeWidth="6" />
-                <circle
-                  cx="23"
-                  cy="23"
-                  r="18"
-                  fill="none"
-                  stroke={budgetRows[0].state.status === "exceeded" ? "#dc2626" : "#0f766e"}
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(Math.min(100, Math.max(0, budgetRows[0].state.percent)) / 100) * 113.1} 113.1`}
-                  transform="rotate(-90 23 23)"
-                />
-              </svg>
-              <span className="flex min-w-0 flex-col">
-                <span className="truncate text-sm font-semibold text-ink dark:text-fg">{budgetRows[0].budget.name}</span>
-                <span className="text-xs tabular-nums text-slate-600 dark:text-muted">
-                  {Math.round(budgetRows[0].state.percent)} %
-                </span>
-              </span>
-            </span>
+            {t("home.manage")}
           </Link>
-        ) : (
+        </div>
+        {budgetRows.length === 0 ? (
           <Link
             to="/budgets/new"
-            className="flex min-h-[44px] flex-col justify-between rounded-3xl border border-dashed border-slate-300 p-4 text-sm font-medium text-brand-700 dark:border-white/15 dark:text-brand-300"
+            className="inline-flex min-h-[44px] items-center text-sm font-medium text-brand-700 underline dark:text-brand-300"
           >
             {t("home.budgetsEmpty")}
           </Link>
+        ) : (
+          <ul className="flex flex-col divide-y divide-slate-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
+            {budgetRows.slice(0, 3).map(({ budget, state }) => {
+              const width = Math.min(100, Math.max(0, state.percent));
+              const barColor =
+                state.status === "exceeded"
+                  ? "bg-expense dark:bg-expense-dark"
+                  : state.status === "threshold"
+                    ? "bg-amber-500"
+                    : "bg-brand-700 dark:bg-brand-300";
+              return (
+                <li key={budget.id} className="py-4">
+                  <Link to={`/budgets/${budget.id}`} className="pressable flex min-h-[44px] flex-col gap-2">
+                    <div className="flex items-baseline justify-between gap-3 text-sm">
+                      <span className="truncate font-medium text-ink dark:text-fg">{budget.name}</span>
+                      <span className="shrink-0 tabular-nums text-slate-600 dark:text-muted" data-amount>
+                        {formatMoney(state.spent, budget.currency)} / {formatMoney(state.available, budget.currency)}
+                      </span>
+                    </div>
+                    <div
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.min(100, state.percent)}
+                      aria-label={budget.name}
+                      className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
+                    >
+                      <div className={`progress-fill h-full rounded-full ${barColor}`} style={{ transform: `scaleX(${width / 100})` }} />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         )}
-        {active[0] ? (
-          <Link
-            to={`/plus/wallets/${active[0].id}`}
-            className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
-          >
-            <span className="text-2xl" aria-hidden="true">{active[0].icon}</span>
-            <span className="truncate text-sm font-medium text-ink dark:text-fg">{active[0].name}</span>
-            <span className="text-sm tabular-nums text-ink dark:text-fg" data-amount>
-              {formatMoney(balances[active[0].id] ?? active[0].initialBalance, active[0].currency)}
-            </span>
-          </Link>
-        ) : null}
       </section>
 
       <section className="flex flex-col gap-3">
