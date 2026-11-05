@@ -11,7 +11,7 @@ test("navigation entre les pages de la barre basse sur mobile", async ({ page })
   const tabs: Array<[string, string]> = [
     ["Transactions", "Transactions"],
     ["Budgets", "Budgets"],
-    ["Plus", "Paramètres"],
+    ["Visualisation", "Calendrier"],
     ["Accueil", "Accueil"],
   ];
   for (const [tab, heading] of tabs) {

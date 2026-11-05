@@ -33,7 +33,7 @@
     "calendar": "Kalandrie",
     "main": "Fandaharana fototra",
     "add": "Ampio",
-    "plus": "Hafa"
+    "visualisation": "Sary sy tabilao"
   },
   "pages": {
     "home": {
@@ -73,8 +73,7 @@
     "groups": {
       "manage": "Fitantanana",
       "data": "Angona sy fiarovana",
-      "appearance": "Endrika",
-      "see": "Jereo"
+      "appearance": "Endrika"
     },
     "budgets": "Tetibola"
   },

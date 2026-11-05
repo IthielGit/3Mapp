@@ -19,7 +19,6 @@ export function BudgetFormPage() {
   const { id } = useParams();
   const settings = useLiveQuery(() => db.settings.toArray(), []) ?? EMPTY;
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
-  const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
   const currency: CurrencyCode = settings[0]?.baseCurrency ?? "MGA";
 
   const [loaded, setLoaded] = useState(!id);
@@ -179,42 +178,15 @@ export function BudgetFormPage() {
         ))}
       </fieldset>
 
-      <fieldset className="grid grid-cols-2 gap-x-3 gap-y-0">
-        <legend className="mb-1 text-sm font-medium">{t("budgets.walletsOptional")}</legend>
-        {wallets
-          .filter((w) => !w.archived && w.currency === currency)
-          .map((w) => (
-            <label key={w.id} className="flex min-h-[44px] items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-5 w-5 shrink-0"
-                checked={walletIds.includes(w.id)}
-                onChange={() => setWalletIds((ids) => toggle(ids, w.id))}
-              />
-              <span className="truncate">{w.name}</span>
-            </label>
-          ))}
-      </fieldset>
-
-      <div className="grid grid-cols-2 items-end gap-3">
-        <Field label={t("budgets.threshold")}>
-          <input
-            inputMode="numeric"
-            className={inputClass}
-            value={threshold}
-            onChange={(e) => setThreshold(e.target.value)}
-          />
-        </Field>
-        <label className="flex min-h-[44px] items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-5 w-5 shrink-0"
-            checked={rollover}
-            onChange={(e) => setRollover(e.target.checked)}
-          />
-          {t("budgets.rollover")}
-        </label>
-      </div>
+      <label className="flex min-h-[44px] items-center gap-2">
+        <input
+          type="checkbox"
+          className="h-5 w-5 shrink-0"
+          checked={rollover}
+          onChange={(e) => setRollover(e.target.checked)}
+        />
+        {t("budgets.rollover")}
+      </label>
 
       {error ? (
         <p role="alert" className="text-red-700 dark:text-red-400">

@@ -8,7 +8,7 @@ import { generateDueOccurrences } from "../features/recurring/recurring-service"
 import { useAppPreferences } from "../features/settings/app-preferences";
 
 /** Destinations de la barre basse : pas de bouton retour sur ces écrans racines. */
-const ROOTS = ["/", "/transactions", "/calendar", "/stats"];
+const ROOTS = ["/", "/transactions", "/budgets", "/visualisation"];
 
 /**
  * Ligne d'en-tête des écrans secondaires : bouton retour rond à gauche, titre de l'écran

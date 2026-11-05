@@ -33,7 +33,7 @@
     "calendar": "Calendar",
     "main": "Main navigation",
     "add": "Add",
-    "plus": "More"
+    "visualisation": "Visualisation"
   },
   "pages": {
     "home": {
@@ -73,8 +73,7 @@
     "groups": {
       "manage": "Management",
       "data": "Data and security",
-      "appearance": "Appearance",
-      "see": "View"
+      "appearance": "Appearance"
     },
     "budgets": "Budgets"
   },

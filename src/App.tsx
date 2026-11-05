@@ -1,8 +1,9 @@
 import { lazy, Suspense, type ComponentType } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { RequireOnboarding } from "./components/RequireOnboarding";
 import { NotFoundPage } from "./components/NotFoundPage";
+import { VisualisationLayout } from "./features/visualisation/VisualisationLayout";
 import { Skeleton } from "./components/PwaComponents";
 
 /**
@@ -127,8 +128,14 @@ export default function App() {
           <Route path="transactions/new" element={<TransactionsPage />} />
           <Route path="transactions/:id" element={<TransactionsPage />} />
           <Route path="transactions/:id/edit" element={<TransactionsPage />} />
-          <Route path="calendar" element={<CalendarPage />} />
-          <Route path="stats" element={<StatsPage />} />
+          {/* Calendrier et Analyses vivent dans l’onglet Visualisation ; les anciennes adresses y renvoient. */}
+          <Route path="visualisation" element={<VisualisationLayout />}>
+            <Route index element={<Navigate to="calendar" replace />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="stats" element={<StatsPage />} />
+          </Route>
+          <Route path="calendar" element={<Navigate to="/visualisation/calendar" replace />} />
+          <Route path="stats" element={<Navigate to="/visualisation/stats" replace />} />
           <Route path="budgets" element={<BudgetsPage />} />
           <Route path="budgets/new" element={<BudgetFormPage />} />
           <Route path="budgets/:id" element={<BudgetDetailPage />} />
