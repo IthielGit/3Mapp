@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, Cell, ResponsiveContainer } from "recharts";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
@@ -14,12 +14,11 @@ import { cycleOverview, type PayStatus } from "../../domain/cycle";
 import { periodFor } from "../../domain/period";
 import { usePeriodSettings } from "../stats/period-state";
 import { dailyExpenses } from "../../domain/home-series";
-import { TransactionRow, WalletCard } from "../../components/TransactionRow";
+import { TransactionRow } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
 import { updatePreferences } from "../settings/preferences-service";
-import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 
 const EMPTY: never[] = [];
 const EMPTY_DEBTS: never[] = [];
@@ -151,6 +150,7 @@ export function HomePage() {
   const noStartBalance =
     cycle.available < 0 &&
     active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0);
+  // La question de paie vit sur la carte colorée : texte blanc, boutons blanc et contour.
   function payLine(pay: PayStatus) {
     const day = (d: Date) => format(d, "d MMM", { locale: cycleLocale });
     switch (pay.kind) {
@@ -159,7 +159,7 @@ export function HomePage() {
         if (suggestion && !suggestionHidden) {
           const category = categories.find((c) => c.id === suggestion.categoryId)?.name ?? "";
           return (
-            <>
+            <div className="flex flex-col gap-3">
               <p>
                 {t("cycle.lastEntry", {
                   amount: formatMoney(suggestion.amount, baseCurrency),
@@ -170,20 +170,20 @@ export function HomePage() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  className={buttonPrimary}
+                  className="min-h-[44px] rounded-xl bg-white font-semibold text-[#0a4f4a]"
                   onClick={() => void acceptSuggestedPay(suggestion.categoryId)}
                 >
                   {t("cycle.yes")}
                 </button>
                 <button
                   type="button"
-                  className={buttonSecondary}
+                  className="min-h-[44px] rounded-xl border border-white/40 font-medium text-white"
                   onClick={() => setSuggestionHidden(true)}
                 >
                   {t("cycle.no")}
                 </button>
               </div>
-            </>
+            </div>
           );
         }
         return (
@@ -205,7 +205,7 @@ export function HomePage() {
         return (
           <p>
             {t("cycle.payExpected", { date: day(pay.date) })} ·{" "}
-            <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
+            <Link to="/transactions/new" className="underline">
               {t("cycle.addPay")}
             </Link>
           </p>
@@ -214,7 +214,7 @@ export function HomePage() {
         return (
           <p>
             {t("cycle.payLate", { days: pay.daysLate })} ·{" "}
-            <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
+            <Link to="/transactions/new" className="underline">
               {t("cycle.addPay")}
             </Link>
           </p>
@@ -255,52 +255,30 @@ export function HomePage() {
     <section className="-mx-4 flex flex-col gap-5 px-4">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
-      {/* En-tête : salutation à gauche, réglages ronds à droite. */}
-      <header className="sticky top-0 z-20 -mx-4 -mt-4 flex items-center justify-between bg-canvas px-4 pb-2 pt-5 dark:bg-page">
-        <div className="flex items-center gap-3">
-          {/* Marque : tuile sombre à anneau de progression et point rouge, comme l'icône de l'app. */}
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            viewBox="0 0 44 44"
-            className="h-11 w-11 shrink-0"
-          >
-            <defs>
-              <linearGradient id="brand-tile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#34343c" />
-                <stop offset="1" stopColor="#0b0b0d" />
-              </linearGradient>
-              <linearGradient id="brand-arc" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#ffffff" />
-                <stop offset="1" stopColor="#c9c9d1" />
-              </linearGradient>
-            </defs>
-            <rect width="44" height="44" rx="12.5" fill="url(#brand-tile)" />
-            <rect x="0.5" y="0.5" width="43" height="43" rx="12" fill="none" stroke="#ffffff" strokeOpacity="0.12" />
-            <circle cx="22" cy="22" r="11.5" fill="none" stroke="#ffffff" strokeOpacity="0.16" strokeWidth="3.2" />
-            <path d="M22 10.5 A11.5 11.5 0 1 1 10.7 18.4" fill="none" stroke="url(#brand-arc)" strokeWidth="3.2" />
-            <circle cx="10.7" cy="18.4" r="3" fill="#ee4444" />
-          </svg>
-          <div className="flex flex-col">
-            <span className="font-semibold text-ink dark:text-fg">{t("home.hello")}</span>
-            <span className="text-sm capitalize text-slate-600 dark:text-muted">{format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}</span>
-          </div>
+      {/* En-tête : « Bienvenue », le mois en cours, et l'engrenage seul. */}
+      <header className="flex items-center justify-between pb-1 pt-3">
+        <div className="flex flex-col">
+          <span className="text-2xl font-semibold tracking-tight text-ink dark:text-fg">{t("home.hello")}</span>
+          <span className="text-sm capitalize text-slate-600 dark:text-muted">
+            {format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}
+          </span>
         </div>
         <Link
           to="/plus"
-          className="flex h-11 items-center gap-2 rounded-full bg-white px-3 text-sm font-medium text-ink shadow-sm dark:bg-raised dark:text-fg"
+          aria-label={t("nav.more")}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
         >
           <GearIcon />
-          <span>{t("nav.more")}</span>
         </Link>
       </header>
 
-      {/* Ma période : le disponible, ce que je peux dépenser par jour, et ce que j'ai mis de côté. */}
+      {/* Votre mois : la seule carte colorée. Elle répond d'abord à « combien puis-je dépenser ? ». */}
       <section
         aria-labelledby="cycle-title"
-        className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
+        className="relative flex flex-col gap-3 overflow-hidden rounded-3xl p-5 text-white shadow-lg"
+        style={{ background: "linear-gradient(150deg, #0f766e 0%, #0a4f4a 100%)" }}
       >
-        <h2 id="cycle-title" className="text-sm font-medium text-slate-600 dark:text-muted">
+        <h2 id="cycle-title" className="text-xs font-medium text-white/75">
           {t("cycle.title", {
             from: format(cycle.period.from, "d MMM", { locale: cycleLocale }),
             to: format(cycleLastDay, "d MMM", { locale: cycleLocale }),
@@ -308,24 +286,24 @@ export function HomePage() {
         </h2>
 
         {noStartBalance ? (
-          // Sans solde de départ, un découvert n'a pas de sens : on demande le solde au lieu d'afficher un montant négatif.
+          // Sans solde de départ, un découvert n'a pas de sens : on demande le solde au lieu d'un montant négatif.
           <div className="flex flex-col gap-3">
-            <p className="text-base font-semibold text-ink dark:text-fg">{t("cycle.noStartBalance")}</p>
+            <p className="text-base font-semibold">{t("cycle.noStartBalance")}</p>
             <Link
               to="/plus/wallets"
-              className="inline-flex min-h-[44px] items-center self-start rounded-xl bg-brand-700 px-4 font-semibold text-white dark:bg-white dark:text-ink"
+              className="inline-flex min-h-[44px] items-center self-start rounded-xl bg-white px-4 font-semibold text-[#0a4f4a]"
             >
               {t("cycle.setStartBalances")}
             </Link>
           </div>
         ) : (
           <div className="flex flex-col gap-1">
-            <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
-            <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+            <p className="text-xs text-white/75">{t("cycle.available")}</p>
+            <p className="text-[40px] font-semibold leading-none tracking-tight tabular-nums" data-amount>
               {formatMoney(cycle.available, baseCurrency)}
             </p>
             {cycle.available < 0 ? (
-              <p className="text-sm font-medium text-ink dark:text-fg">
+              <p className="pt-1 text-sm">
                 {t("cycle.negativeBalance")}{" "}
                 <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
                   {t("cycle.checkAccounts")}
@@ -335,32 +313,37 @@ export function HomePage() {
           </div>
         )}
 
-        {/* La réponse à « combien puis-je dépenser ? » et « combien ai-je mis de côté ? ». */}
-        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
+        {/* Phrase du jour, ou dépassement, puis l'épargne du mois. */}
+        <div className="flex flex-col gap-2 border-t border-white/20 pt-3">
           {transactions.length === 0 ? (
-            <p className="text-sm text-ink dark:text-fg">{t("cycle.empty")}</p>
+            <p className="text-sm text-white/90">{t("cycle.empty")}</p>
           ) : cycle.available >= 0 && restView.overdrawn ? (
-            <p className="text-base font-semibold text-ink dark:text-fg">
+            <p className="text-[15px] leading-snug">
               {t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })}
             </p>
           ) : cycle.available >= 0 ? (
-            <p className="text-base font-semibold text-ink dark:text-fg">
+            <p className="text-[15px] leading-snug">
               {t("cycle.perDay", {
                 amount: formatMoney(restView.perDay, baseCurrency),
                 date: format(cycle.period.to, "d MMM", { locale: cycleLocale }),
               })}
             </p>
           ) : null}
-          <p className="text-sm text-ink dark:text-fg">
+          <p className="text-sm text-white/85">
             {cycle.saved >= 0
               ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
               : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
           </p>
         </div>
 
+        {/* La question de paie, en une ligne sur la carte. */}
+        {cycleView.pay.kind === "unset" && !(cycleView.suggestedPay && !suggestionHidden) ? null : (
+          <div className="rounded-2xl bg-white/15 p-3 text-sm">{payLine(cycleView.pay)}</div>
+        )}
+
         {/* Détail replié : comptes pris en compte, entrées, sorties et versements. */}
-        <details className="group flex flex-col gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
-          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 dark:text-muted [&::-webkit-details-marker]:hidden">
+        <details className="group flex flex-col gap-3 border-t border-white/20 pt-3">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium text-white/80 [&::-webkit-details-marker]:hidden">
             {t("cycle.thisMonth")}
             <svg
               aria-hidden="true"
@@ -368,17 +351,10 @@ export function HomePage() {
               viewBox="0 0 20 20"
               className="h-4 w-4 transition-transform group-open:rotate-180"
             >
-              <path
-                d="M5 8l5 5 5-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </summary>
-          <p className="text-xs text-slate-600 dark:text-muted">
+          <p className="text-xs text-white/80">
             {countedList.length <= 2
               ? t("cycle.accounts", { names: countedNames || "—" })
               : t("cycle.accountsCount", { count: countedList.length })}{" "}
@@ -388,54 +364,37 @@ export function HomePage() {
           </p>
           <dl className="grid grid-cols-2 gap-2 text-center">
             <div className="flex flex-col gap-0.5">
-              <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
-              <dd
-                className="text-sm font-semibold tabular-nums text-income dark:text-income-dark"
-                data-amount
-              >
+              <dt className="text-xs text-white/75">{t("cycle.income")}</dt>
+              <dd className="text-sm font-semibold tabular-nums text-emerald-200" data-amount>
                 {formatMoney(cycle.income, baseCurrency)}
               </dd>
             </div>
             <div className="flex flex-col gap-0.5">
-              <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.expense")}</dt>
-              <dd
-                className="text-sm font-semibold tabular-nums text-expense dark:text-expense-dark"
-                data-amount
-              >
+              <dt className="text-xs text-white/75">{t("cycle.expense")}</dt>
+              <dd className="text-sm font-semibold tabular-nums text-rose-200" data-amount>
                 {formatMoney(cycle.expense, baseCurrency)}
               </dd>
             </div>
           </dl>
           {cycle.savedToGoals > 0 ? (
-            <p className="text-sm text-ink dark:text-fg">
-              {t("cycle.savedToGoals", { amount: formatMoney(cycle.savedToGoals, baseCurrency) })}
-            </p>
+            <p className="text-sm">{t("cycle.savedToGoals", { amount: formatMoney(cycle.savedToGoals, baseCurrency) })}</p>
           ) : null}
           {cycle.debtsPaid > 0 ? (
-            <p className="text-sm text-ink dark:text-fg">
-              {t("cycle.debtsPaid", { amount: formatMoney(cycle.debtsPaid, baseCurrency) })}
-            </p>
+            <p className="text-sm">{t("cycle.debtsPaid", { amount: formatMoney(cycle.debtsPaid, baseCurrency) })}</p>
           ) : null}
           {cycleView.plannedSaving !== undefined ? (
-            <p className="text-xs text-slate-600 dark:text-muted">
-              {t("cycle.plannedSaving", {
-                amount: formatMoney(cycleView.plannedSaving, baseCurrency),
-              })}
+            <p className="text-xs text-white/80">
+              {t("cycle.plannedSaving", { amount: formatMoney(cycleView.plannedSaving, baseCurrency) })}
             </p>
           ) : null}
         </details>
       </section>
 
-      {/* La question de paie vit à part de la carte : elle ne concurrence plus le détail. */}
-      <section className="flex flex-col gap-2 rounded-3xl bg-white p-4 text-xs text-slate-600 shadow-sm dark:bg-card dark:text-muted">
-        {payLine(cycleView.pay)}
-      </section>
-
-      {/* Alertes : une seule à la fois, sous la carte. */}
+      {/* Alertes : fines, sous la carte, sans couleur d'avertissement. */}
       {backupState !== "none" ? (
         <Link
           to="/plus/backup"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
+          className="flex items-center gap-3 rounded-2xl border border-slate-200 border-l-[3px] border-l-brand-700 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
         >
           {t("home.backupReminder")}
         </Link>
@@ -443,189 +402,102 @@ export function HomePage() {
       {pendingCount > 0 ? (
         <Link
           to="/plus/recurring"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
+          className="flex items-center gap-3 rounded-2xl border border-slate-200 border-l-[3px] border-l-brand-700 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
         >
           {t("home.pendingBanner", { count: pendingCount })}
         </Link>
       ) : null}
 
-      {/* Échéances à venir : affichées seulement s'il y en a. */}
-      {upcoming.length > 0 ? (
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
-          <Link
-            to="/plus/recurring"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
-          >
-            {t("home.seeAll")}
-          </Link>
+      {/* Cette semaine : les dépenses des 7 derniers jours, et la prochaine échéance en une ligne. */}
+      <section aria-labelledby="week-title" className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 id="week-title" className="font-semibold text-ink dark:text-fg">
+            {t("home.expenseCard")}
+          </h2>
+          <span className="text-sm font-medium tabular-nums text-ink dark:text-fg" data-amount>
+            {formatMoney(weekTotalMinor, baseCurrency)}
+          </span>
         </div>
-        {upcoming.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-600 dark:border-white/15 dark:text-muted">
-            <Icon name="clock" className="h-6 w-6 text-amber-600 dark:text-amber-300" />
-            <span>{t("home.noUpcoming")}</span>
-          </div>
+        <div className="h-16">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={weekExpenses}>
+              <Bar dataKey="value" radius={[8, 8, 4, 4]} isAnimationActive={false}>
+                {weekExpenses.map((entry, i) => (
+                  <Cell key={entry.day} fill={i === weekExpenses.length - 1 ? "#0f766e" : "#cfe7e2"} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        {upcoming[0] ? (
+          <Link
+            to={`/plus/recurring/${upcoming[0].id}`}
+            className="flex min-h-[44px] items-center justify-between gap-3 border-t border-slate-200 pt-3 text-sm dark:border-white/15"
+          >
+            <span className="min-w-0 truncate">
+              <span className="text-slate-600 dark:text-muted">{t("home.nextDue")} · </span>
+              <span className="font-medium text-ink dark:text-fg">
+                {upcoming[0].memo || t(`transactions.types.${upcoming[0].type}`)}
+              </span>
+              <span className="text-slate-600 dark:text-muted"> · {format(new Date(upcoming[0].nextDate), "d MMM")}</span>
+            </span>
+            <span className="shrink-0 font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+              {formatMoney(upcoming[0].amount, upcoming[0].currency)}
+            </span>
+          </Link>
+        ) : null}
+      </section>
+
+      {/* Comptes et budgets : un compte et un budget en vue, le reste dans leurs pages. */}
+      <section className="grid grid-cols-2 gap-3">
+        {budgetRows[0] ? (
+          <Link
+            to={`/budgets/${budgetRows[0].budget.id}`}
+            className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
+          >
+            <span className="flex items-center gap-3">
+              <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true" className="shrink-0">
+                <circle cx="23" cy="23" r="18" fill="none" className="stroke-slate-200 dark:stroke-white/15" strokeWidth="6" />
+                <circle
+                  cx="23"
+                  cy="23"
+                  r="18"
+                  fill="none"
+                  stroke={budgetRows[0].state.status === "exceeded" ? "#dc2626" : "#0f766e"}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(Math.min(100, Math.max(0, budgetRows[0].state.percent)) / 100) * 113.1} 113.1`}
+                  transform="rotate(-90 23 23)"
+                />
+              </svg>
+              <span className="flex min-w-0 flex-col">
+                <span className="truncate text-sm font-semibold text-ink dark:text-fg">{budgetRows[0].budget.name}</span>
+                <span className="text-xs tabular-nums text-slate-600 dark:text-muted">
+                  {Math.round(budgetRows[0].state.percent)} %
+                </span>
+              </span>
+            </span>
+          </Link>
         ) : (
-          <ul className="flex flex-col divide-y divide-slate-200 rounded-card border border-slate-200 bg-white px-4 dark:divide-white/10 dark:border-white/15 dark:bg-card">
-            {upcoming.map((r) => {
-              const due = new Date(r.nextDate);
-              const income = r.type === "income";
-              return (
-                <li key={r.id}>
-                  <Link
-                    to={`/plus/recurring/${r.id}`}
-                    className="pressable flex min-h-[64px] items-center gap-3 py-3"
-                  >
-                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-amber-100 text-center leading-none dark:bg-amber-900/40">
-                      <span className="text-base font-semibold tabular-nums text-amber-900 dark:text-amber-100">
-                        {format(due, "d")}
-                      </span>
-                      <span className="mt-0.5 text-[10px] uppercase text-slate-600 dark:text-muted">
-                        {format(due, "MMM")}
-                      </span>
-                    </span>
-                    <div className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-sm font-medium text-ink dark:text-fg">
-                        {r.memo || t(`transactions.types.${r.type}`)}
-                      </span>
-                      <span className="truncate text-xs text-slate-600 dark:text-muted">
-                        {walletName(r.walletId)} · {format(due, "HH:mm")}
-                      </span>
-                    </div>
-                    <span
-                      className={`shrink-0 text-sm font-semibold tabular-nums ${income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
-                      data-amount
-                    >
-                      {income ? "+" : "−"}
-                      {formatMoney(r.amount, r.currency)}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
-      ) : null}
-
-      {/* Vue d'ensemble : dépenses des 7 derniers jours, avec leur mini-graphique. */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
-        <div className="grid grid-cols-1 gap-3">
-          <div className="flex flex-col gap-1 rounded-3xl bg-rose-50 p-4 shadow-sm dark:bg-rose-900/30">
-            <span className="text-sm font-medium text-rose-800 dark:text-rose-200">
-              {t("home.expenseCard")}
-            </span>
-            <span className="text-lg font-semibold tabular-nums text-expense dark:text-expense-dark">
-              {formatMoney(weekTotalMinor, baseCurrency)}
-            </span>
-            <div className="h-12">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={weekExpenses}>
-                  <Bar
-                    dataKey="value"
-                    fill="#ee4444"
-                    radius={[4, 4, 0, 0]}
-                    isAnimationActive={false}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Budgets : où en est chaque budget sur sa période en cours. */}
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
-          <Link
-            to="/budgets"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
-          >
-            {t("home.manage")}
-          </Link>
-        </div>
-        {budgetRows.length === 0 ? (
           <Link
             to="/budgets/new"
-            className="inline-flex min-h-[44px] items-center text-sm font-medium text-brand-700 underline dark:text-brand-300"
+            className="flex min-h-[44px] flex-col justify-between rounded-3xl border border-dashed border-slate-300 p-4 text-sm font-medium text-brand-700 dark:border-white/15 dark:text-brand-300"
           >
             {t("home.budgetsEmpty")}
           </Link>
-        ) : (
-          <ul className="flex flex-col divide-y divide-slate-200 rounded-card border border-slate-200 bg-white px-4 dark:divide-white/10 dark:border-white/15 dark:bg-card">
-            {budgetRows.slice(0, 3).map(({ budget, state }) => {
-              const width = Math.min(100, Math.max(0, state.percent));
-              const barColor =
-                state.status === "exceeded"
-                  ? "bg-expense dark:bg-expense-dark"
-                  : state.status === "threshold"
-                    ? "bg-amber-500"
-                    : "bg-income dark:bg-income-dark";
-              return (
-                <li key={budget.id} className="py-4">
-                  <Link
-                    to={`/budgets/${budget.id}`}
-                    className="pressable flex min-h-[44px] flex-col gap-1.5"
-                  >
-                    <div className="flex items-baseline justify-between gap-3 text-sm">
-                      <span className="flex min-w-0 items-center gap-2 font-medium text-ink dark:text-fg">
-                        <span
-                          aria-hidden="true"
-                          className="h-3 w-3 shrink-0 rounded-full"
-                          style={{ backgroundColor: categoryById.get(budget.categoryIds[0] ?? "")?.color ?? "#64748b" }}
-                        />
-                        <span className="truncate">{budget.name}</span>
-                      </span>
-                      <span
-                        className="shrink-0 tabular-nums text-slate-600 dark:text-muted"
-                        data-amount
-                      >
-                        {formatMoney(state.spent, budget.currency)} /{" "}
-                        {formatMoney(state.available, budget.currency)}
-                      </span>
-                    </div>
-                    <div
-                      role="progressbar"
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={Math.min(100, state.percent)}
-                      aria-label={budget.name}
-                      className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
-                    >
-                      <div
-                        className={`progress-fill h-full rounded-full ${barColor}`}
-                        style={{ transform: `scaleX(${width / 100})` }}
-                      />
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
         )}
-      </section>
-
-      {/* Portefeuilles puis transactions récentes. */}
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
+        {active[0] ? (
           <Link
-            to="/plus/wallets"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
+            to={`/plus/wallets/${active[0].id}`}
+            className="flex flex-col gap-2 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
           >
-            {t("home.manage")}
+            <span className="text-2xl" aria-hidden="true">{active[0].icon}</span>
+            <span className="truncate text-sm font-medium text-ink dark:text-fg">{active[0].name}</span>
+            <span className="text-sm tabular-nums text-ink dark:text-fg" data-amount>
+              {formatMoney(balances[active[0].id] ?? active[0].initialBalance, active[0].currency)}
+            </span>
           </Link>
-        </div>
-        <ul className="grid grid-cols-2 gap-3">
-          {active.map((w) => (
-            <li key={w.id}>
-              <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
-            </li>
-          ))}
-        </ul>
+        ) : null}
       </section>
 
       <section className="flex flex-col gap-3">

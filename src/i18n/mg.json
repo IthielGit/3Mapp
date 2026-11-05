@@ -467,7 +467,7 @@
     "overview": "Fanoharana ankapobeny",
     "wallets": "Kitapo vola",
     "manage": "Hanitsy",
-    "hello": "Manao ahoana",
+    "hello": "Tongasoa",
     "upcoming": "Ho avy",
     "noUpcoming": "Tsy misy ho avy.",
     "overviewTitle": "Fanoharana ankapobeny",
@@ -481,7 +481,8 @@
     "budgetOf": "amin’ny {{amount}}",
     "budgetLeft": "Mbola {{amount}}",
     "budgetOver": "Mihoatra {{amount}}",
-    "netThisMonth": "Ny sisa amin’ity volana"
+    "netThisMonth": "Ny sisa amin’ity volana",
+    "nextDue": "Manaraka"
   },
   "stats": {
     "title": "Fandinihana",

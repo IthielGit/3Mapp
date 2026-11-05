@@ -41,6 +41,8 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await page.getByRole("link", { name: "Ajouter" }).click();
   await page.getByLabel("Nom").fill("Mobile Money");
   await page.getByRole("button", { name: "Enregistrer" }).click();
+  // L’accueil ne montre que le compte principal : la liste des comptes est sur sa page.
+  await page.goto("/plus/wallets");
   await expect(page.getByText("Mobile Money", { exact: true })).toBeVisible();
 
   // Virement de 2 000 du compte BNI vers Mobile Money.

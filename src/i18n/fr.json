@@ -467,7 +467,7 @@
     "overview": "Vue d’ensemble",
     "wallets": "Portefeuilles",
     "manage": "Gérer",
-    "hello": "Bonjour",
+    "hello": "Bienvenue",
     "upcoming": "Échéances à venir",
     "noUpcoming": "Aucune échéance prévue.",
     "overviewTitle": "Vue d'ensemble",
@@ -481,7 +481,8 @@
     "budgetOf": "sur {{amount}}",
     "budgetLeft": "Reste {{amount}}",
     "budgetOver": "Dépassé de {{amount}}",
-    "netThisMonth": "Ce qui vous reste ce mois-ci"
+    "netThisMonth": "Ce qui vous reste ce mois-ci",
+    "nextDue": "Prochaine échéance"
   },
   "stats": {
     "title": "Analyses",

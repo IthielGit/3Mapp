@@ -467,7 +467,7 @@
     "overview": "Overview",
     "wallets": "Wallets",
     "manage": "Manage",
-    "hello": "Hello",
+    "hello": "Welcome",
     "upcoming": "Upcoming",
     "noUpcoming": "No upcoming payment.",
     "overviewTitle": "Overview",
@@ -481,7 +481,8 @@
     "budgetOf": "of {{amount}}",
     "budgetLeft": "{{amount}} left",
     "budgetOver": "Over by {{amount}}",
-    "netThisMonth": "What is left this month"
+    "netThisMonth": "What is left this month",
+    "nextDue": "Next due"
   },
   "stats": {
     "title": "Analytics",
