@@ -1,5 +1,5 @@
 import { Icon, type IconName } from "../../components/Icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -502,18 +502,21 @@ export function TransactionSheet({
             />
           </label>
           {attachmentIds.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
-              <span>{t("transactions.attachmentCount", { count: attachmentIds.length })}</span>
-              {attachmentIds.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  className="text-red-700 underline"
-                  onClick={() => void detach(id)}
-                >
-                  {t("transactions.removeAttachment")}
-                </button>
-              ))}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm text-slate-500">
+                {t("transactions.attachmentCount", { count: attachmentIds.length })}
+              </span>
+              <ul className="grid grid-cols-3 gap-2">
+                {attachmentIds.map((id, index) => (
+                  <li key={id}>
+                    <AttachmentThumb
+                      id={id}
+                      index={index + 1}
+                      onRemove={() => void detach(id)}
+                    />
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
         </div>
@@ -557,4 +560,54 @@ function transactionTargetCurrency(
   wallets: readonly { id: string; currency: CurrencyCode }[],
 ): CurrencyCode {
   return wallets.find((w) => w.id === transaction.toWalletId)?.currency ?? transaction.currency;
+}
+
+/** Vignette d'une pièce jointe, chargée depuis la base locale (aucun envoi réseau). */
+function AttachmentThumb({
+  id,
+  index,
+  onRemove,
+}: {
+  id: string;
+  index: number;
+  onRemove: () => void;
+}) {
+  const { t } = useTranslation();
+  const [url, setUrl] = useState<string | undefined>();
+
+  useEffect(() => {
+    let objectUrl: string | undefined;
+    let cancelled = false;
+    void db.attachments.get(id).then((record) => {
+      if (!record || cancelled) return;
+      objectUrl = URL.createObjectURL(record.blob);
+      setUrl(objectUrl);
+    });
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [id]);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="aspect-square w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/15 dark:bg-raised">
+        {url ? (
+          <img
+            src={url}
+            alt={t("transactions.photoAlt", { n: index })}
+            className="h-full w-full object-cover"
+          />
+        ) : null}
+      </div>
+      <button
+        type="button"
+        aria-label={t("transactions.removePhotoN", { n: index })}
+        className="min-h-[44px] text-sm text-red-700 underline dark:text-red-400"
+        onClick={onRemove}
+      >
+        {t("transactions.removePhoto")}
+      </button>
+    </div>
+  );
 }

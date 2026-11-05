@@ -105,7 +105,9 @@
     "shareButton": "Hizara amin'ny Google Drive, OneDrive, Dropbox…",
     "shareHint": "Ny fizarana dia mampiasa ny fampiharana eo amin'ny finday-nao : tsy misy kaonty tokony ho apetraka ao amin'ny app. Tazomy eo amin'ny toerana fitahirizana an-tserasera ny rakitra mba hahitana azy raha very ny finday.",
     "shared": "Voazara ny fitehirizana.",
-    "sharedFallback": "Tsy nisokatra ny fizarana ka voaray ny rakitra. Ampidiro any amin’ny Google Drive ianao avy amin’ny fandraisana."
+    "sharedFallback": "Tsy nisokatra ny fizarana ka voaray ny rakitra. Ampidiro any amin’ny Google Drive ianao avy amin’ny fandraisana.",
+    "prepareShare": "Sahany ny sauvegarde hizara",
+    "readyToShare": "Vonona ny sauvegarde. Tsindrio « Hizara » mba hisafidianana Google Drive na fampiharana hafa."
   },
   "pwa": {
     "updateAvailable": "Misy version vaovao.",
@@ -254,7 +256,10 @@
       "month": "amin’ny volana",
       "thirty": "andro 30 farany",
       "all": "amin’ny ankapobeny"
-    }
+    },
+    "photoAlt": "Rakitra mifandray {{n}}",
+    "removePhoto": "Esorina",
+    "removePhotoN": "Esorina ny rakitra mifandray {{n}}"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

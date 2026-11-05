@@ -29,6 +29,12 @@ function errorText(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
 }
 
+/** Sauvegarde déjà chiffrée (ou non) et prête à être partagée. */
+interface ReadyShare {
+  blob: Blob;
+  name: string;
+}
+
 export function BackupPage() {
   const { t } = useTranslation();
   const state = useLiveQuery(
@@ -44,6 +50,7 @@ export function BackupPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
+  const [readyShare, setReadyShare] = useState<ReadyShare | undefined>();
 
   const [encryptedText, setEncryptedText] = useState<string | undefined>();
   const [decryptPassword, setDecryptPassword] = useState("");
@@ -71,11 +78,8 @@ export function BackupPage() {
     setRestored(undefined);
   }
 
-  /**
-   * « download » enregistre le fichier ; « share » ouvre la feuille de partage du téléphone
-   * (Google Drive, OneDrive, Dropbox, e-mail…). Aucun compte ni clé n'est nécessaire dans l'app.
-   */
-  async function onExport(target: "download" | "share") {
+  /** Enregistre le fichier de sauvegarde sur l'appareil. */
+  async function onDownload() {
     setMessage(undefined);
     setError(undefined);
     setBusy(true);
@@ -84,35 +88,70 @@ export function BackupPage() {
       const file = await createBackup(db, now);
       const encrypted = password.length > 0;
       const text = await serializeBackup(file, encrypted ? password : undefined);
-      const name = backupFileName(now, encrypted);
-      const blob = new Blob([text], { type: "application/json" });
-
-      if (target === "share") {
-        let shared = false;
-        try {
-          shared = await shareFile(blob, name);
-        } catch (err) {
-          // Le navigateur refuse le partage (« Permission denied ») : souvent parce que l'appui
-          // n'est plus actif après le chiffrement. On enregistre le fichier à la place.
-          if (!(err instanceof DOMException && err.name === "NotAllowedError")) throw err;
-          downloadBlob(blob, name);
-          await markBackupDone(db, now);
-          setPassword("");
-          setMessage(t("backup.sharedFallback"));
-          return;
-        }
-        if (!shared) return; // l'utilisateur a fermé la feuille de partage
-      } else {
-        downloadBlob(blob, name);
-      }
+      downloadBlob(new Blob([text], { type: "application/json" }), backupFileName(now, encrypted));
       await markBackupDone(db, now);
       setPassword("");
-      setMessage(t(target === "share" ? "backup.shared" : "backup.exported"));
+      setMessage(t("backup.exported"));
     } catch (err) {
       setError(errorText(err, t("errors.generic")));
     } finally {
       setBusy(false);
     }
+  }
+
+  /**
+   * Étape 1 : prépare le fichier à partager. Le chiffrement prend du temps, et le téléphone
+   * n'autorise le partage que peu de temps après un appui : on sépare donc les deux étapes.
+   */
+  async function onPrepareShare() {
+    setMessage(undefined);
+    setError(undefined);
+    setBusy(true);
+    try {
+      const now = new Date();
+      const file = await createBackup(db, now);
+      const encrypted = password.length > 0;
+      const text = await serializeBackup(file, encrypted ? password : undefined);
+      setReadyShare({
+        blob: new Blob([text], { type: "application/json" }),
+        name: backupFileName(now, encrypted),
+      });
+    } catch (err) {
+      setError(errorText(err, t("errors.generic")));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /**
+   * Étape 2 : ouvre la feuille de partage (Google Drive, OneDrive, Dropbox…). Rien n'est attendu
+   * avant l'appel à navigator.share, pour rester dans l'appui de l'utilisateur.
+   */
+  function onShare() {
+    if (!readyShare) return;
+    const { blob, name } = readyShare;
+    setMessage(undefined);
+    setError(undefined);
+    shareFile(blob, name)
+      .then(async (shared) => {
+        if (!shared) return; // l'utilisateur a fermé la feuille de partage
+        await markBackupDone(db, new Date());
+        setReadyShare(undefined);
+        setPassword("");
+        setMessage(t("backup.shared"));
+      })
+      .catch(async (err: unknown) => {
+        if (!(err instanceof DOMException && err.name === "NotAllowedError")) {
+          setError(errorText(err, t("errors.generic")));
+          return;
+        }
+        // Le navigateur refuse le partage : on enregistre le fichier à la place.
+        downloadBlob(blob, name);
+        await markBackupDone(db, new Date());
+        setReadyShare(undefined);
+        setPassword("");
+        setMessage(t("backup.sharedFallback"));
+      });
   }
 
   async function onPickFile(files: FileList | null) {
@@ -196,7 +235,10 @@ export function BackupPage() {
               type="password"
               autoComplete="new-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setReadyShare(undefined); // une sauvegarde préparée avec un autre mot de passe n'est plus valable
+              }}
               className={inputClass}
               aria-describedby="backup-password-hint"
             />
@@ -208,21 +250,29 @@ export function BackupPage() {
             type="button"
             className={buttonPrimary}
             disabled={busy}
-            onClick={() => void onExport("download")}
+            onClick={() => void onDownload()}
           >
             {t("backup.exportButton")}
           </button>
           {canShareFiles() ? (
             <>
-              <button
-                type="button"
-                className={buttonSecondary}
-                disabled={busy}
-                onClick={() => void onExport("share")}
-              >
-                {t("backup.shareButton")}
-              </button>
-              <p className="text-sm text-slate-500">{t("backup.shareHint")}</p>
+              {readyShare ? (
+                <button type="button" className={buttonSecondary} onClick={onShare}>
+                  {t("backup.shareButton")}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={buttonSecondary}
+                  disabled={busy}
+                  onClick={() => void onPrepareShare()}
+                >
+                  {t("backup.prepareShare")}
+                </button>
+              )}
+              <p className="text-sm text-slate-500">
+                {readyShare ? t("backup.readyToShare") : t("backup.shareHint")}
+              </p>
             </>
           ) : null}
         </section>

@@ -114,7 +114,9 @@
     "shareButton": "Share to Google Drive, OneDrive, Dropbox…",
     "shareHint": "Sharing uses your phone's apps: no account needs to be set up in the app. Keep the file in online storage so you can recover it if your phone is lost.",
     "shared": "Backup shared.",
-    "sharedFallback": "Sharing was blocked, so the file was downloaded. You can add it to Google Drive from your downloads."
+    "sharedFallback": "Sharing was blocked, so the file was downloaded. You can add it to Google Drive from your downloads.",
+    "prepareShare": "Prepare the backup to share",
+    "readyToShare": "Backup ready. Tap « Share » to choose Google Drive or another app."
   },
   "onboarding": {
     "restoreLink": "I already have a backup: restore it",
@@ -254,7 +256,10 @@
       "month": "this month",
       "thirty": "last 30 days",
       "all": "in total"
-    }
+    },
+    "photoAlt": "Attachment {{n}}",
+    "removePhoto": "Remove",
+    "removePhotoN": "Remove attachment {{n}}"
   },
   "errors": {
     "required": "This field is required.",
