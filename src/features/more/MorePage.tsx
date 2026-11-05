@@ -7,6 +7,8 @@ import { useTheme } from "../../lib/theme-context";
 import { InstallCard } from "../../components/PwaComponents";
 import { PreferencesSection } from "../settings/PreferencesSection";
 import { ResetAccountSection } from "../settings/ResetAccountSection";
+import { useAccount } from "../account/AccountProvider";
+import { isSuperAdmin } from "../account/profile";
 
 /** Ligne de liste cliquable avec chevron : pour les pages de réglages et de gestion. */
 function NavRow({ to, icon, children }: { to: string; icon: IconName; children: ReactNode }) {
@@ -47,6 +49,8 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 export function MorePage() {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const account = useAccount();
+  const profile = account.status === "signedIn" || account.status === "suspended" ? account.profile : undefined;
 
   return (
     <section className="flex flex-col gap-6">
@@ -78,6 +82,18 @@ export function MorePage() {
           </ul>
         </nav>
       </Group>
+
+      {isSuperAdmin(profile) ? (
+        <Group title={t("admin.group")}>
+          <nav aria-label={t("admin.group")}>
+            <ul className="divide-y divide-neutral-100 dark:divide-white/10">
+              <NavRow to="/plus/admin" icon="shield">
+                {t("admin.title")}
+              </NavRow>
+            </ul>
+          </nav>
+        </Group>
+      ) : null}
 
       <Group title={t("more.groups.data")}>
         <nav aria-label={t("more.groups.data")}>

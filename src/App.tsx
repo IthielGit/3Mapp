@@ -5,6 +5,7 @@ import { RequireOnboarding } from "./components/RequireOnboarding";
 import { NotFoundPage } from "./components/NotFoundPage";
 import { VisualisationLayout } from "./features/visualisation/VisualisationLayout";
 import { Skeleton } from "./components/PwaComponents";
+import { RequireSuperAdmin } from "./features/admin/RequireSuperAdmin";
 
 /**
  * Chaque page est chargée à la demande : le bundle initial reste léger et les bibliothèques
@@ -97,6 +98,15 @@ const CategoriesPage = page(() =>
 const CategoryDetailPage = page(() =>
   import("./features/categories/CategoryDetailPage").then((m) => ({ default: m.CategoryDetailPage })),
 );
+const AdminPage = page(() =>
+  import("./features/admin/AdminPage").then((m) => ({ default: m.AdminPage })),
+);
+const AccountDetailPage = page(() =>
+  import("./features/admin/AccountDetailPage").then((m) => ({ default: m.AccountDetailPage })),
+);
+const AuditPage = page(() =>
+  import("./features/admin/AuditPage").then((m) => ({ default: m.AuditPage })),
+);
 const AccountPage = page(() =>
   import("./features/account/AccountPage").then((m) => ({ default: m.AccountPage })),
 );
@@ -161,6 +171,9 @@ export default function App() {
           <Route path="plus/rates" element={<RatesPage />} />
           <Route path="plus/security" element={<SecurityPage />} />
           <Route path="plus/account" element={<AccountPage />} />
+          <Route path="plus/admin" element={<RequireSuperAdmin><AdminPage /></RequireSuperAdmin>} />
+          <Route path="plus/admin/audit" element={<RequireSuperAdmin><AuditPage /></RequireSuperAdmin>} />
+          <Route path="plus/admin/accounts/:id" element={<RequireSuperAdmin><AccountDetailPage /></RequireSuperAdmin>} />
           <Route path="plus/wallets/:id/reconcile" element={<ReconcilePage />} />
           <Route path="plus/categories" element={<CategoriesPage />} />
           <Route path="plus/categories/:id" element={<CategoryDetailPage />} />

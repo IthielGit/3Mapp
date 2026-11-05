@@ -809,5 +809,59 @@
       "replace": "Utiliser seulement ce compte",
       "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte."
     }
+  },
+  "admin": {
+    "title": "Console d'administration",
+    "group": "Administration",
+    "intro": "Comptes des utilisateurs. Vous voyez le contenu des comptes ; chaque consultation est journalisée.",
+    "search": "Rechercher par e-mail",
+    "loading": "Chargement…",
+    "none": "Aucun compte ne correspond.",
+    "notFound": "Compte introuvable.",
+    "role": {
+      "super_admin": "Super admin",
+      "user": "Utilisateur"
+    },
+    "status": {
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "recordCount": "{{count}} enregistrement(s)",
+    "lastSync": "Synchro : {{date}}",
+    "neverSynced": "Jamais synchronisé",
+    "field": {
+      "status": "Statut",
+      "created": "Inscription",
+      "lastSync": "Dernière synchro",
+      "records": "Enregistrements"
+    },
+    "selfNote": "Vous ne pouvez pas suspendre ni supprimer votre propre compte.",
+    "suspend": "Suspendre le compte",
+    "reactivate": "Réactiver le compte",
+    "delete": "Supprimer le compte",
+    "confirmSuspend": "Suspendre {{email}} ? Le compte ne pourra plus se connecter ni synchroniser.",
+    "confirmReactivate": "Réactiver {{email}} ?",
+    "confirmDelete": "Supprimer définitivement {{email}} et toutes ses données ? Action irréversible.",
+    "contents": "Contenu",
+    "table": "Données",
+    "noRecords": "Aucun enregistrement dans cette catégorie.",
+    "tables": {},
+    "error": {
+      "forbidden": "Accès réservé au super administrateur.",
+      "network": "Connexion impossible. Vérifiez votre réseau.",
+      "invalid": "Réponse inattendue du serveur.",
+      "unknown": "Une erreur est survenue. Réessayez."
+    },
+    "audit": {
+      "open": "Journal",
+      "title": "Journal d'administration",
+      "none": "Aucune action enregistrée.",
+      "view": "Consultation : {{table}}",
+      "action": {
+        "suspend": "Compte suspendu",
+        "reactivate": "Compte réactivé",
+        "delete": "Compte supprimé"
+      }
+    }
   }
 }
