@@ -41,7 +41,7 @@ test("virement entre deux portefeuilles : le portefeuille de destination reçoit
   await page.getByRole("link", { name: "Ajouter" }).click();
   await page.getByLabel("Nom").fill("Mobile Money");
   await page.getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByText("Mobile Money")).toBeVisible();
+  await expect(page.getByText("Mobile Money", { exact: true })).toBeVisible();
 
   // Virement de 2 000 du compte BNI vers Mobile Money.
   await goToTab(page, "Transactions");

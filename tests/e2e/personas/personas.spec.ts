@@ -199,8 +199,8 @@ test("persona 2 — jeune actif avec plusieurs comptes et abonnements", async ({
     await page.getByLabel("Nom").fill("Mobile money");
     await page.getByLabel(/Solde initial/).fill("200000");
     await page.getByRole("button", { name: "Enregistrer" }).click();
-    // L'app ouvre la fiche du portefeuille une fois l'enregistrement terminé : on attend ce signal.
-    await expect(page).toHaveURL(/\/plus\/wallets\/[0-9a-f-]{36}$/);
+    // Après l'enregistrement, l'app revient à l'accueil : on attend ce signal.
+    await expect(page).toHaveURL(/\/$/);
     await page.goto("/plus/wallets");
     await expect(page.getByText("Mobile money").first()).toBeVisible();
     await j.shot(page, "p2-01-portefeuilles");

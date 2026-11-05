@@ -69,11 +69,11 @@ export function WalletFormPage() {
     };
     if (existing) {
       await updateWallet(existing.id, input);
-      navigate(`/plus/wallets/${existing.id}`);
     } else {
-      const created = await createWallet({ ...input, archived: false });
-      navigate(`/plus/wallets/${created.id}`);
+      await createWallet({ ...input, archived: false });
     }
+    // Succès : retour à l'accueil. En cas d'erreur, on reste sur le formulaire.
+    navigate("/", { replace: true });
   }
 
   return (
