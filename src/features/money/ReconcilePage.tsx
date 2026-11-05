@@ -12,6 +12,7 @@ import { lastKnownActivity } from "../../domain/reconciliation";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { buttonPrimary, Field, inputClass } from "../../components/FormControls";
 import { formatMoney, parseMoney } from "../../lib/money";
+import { HelpTip } from "../../components/HelpTip";
 import { reconcileWallet } from "./money-services";
 
 const EMPTY: never[] = [];
@@ -65,9 +66,20 @@ export function ReconcilePage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-semibold">
-        {t("reconcile.title", { name: wallet.name })}
-      </PageTitle>
+      <div className="flex items-start justify-between gap-3">
+        <PageTitle className="text-2xl font-semibold">
+          {t("reconcile.title", { name: wallet.name })}
+        </PageTitle>
+        <HelpTip
+          title={t("reconcile.help.guideTitle")}
+          steps={[
+            t("reconcile.help.step1"),
+            t("reconcile.help.step2"),
+            t("reconcile.help.step3"),
+            t("reconcile.help.step4"),
+          ]}
+        />
+      </div>
       <p>
         {t("reconcile.computed")} : <strong>{formatMoney(computed, currency)}</strong>
       </p>
@@ -92,15 +104,26 @@ export function ReconcilePage() {
       ) : null}
       {gap !== null && gap !== 0 ? (
         <div className="flex flex-col gap-2">
-          <label className="flex min-h-[44px] items-center gap-3">
-            <input
-              type="checkbox"
-              className="h-5 w-5"
-              checked={undetailed}
-              onChange={(e) => setUndetailed(e.target.checked)}
+          <div className="flex items-center gap-2">
+            <label className="flex min-h-[44px] flex-1 items-center gap-3">
+              <input
+                type="checkbox"
+                className="h-5 w-5"
+                checked={undetailed}
+                onChange={(e) => setUndetailed(e.target.checked)}
+              />
+              <span className="text-sm">{t("reconcile.undetailed")}</span>
+            </label>
+            <HelpTip
+              title={t("reconcile.help.undetailedTitle")}
+              paragraphs={[
+                t("reconcile.help.undetailedP1"),
+                t("reconcile.help.undetailedP2"),
+                t("reconcile.help.undetailedP3"),
+                t("reconcile.help.detailedP"),
+              ]}
             />
-            <span className="text-sm">{t("reconcile.undetailed")}</span>
-          </label>
+          </div>
           <p className="text-sm text-neutral-600 dark:text-muted">{t("reconcile.undetailedHint")}</p>
           <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
             {t("reconcile.addMovement")}

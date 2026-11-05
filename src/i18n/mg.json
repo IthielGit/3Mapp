@@ -414,7 +414,22 @@
     "invalidInterval": "Ny elanelana dia tokony ho isa feno 1 farafahakeliny.",
     "editTitle": "Hanova ny fandoavana mandavaka"
   },
+  "help": {
+    "open": "Fanampiana"
+  },
   "reconcile": {
+    "help": {
+      "guideTitle": "Ahoana no fampifanarahana",
+      "step1": "Ampidiro ny tahiry marina aseho amin'ny banky, mobile money na caisse-nao.",
+      "step2": "Kajiny ny fahasamihafana eo amin'ny tahiry marina sy ny kajy ataon'ny app.",
+      "step3": "Raha avy amin'ny fanoratana nohadinoina na nataon-droa ny fahasamihafana, havaozy aloha ilay fifanakalozana : very ny fahasamihafana.",
+      "step4": "Raha tsy izany, manamarina : mamorona ajustement ny app mba hitovy ny tahiry roa.",
+      "undetailedTitle": "Fahasamihafana tsy voamarina",
+      "undetailedP1": "Asio ity tsipika ity rehefa fantatrao ny totalin'ny fahasamihafana fa tsy fantatrao izay misy ao, ohatra aorian'ny volana maro tsy nisy nosoratana.",
+      "undetailedP2": "Voanitsy ny tahiry, fa tsy isaina ho vola miditra na mivoaka ny fahasamihafana : tsy miova ny statistika-nao.",
+      "undetailedP3": "Ohatra : aorian'ny volana 3 tsy nisy nosoratana, 50 000 Ar mihoatra ny tahiry marina. Miakatra 50 000 Ar ny tahiry, fa tsy miova ny vola miditra sy mivoaka.",
+      "detailedP": "Raha tsy asiana tsipika, arakaraka ny famantarana no sokajiana ny fahasamihafana : tsara = vola miditra, ratsy = vola mivoaka."
+    },
     "title": "Hampifanaraka {{name}}",
     "open": "Hampifanaraka ny tahiry",
     "computed": "Tahiry voakajy",
