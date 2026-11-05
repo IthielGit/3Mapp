@@ -120,7 +120,7 @@ export function BottomNav() {
           <Link
             to="/transactions/new"
             aria-label={t("nav.quickAdd")}
-            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:ring-card"
+            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:ring-card"
           >
             <span aria-hidden="true">+</span>
           </Link>
