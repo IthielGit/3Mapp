@@ -45,7 +45,7 @@ function DebtList() {
             role="tab"
             aria-selected={tab === d}
             onClick={() => setTab(d)}
-            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised" : "border-slate-300 dark:border-white/15"}`}
+            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-300" : "border-slate-300 dark:border-white/15"}`}
           >
             {t(`debts.tabs.${d}`)}
           </button>
@@ -54,7 +54,7 @@ function DebtList() {
 
       {creating ? <DebtForm direction={tab} onDone={() => setCreating(false)} /> : null}
       {shown.length === 0 && !creating ? (
-        <p className="text-slate-600">{t("debts.empty")}</p>
+        <p className="text-slate-600 dark:text-muted">{t("debts.empty")}</p>
       ) : null}
 
       <ul className="flex flex-col gap-3">
@@ -72,7 +72,7 @@ function DebtList() {
               >
                 <span>
                   <span className="font-medium">{d.counterparty}</span>
-                  <span className="block text-sm text-slate-600">
+                  <span className="block text-sm text-slate-600 dark:text-muted">
                     {t(`debts.status.${state.status}`)}
                   </span>
                 </span>
@@ -219,7 +219,7 @@ function DebtDetail({ id }: { id: string }) {
   return (
     <section className="flex flex-col gap-4">
       <PageTitle className="text-2xl font-semibold">{debt.counterparty}</PageTitle>
-      <p className="text-sm text-slate-600">{t(`debts.status.${state.status}`)}</p>
+      <p className="text-sm text-slate-600 dark:text-muted">{t(`debts.status.${state.status}`)}</p>
       <div className="grid grid-cols-2 gap-2 text-sm">
         <Figure label={t("debts.principal")} value={formatMoney(debt.principal, debt.currency)} />
         <Figure
@@ -307,7 +307,7 @@ function DebtDetail({ id }: { id: string }) {
 function Figure({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-slate-200 p-2 dark:border-white/15">
-      <p className="text-slate-600">{label}</p>
+      <p className="text-slate-600 dark:text-muted">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>
   );

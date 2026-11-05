@@ -49,6 +49,16 @@ export function getCurrency(code: CurrencyCode): CurrencyDef {
   return def;
 }
 
+/** Unités mineures → unités majeures selon la devise (MGA : 1 pour 1 ; EUR/USD : ÷ 100). */
+export function minorToMajor(value: Minor, code: CurrencyCode): number {
+  return value / 10 ** getCurrency(code).decimals;
+}
+
+/** Unités majeures → unités mineures selon la devise, arrondies. */
+export function majorToMinor(value: number, code: CurrencyCode): Minor {
+  return Math.round(value * 10 ** getCurrency(code).decimals);
+}
+
 /** Vérifie qu'une valeur est un montant valide (entier sûr). */
 export function assertMinor(value: number): asserts value is Minor {
   if (!Number.isSafeInteger(value)) {

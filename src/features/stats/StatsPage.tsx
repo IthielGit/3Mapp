@@ -36,7 +36,7 @@ import { BottomSheet } from "../../components/BottomSheet";
 import { Field, buttonSecondary, inputClass } from "../../components/FormControls";
 import { useTheme } from "../../lib/theme-context";
 import { compactAmount } from "../../lib/compact";
-import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, majorToMinor, minorToMajor, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 import { CategoryDonut } from "./CategoryDonut";
@@ -64,9 +64,6 @@ const REPRS: Record<Dataset, Repr[]> = {
 
 const EMPTY: never[] = [];
 
-/** Les montants sont en unités mineures ; les graphiques affichent des unités majeures. */
-const toMajor = (minor: number) => minor / 100;
-
 export function StatsPage() {
   const { t } = useTranslation();
   const { resolved } = useTheme();
@@ -92,6 +89,8 @@ export function StatsPage() {
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
   const baseCurrency: CurrencyCode =
     useLiveQuery(async () => (await db.settings.toArray())[0]?.baseCurrency, []) ?? "MGA";
+  /** Les montants sont en unités mineures ; les graphiques affichent des unités majeures (selon la devise). */
+  const toMajor = (minor: number) => minorToMajor(minor, baseCurrency);
 
   const names = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const walletName = useMemo(() => new Map(wallets.map((w) => [w.id, w.name])), [wallets]);
@@ -250,7 +249,7 @@ export function StatsPage() {
           ? weekData.some((w) => w.income > 0 || w.expense > 0)
           : evolution.length > 0;
 
-  const fmt = (value: number) => formatMoney(Math.round(value * 100), baseCurrency);
+  const fmt = (value: number) => formatMoney(majorToMinor(value, baseCurrency), baseCurrency);
   const grid = resolved === "dark" ? "#303036" : "#e4e4ea";
   const tick = resolved === "dark" ? "#b8b8c0" : "#5c5c64";
   // Infobulles : fond de carte et texte lisibles dans les deux thèmes.

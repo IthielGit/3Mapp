@@ -42,7 +42,7 @@ export function CategoriesPage() {
             onClick={() => setKind(k)}
             className={`min-h-[44px] rounded-lg border font-medium ${
               kind === k
-                ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised"
+                ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-300"
                 : "border-slate-300 dark:border-white/15"
             }`}
           >
@@ -51,23 +51,24 @@ export function CategoriesPage() {
         ))}
       </div>
 
-      {active.length === 0 ? <p className="text-slate-600">{t("categories.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("categories.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
         {active.map((category, index) => (
           <li
             key={category.id}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+            className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
           >
             <Link
               to={`/plus/categories/${category.id}/edit`}
-              className="flex flex-1 items-center gap-3"
+              className="flex min-w-0 flex-1 basis-40 items-center gap-3"
             >
               <span aria-hidden="true" className="text-2xl">
                 {category.icon}
               </span>
               <span className="font-medium">{category.name}</span>
             </Link>
+            <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               className={buttonSecondary}
@@ -93,13 +94,14 @@ export function CategoriesPage() {
             >
               {t("common.archive")}
             </button>
+            </div>
           </li>
         ))}
       </ul>
 
       {archived.length > 0 ? (
         <section className="flex flex-col gap-2">
-          <h2 className="font-semibold text-slate-600">{t("categories.archivedSection")}</h2>
+          <h2 className="font-semibold text-slate-600 dark:text-muted">{t("categories.archivedSection")}</h2>
           <ul className="flex flex-col gap-2">
             {archived.map((category) => (
               <li

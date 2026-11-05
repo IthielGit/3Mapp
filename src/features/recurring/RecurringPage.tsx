@@ -40,7 +40,7 @@ export function RecurringPage() {
         <h2 className="font-semibold">
           {t("recurring.pendingTitle")} ({pending.length})
         </h2>
-        {pending.length === 0 ? <p className="text-slate-600">{t("recurring.noPending")}</p> : null}
+        {pending.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("recurring.noPending")}</p> : null}
         <ul className="flex flex-col gap-2">
           {pending.map((tx) => (
             <li
@@ -84,7 +84,7 @@ export function RecurringPage() {
 
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("recurring.listTitle")}</h2>
-        {recurring.length === 0 ? <p className="text-slate-600">{t("recurring.empty")}</p> : null}
+        {recurring.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("recurring.empty")}</p> : null}
         <ul className="flex flex-col gap-2">
           {recurring.map((r) => (
             <li
@@ -97,7 +97,7 @@ export function RecurringPage() {
                     categoryName.get(r.categoryId ?? "") ||
                     t(`transactions.types.${r.type}`)}
                 </span>
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-slate-600 dark:text-muted">
                   {formatMoney(r.amount, r.currency)} ·{" "}
                   {t("recurring.every", {
                     interval: r.frequency.interval,
@@ -149,7 +149,7 @@ export function RecurringDetailPage() {
       <PageTitle className="text-2xl font-semibold">
         {r.memo || t(`transactions.types.${r.type}`)}
       </PageTitle>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-slate-600 dark:text-muted">
         {formatMoney(r.amount, r.currency)} ·{" "}
         {t("recurring.every", {
           interval: r.frequency.interval,
@@ -164,7 +164,7 @@ export function RecurringDetailPage() {
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("recurring.history")}</h2>
         {occurrences.length === 0 ? (
-          <p className="text-slate-600">{t("recurring.noHistory")}</p>
+          <p className="text-slate-600 dark:text-muted">{t("recurring.noHistory")}</p>
         ) : null}
         <ul className="flex flex-col gap-1 text-sm">
           {occurrences.map((tx) => (

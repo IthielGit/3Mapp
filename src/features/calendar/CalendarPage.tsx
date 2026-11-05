@@ -8,7 +8,7 @@ import { db } from "../../db/database";
 import { TransactionRow } from "../../components/TransactionRow";
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
-import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, minorToMajor, type CurrencyCode } from "../../lib/money";
 import { compactAmount } from "../../lib/compact";
 import { usePeriodSettings } from "../stats/period-state";
 import { upTo } from "../../domain/cutoff";
@@ -168,7 +168,7 @@ export function CalendarPage() {
                           : "text-income dark:text-income-dark"
                     }`}
                   >
-                    {compactAmount(net / 100)}
+                    {compactAmount(minorToMajor(net, baseCurrency))}
                   </span>
                 ) : null}
               </button>

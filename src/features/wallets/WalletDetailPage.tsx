@@ -62,9 +62,9 @@ export function WalletDetailPage() {
       </DetailHeader>
 
       <div className="rounded-lg border border-slate-200 p-4 dark:border-white/15">
-        <p className="text-sm text-slate-600">{t("wallets.balance")}</p>
+        <p className="text-sm text-slate-600 dark:text-muted">{t("wallets.balance")}</p>
         <p className="text-2xl font-semibold">{formatMoney(balance, wallet.currency)}</p>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-slate-600 dark:text-muted">
           {t("wallets.initialBalance")} : {formatMoney(wallet.initialBalance, wallet.currency)}
         </p>
       </div>
@@ -72,7 +72,7 @@ export function WalletDetailPage() {
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("wallets.movements")}</h2>
         {(movements ?? []).length === 0 ? (
-          <p className="text-slate-600">{t("wallets.noMovements")}</p>
+          <p className="text-slate-600 dark:text-muted">{t("wallets.noMovements")}</p>
         ) : null}
         <ul className="flex flex-col gap-2">
           {(movements ?? []).slice(0, 30).map((tx) => (
@@ -86,7 +86,19 @@ export function WalletDetailPage() {
                   {t(`transactions.types.${tx.type}`)}
                   {tx.memo ? ` · ${tx.memo}` : ""}
                 </span>
-                <span className="font-medium">{formatMoney(tx.amount, tx.currency)}</span>
+                <span
+                  className={`font-medium tabular-nums ${
+                    tx.type === "expense"
+                      ? "text-expense dark:text-expense-dark"
+                      : tx.type === "income" || (tx.type === "adjustment" && tx.amount > 0)
+                        ? "text-income dark:text-income-dark"
+                        : ""
+                  }`}
+                  data-amount
+                >
+                  {tx.type === "expense" ? "−" : tx.type === "income" ? "+" : ""}
+                  {formatMoney(tx.amount, tx.currency)}
+                </span>
               </Link>
             </li>
           ))}

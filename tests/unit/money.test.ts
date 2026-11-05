@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MoneyError, formatMoney, parseMoney, roundedDivide, sumMinor } from "../../src/lib/money";
+import { MoneyError, formatMoney, parseMoney, roundedDivide, sumMinor, majorToMinor, minorToMajor } from "../../src/lib/money";
 
 const GROUP = ".";
 const NBSP = " ";
@@ -126,5 +126,16 @@ describe("sumMinor", () => {
 
   it("refuse un flottant dans la somme", () => {
     expect(() => sumMinor([100, 0.5])).toThrow(MoneyError);
+  });
+});
+
+describe("conversion mineur / majeur par devise", () => {
+  it("MGA n'a aucune décimale : 15 000 Ar = 15 000", () => {
+    expect(minorToMajor(15000, "MGA")).toBe(15000);
+    expect(majorToMinor(15000, "MGA")).toBe(15000);
+  });
+  it("EUR a deux décimales : 150,25 € = 15 025 centimes", () => {
+    expect(minorToMajor(15025, "EUR")).toBe(150.25);
+    expect(majorToMinor(150.25, "EUR")).toBe(15025);
   });
 });

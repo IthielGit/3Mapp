@@ -118,7 +118,7 @@ export function WalletFormPage() {
         </Field>
       </div>
       {existing ? (
-        <span className="-mt-2 text-sm text-slate-600">{t("wallets.currencyLocked")}</span>
+        <span className="-mt-2 text-sm text-slate-600 dark:text-muted">{t("wallets.currencyLocked")}</span>
       ) : null}
 
       <div className="grid grid-cols-[1fr_auto] items-end gap-3">
