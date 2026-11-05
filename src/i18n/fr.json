@@ -727,5 +727,38 @@
     "payModeNone": "Pas de paie à suivre",
     "payHintIrregular": "Le cycle suit alors le mois calendaire. Ajoutez vos revenus au fil de l’eau.",
     "payHintNone": "Vous pourrez changer cela dans Réglages."
+  },
+  "account": {
+    "title": "Compte",
+    "unavailable": "Les comptes ne sont pas disponibles sur cette version. L'application fonctionne entièrement sur cet appareil.",
+    "loading": "Chargement…",
+    "signedInAs": "Connecté en tant que",
+    "localNotice": "Vos données restent sur cet appareil tant que la synchronisation n'est pas activée.",
+    "signOut": "Se déconnecter",
+    "help": {
+      "title": "Compte",
+      "p1": "Un compte est facultatif. Il permet de retrouver vos données sur plusieurs appareils une fois la synchronisation activée.",
+      "p2": "Créer un compte est libre : aucune validation n'est nécessaire. Les données du compte peuvent être consultées par l'administrateur du service."
+    },
+    "signIn": "Connexion",
+    "signUp": "Inscription",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "passwordHint": "Au moins 8 caractères.",
+    "createButton": "Créer mon compte",
+    "signInButton": "Se connecter",
+    "google": "Continuer avec Google",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetSent": "Si un compte existe pour cette adresse, un lien de réinitialisation vient d'être envoyé.",
+    "checkEmail": "Vérifiez votre boîte e-mail pour confirmer votre compte.",
+    "errors": {
+      "invalidEmail": "Adresse e-mail invalide.",
+      "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "emailNotConfirmed": "Confirmez d'abord votre adresse e-mail.",
+      "alreadyRegistered": "Un compte existe déjà avec cette adresse.",
+      "network": "Connexion impossible. Vérifiez votre réseau.",
+      "unknown": "Une erreur est survenue. Réessayez."
+    }
   }
 }

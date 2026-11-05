@@ -97,6 +97,9 @@ const CategoriesPage = page(() =>
 const CategoryDetailPage = page(() =>
   import("./features/categories/CategoryDetailPage").then((m) => ({ default: m.CategoryDetailPage })),
 );
+const AccountPage = page(() =>
+  import("./features/account/AccountPage").then((m) => ({ default: m.AccountPage })),
+);
 const CategoryFormPage = page(() =>
   import("./features/categories/CategoryFormPage").then((m) => ({
     default: m.CategoryFormPage,
@@ -157,6 +160,7 @@ export default function App() {
           <Route path="plus/debts/:id" element={<DebtsPage />} />
           <Route path="plus/rates" element={<RatesPage />} />
           <Route path="plus/security" element={<SecurityPage />} />
+          <Route path="plus/account" element={<AccountPage />} />
           <Route path="plus/wallets/:id/reconcile" element={<ReconcilePage />} />
           <Route path="plus/categories" element={<CategoriesPage />} />
           <Route path="plus/categories/:id" element={<CategoryDetailPage />} />

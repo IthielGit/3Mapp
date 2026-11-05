@@ -82,6 +82,9 @@ export function MorePage() {
       <Group title={t("more.groups.data")}>
         <nav aria-label={t("more.groups.data")}>
           <ul className="divide-y divide-neutral-100 dark:divide-white/10">
+            <NavRow to="/plus/account" icon="inbox">
+              {t("account.title")}
+            </NavRow>
             <NavRow to="/plus/security" icon="shield">
               {t("more.security")}
             </NavRow>
