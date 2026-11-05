@@ -60,3 +60,22 @@ export function overlapSince(cursorIso: string, seconds = 5): string {
 export function outboxKey(table: string, recordId: string): string {
   return `${table}|${recordId}`;
 }
+
+/**
+ * À qui appartiennent les données de cet appareil ?
+ * - empty : aucune donnée locale, rien à protéger ;
+ * - ok : les données sont déjà liées à ce compte ;
+ * - foreign : elles sont liées à un autre compte (session expirée sans déconnexion) ;
+ * - unowned : des données existent sans compte associé (avant les comptes, ou état incomplet).
+ */
+export type DeviceOwnership = "empty" | "ok" | "foreign" | "unowned";
+
+export function deviceOwnership(
+  state: { userId?: string } | undefined,
+  localRecords: number,
+  userId: string,
+): DeviceOwnership {
+  if (localRecords === 0) return "empty";
+  if (!state?.userId) return "unowned";
+  return state.userId === userId ? "ok" : "foreign";
+}

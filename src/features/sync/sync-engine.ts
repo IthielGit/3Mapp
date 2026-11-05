@@ -14,6 +14,8 @@ import {
   type SyncStateRow,
 } from "../../db/sync-tracking";
 import {
+  deviceOwnership,
+  type DeviceOwnership,
   SETTINGS_RECORD_ID,
   chunk,
   outboxKey,
@@ -350,7 +352,11 @@ export async function enableSync(
   mode: "merge" | "remote",
   database: AppDatabase = defaultDb,
 ): Promise<SyncReport> {
+  // Changement de compte sur cet appareil : la file et le curseur de l'ancien compte ne valent plus rien.
+  const previous = await getState(database);
+  const ownerChanged = previous?.userId !== userId;
   if (mode === "merge") {
+    if (ownerChanged) await database.syncOutbox.clear();
     await enqueueAll(database);
   } else {
     await database.transaction("rw", database.tables, async () => {
@@ -364,7 +370,7 @@ export async function enableSync(
   await saveState(database, {
     enabled: true,
     userId,
-    cursor: mode === "remote" ? undefined : (await getState(database))?.cursor,
+    cursor: mode === "remote" || ownerChanged ? undefined : previous?.cursor,
     lastError: undefined,
   });
   setSyncTracking(true);
@@ -386,6 +392,16 @@ export function pendingCount(database: AppDatabase = defaultDb): Promise<number>
 
 export function readSyncState(database: AppDatabase = defaultDb): Promise<SyncStateRow | undefined> {
   return getState(database);
+}
+
+/** Propriété des données présentes sur cet appareil, par rapport au compte connecté. */
+export async function checkDeviceOwnership(
+  userId: string,
+  database: AppDatabase = defaultDb,
+): Promise<DeviceOwnership> {
+  const state = await getState(database);
+  const count = (await database.settings.count()) + (await countLocalRecords(database));
+  return deviceOwnership(state, count, userId);
 }
 
 /**
