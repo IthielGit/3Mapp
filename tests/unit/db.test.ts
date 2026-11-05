@@ -21,6 +21,8 @@ const EXPECTED_TABLES = [
   "debtPayments",
   "attachments",
   "reconciliations",
+  "syncOutbox",
+  "syncState",
 ].sort();
 
 let testDb: AppDatabase;

@@ -17,6 +17,7 @@ import type {
   Transaction,
   Wallet,
 } from "./entities";
+import { installSyncTracking, type OutboxEntry, type SyncStateRow } from "./sync-tracking";
 
 export const DB_NAME = "money-manager";
 
@@ -43,6 +44,10 @@ export class AppDatabase extends Dexie {
   declare debtPayments: Table<DebtPayment, string>;
   declare attachments: Table<Attachment, string>;
   declare reconciliations: Table<Reconciliation, string>;
+  /** File des modifications à envoyer (phase C, synchronisation). */
+  declare syncOutbox: Table<OutboxEntry, string>;
+  /** État de la synchronisation sur cet appareil. */
+  declare syncState: Table<SyncStateRow, string>;
 
   constructor(name: string = DB_NAME) {
     super(name);
@@ -85,6 +90,14 @@ export class AppDatabase extends Dexie {
           if (row.transactionId) await tx.table("transactions").update(row.transactionId, { debtId: row.debtId });
         }
       });
+
+    // Version 4 : file d'envoi et état de synchronisation (plan « comptes », phase C). Ajout de tables seulement.
+    this.version(4).stores({
+      syncOutbox: "key, seq",
+      syncState: "id",
+    });
+
+    installSyncTracking(this);
   }
 }
 
