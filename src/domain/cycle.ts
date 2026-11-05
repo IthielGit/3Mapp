@@ -133,6 +133,30 @@ export interface CycleOverview {
   upcomingExpenses: Minor;
   debtsDue: Minor;
   pay: PayStatus;
+  /**
+   * Épargne prévue : paie du cycle (reçue, sinon la dernière paie connue) moins toutes les dépenses
+   * connues. Absente tant qu'aucune paie n'est connue.
+   */
+  plannedSaving?: Minor;
+}
+
+/** Montant de la dernière paie validée reçue avant le cycle (sans compter les paies en cours de cycle). */
+function lastPayBefore(
+  transactions: readonly Transaction[],
+  payCategoryId: string,
+  from: Date,
+): Minor | undefined {
+  const windowStart = addDays(from, -EARLY_DAYS).getTime();
+  const earlier = transactions
+    .filter(
+      (t) =>
+        t.type === "income" &&
+        t.status === "posted" &&
+        t.categoryId === payCategoryId &&
+        new Date(t.date).getTime() < windowStart,
+    )
+    .sort((a, b) => b.date.localeCompare(a.date));
+  return earlier[0]?.amount;
 }
 
 export interface CycleInput {
@@ -222,5 +246,16 @@ export function cycleOverview(input: CycleInput): CycleOverview {
   });
   const pay = payStatus(baseTransactions, input.payCategoryId, period, now);
 
-  return { summary, rest, pendingExpenses, upcomingExpenses, debtsDue, pay };
+  const expectedPay =
+    pay.kind === "received"
+      ? pay.amount
+      : input.payCategoryId
+        ? lastPayBefore(baseTransactions, input.payCategoryId, period.from)
+        : undefined;
+  const plannedSaving =
+    expectedPay === undefined
+      ? undefined
+      : expectedPay - summary.expense - pendingExpenses - upcomingExpenses - debtsDue;
+
+  return { summary, rest, pendingExpenses, upcomingExpenses, debtsDue, pay, plannedSaving };
 }

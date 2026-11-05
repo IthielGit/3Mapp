@@ -667,6 +667,8 @@
     "payReceived": "Paie reçue : {{amount}} le {{date}}",
     "payExpected": "Paie attendue le {{date}}",
     "payLate": "Paie en retard de {{days}} jours",
-    "paySet": "Choisir mon revenu de paie"
+    "paySet": "Choisir mon revenu de paie",
+    "addPay": "Ajouter ma paie",
+    "plannedSaving": "Épargne prévue : {{amount}}"
   }
 }

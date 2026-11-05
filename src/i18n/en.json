@@ -667,6 +667,8 @@
     "payReceived": "Pay received: {{amount}} on {{date}}",
     "payExpected": "Pay expected on {{date}}",
     "payLate": "Pay is {{days}} days late",
-    "paySet": "Choose my pay income"
+    "paySet": "Choose my pay income",
+    "addPay": "Add my pay",
+    "plannedSaving": "Planned savings: {{amount}}"
   }
 }

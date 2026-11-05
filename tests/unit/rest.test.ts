@@ -168,5 +168,7 @@ describe("vue « Mon cycle » complète (cycleOverview)", () => {
     expect(v.rest.rest).toBe(1_250_000);
     expect(v.rest.perDay).toBe(Math.floor(1_250_000 / v.summary.daysLeft));
     expect(v.pay.kind).toBe("received");
+    // Paie 1 200 000 − dépenses 200 000 − en attente 50 000 − récurrence 300 000 − dette 400 000.
+    expect(v.plannedSaving).toBe(250_000);
   });
 });

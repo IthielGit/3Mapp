@@ -667,6 +667,8 @@
     "payReceived": "Karama voaray: {{amount}} tamin’ny {{date}}",
     "payExpected": "Karama andrasana tamin’ny {{date}}",
     "payLate": "Karama tara {{days}} andro",
-    "paySet": "Safidio ny karamako"
+    "paySet": "Safidio ny karamako",
+    "addPay": "Ampidiro ny karamako",
+    "plannedSaving": "Tahiry andrasana: {{amount}}"
   }
 }

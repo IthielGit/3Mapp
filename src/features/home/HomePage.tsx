@@ -174,9 +174,23 @@ export function HomePage() {
           date: day(pay.date),
         });
       case "expected":
-        return t("cycle.payExpected", { date: day(pay.date) });
+        return (
+          <>
+            {t("cycle.payExpected", { date: day(pay.date) })} ·{" "}
+            <Link to="/transactions/new" className="underline">
+              {t("cycle.addPay")}
+            </Link>
+          </>
+        );
       case "late":
-        return t("cycle.payLate", { days: pay.daysLate });
+        return (
+          <>
+            {t("cycle.payLate", { days: pay.daysLate })} ·{" "}
+            <Link to="/transactions/new" className="underline">
+              {t("cycle.addPay")}
+            </Link>
+          </>
+        );
     }
   }
 
@@ -331,6 +345,13 @@ export function HomePage() {
           <p className="text-xs text-slate-600 dark:text-muted">
             {payLine(cycleView.pay)}
           </p>
+          {cycleView.plannedSaving !== undefined ? (
+            <p className="text-xs text-slate-600 dark:text-muted">
+              {t("cycle.plannedSaving", {
+                amount: formatMoney(cycleView.plannedSaving, baseCurrency),
+              })}
+            </p>
+          ) : null}
         </div>
         <p className="text-xs text-slate-600 dark:text-muted">
           {t("cycle.daysLeft", { days: cycle.daysLeft })}
