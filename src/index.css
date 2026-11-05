@@ -300,3 +300,79 @@ main > * {
     animation: none;
   }
 }
+
+/* Onboarding : introduction. Le texte monte par paliers de 70 ms, puis le bouton. Premier lancement seulement. */
+@keyframes intro-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.intro-stagger > * {
+  animation: intro-up 520ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+.intro-stagger > :nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.intro-stagger > :nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.intro-cta {
+  animation: intro-up 520ms cubic-bezier(0.23, 1, 0.32, 1) 210ms backwards;
+}
+
+/* Onboarding : étapes. Chaque étape entre depuis la droite, sans rebond. */
+@keyframes onb-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.onb-step {
+  animation: onb-step-in 260ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+/* Barre de progression : glisse d'une étape à l'autre. */
+.onb-progress-fill {
+  transition: transform 360ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Mouvement réduit : fondus seuls, la barre change sans glisser. */
+@media (prefers-reduced-motion: reduce) {
+  .intro-stagger > *,
+  .intro-cta,
+  .onb-step {
+    animation-name: intro-fade;
+    animation-duration: 300ms;
+  }
+  .intro-stagger > :nth-child(2),
+  .intro-stagger > :nth-child(3),
+  .intro-cta {
+    animation-delay: 0ms;
+  }
+  .onb-progress-fill {
+    transition: none;
+  }
+}

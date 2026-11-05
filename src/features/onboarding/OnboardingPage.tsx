@@ -61,15 +61,23 @@ export function OnboardingPage() {
 
   return (
     <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-6 px-6 py-6">
-      <progress
-        className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-neutral-200 dark:bg-white/15 [&::-moz-progress-bar]:bg-brand-600 [&::-webkit-progress-bar]:bg-neutral-200 [&::-webkit-progress-value]:bg-brand-600 dark:[&::-moz-progress-bar]:bg-fg dark:[&::-webkit-progress-value]:bg-fg"
-        value={step}
-        max={2}
+      {/* Barre : l'échelle (et non la largeur) passe d'une étape à l'autre, en douceur. */}
+      <div
+        role="progressbar"
         aria-label={t("onboarding.progress")}
-      />
+        aria-valuemin={0}
+        aria-valuemax={2}
+        aria-valuenow={step}
+        className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/15"
+      >
+        <div
+          className="onb-progress-fill h-full w-full origin-left rounded-full bg-brand-600 dark:bg-fg"
+          style={{ transform: `scaleX(${step / 2})` }}
+        />
+      </div>
 
       {step === 1 ? (
-        <div className="flex flex-col gap-4">
+        <div className="onb-step flex flex-col gap-4">
           <h1 className="text-2xl font-semibold">{t("onboarding.settingsTitle")}</h1>
           <Field label={t("onboarding.language")}>
             <select
@@ -99,7 +107,7 @@ export function OnboardingPage() {
       ) : null}
 
       {step === 2 ? (
-        <div className="flex flex-col gap-4">
+        <div className="onb-step flex flex-col gap-4">
           <h1 className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
           <p className="text-neutral-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("common.name")} error={nameError}>
