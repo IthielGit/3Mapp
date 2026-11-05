@@ -426,7 +426,12 @@
     "done": "Reconciliation saved.",
     "history": "History",
     "noHistory": "No reconciliation yet.",
-    "defaultMemo": "Reconciliation"
+    "defaultMemo": "Reconciliation",
+    "since": "Last known activity: {{date}} ({{days}} days ago). The gap covers this period.",
+    "addMovement": "Add a missing movement",
+    "undetailed": "Undetailed gap: counts neither as income nor as expense",
+    "undetailedHint": "Use when the detail of the period is unknown, for example after several months without entries.",
+    "undetailedMemo": "Undetailed gap"
   },
   "rates": {
     "title": "Currencies and rates",
@@ -452,6 +457,8 @@
     "next": "Next period"
   },
   "home": {
+    "staleWallet": "No entries for {{days}} days on {{name}}.",
+    "staleAction": "Reconcile",
     "backupReminder": "Backup recommended: no recent backup.",
     "totalBalance": "Total balance",
     "income": "Income",

@@ -1,6 +1,6 @@
 import { PageTitle } from "../../components/PageHeader";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -8,6 +8,7 @@ import { db } from "../../db/database";
 import { RuleError } from "../../db/errors";
 import { walletBalance } from "../../domain/balance";
 import { upTo } from "../../domain/cutoff";
+import { lastKnownActivity } from "../../domain/reconciliation";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { buttonPrimary, Field, inputClass } from "../../components/FormControls";
 import { formatMoney, parseMoney } from "../../lib/money";
@@ -31,6 +32,7 @@ export function ReconcilePage() {
     ) ?? EMPTY;
   const [real, setReal] = useState("");
   const [memo, setMemo] = useState("");
+  const [undetailed, setUndetailed] = useState(false);
   const [message, setMessage] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const cutoff = useBalanceCutoff();
@@ -41,15 +43,20 @@ export function ReconcilePage() {
   const computed = walletBalance(wallet, upTo(transactions, cutoff));
   const realValue = real.trim() === "" ? null : parseMoney(real, currency);
   const gap = realValue === null ? null : realValue - computed;
+  // Début de la période que couvre l'écart : dernier mouvement ou dernière réconciliation connus.
+  const since = lastKnownActivity(wallet, transactions, history);
+  const sinceDays = Math.floor((Date.now() - since.getTime()) / (24 * 60 * 60 * 1000));
 
   async function reconcile() {
     setError(undefined);
     setMessage(undefined);
     if (realValue === null) return setError(t("errors.invalidAmount"));
+    const motive = memo.trim() || (undetailed ? t("reconcile.undetailedMemo") : "");
     try {
-      await reconcileWallet(id, realValue, memo, new Date(), undefined, cutoff);
+      await reconcileWallet(id, realValue, motive, new Date(), undefined, cutoff, { undetailed });
       setReal("");
       setMemo("");
+      setUndetailed(false);
       setMessage(t("reconcile.done"));
     } catch (err) {
       setError(err instanceof RuleError ? err.message : t("errors.generic"));
@@ -73,12 +80,32 @@ export function ReconcilePage() {
           onChange={(e) => setReal(e.target.value)}
         />
       </Field>
+      <p className="text-sm text-neutral-600 dark:text-muted">
+        {t("reconcile.since", { date: format(since, "dd/MM/yyyy"), days: Math.max(0, sinceDays) })}
+      </p>
       {gap !== null ? (
         <p className="text-sm text-neutral-600 dark:text-muted">
           {gap === 0
             ? t("reconcile.noGap")
             : t("reconcile.gap", { amount: formatMoney(gap, currency) })}
         </p>
+      ) : null}
+      {gap !== null && gap !== 0 ? (
+        <div className="flex flex-col gap-2">
+          <label className="flex min-h-[44px] items-center gap-3">
+            <input
+              type="checkbox"
+              className="h-5 w-5"
+              checked={undetailed}
+              onChange={(e) => setUndetailed(e.target.checked)}
+            />
+            <span className="text-sm">{t("reconcile.undetailed")}</span>
+          </label>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("reconcile.undetailedHint")}</p>
+          <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
+            {t("reconcile.addMovement")}
+          </Link>
+        </div>
       ) : null}
       <Field label={t("reconcile.memo")}>
         <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />

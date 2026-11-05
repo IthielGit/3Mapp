@@ -5,18 +5,22 @@ import { sumMinor, type Minor } from "../lib/money";
  * Vrai si la transaction compte comme dépense : une dépense, ou une réconciliation qui retire de l'argent
  * (ajustement négatif). Pas un versement d’objectif ni un remboursement de dette.
  */
-export function isSpending(t: Pick<Transaction, "type" | "amount" | "goalId" | "debtId">): boolean {
+export function isSpending(
+  t: Pick<Transaction, "type" | "amount" | "goalId" | "debtId" | "undetailed">,
+): boolean {
   const outflow = t.type === "expense" || (t.type === "adjustment" && t.amount < 0);
-  return outflow && t.goalId === undefined && t.debtId === undefined;
+  return outflow && t.goalId === undefined && t.debtId === undefined && !t.undetailed;
 }
 
 /**
  * Vrai si la transaction compte comme revenu : un revenu, ou une réconciliation qui ajoute de l'argent
  * (ajustement positif). Pas un retrait d’objectif ni un remboursement reçu.
  */
-export function isEarning(t: Pick<Transaction, "type" | "amount" | "goalId" | "debtId">): boolean {
+export function isEarning(
+  t: Pick<Transaction, "type" | "amount" | "goalId" | "debtId" | "undetailed">,
+): boolean {
   const inflow = t.type === "income" || (t.type === "adjustment" && t.amount > 0);
-  return inflow && t.goalId === undefined && t.debtId === undefined;
+  return inflow && t.goalId === undefined && t.debtId === undefined && !t.undetailed;
 }
 
 /**

@@ -24,6 +24,8 @@ export interface TransactionDraft {
   attachmentIds: string[];
   date: string;
   status: Transaction["status"];
+  /** Réservé aux ajustements de réconciliation (voir entities.undetailed). */
+  undetailed?: boolean | undefined;
 }
 
 type TxRecord = Omit<Transaction, "id" | "createdAt" | "updatedAt" | "archived">;
@@ -43,6 +45,7 @@ export function draftFromTransaction(t: Transaction): TransactionDraft {
     attachmentIds: t.attachmentIds,
     date: t.date,
     status: t.status,
+    undetailed: t.undetailed,
   };
 }
 
@@ -116,6 +119,7 @@ export async function validateDraft(
     recurringId: undefined,
     debtId: undefined,
     goalId: undefined,
+    undetailed: draft.type === "adjustment" && draft.undetailed ? true : undefined,
   };
 
   const parsed = transactionSchema.safeParse({

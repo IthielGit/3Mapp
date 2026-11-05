@@ -426,7 +426,12 @@
     "done": "Voatahiry ny fampifanarahana.",
     "history": "Tantara",
     "noHistory": "Tsy misy fampifanarahana amin'izao fotoana izao.",
-    "defaultMemo": "Fampifanarahana"
+    "defaultMemo": "Fampifanarahana",
+    "since": "Hetsika farany fantatra : {{date}} (andro {{days}} lasa). Ity fahasamihafana ity mandrakotra io vanim-potoana io.",
+    "addMovement": "Ampio fihetsehana tsy voarakitra",
+    "undetailed": "Fahasamihafana tsy voamarina : tsy isaina ho vola miditra na mivoaka",
+    "undetailedHint": "Ampiasao rehefa tsy fantatra ny antsipiriany amin'ilay vanim-potoana, ohatra aorian'ny volana maro tsy nisy nosoratana.",
+    "undetailedMemo": "Fahasamihafana tsy voamarina"
   },
   "rates": {
     "title": "Vola sy tahan'ny vidiny",
@@ -452,6 +457,8 @@
     "next": "Vanim-potoana manaraka"
   },
   "home": {
+    "staleWallet": "Tsy misy nosoratana nandritra ny andro {{days}} tao amin'ny {{name}}.",
+    "staleAction": "Hampifanaraka",
     "backupReminder": "Torohevitra ny fitehirizana : tsy misy fitehirizana vaovao.",
     "totalBalance": "Tahiry rehetra",
     "income": "Fidiram-bola",

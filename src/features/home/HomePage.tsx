@@ -2,6 +2,7 @@ import { Icon } from "../../components/Icon";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
+import { staleWallets } from "../../domain/reconciliation";
 import { useTranslation } from "react-i18next";
 import { addDays, format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
@@ -25,6 +26,7 @@ import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 const EMPTY: never[] = [];
 const EMPTY_DEBTS: never[] = [];
 const EMPTY_PAYMENTS: never[] = [];
+const EMPTY_RECONCILIATIONS: never[] = [];
 const PREVIEW = 2;
 
 /** Engrenage des réglages (tracé ISC, Lucide), en haut à droite. */
@@ -63,6 +65,8 @@ export function HomePage() {
   const [suggestionHidden, setSuggestionHidden] = useState(false);
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? EMPTY;
+  const reconciliations =
+    useLiveQuery(() => db.reconciliations.toArray(), []) ?? EMPTY_RECONCILIATIONS;
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
@@ -271,6 +275,7 @@ export function HomePage() {
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const walletName = (id: string | undefined) => active.find((w) => w.id === id)?.name ?? "";
   const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
+  const stale = staleWallets(active, transactions, reconciliations, cycleNow);
 
   return (
     <section className="-mx-4 flex flex-col gap-5 px-4">
@@ -295,6 +300,22 @@ export function HomePage() {
           <GearIcon />
         </Link>
       </header>
+
+      {/* Saisie en retard : un portefeuille sans mouvement ni réconciliation depuis trop longtemps. */}
+      {stale.length > 0 ? (
+        <Link
+          to={`/plus/wallets/${stale[0]?.wallet.id ?? ""}/reconcile`}
+          className="pressable flex min-h-[44px] items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink dark:border-amber-700 dark:bg-raised dark:text-fg"
+        >
+          <span>
+            {t("home.staleWallet", {
+              name: stale[0]?.wallet.name ?? "",
+              days: stale[0]?.daysSince ?? 0,
+            })}
+          </span>
+          <span className="shrink-0 font-semibold underline">{t("home.staleAction")}</span>
+        </Link>
+      ) : null}
 
       {/* Votre mois : la seule carte colorée. Elle répond d'abord à « combien puis-je dépenser ? ». */}
       <section

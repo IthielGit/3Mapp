@@ -110,6 +110,11 @@ const transactionFields = {
   recurringId: z.uuid().optional(),
   debtId: z.uuid().optional(),
   goalId: z.uuid().optional(),
+  /**
+   * Ajustement de réconciliation « non détaillé » : modifie le solde sans compter en revenu ni en dépense
+   * (utilisé quand le détail d'une longue période sans saisie est inconnu).
+   */
+  undetailed: z.boolean().optional(),
 };
 
 /** Règles communes aux montants : dépense, revenu et virement sont des montants positifs. */
