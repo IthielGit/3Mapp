@@ -6,6 +6,7 @@ import App from "./App";
 import { ConfirmHost } from "./components/confirm";
 import { SecurityProvider } from "./features/security/SecurityProvider";
 import { AccountProvider } from "./features/account/AccountProvider";
+import { AccountGate } from "./features/account/AccountGate";
 import { ThemeProvider } from "./lib/theme";
 import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
 import "./i18n";
@@ -38,8 +39,10 @@ createRoot(rootElement).render(
       <BrowserRouter>
         <SecurityProvider>
           <AccountProvider>
-            <App />
-            <ConfirmHost />
+            <AccountGate>
+              <App />
+              <ConfirmHost />
+            </AccountGate>
           </AccountProvider>
         </SecurityProvider>
       </BrowserRouter>

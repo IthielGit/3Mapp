@@ -751,6 +751,10 @@
     "forgotPassword": "Forgot password?",
     "resetSent": "If an account exists for this address, a reset link has just been sent.",
     "checkEmail": "Check your inbox to confirm your account.",
+    "suspended": {
+      "title": "Account suspended",
+      "body": "Your account has been suspended by the service administrator. The app is blocked on this device. Contact the administrator for more information."
+    },
     "errors": {
       "invalidEmail": "Invalid email address.",
       "weakPassword": "The password must be at least 8 characters.",
