@@ -69,7 +69,7 @@ export function CalendarPage() {
 
   return (
     <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-2 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
           {t("nav.calendar")}
         </h1>
@@ -121,9 +121,9 @@ export function CalendarPage() {
           <div>
             <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
               <Icon name="equal" className="h-3 w-3" />
-              {t("home.netThisMonth")}
+              {t("calendar.netShort")}
             </p>
-            <p className="font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+            <p className="text-lg font-semibold tabular-nums text-ink dark:text-fg" data-amount>
               {formatMoney(monthTotals.net, baseCurrency)}
             </p>
           </div>
@@ -179,7 +179,7 @@ export function CalendarPage() {
           type="button"
           aria-expanded={!folded}
           onClick={() => setFolded((f) => !f)}
-          className="min-h-[44px] self-center px-4 text-sm font-medium text-brand-700 underline dark:text-brand-300"
+          className="min-h-[44px] self-center rounded-full bg-white px-5 text-sm font-medium text-brand-700 shadow-sm dark:bg-raised dark:text-brand-300"
         >
           {folded ? t("calendar.showMonth") : t("calendar.showWeek")}
         </button>

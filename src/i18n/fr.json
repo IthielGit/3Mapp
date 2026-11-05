@@ -626,7 +626,8 @@
   "calendar": {
     "empty": "Aucune transaction ce jour.",
     "showWeek": "Réduire à la semaine",
-    "showMonth": "Voir le mois"
+    "showMonth": "Voir le mois",
+    "netShort": "Reste ce mois"
   },
   "resetAccount": {
     "button": "Réinitialiser le compte",

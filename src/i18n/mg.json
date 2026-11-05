@@ -626,7 +626,8 @@
   "calendar": {
     "empty": "Tsy misy raharaha androany.",
     "showWeek": "Hampihena ho herinandro",
-    "showMonth": "Hijery ny volana"
+    "showMonth": "Hijery ny volana",
+    "netShort": "Sisa amin’ny volana"
   },
   "resetAccount": {
     "button": "Averina ny kaonty",
