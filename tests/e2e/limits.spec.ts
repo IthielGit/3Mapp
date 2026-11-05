@@ -61,6 +61,8 @@ test("catégorie utilisée : la suppression est refusée", async ({ page }) => {
   await page.goto("/plus");
   await page.getByRole("link", { name: "Catégories" }).click();
   await page.getByRole("link", { name: /Alimentation/ }).click();
+  // La fiche est en lecture seule : la suppression se fait depuis le formulaire de modification.
+  await page.getByRole("link", { name: "Modifier", exact: true }).click();
   acceptNextDialog(page);
   await page.getByRole("button", { name: "Supprimer", exact: true }).last().click();
   await expect(page.getByText(/Cette catégorie contient déjà des opérations/)).toBeVisible();
@@ -88,9 +90,12 @@ test("suppression d'une transaction : « Annuler » la restaure", async ({ page 
   await addExpense(page, "4200");
   await expect(page.getByTestId("transaction-list")).toContainText("4.200");
   await page.getByTestId("transaction-list").getByText("Alimentation").first().click();
+  // La fiche est en lecture seule : modifier, puis supprimer depuis le menu d'actions.
+  await page.getByRole("button", { name: "Modifier", exact: true }).click();
+  await page.getByRole("button", { name: "Plus d’actions" }).click();
   // La suppression depuis la feuille demande confirmation, puis propose « Annuler ».
   acceptNextDialog(page);
-  await page.getByRole("button", { name: "Supprimer", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Supprimer", exact: true }).click();
   await expect(page.getByTestId("transaction-list")).not.toContainText("4.200");
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
   await expect(page.getByTestId("transaction-list")).toContainText("4.200");

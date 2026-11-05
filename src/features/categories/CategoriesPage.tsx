@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import type { Category } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
-import { moveCategory, setCategoryArchived } from "./category-service";
+import { setCategoryArchived } from "./category-service";
 
 type Kind = Category["kind"];
 
@@ -54,47 +54,18 @@ export function CategoriesPage() {
       {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("categories.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
-        {active.map((category, index) => (
-          <li
-            key={category.id}
-            className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
-          >
+        {active.map((category) => (
+          <li key={category.id}>
             <Link
-              to={`/plus/categories/${category.id}/edit`}
-              className="flex min-w-0 flex-1 basis-40 items-center gap-3"
+              to={`/plus/categories/${category.id}`}
+              className="flex items-center gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15"
             >
               <span aria-hidden="true" className="text-2xl">
                 {category.icon}
               </span>
-              <span className="font-medium">{category.name}</span>
+              <span className="min-w-0 flex-1 font-medium">{category.name}</span>
+              <span aria-hidden="true" className="text-xl text-slate-400">›</span>
             </Link>
-            <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              className={buttonSecondary}
-              aria-label={t("common.moveUp")}
-              disabled={index === 0}
-              onClick={() => moveCategory(category.id, -1)}
-            >
-              ↑
-            </button>
-            <button
-              type="button"
-              className={buttonSecondary}
-              aria-label={t("common.moveDown")}
-              disabled={index === active.length - 1}
-              onClick={() => moveCategory(category.id, 1)}
-            >
-              ↓
-            </button>
-            <button
-              type="button"
-              className={buttonSecondary}
-              onClick={() => setCategoryArchived(category.id, true)}
-            >
-              {t("common.archive")}
-            </button>
-            </div>
           </li>
         ))}
       </ul>

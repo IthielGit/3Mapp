@@ -192,7 +192,8 @@
     "merge": "Ampiraiko",
     "mergeHint": "Ny fifanakalozana rehetra amin'ity sokajy ity dia hosoloina ho any amin'ny sokajy voafidy, avy eo dia ho esorina ity sokajy ity.",
     "mergeTarget": "Ampiraiko ao amin'ny…",
-    "mergeConfirm": "Ampiraiko sy esorina ity sokajy ity ?"
+    "mergeConfirm": "Ampiraiko sy esorina ity sokajy ity ?",
+    "notFound": "Tsy hita ny sokajy."
   },
   "transactions": {
     "title": "Fifanakalozan-vola",
@@ -229,6 +230,7 @@
     "adjustSign": "Hevitra amin'ny fanitsiana",
     "increase": "Hampitombo ny tahiry",
     "decrease": "Hampihena ny tahiry",
+    "category": "Sokajy",
     "wallet": "Kitapo vola",
     "fromWallet": "Avy amin'ny",
     "toWallet": "Ho any amin'ny",

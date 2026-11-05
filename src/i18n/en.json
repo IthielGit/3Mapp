@@ -192,7 +192,8 @@
     "merge": "Merge",
     "mergeHint": "All transactions in this category will be moved to the chosen category, then this category will be deleted.",
     "mergeTarget": "Merge into…",
-    "mergeConfirm": "Merge and delete this category?"
+    "mergeConfirm": "Merge and delete this category?",
+    "notFound": "Category not found."
   },
   "transactions": {
     "title": "Transactions",
@@ -229,6 +230,7 @@
     "adjustSign": "Adjustment direction",
     "increase": "Increase balance",
     "decrease": "Decrease balance",
+    "category": "Category",
     "wallet": "Wallet",
     "fromWallet": "From",
     "toWallet": "To",

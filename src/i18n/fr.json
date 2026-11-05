@@ -192,7 +192,8 @@
     "merge": "Fusionner",
     "mergeHint": "Toutes les opérations de cette catégorie seront transférées vers la catégorie choisie, puis cette catégorie sera supprimée.",
     "mergeTarget": "Fusionner dans…",
-    "mergeConfirm": "Fusionner et supprimer cette catégorie ?"
+    "mergeConfirm": "Fusionner et supprimer cette catégorie ?",
+    "notFound": "Catégorie introuvable."
   },
   "transactions": {
     "title": "Transactions",
@@ -229,6 +230,7 @@
     "adjustSign": "Sens de l'ajustement",
     "increase": "Augmenter le solde",
     "decrease": "Diminuer le solde",
+    "category": "Catégorie",
     "wallet": "Portefeuille",
     "fromWallet": "Depuis",
     "toWallet": "Vers",

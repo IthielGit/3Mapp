@@ -179,7 +179,7 @@ export function RecurringDetailPage() {
         <ul className="flex flex-col gap-1 text-sm">
           {occurrences.map((tx) => (
             <li key={tx.id}>
-              <Link to={`/transactions/${tx.id}/edit`} className="flex justify-between">
+              <Link to={`/transactions/${tx.id}`} className="flex justify-between">
                 <span>
                   {format(new Date(tx.date), "dd/MM/yyyy")} ·{" "}
                   {tx.status === "pending" ? t("recurring.pendingTag") : t("recurring.postedTag")}

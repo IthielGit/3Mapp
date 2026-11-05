@@ -8,7 +8,7 @@ import type { Wallet } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 import { computeBalances } from "../../domain/balance";
 import { formatMoney } from "../../lib/money";
-import { moveWallet, setWalletArchived } from "./wallet-service";
+import { setWalletArchived } from "./wallet-service";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 const EMPTY: never[] = [];
@@ -39,14 +39,8 @@ export function WalletsPage() {
       {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("wallets.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
-        {active.map((wallet, index) => (
-          <WalletRow
-            key={wallet.id}
-            wallet={wallet}
-            balance={balances[wallet.id] ?? wallet.initialBalance}
-            isFirst={index === 0}
-            isLast={index === active.length - 1}
-          />
+        {active.map((wallet) => (
+          <WalletRow key={wallet.id} wallet={wallet} balance={balances[wallet.id] ?? wallet.initialBalance} />
         ))}
       </ul>
 
@@ -87,21 +81,14 @@ export function WalletsPage() {
   );
 }
 
-function WalletRow({
-  wallet,
-  balance,
-  isFirst,
-  isLast,
-}: {
-  wallet: Wallet;
-  balance: number;
-  isFirst: boolean;
-  isLast: boolean;
-}) {
+function WalletRow({ wallet, balance }: { wallet: Wallet; balance: number }) {
   const { t } = useTranslation();
   return (
-    <li className="flex items-center gap-2 rounded-card border border-slate-200 p-3 shadow-sm dark:border-white/15">
-      <Link to={`/plus/wallets/${wallet.id}`} className="flex flex-1 items-center gap-3">
+    <li>
+      <Link
+        to={`/plus/wallets/${wallet.id}`}
+        className="flex items-center gap-3 rounded-card border border-slate-200 p-3 shadow-sm dark:border-white/15"
+      >
         <span
           aria-hidden="true"
           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl"
@@ -109,32 +96,15 @@ function WalletRow({
         >
           {wallet.icon}
         </span>
-        <span className="flex min-w-0 flex-col">
+        <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate font-semibold">{wallet.name}</span>
           <span className="text-sm text-slate-600 dark:text-muted">
             {t("wallets.balance")} :{" "}
             <span data-amount>{formatMoney(balance, wallet.currency)}</span>
           </span>
         </span>
+        <span aria-hidden="true" className="text-xl text-slate-400">›</span>
       </Link>
-      <button
-        type="button"
-        className={buttonSecondary}
-        aria-label={t("common.moveUp")}
-        disabled={isFirst}
-        onClick={() => moveWallet(wallet.id, -1)}
-      >
-        ↑
-      </button>
-      <button
-        type="button"
-        className={buttonSecondary}
-        aria-label={t("common.moveDown")}
-        disabled={isLast}
-        onClick={() => moveWallet(wallet.id, 1)}
-      >
-        ↓
-      </button>
     </li>
   );
 }

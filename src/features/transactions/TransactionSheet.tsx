@@ -7,12 +7,11 @@ import { db } from "../../db/database";
 import type { Subcategory, Transaction } from "../../db/entities";
 import { RuleError } from "../../db/errors";
 import { BottomSheet } from "../../components/BottomSheet";
+import { ActionMenu } from "../../components/DetailHeader";
 import { AmountInput } from "../../components/AmountInput";
 import {
   Field,
-  buttonDanger,
   buttonPrimary,
-  buttonSecondary,
   inputClass,
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
@@ -491,16 +490,14 @@ export function TransactionSheet({
 
 
         {transaction ? (
-          <div className="grid grid-cols-2 gap-2">
-            <button type="button" className={buttonSecondary} onClick={() => void saveAsTemplate()}>
-              {t("templates.saveAsTemplate")}
-            </button>
-            <button type="button" className={buttonSecondary} onClick={() => void duplicate()}>
-              {t("transactions.duplicate")}
-            </button>
-            <button type="button" className={buttonDanger} onClick={() => onDelete?.(transaction)}>
-              {t("common.delete")}
-            </button>
+          <div className="flex justify-end">
+            <ActionMenu
+              items={[
+                { label: t("templates.saveAsTemplate"), onSelect: () => void saveAsTemplate() },
+                { label: t("transactions.duplicate"), onSelect: () => void duplicate() },
+                { label: t("common.delete"), onSelect: () => onDelete?.(transaction), danger: true },
+              ]}
+            />
           </div>
         ) : null}
       </div>

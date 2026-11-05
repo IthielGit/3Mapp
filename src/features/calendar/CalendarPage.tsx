@@ -1,5 +1,7 @@
 import { Icon } from "../../components/Icon";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { TransactionDetailSheet } from "../transactions/TransactionDetailSheet";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
@@ -21,6 +23,8 @@ export function CalendarPage() {
   const { t, i18n } = useTranslation();
   const settings = usePeriodSettings();
   const locale = i18n.language === "en" ? enUS : fr;
+  const navigate = useNavigate();
+  const [openId, setOpenId] = useState<string | null>(null);
   const [cursor, setCursor] = useState(() => startOfMonth(new Date()));
   const [selected, setSelected] = useState(() => format(new Date(), "yyyy-MM-dd"));
   // Écran bas : on affiche la semaine du jour choisi, pour que la liste reste assez haute.
@@ -66,6 +70,7 @@ export function CalendarPage() {
     ),
   );
   const dayGroup = byDay.get(selected);
+  const openTx = openId ? inBase.find((tx) => tx.id === openId) : undefined;
 
   return (
     <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
@@ -204,12 +209,22 @@ export function CalendarPage() {
                   transaction={tx}
                   category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
                   walletName={(id) => walletName.get(id ?? "") ?? ""}
+                  onOpen={() => setOpenId(tx.id)}
                 />
               </li>
             ))}
           </ul>
         )}
       </section>
+      {openTx ? (
+        <TransactionDetailSheet
+          transaction={openTx}
+          category={openTx.categoryId ? categoryById.get(openTx.categoryId) : undefined}
+          walletName={(id) => walletName.get(id ?? "") ?? ""}
+          onClose={() => setOpenId(null)}
+          onEdit={() => navigate(`/transactions/${openTx.id}/edit`)}
+        />
+      ) : null}
     </section>
   );
 }

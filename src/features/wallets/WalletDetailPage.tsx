@@ -8,7 +8,8 @@ import { InUseError } from "../../db/errors";
 import { walletBalance } from "../../domain/balance";
 import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { formatMoney } from "../../lib/money";
-import { deleteWallet, setWalletArchived } from "./wallet-service";
+import { deleteWallet, moveWallet, setWalletArchived } from "./wallet-service";
+import { buttonPrimary } from "../../components/FormControls";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 export function WalletDetailPage() {
@@ -44,8 +45,9 @@ export function WalletDetailPage() {
   }
 
   const walletActions: MenuItem[] = [
-    { label: t("common.edit"), to: `/plus/wallets/${id}/edit` },
     { label: t("reconcile.open"), to: `/plus/wallets/${id}/reconcile` },
+    { label: t("common.moveUp"), onSelect: () => void moveWallet(id, -1) },
+    { label: t("common.moveDown"), onSelect: () => void moveWallet(id, 1) },
     wallet.archived
       ? { label: t("common.restore"), onSelect: () => void setWalletArchived(id, false) }
       : { label: t("common.archive"), onSelect: () => void setWalletArchived(id, true) },
@@ -78,7 +80,7 @@ export function WalletDetailPage() {
           {(movements ?? []).slice(0, 30).map((tx) => (
             <li key={tx.id}>
               <Link
-                to={`/transactions/${tx.id}/edit`}
+                to={`/transactions/${tx.id}`}
                 className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-white/15"
               >
                 <span className="text-sm">
@@ -104,6 +106,13 @@ export function WalletDetailPage() {
           ))}
         </ul>
       </section>
+
+      <Link
+        to={`/plus/wallets/${id}/edit`}
+        className={`${buttonPrimary} inline-flex w-full items-center justify-center`}
+      >
+        {t("common.edit")}
+      </Link>
 
       {error ? (
         <p role="alert" className="text-red-700 dark:text-red-400">

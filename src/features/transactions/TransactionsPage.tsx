@@ -31,6 +31,7 @@ import {
   type RemovedBundle,
 } from "./transaction-service";
 import { TransactionSheet } from "./TransactionSheet";
+import { TransactionDetailSheet } from "./TransactionDetailSheet";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 
@@ -160,8 +161,16 @@ export function TransactionsPage() {
     setPeriod(DEFAULT_PERIOD);
   }
 
-  const sheetMode = location.pathname.endsWith("/new") ? "new" : id ? "edit" : null;
-  const editing = sheetMode === "edit" ? transactions.find((t) => t.id === id) : undefined;
+  const sheetMode = location.pathname.endsWith("/new")
+    ? "new"
+    : id
+      ? location.pathname.endsWith("/edit")
+        ? "edit"
+        : "view"
+      : null;
+  // Lecture directe en base : la feuille de saisie ne s'ouvre qu'avec la transaction chargée.
+  const target = useLiveQuery(() => (id ? db.transactions.get(id) : undefined), [id]);
+  const editing = sheetMode === "edit" ? (target ?? undefined) : undefined;
   const defaultType = params.get("type") as TransactionType | null;
 
   function closeSheet() {
@@ -413,7 +422,7 @@ export function TransactionsPage() {
                     selectMode={selectMode}
                     selected={selected.has(row.transaction.id)}
                     onToggle={() => toggleSelected(row.transaction.id)}
-                    onOpen={() => navigate(`/transactions/${row.transaction.id}/edit`)}
+                    onOpen={() => navigate(`/transactions/${row.transaction.id}`)}
                     time={format(new Date(row.transaction.date), "HH:mm")}
                   />
                 )}
@@ -625,7 +634,16 @@ export function TransactionsPage() {
         </BottomSheet>
       ) : null}
 
-      {sheetMode ? (
+      {sheetMode === "view" && target ? (
+        <TransactionDetailSheet
+          transaction={target}
+          category={target.categoryId ? categories.find((c) => c.id === target.categoryId) : undefined}
+          walletName={(wid) => walletName.get(wid ?? "") ?? ""}
+          onClose={closeSheet}
+          onEdit={() => navigate(`/transactions/${target.id}/edit`)}
+        />
+      ) : null}
+      {sheetMode === "new" || (sheetMode === "edit" && editing) ? (
         <TransactionSheet
           key={sheetMode === "edit" ? `edit-${id}` : `new-${defaultType ?? ""}`}
           transaction={editing}

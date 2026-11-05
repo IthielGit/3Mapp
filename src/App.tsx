@@ -92,6 +92,9 @@ const SecurityPage = page(() =>
 const CategoriesPage = page(() =>
   import("./features/categories/CategoriesPage").then((m) => ({ default: m.CategoriesPage })),
 );
+const CategoryDetailPage = page(() =>
+  import("./features/categories/CategoryDetailPage").then((m) => ({ default: m.CategoryDetailPage })),
+);
 const CategoryFormPage = page(() =>
   import("./features/categories/CategoryFormPage").then((m) => ({
     default: m.CategoryFormPage,
@@ -121,6 +124,7 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="transactions" element={<TransactionsPage />} />
           <Route path="transactions/new" element={<TransactionsPage />} />
+          <Route path="transactions/:id" element={<TransactionsPage />} />
           <Route path="transactions/:id/edit" element={<TransactionsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="stats" element={<StatsPage />} />
@@ -147,6 +151,7 @@ export default function App() {
           <Route path="plus/security" element={<SecurityPage />} />
           <Route path="plus/wallets/:id/reconcile" element={<ReconcilePage />} />
           <Route path="plus/categories" element={<CategoriesPage />} />
+          <Route path="plus/categories/:id" element={<CategoryDetailPage />} />
           <Route path="plus/categories/new" element={<CategoryFormPage />} />
           <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

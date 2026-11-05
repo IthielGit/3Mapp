@@ -680,7 +680,7 @@ export function StatsPage() {
         <ol className="flex flex-col text-sm">
           {top.map((tx) => (
             <li key={tx.id} className="border-b border-slate-200 dark:border-white/15">
-              <Link to={`/transactions/${tx.id}/edit`} className="flex justify-between py-2">
+              <Link to={`/transactions/${tx.id}`} className="flex justify-between py-2">
                 <span className="truncate">
                   {tx.memo || names.get(tx.categoryId ?? "") || t("transactions.types.expense")}
                 </span>
