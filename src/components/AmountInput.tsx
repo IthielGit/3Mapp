@@ -138,7 +138,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               className="pointer-events-none absolute inset-0 flex items-center whitespace-pre text-3xl font-semibold"
             >
               <span className="invisible">{expression.slice(0, shownAt)}</span>
-              <span className="h-9 w-0.5 rounded-full bg-brand-700 motion-safe:animate-pulse dark:bg-brand-300" />
+              <span className="h-9 w-0.5 rounded-full bg-brand-700 caret-blink dark:bg-brand-300" />
               <span className="invisible">{expression.slice(shownAt)}</span>
             </div>
           ) : (
@@ -146,7 +146,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 flex items-center text-3xl font-semibold"
             >
-              <span className="h-9 w-0.5 rounded-full bg-brand-700 motion-safe:animate-pulse dark:bg-brand-300" />
+              <span className="h-9 w-0.5 rounded-full bg-brand-700 caret-blink dark:bg-brand-300" />
             </div>
           )}
         </div>

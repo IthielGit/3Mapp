@@ -100,7 +100,7 @@ button:not(:disabled):active {
 /* Barres de progression : l’échelle plutôt que la largeur (pas de mise en page pendant l’animation). */
 .progress-fill {
   transform-origin: left;
-  transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -170,34 +170,29 @@ main > * {
 }
 
 /* Menu « ⋯ » : apparaît depuis son bouton (coin haut-droit), sans toucher aux autres éléments. */
-@keyframes menu-pop {
-  from {
+/* Une transition (et non des images-clés) : rouvrir le menu vite reprend l’état en cours. */
+.menu-pop {
+  transform-origin: top right;
+  transition:
+    opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .menu-pop {
     opacity: 0;
     transform: scale(0.95);
   }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes menu-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.menu-pop {
-  transform-origin: top right;
-  animation: menu-pop 150ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .menu-pop {
-    animation-name: menu-fade;
+    transition: opacity 150ms ease-out;
+  }
+  @starting-style {
+    .menu-pop {
+      transform: none;
+    }
   }
 }
 
@@ -281,5 +276,27 @@ main > * {
     .pay-reveal {
       transform: none;
     }
+  }
+}
+
+/* Curseur de saisie : il clignote (allumé, éteint), comme un curseur, et reste fixe sans mouvement demandé. */
+.caret-blink {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret-blink {
+    animation: none;
   }
 }

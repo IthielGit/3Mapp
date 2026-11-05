@@ -367,7 +367,7 @@ export function HomePage() {
               aria-hidden="true"
               focusable="false"
               viewBox="0 0 20 20"
-              className="h-4 w-4 transition-transform group-open:rotate-180"
+              className="h-4 w-4 transition-transform duration-200 ease-out-strong group-open:rotate-180 motion-reduce:transition-none"
             >
               <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

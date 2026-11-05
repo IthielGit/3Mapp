@@ -48,7 +48,7 @@ export function ResetAccountSection() {
         </span>
         <span
           aria-hidden="true"
-          className={`text-xl text-slate-400 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}
+          className={`text-xl text-slate-400 transition-transform duration-200 ease-out-strong motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`}
         >
           ›
         </span>

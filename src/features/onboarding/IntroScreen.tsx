@@ -38,7 +38,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         <button
           type="button"
           onClick={onStart}
-          className="relative z-10 flex min-h-[60px] items-center justify-between rounded-2xl bg-white px-6 text-base font-semibold text-[#1A1A1B] transition-transform duration-150 ease-out-strong active:scale-[0.98]"
+          className="relative z-10 flex min-h-[60px] items-center justify-between rounded-2xl bg-white px-6 text-base font-semibold text-[#1A1A1B] transition-transform duration-150 ease-out-strong active:scale-[0.98] motion-reduce:active:scale-100"
         >
           <span>{t("onboarding.introStart")}</span>
           <span aria-hidden="true" className="text-xl">
