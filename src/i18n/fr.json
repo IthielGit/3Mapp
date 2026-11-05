@@ -267,7 +267,9 @@
     "photoAlt": "Pièce jointe {{n}}",
     "removePhoto": "Retirer",
     "removePhotoN": "Retirer la pièce jointe {{n}}",
-    "transferHint": "Virement : déplacer de l’argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas."
+    "transferHint": "Virement : déplacer de l’argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas.",
+    "amountTapToEdit": "Toucher pour modifier le montant",
+    "amountDone": "Terminé"
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

@@ -267,7 +267,9 @@
     "photoAlt": "Rakitra mifandray {{n}}",
     "removePhoto": "Esorina",
     "removePhotoN": "Esorina ny rakitra mifandray {{n}}",
-    "transferHint": "Fifindrana vola : mamindra vola eo anelanelan’ny kaontinao roa (ohatra banque sy mobile money). Tsy miova ny totalinao."
+    "transferHint": "Fifindrana vola : mamindra vola eo anelanelan’ny kaontinao roa (ohatra banque sy mobile money). Tsy miova ny totalinao.",
+    "amountTapToEdit": "Tsindrio raha hanova ny vola",
+    "amountDone": "Vita"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

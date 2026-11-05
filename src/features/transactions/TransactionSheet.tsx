@@ -12,11 +12,12 @@ import { AmountInput } from "../../components/AmountInput";
 import {
   Field,
   buttonPrimary,
+  buttonSecondary,
   inputClass,
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
 import { minorToPlainText } from "../../lib/amount-text";
-import type { CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { saveTransactionAsTemplate } from "./template-service";
 import { createRecurring } from "../recurring/recurring-service";
 import { occurrenceDate, type Frequency } from "../../domain/recurrence";
@@ -76,6 +77,8 @@ export function TransactionSheet({
   const templates = useLiveQuery(() => db.templates.toArray(), []) ?? [];
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
+  // En modification, le pavé est fermé : le montant s'affiche et se modifie au toucher.
+  const [keypadOpen, setKeypadOpen] = useState(!transaction);
   const [type, setType] = useState<TxType>(initial?.type ?? defaultType ?? "expense");
   const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
@@ -113,6 +116,8 @@ export function TransactionSheet({
   const effectiveWalletId = walletId || settings[0]?.defaultWalletId || activeWallets[0]?.id || "";
   const sourceWallet = wallets.find((w) => w.id === effectiveWalletId);
   const currency: CurrencyCode = sourceWallet?.currency ?? "MGA";
+  const amountMinor = amountExpr.trim() === "" ? null : expressionToMinor(amountExpr, currency);
+  const amountDisplay = amountMinor !== null ? formatMoney(amountMinor, currency) : amountExpr.trim() || "0";
   const targetWallet = wallets.find((w) => w.id === toWalletId);
   const crossCurrency =
     type === "transfer" && targetWallet !== undefined && targetWallet.currency !== currency;
@@ -301,12 +306,39 @@ export function TransactionSheet({
           </Field>
         ) : null}
 
-        <AmountInput
-          expression={amountExpr}
-          onExpressionChange={setAmountExpr}
-          currency={currency}
-          label={t("transactions.amount")}
-        />
+        {keypadOpen ? (
+          <div className="flex flex-col gap-2">
+            <AmountInput
+              expression={amountExpr}
+              onExpressionChange={setAmountExpr}
+              currency={currency}
+              label={t("transactions.amount")}
+            />
+            {transaction ? (
+              <button
+                type="button"
+                className={`${buttonSecondary} w-full`}
+                onClick={() => setKeypadOpen(false)}
+              >
+                {t("transactions.amountDone")}
+              </button>
+            ) : null}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setKeypadOpen(true)}
+            className="flex min-h-[64px] w-full flex-col items-start gap-0.5 rounded-lg border border-slate-300 px-3 py-2 text-left dark:border-white/15"
+          >
+            <span className="text-sm text-slate-600 dark:text-muted">{t("transactions.amount")}</span>
+            <span className="text-3xl font-semibold tabular-nums" data-amount>
+              {amountDisplay}
+            </span>
+            <span className="text-sm text-brand-700 dark:text-brand-300">
+              {t("transactions.amountTapToEdit")}
+            </span>
+          </button>
+        )}
 
         {!transaction && type !== "adjustment" ? (
           <div className="flex flex-col gap-2">
