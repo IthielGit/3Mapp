@@ -126,7 +126,8 @@ test("dette « Je dois » : paiement trop élevé refusé", async ({ page }) => 
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await page.getByRole("link", { name: /Rakoto/ }).click();
   await page.getByLabel(/Paiement/).fill("60000");
-  await page.getByRole("button", { name: "Enregistrer le paiement" }).click();
+  // Montant trop élevé : le bouton reste désactivé et le motif s’affiche.
+  await expect(page.getByRole("button", { name: "Enregistrer le paiement" })).toBeDisabled();
   await expect(page.getByText("Ce montant est plus grand que ce qu’il reste à rembourser.")).toBeVisible();
 });
 

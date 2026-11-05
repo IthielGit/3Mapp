@@ -98,6 +98,17 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | undefined>();
 
+  function missingDebt(): string | null {
+    if (counterparty.trim() === "") return t("forms.missingName");
+    const amount = parseMoney(principal, currency);
+    if (amount === null || amount <= 0) return t("transactions.amountRequired");
+    if (rate.trim() !== "") {
+      const pct = Number(rate.replace(",", "."));
+      if (!Number.isFinite(pct) || pct < 0) return t("debts.invalidRate");
+    }
+    return null;
+  }
+
   async function save() {
     setError(undefined);
     const amount = parseMoney(principal, currency);
@@ -171,7 +182,8 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
           {error}
         </p>
       ) : null}
-      <button type="button" className={buttonPrimary} onClick={() => void save()}>
+      {missingDebt() ? <p className="text-sm text-slate-600 dark:text-muted">{missingDebt()}</p> : null}
+      <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingDebt() !== null}>
         {t("common.save")}
       </button>
     </div>
@@ -201,6 +213,13 @@ function DebtDetail({ id }: { id: string }) {
   if (!debt) return <p>{t("debts.notFound")}</p>;
   const state = debtState(debt, payments, new Date());
   const debtCurrency = debt.currency;
+
+  function missingPayment(): string | null {
+    const value = parseMoney(amount, debtCurrency);
+    if (value === null || value <= 0) return t("transactions.amountRequired");
+    if (value > state.remaining) return t("debts.tooMuch");
+    return null;
+  }
 
   async function pay() {
     setError(undefined);
@@ -272,7 +291,8 @@ function DebtDetail({ id }: { id: string }) {
               {error}
             </p>
           ) : null}
-          <button type="button" className={buttonPrimary} onClick={() => void pay()}>
+          {missingPayment() ? <p className="text-sm text-slate-600 dark:text-muted">{missingPayment()}</p> : null}
+          <button type="button" className={buttonPrimary} onClick={() => void pay()} disabled={missingPayment() !== null}>
             {t("debts.addPayment")}
           </button>
         </div>

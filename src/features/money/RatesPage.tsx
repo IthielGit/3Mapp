@@ -22,6 +22,12 @@ export function RatesPage() {
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [error, setError] = useState<string | undefined>();
 
+  function missingRate(): string | null {
+    const value = Number(rate.replace(",", "."));
+    if (!Number.isFinite(value) || value <= 0) return t("forms.missingRate");
+    return null;
+  }
+
   async function save() {
     setError(undefined);
     const value = Number(rate.replace(",", "."));
@@ -89,7 +95,8 @@ export function RatesPage() {
           {error}
         </p>
       ) : null}
-      <button type="button" className={buttonPrimary} onClick={() => void save()}>
+      {missingRate() ? <p className="text-sm text-slate-600 dark:text-muted">{missingRate()}</p> : null}
+      <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingRate() !== null}>
         {t("rates.add")}
       </button>
 

@@ -638,5 +638,9 @@
     "warning": "All your data on this device will be erased. Consider downloading a backup first if you want to keep it.",
     "confirm": "Yes, start again",
     "group": "Reset"
+  },
+  "forms": {
+    "missingName": "Enter a name.",
+    "missingRate": "Enter a rate greater than 0."
   }
 }

@@ -46,6 +46,12 @@ export function WalletFormPage() {
 
   if (!loaded) return null;
 
+  function missingField(): string | null {
+    if (name.trim() === "") return t("forms.missingName");
+    if (parseMoney(balanceText || "0", currency) === null) return t("errors.invalidAmount");
+    return null;
+  }
+
   async function save() {
     setError(undefined);
     if (name.trim() === "") return setNameError(t("errors.required"));
@@ -150,11 +156,12 @@ export function WalletFormPage() {
         </p>
       ) : null}
 
+      {missingField() ? <p className="text-sm text-slate-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}
         </button>
-        <button type="button" className={buttonPrimary} onClick={save}>
+        <button type="button" className={buttonPrimary} onClick={save} disabled={missingField() !== null}>
           {t("common.save")}
         </button>
       </div>

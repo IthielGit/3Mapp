@@ -62,6 +62,14 @@ export function BudgetFormPage() {
     return list.includes(value) ? list.filter((x) => x !== value) : [...list, value];
   }
 
+  function missingField(): string | null {
+    if (name.trim() === "") return t("forms.missingName");
+    const amount = parseMoney(amountText, currency);
+    if (amount === null || amount <= 0) return t("transactions.amountRequired");
+    if (categoryIds.length === 0) return t("budgets.needCategory");
+    return null;
+  }
+
   async function save() {
     setError(undefined);
     if (name.trim() === "") return setNameError(t("errors.required"));
@@ -214,11 +222,12 @@ export function BudgetFormPage() {
         </p>
       ) : null}
 
+      {missingField() ? <p className="text-sm text-slate-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}
         </button>
-        <button type="button" className={buttonPrimary} onClick={() => void save()}>
+        <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingField() !== null}>
           {t("common.save")}
         </button>
       </div>

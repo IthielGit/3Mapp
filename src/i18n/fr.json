@@ -638,5 +638,9 @@
     "warning": "Toutes vos données sur cet appareil seront effacées. Pensez à télécharger une sauvegarde avant si vous voulez la garder.",
     "confirm": "Oui, recommencer",
     "group": "Réinitialisation"
+  },
+  "forms": {
+    "missingName": "Donnez un nom.",
+    "missingRate": "Saisissez un taux supérieur à 0."
   }
 }

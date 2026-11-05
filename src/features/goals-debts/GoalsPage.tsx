@@ -100,6 +100,13 @@ function GoalForm({ onDone }: { onDone: () => void }) {
   const [nameError, setNameError] = useState<string | undefined>();
   const currency: CurrencyCode = wallets[0]?.currency ?? "MGA";
 
+  function missingGoal(): string | null {
+    if (name.trim() === "") return t("forms.missingName");
+    const amount = parseMoney(target, currency);
+    if (amount === null || amount <= 0) return t("transactions.amountRequired");
+    return null;
+  }
+
   async function save() {
     setError(undefined);
     const amount = parseMoney(target, currency);
@@ -148,7 +155,8 @@ function GoalForm({ onDone }: { onDone: () => void }) {
           {error}
         </p>
       ) : null}
-      <button type="button" className={buttonPrimary} onClick={() => void save()}>
+      {missingGoal() ? <p className="text-sm text-slate-600 dark:text-muted">{missingGoal()}</p> : null}
+      <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingGoal() !== null}>
         {t("common.save")}
       </button>
     </div>
@@ -179,6 +187,12 @@ function GoalDetail({ id }: { id: string }) {
   if (!goal) return <p>{t("goals.notFound")}</p>;
   const p = goalProgress(goal.targetAmount, movements, new Date());
   const goalCurrency = goal.currency;
+
+  function missingMovement(): string | null {
+    const value = parseMoney(amount, goalCurrency);
+    if (value === null || value <= 0) return t("transactions.amountRequired");
+    return null;
+  }
 
   async function addMovement() {
     setError(undefined);
@@ -275,7 +289,8 @@ function GoalDetail({ id }: { id: string }) {
             {error}
           </p>
         ) : null}
-        <button type="button" className={buttonPrimary} onClick={() => void addMovement()}>
+        {missingMovement() ? <p className="text-sm text-slate-600 dark:text-muted">{missingMovement()}</p> : null}
+        <button type="button" className={buttonPrimary} onClick={() => void addMovement()} disabled={missingMovement() !== null}>
           {t("common.save")}
         </button>
       </div>

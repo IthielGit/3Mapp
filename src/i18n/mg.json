@@ -638,5 +638,9 @@
     "warning": "Ny angon-drakitra rehetra amin’ity fitaovana ity dia hofafana. Ataovy alohan’izay ny sauvegarde raha tianao ny hitahiry azy.",
     "confirm": "Eny, hanomboka indray",
     "group": "Averina"
+  },
+  "forms": {
+    "missingName": "Ampidiro ny anarana.",
+    "missingRate": "Ampidiro ny tahan'ny vola mihoatra ny 0."
   }
 }
