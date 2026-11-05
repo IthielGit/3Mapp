@@ -18,16 +18,21 @@ body {
 }
 
 :root.dark :focus-visible {
-  outline-color: #f5f5f7;
+  outline-color: #2dd4bf;
 }
 
 ::selection {
-  background: rgb(238 68 68 / 0.18);
+  background: rgb(15 118 110 / 0.18);
 }
 
 input,
 textarea {
-  caret-color: #ee4444;
+  caret-color: #0f766e;
+}
+
+:root.dark input,
+:root.dark textarea {
+  caret-color: #2dd4bf;
 }
 
 input::placeholder,
@@ -218,3 +223,10 @@ main > * {
   }
 }
 
+/* Cases et boutons radio dans la couleur de marque (et non le bleu par défaut du navigateur). */
+@layer base {
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: #0f766e;
+  }
+}

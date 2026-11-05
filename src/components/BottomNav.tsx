@@ -93,7 +93,7 @@ const SIDE = [
 ];
 
 const TAB =
-  "flex min-h-[60px] flex-col items-center justify-center gap-0.5 px-1 text-center text-[11px] transition-colors";
+  "flex min-h-[60px] flex-col items-center justify-center gap-0.5 px-1 text-center text-xs transition-colors";
 
 /**
  * Barre basse (téléphone) : Accueil, Transactions, « + » au centre (ajout rapide), Budgets, Visualisation.
@@ -108,7 +108,7 @@ export function BottomNav() {
         to={item.to}
         end={item.end ?? false}
         className={({ isActive }) =>
-          `${TAB} ${isActive ? "font-semibold text-brand-700 dark:text-brand-300" : "font-medium text-slate-600 dark:text-muted"}`
+          `${TAB} ${isActive ? "font-semibold text-brand-700 dark:text-brand-dark" : "font-medium text-stone-600 dark:text-muted"}`
         }
       >
         {({ isActive }) => (
@@ -124,7 +124,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t("nav.home")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-white/15 dark:bg-card"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-stone-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-white/15 dark:bg-card"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-[1fr_1fr_3.5rem_1fr_1fr] items-center">
         {LEFT.map((item) => (
@@ -134,11 +134,11 @@ export function BottomNav() {
           <Link
             to="/transactions/new"
             aria-label={t("nav.quickAdd")}
-            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:ring-card"
+            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:ring-card"
           >
             <span aria-hidden="true">+</span>
           </Link>
-          <span aria-hidden="true" className="mt-1 text-[11px] font-medium text-slate-600 dark:text-muted">
+          <span aria-hidden="true" className="mt-1 text-xs font-medium text-stone-600 dark:text-muted">
             {t("nav.add")}
           </span>
         </li>
@@ -156,11 +156,11 @@ export function SideNav() {
   return (
     <nav
       aria-label={t("nav.main")}
-      className="hidden md:sticky md:top-0 md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col md:gap-1 md:border-r md:border-slate-200 md:bg-white md:px-3 md:py-6 dark:md:border-white/15 dark:md:bg-card"
+      className="hidden md:sticky md:top-0 md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col md:gap-1 md:border-r md:border-stone-200 md:bg-white md:px-3 md:py-6 dark:md:border-white/15 dark:md:bg-card"
     >
       <Link
         to="/transactions/new"
-        className="mb-4 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 font-semibold text-white transition-transform duration-150 ease-out-strong active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="mb-4 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 font-semibold text-white transition-transform duration-150 ease-out-strong active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
       >
         <span aria-hidden="true" className="text-xl leading-none">
           +
@@ -176,8 +176,8 @@ export function SideNav() {
               className={({ isActive }) =>
                 `flex min-h-[44px] items-center gap-3 rounded-xl px-3 transition-colors ${
                   isActive
-                    ? "bg-brand-700/10 font-semibold text-brand-700 dark:text-brand-300"
-                    : "font-medium text-slate-600 hover:bg-slate-100 dark:text-muted dark:hover:bg-raised"
+                    ? "bg-brand-700/10 font-semibold text-brand-700 dark:text-brand-dark"
+                    : "font-medium text-stone-600 hover:bg-stone-100 dark:text-muted dark:hover:bg-raised"
                 }`
               }
             >

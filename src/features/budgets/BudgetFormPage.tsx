@@ -124,6 +124,11 @@ export function BudgetFormPage() {
             className={inputClass}
             value={amountText}
             onChange={(e) => setAmountText(e.target.value)}
+            onBlur={() => {
+              // À la sortie du champ, le montant reprend le format de la liste (300 000 au lieu de 300000).
+              const value = parseMoney(amountText, currency);
+              if (value !== null && value > 0) setAmountText(formatMoney(value, currency, { withSymbol: false }));
+            }}
           />
         </Field>
         <Field label={t("budgets.periodLabel")}>
@@ -171,7 +176,7 @@ export function BudgetFormPage() {
               checked={categoryIds.includes(c.id)}
               onChange={() => setCategoryIds((ids) => toggle(ids, c.id))}
             />
-            <span className="truncate">
+            <span>
               {c.icon} {c.name}
             </span>
           </label>
@@ -194,7 +199,7 @@ export function BudgetFormPage() {
         </p>
       ) : null}
 
-      {missingField() ? <p className="text-sm text-slate-600 dark:text-muted">{missingField()}</p> : null}
+      {missingField() ? <p className="text-sm text-stone-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}

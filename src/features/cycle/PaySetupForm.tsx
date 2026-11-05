@@ -39,23 +39,23 @@ const TONES = {
     label: "text-xs font-medium text-white",
     hint: "text-xs text-white",
     select:
-      "min-h-[44px] w-full rounded-xl bg-white px-3 text-base font-medium text-ink [color-scheme:light] outline-none focus:bg-slate-100",
+      "min-h-[44px] w-full rounded-xl bg-white px-3 text-base font-medium text-ink [color-scheme:light] outline-none focus:bg-stone-100",
     option:
-      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl bg-white/10 px-3 text-white has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-[#0a4f4a]",
-    submit: "min-h-[44px] rounded-xl bg-white font-semibold text-[#0a4f4a] disabled:bg-white/40 disabled:text-white",
+      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl bg-white/10 px-3 text-white has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-brand-900",
+    submit: "min-h-[44px] rounded-xl bg-white font-semibold text-brand-900 disabled:bg-white/25 disabled:text-teal-50",
     link: "inline-flex min-h-[44px] items-center text-white underline",
   },
   page: {
     form: "flex flex-col gap-4",
     title: "text-base font-semibold text-ink dark:text-fg",
     label: "text-sm font-medium text-ink dark:text-fg",
-    hint: "text-sm text-slate-600 dark:text-muted",
+    hint: "text-sm text-stone-600 dark:text-muted",
     select: inputClass,
     option:
-      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-3 text-ink has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-white/15 dark:text-fg dark:has-[:checked]:border-brand-300",
+      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-stone-200 px-3 text-ink has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-white/15 dark:text-fg dark:has-[:checked]:border-brand-dark",
     submit:
-      "min-h-[44px] rounded-xl bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-brand-300 dark:text-ink",
-    link: "inline-flex min-h-[44px] items-center text-brand-700 underline dark:text-brand-300",
+      "min-h-[44px] rounded-xl bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-brand-dark dark:text-ink",
+    link: "inline-flex min-h-[44px] items-center text-brand-700 underline dark:text-brand-dark",
   },
 } as const;
 
