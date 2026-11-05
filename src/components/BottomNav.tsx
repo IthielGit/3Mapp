@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-type IconName = "home" | "list" | "calendar" | "chart" | "wallet" | "user" | "budget";
+type IconName = "home" | "list" | "calendar" | "chart" | "wallet" | "user" | "budget" | "bars";
 
 /** Pictogrammes en trait : l'état actif s'exprime par la couleur et l'épaisseur du trait. */
 export function NavIcon({ name, active }: { name: IconName; active: boolean }) {
@@ -49,6 +49,12 @@ export function NavIcon({ name, active }: { name: IconName; active: boolean }) {
           <path d="M3 10h18M16.5 14.5h.01" />
         </svg>
       );
+    case "bars":
+      return (
+        <svg {...common}>
+          <path d="M5 20V12M12 20V5M19 20v-7" />
+        </svg>
+      );
     case "budget":
       return (
         <svg {...common}>
@@ -73,7 +79,7 @@ const LEFT = [
 ];
 const RIGHT = [
   { to: "/budgets", key: "nav.budgets", icon: "budget" as const },
-  { to: "/visualisation", key: "nav.visualisation", icon: "chart" as const },
+  { to: "/visualisation", key: "nav.visualisation", icon: "bars" as const },
 ];
 
 /** Écran large : toutes les entrées, dans une colonne latérale avec libellés complets. */
@@ -81,7 +87,7 @@ const SIDE = [
   { to: "/", key: "nav.home", icon: "home" as const, end: true },
   { to: "/transactions", key: "nav.transactions", icon: "list" as const },
   { to: "/budgets", key: "nav.budgets", icon: "budget" as const },
-  { to: "/visualisation", key: "nav.visualisation", icon: "chart" as const },
+  { to: "/visualisation", key: "nav.visualisation", icon: "bars" as const },
   { to: "/plus/wallets", key: "more.wallets", icon: "wallet" as const },
   { to: "/plus", key: "pages.more.title", icon: "user" as const },
 ];
