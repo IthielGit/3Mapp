@@ -257,3 +257,29 @@ main > * {
     }
   }
 }
+
+/* Champs qui apparaissent avec une réponse (jour et revenu après « Salaire à date fixe ») :
+   ils se déplient de quelques pixels vers le bas, pas d’un bloc. */
+.pay-reveal {
+  transition:
+    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .pay-reveal {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pay-reveal {
+    transition: opacity 150ms ease-out;
+  }
+  @starting-style {
+    .pay-reveal {
+      transform: none;
+    }
+  }
+}

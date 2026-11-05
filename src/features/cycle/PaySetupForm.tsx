@@ -142,7 +142,7 @@ export function PaySetupForm({
       </fieldset>
 
       {draft.mode === "fixed" ? (
-        <div className={needsCategory ? "grid grid-cols-2 gap-2" : "grid grid-cols-1 gap-2"}>
+        <div className={`pay-reveal ${needsCategory ? "grid grid-cols-2 gap-2" : "grid grid-cols-1 gap-2"}`}>
           <label className={`flex flex-col gap-1 ${style.label}`}>
             {t("cycle.paySetupDay")}
             <select className={style.select} value={draft.day} onChange={(e) => update({ day: Number(e.target.value) })}>
