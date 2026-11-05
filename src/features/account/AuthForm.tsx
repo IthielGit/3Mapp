@@ -2,6 +2,7 @@ import { useId, useState, type FormEvent, type ReactNode } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useTranslation } from "react-i18next";
 import { BrandMark } from "../../components/BrandMark";
+import { HelpTip } from "../../components/HelpTip";
 import {
   sendPasswordReset,
   signInWithEmail,
@@ -110,6 +111,11 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
       </header>
 
       <section className={`relative mx-auto mt-auto w-full max-w-md rounded-t-[2rem] bg-white px-6 pb-4 pt-5 shadow-[0_-8px_30px_rgba(11,18,32,0.08)] [@media(max-height:720px)]:pt-4 dark:bg-card`}>
+        {isSignUp ? (
+          <div className="absolute right-4 top-4 [@media(min-height:720px)]:hidden">
+            <HelpTip title={t("account.privacy.consentTitle")} paragraphs={[t("account.privacy.consent")]} />
+          </div>
+        ) : null}
         <div className="mb-3 flex flex-col gap-0.5">
           <h1 className={`text-2xl font-semibold text-ink dark:text-fg [@media(max-height:720px)]:text-xl`}>
             {isSignUp ? t("account.screen.createTitle") : t("account.screen.welcomeTitle")}
@@ -220,6 +226,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
             {isSignUp ? t("account.createButton") : t("account.signInButton")}
           </button>
         </form>
+        {isSignUp ? <p className="mt-2 text-xs text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden">{t("account.privacy.consent")}</p> : null}
 
         <div className={`my-3 [@media(max-height:720px)]:my-2 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500`}>
           <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
@@ -239,6 +246,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
           {t("account.google")}
         </button>
 
+        {!isSignUp ? (
         <p className={`mt-3 text-center text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden`}>
           {isSignUp ? t("account.haveAccount") : t("account.noAccount")}{" "}
           <button
@@ -249,6 +257,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
             {isSignUp ? t("account.signIn") : t("account.signUp")}
           </button>
         </p>
+        ) : null}
       </section>
     </main>
   );

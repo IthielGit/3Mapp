@@ -819,6 +819,20 @@
       "needBackup": "Download a backup first so you can erase this device's data.",
       "replaceConfirm": "Erase this device's data and use only this account? Without your backup, the data will be lost.",
       "signOutConfirm": "Signing out erases this device's data. Continue?"
+    },
+    "privacy": {
+      "export": "Export my data",
+      "exportError": "The export could not be created. Try again.",
+      "deleteTitle": "Delete my account",
+      "deleteHint": "Permanently deletes your account, your data on the server and this device's data. Export your data first if you want to keep it.",
+      "delete": "Permanently delete my account",
+      "deleteConfirm": "Permanently delete your account and all your data? This cannot be undone. Have you exported your data?",
+      "consent": "An administrator can view your account data.",
+      "error": {
+        "network": "Deletion needs a connection. Nothing was erased.",
+        "unknown": "Deletion failed. Nothing was erased. Try again."
+      },
+      "consentTitle": "Your data"
     }
   },
   "admin": {

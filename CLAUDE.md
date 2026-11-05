@@ -3,7 +3,7 @@
 ## Mission
 
 Construire une application de gestion de finances personnelles complète, utilisable sur mobile
-comme une app installée (PWA), **offline-first**, sans serveur obligatoire. Tout est détaillé dans
+comme une app installée (PWA), **offline-first**. Un compte est obligatoire : la synchronisation passe par un service (Supabase), voir SPEC §5.18. Tout est détaillé dans
 `SPEC.md` (quoi) et `ROADMAP.md` (dans quel ordre). Lis les deux avant de coder.
 
 ## Règles absolues
@@ -11,7 +11,7 @@ comme une app installée (PWA), **offline-first**, sans serveur obligatoire. Tou
 - Original uniquement : ne copie aucun code, nom, logo, icône ou texte d'une app existante.
 - Les montants sont des **entiers en unités mineures** (jamais de float). Voir SPEC §3.
 - Le solde d'un portefeuille est **calculé** à partir des transactions, jamais stocké.
-- Les données restent sur l'appareil (IndexedDB). Aucun envoi réseau sans action explicite de l'utilisateur.
+- Les données restent sur l'appareil (IndexedDB) et sont synchronisées avec le compte de l'utilisateur. Aucune donnée n'est envoyée sans compte connecté. Pas de chiffrement de bout en bout (décision du propriétaire).
 - Chaque phase du ROADMAP se termine par : tests verts, `npm run build` OK, commit.
 - Ne passe à la phase suivante que si les critères d'acceptation de la phase en cours sont remplis.
 
@@ -23,7 +23,7 @@ comme une app installée (PWA), **offline-first**, sans serveur obligatoire. Tou
 - React Router, Zustand (état UI uniquement : filtres, thème, verrouillage)
 - Recharts (graphiques), date-fns, Zod (validation), Papa Parse (CSV), ExcelJS (export XLSX)
 - vite-plugin-pwa (service worker, manifest, raccourcis)
-- i18next (fr par défaut, en, mg)
+- i18next (fr par défaut, en)
 - Vitest + Testing Library (unitaire), Playwright (e2e mobile viewport 390×844)
 
 ## Structure
@@ -36,7 +36,7 @@ src/
                  templates, stats, import-export, backup, security, settings
   components/    UI partagée (BottomSheet, AmountInput, Calculator, IconPicker, ...)
   lib/           money.ts, dates.ts, csv.ts, crypto.ts
-  i18n/          fr.json, en.json, mg.json
+  i18n/          fr.json, en.json
 tests/           unit + e2e
 ```
 

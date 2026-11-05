@@ -4,6 +4,7 @@ import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { RuleError } from "../../db/errors";
 import { attachmentSchema, settingsSchema, type Attachment } from "../../db/entities";
 import { fromBase64, toBase64 } from "../../lib/base64";
+import { isSyncTracking } from "../../db/sync-tracking";
 import {
   attachmentFileSchema,
   BACKUP_FORMAT,
@@ -173,6 +174,8 @@ export async function restoreBackup(
   database: AppDatabase = defaultDb,
 ): Promise<number> {
   let written = 0;
+  // Synchro active + remplacement : les versions restaurées doivent l'emporter sur celles du compte (le plus récent gagne).
+  const stamp = mode === "replace" && isSyncTracking() ? new Date().toISOString() : undefined;
   await database.transaction("rw", database.tables, async () => {
     if (mode === "replace") {
       for (const table of database.tables) await table.clear();
@@ -186,7 +189,7 @@ export async function restoreBackup(
           const local = (await table.get(record.id)) as StoredRecord | undefined;
           if (local && local.updatedAt >= record.updatedAt) continue;
         }
-        await table.put(record);
+        await table.put(stamp ? { ...record, updatedAt: stamp } : record);
         written++;
       }
     }

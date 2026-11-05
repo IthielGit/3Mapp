@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { useSyncStatus } from "../sync/useSyncStatus";
 import { useAccount } from "./AccountProvider";
 import { signOutAndClear } from "./sign-out";
+import { deleteOwnAccount } from "./delete-account";
+import { downloadLocalBackup } from "../backup/export-backup";
 
 /** Page Compte : identité, état de la synchronisation, déconnexion. La connexion est obligatoire (AccountGate). */
 export function AccountPage() {
@@ -15,6 +17,8 @@ export function AccountPage() {
   const account = useAccount();
   const sync = useSyncStatus();
   const [signingOut, setSigningOut] = useState(false);
+  const [exportError, setExportError] = useState(false);
+  const [deleteError, setDeleteError] = useState<"network" | "unknown" | undefined>();
 
   if (account.status !== "signedIn") {
     return (
@@ -46,6 +50,31 @@ export function AccountPage() {
 
   const shownError = sync.error;
 
+  /** Export RGPD : une sauvegarde complète de cet appareil, téléchargée. */
+  async function exportData() {
+    setExportError(false);
+    try {
+      await downloadLocalBackup();
+    } catch {
+      setExportError(true);
+    }
+  }
+
+  /** Suppression définitive du compte et de ses données (serveur puis appareil). */
+  async function removeAccount() {
+    const confirmed = await askConfirm({
+      message: t("account.privacy.deleteConfirm"),
+      confirmLabel: t("account.privacy.delete"),
+      danger: true,
+    });
+    if (!confirmed) return;
+    setSigningOut(true);
+    setDeleteError(undefined);
+    const result = await deleteOwnAccount(client);
+    setSigningOut(false);
+    if (!result.ok) setDeleteError(result.code === "network" ? "network" : "unknown");
+  }
+
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
@@ -76,9 +105,31 @@ export function AccountPage() {
       </div>
 
       <p className="text-sm text-neutral-600 dark:text-muted">{t("account.localNotice")}</p>
+      <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void exportData()}>
+        {t("account.privacy.export")}
+      </button>
+      {exportError ? (
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">{t("account.privacy.exportError")}</p>
+      ) : null}
       <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void signOut()}>
         {t("account.signOut")}
       </button>
+
+      <section className="flex flex-col gap-2 rounded-card border border-red-200 p-4 dark:border-red-400/30">
+        <h2 className="font-semibold">{t("account.privacy.deleteTitle")}</h2>
+        <p className="text-sm text-neutral-600 dark:text-muted">{t("account.privacy.deleteHint")}</p>
+        <button
+          type="button"
+          className="min-h-[44px] rounded-xl bg-red-700 font-semibold text-white disabled:opacity-50"
+          disabled={busy}
+          onClick={() => void removeAccount()}
+        >
+          {t("account.privacy.delete")}
+        </button>
+        {deleteError ? (
+          <p role="alert" className="text-sm text-red-700 dark:text-red-400">{t(`account.privacy.error.${deleteError}`)}</p>
+        ) : null}
+      </section>
     </section>
   );
 }
