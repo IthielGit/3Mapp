@@ -345,6 +345,12 @@ export function HomePage() {
           <p className="text-xs text-slate-600 dark:text-muted">
             {payLine(cycleView.pay)}
           </p>
+          {cycleView.pay.kind === "unset" && cycleView.runway ? (
+            <p className="text-xs text-slate-600 dark:text-muted">
+              {t("cycle.runway", { days: cycleView.runway.days })} ·{" "}
+              {t(`cycle.confidence.${cycleView.runway.confidence}`)}
+            </p>
+          ) : null}
           {cycleView.plannedSaving !== undefined ? (
             <p className="text-xs text-slate-600 dark:text-muted">
               {t("cycle.plannedSaving", {

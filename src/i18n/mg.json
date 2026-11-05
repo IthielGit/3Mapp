@@ -669,6 +669,12 @@
     "payLate": "Karama tara {{days}} andro",
     "paySet": "Safidio ny karamako",
     "addPay": "Ampidiro ny karamako",
-    "plannedSaving": "Tahiry andrasana: {{amount}}"
+    "plannedSaving": "Tahiry andrasana: {{amount}}",
+    "runway": "Mety hitana andro {{days}} eo ianao",
+    "confidence": {
+      "fragile": "tombana tsy azo antoka: latsaky ny 2 herinandro ny fanoratana",
+      "approx": "eo ho eo: latsaky ny iray volana ny fanoratana",
+      "solid": "miorina amin’ny andro 30 farany"
+    }
   }
 }
