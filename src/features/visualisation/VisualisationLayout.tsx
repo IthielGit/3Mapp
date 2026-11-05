@@ -15,7 +15,8 @@ export function VisualisationLayout() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="relative mx-auto inline-flex items-center gap-1 text-center text-xl font-semibold text-ink dark:text-fg">
+      <h1 className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex justify-center bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] text-center text-xl font-semibold text-ink dark:bg-page dark:text-fg">
+        <span className="relative inline-flex items-center gap-1">
         <label className="sr-only" htmlFor="visualisation-view">
           {t("nav.visualisation")}
         </label>
@@ -45,6 +46,7 @@ export function VisualisationLayout() {
         >
           <path d="M5 8l5 5 5-5" />
         </svg>
+        </span>
       </h1>
       <Outlet />
     </div>

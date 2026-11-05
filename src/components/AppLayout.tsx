@@ -22,7 +22,8 @@ function HeaderRow({
   onActionsSlot: (el: HTMLDivElement | null) => void;
 }) {
   return (
-    <div className="-mx-4 mb-3 flex min-h-11 items-center gap-3 px-4">
+    // Collée en haut pendant le défilement ; son fond couvre la zone de l'encoche.
+    <div className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] mb-3 flex min-h-11 items-center gap-3 bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
       <BackButton />
       <div ref={onTitleSlot} className="flex min-w-0 flex-1 items-center" />
       <div ref={onActionsSlot} className="flex shrink-0 items-center justify-end" />

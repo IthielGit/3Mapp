@@ -277,7 +277,7 @@ export function HomePage() {
       <h1 className="sr-only">{t("nav.home")}</h1>
 
       {/* En-tête : « Bienvenue », le mois en cours, et l'engrenage seul. */}
-      <header className="flex items-center justify-between pb-1 pt-3">
+      <header className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex items-center justify-between bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
         <div className="flex items-center gap-3">
           <BrandMark size={44} className="shrink-0 rounded-xl shadow-sm" />
           <div className="flex flex-col">
