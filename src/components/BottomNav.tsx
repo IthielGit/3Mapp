@@ -94,7 +94,7 @@ export function BottomNav() {
         to={item.to}
         end={item.end ?? false}
         className={({ isActive }) =>
-          `${TAB} ${isActive ? "font-semibold text-accent" : "font-medium text-slate-500 dark:text-muted"}`
+          `${TAB} ${isActive ? "font-semibold text-brand-700 dark:text-brand-300" : "font-medium text-slate-500 dark:text-muted"}`
         }
       >
         {({ isActive }) => (
@@ -120,7 +120,7 @@ export function BottomNav() {
           <Link
             to="/transactions/new"
             aria-label={t("nav.quickAdd")}
-            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:ring-card"
+            className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-3xl leading-none text-white shadow-lg ring-4 ring-white transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:ring-card"
           >
             <span aria-hidden="true">+</span>
           </Link>
@@ -146,7 +146,7 @@ export function SideNav() {
     >
       <Link
         to="/transactions/new"
-        className="mb-4 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-accent px-4 font-semibold text-white transition-transform duration-150 ease-out-strong active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="mb-4 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 font-semibold text-white transition-transform duration-150 ease-out-strong active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <span aria-hidden="true" className="text-xl leading-none">
           +
@@ -162,7 +162,7 @@ export function SideNav() {
               className={({ isActive }) =>
                 `flex min-h-[44px] items-center gap-3 rounded-xl px-3 transition-colors ${
                   isActive
-                    ? "bg-accent/10 font-semibold text-accent"
+                    ? "bg-brand-700/10 font-semibold text-brand-700 dark:text-brand-300"
                     : "font-medium text-slate-600 hover:bg-slate-100 dark:text-muted dark:hover:bg-raised"
                 }`
               }

@@ -33,7 +33,7 @@ export function BudgetsPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
-        <PageTitle className="text-2xl font-bold">{t("budgets.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("budgets.title")}</PageTitle>
         <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
           {t("common.add")}
         </Link>

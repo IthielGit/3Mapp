@@ -172,8 +172,8 @@
     "movements": "Movements",
     "noMovements": "No movements yet.",
     "notFound": "Wallet not found.",
-    "deleteConfirm": "Permanently delete this wallet?",
-    "deleteBlocked": "This wallet is in use. Archive it instead of deleting it."
+    "deleteConfirm": "Delete this account? You won’t be able to undo this.",
+    "deleteBlocked": "This account already has transactions. You can archive it instead."
   },
   "categories": {
     "title": "Categories",
@@ -188,7 +188,7 @@
     "subPlaceholder": "New subcategory",
     "subDeleteBlocked": "This subcategory is in use and cannot be deleted.",
     "deleteConfirm": "Delete this category and its subcategories?",
-    "deleteBlocked": "This category is in use. Archive it or merge it into another one.",
+    "deleteBlocked": "This category already has transactions. Archive it, or merge it into another one.",
     "merge": "Merge",
     "mergeHint": "All transactions in this category will be moved to the chosen category, then this category will be deleted.",
     "mergeTarget": "Merge into…",
@@ -198,7 +198,7 @@
     "title": "Transactions",
     "newTitle": "New transaction",
     "editTitle": "Edit transaction",
-    "empty": "No transactions. Tap + to add one.",
+    "empty": "Nothing yet. Tap + to add your first expense or income.",
     "count": "{{count}} transaction(s)",
     "search": "Search",
     "searchPlaceholder": "Search a memo or a category",
@@ -350,7 +350,7 @@
     "payment": "Payment",
     "addPayment": "Record payment",
     "linkWallet": "Also create the transaction in",
-    "tooMuch": "The payment exceeds the remaining amount due.",
+    "tooMuch": "This amount is more than what is left to pay back.",
     "deleteConfirm": "Delete this debt and its payments?"
   },
   "recurring": {
@@ -401,7 +401,7 @@
     "open": "Reconcile balance",
     "computed": "Calculated balance",
     "real": "Actual balance observed",
-    "gap": "Difference to correct: {{amount}}",
+    "gap": "There is a {{amount}} gap with your real balance. Create an adjustment to fix it.",
     "noGap": "No difference: the balances match.",
     "memo": "Reason (optional)",
     "button": "Create adjustment",
@@ -627,8 +627,8 @@
   "resetAccount": {
     "button": "Reset account",
     "title": "Reset account?",
-    "warning": "All data on this device will be deleted: wallets, transactions, categories, budgets, goals, debts, recurring items and attachments. This cannot be undone. Export a backup first if you want to keep it.",
-    "confirm": "Delete everything",
+    "warning": "All your data on this device will be erased. Consider downloading a backup first if you want to keep it.",
+    "confirm": "Yes, start again",
     "group": "Reset"
   }
 }

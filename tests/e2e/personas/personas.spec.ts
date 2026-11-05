@@ -493,11 +493,11 @@ test("persona 5 — changement de téléphone : sauvegarde, restauration, hors l
 
   await j.step("réinitialisation du compte", async () => {
     await next.goto("/plus");
-    // 1. Ouvrir la ligne « Réinitialiser le compte ». 2. Son bouton rouge « Tout supprimer ».
+    // 1. Ouvrir la ligne « Réinitialiser le compte ». 2. Son bouton rouge « Oui, recommencer ».
     // 3. Confirmer dans la feuille (dialogue).
     await next.getByRole("button", { name: "Réinitialiser le compte", exact: true }).click();
-    await next.getByRole("button", { name: "Tout supprimer", exact: true }).first().click();
-    await next.getByRole("dialog").getByRole("button", { name: "Tout supprimer", exact: true }).click();
+    await next.getByRole("button", { name: "Oui, recommencer", exact: true }).first().click();
+    await next.getByRole("dialog").getByRole("button", { name: "Oui, recommencer", exact: true }).click();
     await expect(
       next.getByRole("heading", { level: 1, name: "Vos finances deviennent simples !" }),
     ).toBeVisible({ timeout: 15_000 });

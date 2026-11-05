@@ -20,22 +20,22 @@ export default {
       colors: {
         // Palette « bleu calme » : marque, boutons, liens, onglets actifs.
         // brand-700 (#1E40AF) est la couleur principale ; le texte clair s'utilise en mode sombre.
-        // Palette « Cosmo » : noir pour les actions et les textes, gris de fond, rouge en accent ponctuel.
-        // brand-700 (noir) est la couleur d'action principale ; brand-300 (clair) sert aux textes sombres.
+        // Palette chaleureuse : bleu-vert profond pour les actions, fond crème, rouge réservé aux dépenses et aux suppressions.
+        // brand-700 (bleu-vert) est la couleur d’action principale ; brand-300 (clair) sert aux textes sombres.
         brand: {
-          50: "#f5f5f7",
-          100: "#e8e8ec",
-          200: "#d4d4da",
+          50: "#f0faf9",
+          100: "#d9f2ef",
+          200: "#b3e4de",
           300: "#f5f5f7",
-          400: "#8e8e96",
-          500: "#5c5c64",
-          600: "#3f3f45",
-          700: "#1a1a1b",
-          800: "#111112",
-          900: "#0a0a0b",
+          400: "#4fa39a",
+          500: "#2d8a80",
+          600: "#13776e",
+          700: "#0f766e",
+          800: "#0b5d57",
+          900: "#084642",
         },
         accent: { DEFAULT: "#ee4444", 600: "#d93a3a" },
-        canvas: "#f0f1f6",
+        canvas: "#f6f3ee",
         ink: "#1a1a1b",
         card: "#26262d",
         page: "#1c1c22",
@@ -52,7 +52,7 @@ export default {
         "out-strong": "cubic-bezier(0.23, 1, 0.32, 1)",
       },
       borderRadius: {
-        card: "1rem",
+        card: "1.25rem",
       },
     },
   },

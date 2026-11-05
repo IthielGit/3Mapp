@@ -172,8 +172,8 @@
     "movements": "Mouvements",
     "noMovements": "Aucun mouvement pour le moment.",
     "notFound": "Portefeuille introuvable.",
-    "deleteConfirm": "Supprimer définitivement ce portefeuille ?",
-    "deleteBlocked": "Ce portefeuille est utilisé. Archivez-le plutôt que de le supprimer."
+    "deleteConfirm": "Supprimer ce compte ? Vous ne pourrez pas revenir en arrière.",
+    "deleteBlocked": "Ce compte contient déjà des opérations. Vous pouvez le ranger en l’archivant."
   },
   "categories": {
     "title": "Catégories",
@@ -188,7 +188,7 @@
     "subPlaceholder": "Nouvelle sous-catégorie",
     "subDeleteBlocked": "Cette sous-catégorie est utilisée et ne peut pas être supprimée.",
     "deleteConfirm": "Supprimer cette catégorie et ses sous-catégories ?",
-    "deleteBlocked": "Cette catégorie est utilisée. Archivez-la ou fusionnez-la avec une autre.",
+    "deleteBlocked": "Cette catégorie contient déjà des opérations. Vous pouvez la ranger en l’archivant, ou la fusionner avec une autre.",
     "merge": "Fusionner",
     "mergeHint": "Toutes les opérations de cette catégorie seront transférées vers la catégorie choisie, puis cette catégorie sera supprimée.",
     "mergeTarget": "Fusionner dans…",
@@ -198,7 +198,7 @@
     "title": "Transactions",
     "newTitle": "Nouvelle transaction",
     "editTitle": "Modifier la transaction",
-    "empty": "Aucune transaction. Appuyez sur + pour en ajouter une.",
+    "empty": "Rien pour l’instant. Appuyez sur + pour noter votre première dépense ou un revenu.",
     "count": "{{count}} transaction(s)",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher un mémo ou une catégorie",
@@ -350,7 +350,7 @@
     "payment": "Paiement",
     "addPayment": "Enregistrer le paiement",
     "linkWallet": "Créer aussi la transaction dans",
-    "tooMuch": "Le paiement dépasse le reste dû.",
+    "tooMuch": "Ce montant est plus grand que ce qu’il reste à rembourser.",
     "deleteConfirm": "Supprimer cette dette et ses paiements ?"
   },
   "recurring": {
@@ -401,7 +401,7 @@
     "open": "Réconcilier le solde",
     "computed": "Solde calculé",
     "real": "Solde réel constaté",
-    "gap": "Écart à corriger : {{amount}}",
+    "gap": "Écart de {{amount}} avec votre solde réel. Créez un ajustement pour le corriger.",
     "noGap": "Aucun écart : les soldes concordent.",
     "memo": "Motif (facultatif)",
     "button": "Créer l'ajustement",
@@ -627,8 +627,8 @@
   "resetAccount": {
     "button": "Réinitialiser le compte",
     "title": "Réinitialiser le compte ?",
-    "warning": "Toutes les données de cet appareil seront supprimées : portefeuilles, transactions, catégories, budgets, objectifs, dettes, récurrences et pièces jointes. Cette action est irréversible. Exportez une sauvegarde avant si vous voulez la garder.",
-    "confirm": "Tout supprimer",
+    "warning": "Toutes vos données sur cet appareil seront effacées. Pensez à télécharger une sauvegarde avant si vous voulez la garder.",
+    "confirm": "Oui, recommencer",
     "group": "Réinitialisation"
   }
 }

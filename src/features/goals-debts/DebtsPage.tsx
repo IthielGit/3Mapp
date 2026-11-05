@@ -31,7 +31,7 @@ function DebtList() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
-        <PageTitle className="text-2xl font-bold">{t("debts.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("debts.title")}</PageTitle>
         <button type="button" className={buttonPrimary} onClick={() => setCreating((c) => !c)}>
           {t("common.add")}
         </button>
@@ -218,7 +218,7 @@ function DebtDetail({ id }: { id: string }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-bold">{debt.counterparty}</PageTitle>
+      <PageTitle className="text-2xl font-semibold">{debt.counterparty}</PageTitle>
       <p className="text-sm text-slate-500">{t(`debts.status.${state.status}`)}</p>
       <div className="grid grid-cols-2 gap-2 text-sm">
         <Figure label={t("debts.principal")} value={formatMoney(debt.principal, debt.currency)} />

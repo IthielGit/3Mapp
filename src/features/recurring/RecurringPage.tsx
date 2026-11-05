@@ -30,7 +30,7 @@ export function RecurringPage() {
   return (
     <section className="flex flex-col gap-6">
       <header className="flex items-center justify-between gap-2">
-        <PageTitle className="text-2xl font-bold">{t("recurring.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("recurring.title")}</PageTitle>
         <Link to="/plus/recurring/new" className={buttonPrimary + " inline-flex items-center"}>
           {t("common.add")}
         </Link>
@@ -146,7 +146,7 @@ export function RecurringDetailPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {r.memo || t(`transactions.types.${r.type}`)}
       </PageTitle>
       <p className="text-sm text-slate-500">

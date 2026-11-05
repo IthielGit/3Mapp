@@ -12,13 +12,13 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-end px-6 pb-10 pt-[max(2rem,env(safe-area-inset-top))]">
         <div className="flex flex-col gap-6">
           <span className="flex items-center gap-2 text-lg font-semibold">
-            <span aria-hidden="true" className="inline-block h-6 w-6 rounded-md bg-accent" />
+            <span aria-hidden="true" className="inline-block h-6 w-6 rounded-md bg-brand-700" />
             {t("app.title")}
           </span>
           <h1 className="text-[40px] font-semibold leading-[1.1] tracking-tight">
             {t("onboarding.introLead")}{" "}
             <span className="whitespace-nowrap">
-              <span className="text-accent">{t("onboarding.introAccent")}</span>
+              <span className="text-brand-700 dark:text-brand-300">{t("onboarding.introAccent")}</span>
               {t("onboarding.introEnd")}
             </span>
           </h1>

@@ -56,7 +56,7 @@ export function PreferencesSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
+      <h2 className="px-1 text-sm font-semibold text-slate-500 dark:text-muted">
         {t("prefs.title")}
       </h2>
       <div className="flex flex-col gap-4 rounded-card border border-slate-200 p-4 dark:border-white/15">

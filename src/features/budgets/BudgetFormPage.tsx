@@ -95,7 +95,7 @@ export function BudgetFormPage() {
 
   return (
     <section className="flex flex-col gap-3">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {existing ? t("budgets.editTitle") : t("budgets.newTitle")}
       </PageTitle>
 

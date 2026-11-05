@@ -172,8 +172,8 @@
     "movements": "Fihetsehana",
     "noMovements": "Tsy misy fihetsehana amin'izao fotoana izao.",
     "notFound": "Tsy hita ny kitapo vola.",
-    "deleteConfirm": "Esorina mandrakizay ity kitapo vola ity ?",
-    "deleteBlocked": "Ampiasaina ity kitapo vola ity. Atao tahiry kosa izany fa aza esorina."
+    "deleteConfirm": "Hofafana ity kaonty ity ? Tsy azo averina intsony izany.",
+    "deleteBlocked": "Efa misy fifanaovana ity kaonty ity. Azonao atao ny manarina azy kosa."
   },
   "categories": {
     "title": "Sokajy",
@@ -188,7 +188,7 @@
     "subPlaceholder": "Sokajy kely vaovao",
     "subDeleteBlocked": "Ampiasaina io sokajy kely io ary tsy azo esorina.",
     "deleteConfirm": "Esorina ity sokajy ity sy ny sokajy kely ao aminy ?",
-    "deleteBlocked": "Ampiasaina ity sokajy ity. Atao tahiry na ampiraiko amin'ny sokajy hafa.",
+    "deleteBlocked": "Efa misy fifanaovana ity sokajy ity. Azonao atao ny manarina na mampiray azy amin’ny sokajy hafa.",
     "merge": "Ampiraiko",
     "mergeHint": "Ny fifanakalozana rehetra amin'ity sokajy ity dia hosoloina ho any amin'ny sokajy voafidy, avy eo dia ho esorina ity sokajy ity.",
     "mergeTarget": "Ampiraiko ao amin'ny…",
@@ -198,7 +198,7 @@
     "title": "Fifanakalozan-vola",
     "newTitle": "Fifanakalozana vaovao",
     "editTitle": "Ovaina ny fifanakalozana",
-    "empty": "Tsy misy fifanakalozana. Tsindrio + mba hanampy iray.",
+    "empty": "Tsy misy mbola. Tsindrio + mba hanampiana ny fandaniana voalohany na ny fidiram-bola.",
     "count": "Fifanakalozana {{count}}",
     "search": "Hitady",
     "searchPlaceholder": "Hitady memo na sokajy",
@@ -350,7 +350,7 @@
     "payment": "Fandoavam-bola",
     "addPayment": "Tehirizo ny fandoavam-bola",
     "linkWallet": "Mamorona koa ny fifanakalozana ao amin'ny",
-    "tooMuch": "Lasa ny fandoavam-bola noho ny sisa tokony haloa.",
+    "tooMuch": "Mihoatra ny vola tokony haverina ity.",
     "deleteConfirm": "Esorina ity trosa ity sy ny fandoavany ?"
   },
   "recurring": {
@@ -401,7 +401,7 @@
     "open": "Hampifanaraka ny tahiry",
     "computed": "Tahiry voakajy",
     "real": "Tahiry marina hita",
-    "gap": "Fahasamihafana hanitsiana : {{amount}}",
+    "gap": "Misy {{amount}} tsy mifanaraka amin’ny soldy marina. Mamorona ajustement mba hanitsiana azy.",
     "noGap": "Tsy misy fahasamihafana : mifanaraka ny tahiry.",
     "memo": "Antony (safidy)",
     "button": "Mamorona ny fanitsiana",
@@ -627,8 +627,8 @@
   "resetAccount": {
     "button": "Averina ny kaonty",
     "title": "Averina ny kaonty?",
-    "warning": "Hofafana ao amin'ity fitaovana ity ny angon-drakitra rehetra : kaonty, fifandraisana, sokajy, tetibola, tanjona, trosa, fandoavana mandavaka ary fanampiny. Tsy azo averina io. Raiso aloha ny backup raha tianao ny hitahiry azy.",
-    "confirm": "Fafao ny rehetra",
+    "warning": "Ny angon-drakitra rehetra amin’ity fitaovana ity dia hofafana. Ataovy alohan’izay ny sauvegarde raha tianao ny hitahiry azy.",
+    "confirm": "Eny, hanomboka indray",
     "group": "Averina"
   }
 }

@@ -23,7 +23,7 @@ export function CategoriesPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
-        <PageTitle className="text-2xl font-bold">{t("categories.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("categories.title")}</PageTitle>
         <Link
           to={`/plus/categories/new?kind=${kind}`}
           className={buttonPrimary + " inline-flex items-center"}

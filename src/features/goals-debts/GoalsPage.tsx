@@ -34,7 +34,7 @@ function GoalList() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
-        <PageTitle className="text-2xl font-bold">{t("goals.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("goals.title")}</PageTitle>
         <button type="button" className={buttonPrimary} onClick={() => setCreating((c) => !c)}>
           {t("common.add")}
         </button>
@@ -201,7 +201,7 @@ function GoalDetail({ id }: { id: string }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {goal.icon} {goal.name}
       </PageTitle>
       <p className="text-lg">

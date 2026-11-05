@@ -38,7 +38,7 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-muted">
+      <h2 className="px-1 text-sm font-semibold text-slate-500 dark:text-muted">
         {title}
       </h2>
       <div className="rounded-card border border-slate-200 dark:border-white/15">{children}</div>
@@ -63,7 +63,7 @@ export function MorePage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <PageTitle className="text-2xl font-bold">{t("pages.more.title")}</PageTitle>
+      <PageTitle className="text-2xl font-semibold">{t("pages.more.title")}</PageTitle>
 
       <PreferencesSection />
 

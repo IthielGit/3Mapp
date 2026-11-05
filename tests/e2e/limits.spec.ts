@@ -51,7 +51,7 @@ test("portefeuille utilisé : la suppression est refusée", async ({ page }) => 
   acceptNextDialog(page);
   await page.getByRole("menuitem", { name: "Supprimer", exact: true }).click();
   await expect(
-    page.getByText("Ce portefeuille est utilisé. Archivez-le plutôt que de le supprimer."),
+    page.getByText("Ce compte contient déjà des opérations. Vous pouvez le ranger en l’archivant."),
   ).toBeVisible();
 });
 
@@ -63,7 +63,7 @@ test("catégorie utilisée : la suppression est refusée", async ({ page }) => {
   await page.getByRole("link", { name: /Alimentation/ }).click();
   acceptNextDialog(page);
   await page.getByRole("button", { name: "Supprimer", exact: true }).last().click();
-  await expect(page.getByText(/Cette catégorie est utilisée/)).toBeVisible();
+  await expect(page.getByText(/Cette catégorie contient déjà des opérations/)).toBeVisible();
 });
 
 test("montant zéro : la saisie est refusée", async ({ page }) => {
@@ -122,7 +122,7 @@ test("dette « Je dois » : paiement trop élevé refusé", async ({ page }) => 
   await page.getByRole("link", { name: /Rakoto/ }).click();
   await page.getByLabel(/Paiement/).fill("60000");
   await page.getByRole("button", { name: "Enregistrer le paiement" }).click();
-  await expect(page.getByText("Le paiement dépasse le reste dû.")).toBeVisible();
+  await expect(page.getByText("Ce montant est plus grand que ce qu’il reste à rembourser.")).toBeVisible();
 });
 
 test("réconciliation : l'écart crée un ajustement", async ({ page }) => {
@@ -132,7 +132,7 @@ test("réconciliation : l'écart crée un ajustement", async ({ page }) => {
   await openWalletMenu(page);
   await page.getByRole("menuitem", { name: "Réconcilier le solde" }).click();
   await page.getByLabel("Solde réel constaté").fill("5000");
-  await expect(page.getByText(/Écart à corriger/)).toBeVisible();
+  await expect(page.getByText(/Écart de /)).toBeVisible();
   await page.getByRole("button", { name: "Créer l'ajustement" }).click();
   await expect(page.getByText("Réconciliation enregistrée.")).toBeVisible();
 });

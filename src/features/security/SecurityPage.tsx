@@ -63,7 +63,7 @@ export function SecurityPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <PageTitle className="text-2xl font-bold">{t("security.title")}</PageTitle>
+      <PageTitle className="text-2xl font-semibold">{t("security.title")}</PageTitle>
 
       <section className="flex flex-col gap-3">
         <h2 className="font-semibold">{t("security.pinTitle")}</h2>

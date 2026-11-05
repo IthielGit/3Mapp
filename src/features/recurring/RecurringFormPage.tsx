@@ -98,7 +98,7 @@ export function RecurringFormPage() {
 
   return (
     <section className="flex flex-col gap-3">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {editId ? t("recurring.editTitle") : t("recurring.newTitle")}
       </PageTitle>
 

@@ -255,7 +255,7 @@ export function TransactionsPage() {
               onClick={() => setSelectMode((m) => !m)}
               aria-pressed={selectMode}
               className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
-                selectMode ? "bg-accent text-white" : "text-accent"
+                selectMode ? "bg-brand-700 text-white" : "text-brand-700 dark:text-brand-300"
               }`}
             >
               {selectMode ? t("transactions.selectDone") : t("transactions.select")}
@@ -282,13 +282,13 @@ export function TransactionsPage() {
           </span>
           <div className="flex items-center gap-3">
             {activeFilterCount > 0 ? (
-              <button type="button" className="font-medium text-accent" onClick={resetAll}>
+              <button type="button" className="font-medium text-brand-700 dark:text-brand-300" onClick={resetAll}>
                 {t("transactions.resetFilters")}
               </button>
             ) : null}
             <button
               type="button"
-              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-accent"
+              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-brand-700 dark:text-brand-300"
               onClick={() => setOldestFirst((o) => !o)}
               aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
               title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
@@ -316,7 +316,7 @@ export function TransactionsPage() {
           <div className="flex flex-col">
             <p className="text-sm text-[#64748B] dark:text-muted">{`${t("transactions.net")} ${t(`transactions.netWhen.${period}`)}`}</p>
             <p
-              className={`text-3xl font-bold tabular-nums ${
+              className={`text-3xl font-semibold tabular-nums ${
                 summary.net < 0
                   ? "text-[#DC2626] dark:text-red-400"
                   : summary.net > 0
@@ -382,10 +382,10 @@ export function TransactionsPage() {
                 {row.kind === "header" ? (
                   <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-100 px-3 py-2 dark:bg-raised">
                     <div className="flex items-center gap-2.5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-bold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-semibold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-muted">
+                      <span className="text-sm font-semibold text-slate-600 dark:text-muted">
                         {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
                       </span>
                     </div>

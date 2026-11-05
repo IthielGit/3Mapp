@@ -72,7 +72,7 @@ export function WalletFormPage() {
 
   return (
     <section className="flex flex-col gap-3">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {existing ? t("wallets.editTitle") : t("wallets.newTitle")}
       </PageTitle>
 

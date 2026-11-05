@@ -113,7 +113,7 @@ export function CategoryFormPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {existing ? t("categories.editTitle") : t("categories.newTitle")}
       </PageTitle>
 

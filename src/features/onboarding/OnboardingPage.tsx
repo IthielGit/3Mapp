@@ -76,14 +76,14 @@ export function OnboardingPage() {
 
       {isSlide && slideKey ? (
         <div className="flex flex-1 flex-col gap-3">
-          <h1 className="text-2xl font-bold">{t(`${slideKey}.title`)}</h1>
+          <h1 className="text-2xl font-semibold">{t(`${slideKey}.title`)}</h1>
           <p className="text-slate-600 dark:text-muted">{t(`${slideKey}.text`)}</p>
         </div>
       ) : null}
 
       {step === SLIDES.length ? (
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold">{t("onboarding.settingsTitle")}</h1>
+          <h1 className="text-2xl font-semibold">{t("onboarding.settingsTitle")}</h1>
           <Field label={t("onboarding.language")}>
             <select
               className={inputClass}
@@ -113,7 +113,7 @@ export function OnboardingPage() {
 
       {step === SLIDES.length + 1 ? (
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold">{t("onboarding.walletTitle")}</h1>
+          <h1 className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
           <p className="text-slate-600 dark:text-muted">{t("onboarding.walletHint")}</p>
           <Field label={t("common.name")} error={nameError}>
             <input
@@ -144,7 +144,7 @@ export function OnboardingPage() {
 
       {step === SLIDES.length + 2 ? (
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold">{t("onboarding.balanceTitle")}</h1>
+          <h1 className="text-2xl font-semibold">{t("onboarding.balanceTitle")}</h1>
           <p className="text-slate-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("wallets.initialBalance")}>
             <input

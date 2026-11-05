@@ -30,7 +30,7 @@ export function WalletsPage() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
-        <PageTitle className="text-2xl font-bold">{t("wallets.title")}</PageTitle>
+        <PageTitle className="text-2xl font-semibold">{t("wallets.title")}</PageTitle>
         <Link to="/plus/wallets/new" className={buttonPrimary + " inline-flex items-center"}>
           {t("common.add")}
         </Link>

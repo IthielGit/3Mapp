@@ -58,7 +58,7 @@ export function ReconcilePage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <PageTitle className="text-2xl font-bold">
+      <PageTitle className="text-2xl font-semibold">
         {t("reconcile.title", { name: wallet.name })}
       </PageTitle>
       <p>
