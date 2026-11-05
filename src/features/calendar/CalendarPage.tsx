@@ -24,7 +24,7 @@ export function CalendarPage() {
   const [cursor, setCursor] = useState(() => startOfMonth(new Date()));
   const [selected, setSelected] = useState(() => format(new Date(), "yyyy-MM-dd"));
   // Écran bas : on affiche la semaine du jour choisi, pour que la liste reste assez haute.
-  const [folded, setFolded] = useState(() => window.matchMedia("(max-height: 760px)").matches);
+  const [folded, setFolded] = useState(() => window.matchMedia("(max-width: 767px), (max-height: 760px)").matches);
 
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
