@@ -387,3 +387,17 @@ export function pendingCount(database: AppDatabase = defaultDb): Promise<number>
 export function readSyncState(database: AppDatabase = defaultDb): Promise<SyncStateRow | undefined> {
   return getState(database);
 }
+
+/**
+ * Synchronise le compte connecté : première fois sur cet appareil = fusion avec la base du compte
+ * (le plus récent gagne) ; ensuite, simple relance.
+ */
+export async function ensureSync(
+  client: SupabaseClient,
+  userId: string,
+  database: AppDatabase = defaultDb,
+): Promise<SyncReport> {
+  const state = await getState(database);
+  if (state?.enabled && state.userId === userId) return runSync(client, database);
+  return enableSync(client, userId, "merge", database);
+}

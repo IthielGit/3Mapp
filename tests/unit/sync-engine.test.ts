@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AppDatabase } from "../../src/db/database";
 import { discardPending, setSyncTracking } from "../../src/db/sync-tracking";
-import { disableSync, enableSync, runSync } from "../../src/features/sync/sync-engine";
+import { disableSync, enableSync, ensureSync, runSync } from "../../src/features/sync/sync-engine";
 import { decodeRecord, encodeRecord } from "../../src/features/sync/sync-records";
 
 type Row = Record<string, unknown>;
@@ -237,5 +237,18 @@ describe("envoi et réception", () => {
     expect(report.pushed).toBe(0);
     expect(await db.syncOutbox.count()).toBe(0);
     expect(server.rows.size).toBe(0);
+  });
+});
+
+describe("synchronisation du compte connecté", () => {
+  it("la première fois fusionne avec la base du compte, ensuite relance seulement", async () => {
+    const server = fakeServer();
+    await ensureSync(server.client, USER, db);
+    expect((await db.syncState.get("state"))?.enabled).toBe(true);
+
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+    const report = await ensureSync(server.client, USER, db);
+    expect(report.pushed).toBe(1);
+    expect(server.rows.has("reconciliations|33333333-3333-4333-8333-333333333333")).toBe(true);
   });
 });

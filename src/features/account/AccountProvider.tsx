@@ -39,10 +39,12 @@ export function AccountProvider({
   client?: SupabaseClient | null;
 }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
-  const [profile, setProfile] = useState<AccountProfile | undefined>(undefined);
-  const [profileSettled, setProfileSettled] = useState(false);
+  // Profil lu pour un compte donné ; il ne vaut que pour ce compte.
+  const [profileRead, setProfileRead] = useState<{ userId: string; profile?: AccountProfile } | undefined>();
   const [online, setOnline] = useState(0);
   const userId = session?.user.id;
+  const profile = profileRead && profileRead.userId === userId ? profileRead.profile : undefined;
+  const profileSettled = userId !== undefined && profileRead?.userId === userId;
 
   useEffect(() => {
     const bump = () => setOnline((n) => n + 1);
@@ -71,25 +73,17 @@ export function AccountProvider({
   }, [client]);
 
   useEffect(() => {
-    if (!client || !userId) {
-      setProfile(undefined);
-      setProfileSettled(false);
-      return;
-    }
+    if (!client || !userId) return;
     let active = true;
-    setProfileSettled(false);
     const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), PROFILE_TIMEOUT_MS));
     void Promise.race([fetchProfile(client, userId), timeout])
       .then((next) => {
         if (!active) return;
-        setProfile(next);
         if (next) writeCachedStatus(userId, next.status);
+        setProfileRead({ userId, profile: next });
       })
       .catch(() => {
-        if (active) setProfile(undefined);
-      })
-      .finally(() => {
-        if (active) setProfileSettled(true);
+        if (active) setProfileRead({ userId });
       });
     return () => {
       active = false;

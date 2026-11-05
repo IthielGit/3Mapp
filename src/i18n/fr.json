@@ -733,11 +733,11 @@
     "unavailable": "Les comptes ne sont pas disponibles sur cette version. L'application fonctionne entièrement sur cet appareil.",
     "loading": "Chargement…",
     "signedInAs": "Connecté en tant que",
-    "localNotice": "Vos données restent sur cet appareil tant que la synchronisation n'est pas activée.",
+    "localNotice": "Vos données sont synchronisées avec ce compte. Se déconnecter efface les données de cet appareil.",
     "signOut": "Se déconnecter",
     "help": {
       "title": "Compte",
-      "p1": "Un compte est facultatif. Il permet de retrouver vos données sur plusieurs appareils une fois la synchronisation activée.",
+      "p1": "Un compte est obligatoire. Il permet de retrouver vos données sur tous vos appareils.",
       "p2": "Créer un compte est libre : aucune validation n'est nécessaire. Les données du compte peuvent être consultées par l'administrateur du service."
     },
     "signIn": "Connexion",
@@ -751,10 +751,10 @@
     "forgotPassword": "Mot de passe oublié ?",
     "resetSent": "Si un compte existe pour cette adresse, un lien de réinitialisation vient d'être envoyé.",
     "checkEmail": "Vérifiez votre boîte e-mail pour confirmer votre compte.",
-    "suspended": {
-      "title": "Compte suspendu",
-      "body": "Votre compte a été suspendu par l’administrateur du service. L’application est bloquée sur cet appareil. Contactez l’administrateur pour plus d’informations."
-    },
+    "suspended": {
+      "title": "Compte suspendu",
+      "body": "Votre compte a été suspendu par l’administrateur du service. L’application est bloquée sur cet appareil. Contactez l’administrateur pour plus d’informations."
+    },
     "errors": {
       "invalidEmail": "Adresse e-mail invalide.",
       "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",
@@ -763,6 +763,26 @@
       "alreadyRegistered": "Un compte existe déjà avec cette adresse.",
       "network": "Connexion impossible. Vérifiez votre réseau.",
       "unknown": "Une erreur est survenue. Réessayez."
+    },
+    "gate": {
+      "title": "Connexion",
+      "intro": "Un compte est nécessaire pour utiliser Fundora. Vos données sont synchronisées avec votre compte et restent accessibles sur vos appareils.",
+      "unconfigured": "Fundora nécessite un compte, mais le service de comptes n'est pas configuré sur cette version. Contactez le support."
+    },
+    "signOutConfirm": "Vos données seront effacées de cet appareil. Elles restent sur votre compte si elles ont été synchronisées.",
+    "signOutLost": "{{count}} modification(s) non envoyée(s) seront perdues.",
+    "sync": {
+      "title": "Synchronisation",
+      "lastSync": "Dernière synchronisation",
+      "never": "jamais",
+      "pending": "{{count}} modification(s) en attente d'envoi",
+      "syncNow": "Synchroniser maintenant",
+      "starting": "Synchronisation en cours…",
+      "error": {
+        "network": "Pas de connexion : la synchronisation reprendra au retour du réseau.",
+        "suspended": "Compte suspendu : la synchronisation est bloquée.",
+        "unknown": "La synchronisation a échoué. Nouvel essai automatique."
+      }
     }
   }
 }
