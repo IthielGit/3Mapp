@@ -13,8 +13,6 @@ import {
   Legend,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -41,6 +39,7 @@ import { compactAmount } from "../../lib/compact";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
+import { CategoryDonut } from "./CategoryDonut";
 
 /** Donnée principale : quelle question on pose au graphique. */
 /** Nom de catégorie raccourci pour tenir dans la colonne des libellés. */
@@ -62,18 +61,6 @@ const REPRS: Record<Dataset, Repr[]> = {
   savings: ["bars", "line"],
 };
 
-const PALETTE = [
-  "#1a1a1b",
-  "#ee4444",
-  "#5c5c64",
-  "#8e8e96",
-  "#b91c1c",
-  "#3f3f45",
-  "#d4d4da",
-  "#737380",
-  "#f08080",
-  "#2a2a2e",
-];
 const EMPTY: never[] = [];
 
 /** Les montants sont en unités mineures ; les graphiques affichent des unités majeures. */
@@ -84,7 +71,6 @@ export function StatsPage() {
   const { resolved } = useTheme();
   // Encre des graphiques : noire en clair, claire en sombre (sinon elle disparaît sur le fond).
   const chartInk = resolved === "dark" ? "#f5f5f7" : "#1a1a1b";
-  const chartPalette = resolved === "dark" ? ["#f5f5f7", ...PALETTE.slice(1)] : PALETTE;
   const settings = usePeriodSettings();
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const [now] = useState(() => new Date());
@@ -233,6 +219,20 @@ export function StatsPage() {
   const forecastMinor = Math.round(monthNets.slice(0, 3).reduce((sum, n) => sum + n, 0) / 3);
 
   const categoryData = slices.map((s) => ({ name: s.name, value: toMajor(s.amount) }));
+  // Nombre d'opérations par catégorie, pour la répartition en anneau.
+  const operationCounts = new Map<string, number>();
+  for (const tx of inPeriod) {
+    if (tx.type !== "expense" || tx.status !== "posted") continue;
+    const key = tx.categoryId ?? "";
+    operationCounts.set(key, (operationCounts.get(key) ?? 0) + 1);
+  }
+  const categoryItems = slices.map((s) => ({
+    key: s.categoryId ?? "",
+    name: s.name,
+    value: toMajor(s.amount),
+    share: s.share,
+    count: operationCounts.get(s.categoryId ?? "") ?? 0,
+  }));
   const top = topExpenses(inPeriod, 10);
   const activeWallets = wallets.filter((w) => !w.archived && w.currency === baseCurrency);
 
@@ -474,6 +474,8 @@ export function StatsPage() {
           <p className="py-10 text-center text-sm text-slate-500 dark:text-muted">
             {t("stats.noExpenses")}
           </p>
+        ) : dataset === "categories" && repr === "donut" ? (
+          <CategoryDonut items={categoryItems} fmt={fmt} tooltipProps={tooltipProps} />
         ) : (
           <div className="h-64" role="img" aria-label={t("stats.chartAria")}>
             <ResponsiveContainer width="100%" height="100%">
@@ -518,24 +520,6 @@ export function StatsPage() {
                     ))}
                   </Bar>
                 </BarChart>
-              ) : dataset === "categories" && repr === "donut" ? (
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={62}
-                    outerRadius={92}
-                    paddingAngle={2}
-                    isAnimationActive={false}
-                  >
-                    {categoryData.map((s, i) => (
-                      <Cell key={s.name} fill={chartPalette[i % chartPalette.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                </PieChart>
               ) : dataset === "categories" ? (
                 <BarChart data={categoryData} layout="vertical" margin={{ left: 4, right: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} horizontal={false} />

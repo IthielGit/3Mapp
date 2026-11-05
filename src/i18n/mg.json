@@ -507,7 +507,9 @@
       "year": "amin’ity taona",
       "custom": "amin’ity vanim-potoana"
     },
-    "currentBalanceHint": "Vola ao amin’ny kaontinao"
+    "currentBalanceHint": "Vola ao amin’ny kaontinao",
+    "donutTotal": "Totalin’ny fandaniana",
+    "donutOps": "Fifanaovana {{count}}"
   },
   "importExport": {
     "title": "Hampiditra / Hamoaka",

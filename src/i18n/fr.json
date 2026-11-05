@@ -507,7 +507,9 @@
       "year": "cette année",
       "custom": "sur cette période"
     },
-    "currentBalanceHint": "Argent dans vos portefeuilles"
+    "currentBalanceHint": "Argent dans vos portefeuilles",
+    "donutTotal": "Total des dépenses",
+    "donutOps": "{{count}} opération(s)"
   },
   "importExport": {
     "title": "Import / Export",

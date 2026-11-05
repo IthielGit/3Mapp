@@ -507,7 +507,9 @@
       "year": "this year",
       "custom": "over this period"
     },
-    "currentBalanceHint": "Money in your wallets"
+    "currentBalanceHint": "Money in your wallets",
+    "donutTotal": "Total spent",
+    "donutOps": "{{count}} transaction(s)"
   },
   "importExport": {
     "title": "Import / Export",
