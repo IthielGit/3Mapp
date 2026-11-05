@@ -807,7 +807,15 @@
       "merge": "Fusionner avec ce compte",
       "mergeHint": "Les données de cet appareil rejoignent le compte ; la version la plus récente l'emporte.",
       "replace": "Utiliser seulement ce compte",
-      "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte."
+      "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte.",
+      "backupTitle": "1. Sauvegardez d'abord",
+      "backupHint": "Un fichier de sauvegarde est téléchargé sur cet appareil. Gardez-le en lieu sûr : c'est la seule copie des données de cet appareil si vous les effacez.",
+      "backupButton": "Télécharger une sauvegarde",
+      "backupDone": "Sauvegarde téléchargée",
+      "backupError": "La sauvegarde n'a pas pu être créée. Réessayez.",
+      "needBackup": "Téléchargez d'abord une sauvegarde pour pouvoir effacer les données de cet appareil.",
+      "replaceConfirm": "Effacer les données de cet appareil et utiliser seulement ce compte ? Sans votre sauvegarde, elles seront perdues.",
+      "signOutConfirm": "Se déconnecter efface les données de cet appareil. Continuer ?"
     }
   },
   "admin": {

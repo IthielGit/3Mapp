@@ -807,7 +807,15 @@
       "merge": "Merge with this account",
       "mergeHint": "This device's data joins the account; the most recent version wins.",
       "replace": "Use this account only",
-      "replaceHint": "This device's data is erased and replaced by the account's data."
+      "replaceHint": "This device's data is erased and replaced by the account's data.",
+      "backupTitle": "1. Back up first",
+      "backupHint": "A backup file is downloaded to this device. Keep it somewhere safe: it is the only copy of this device's data if you erase it.",
+      "backupButton": "Download a backup",
+      "backupDone": "Backup downloaded",
+      "backupError": "The backup could not be created. Try again.",
+      "needBackup": "Download a backup first so you can erase this device's data.",
+      "replaceConfirm": "Erase this device's data and use only this account? Without your backup, the data will be lost.",
+      "signOutConfirm": "Signing out erases this device's data. Continue?"
     }
   },
   "admin": {
