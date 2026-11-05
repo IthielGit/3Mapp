@@ -285,10 +285,6 @@ export function StatsPage() {
 
   return (
     <section className="flex flex-col gap-5">
-      <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
-        {t("stats.title")}
-      </h1>
-
       {dataset !== "savings" ? (
         <PeriodPicker
           state={state}

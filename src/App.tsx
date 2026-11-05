@@ -130,7 +130,7 @@ export default function App() {
           <Route path="transactions/:id/edit" element={<TransactionsPage />} />
           {/* Calendrier et Analyses vivent dans l’onglet Visualisation ; les anciennes adresses y renvoient. */}
           <Route path="visualisation" element={<VisualisationLayout />}>
-            <Route index element={<Navigate to="calendar" replace />} />
+            <Route index element={<Navigate to="stats" replace />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="stats" element={<StatsPage />} />
           </Route>

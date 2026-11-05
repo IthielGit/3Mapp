@@ -11,7 +11,7 @@ test("navigation entre les pages de la barre basse sur mobile", async ({ page })
   const tabs: Array<[string, string]> = [
     ["Transactions", "Transactions"],
     ["Budgets", "Budgets"],
-    ["Visualisation", "Calendrier"],
+    ["Visualisation", "Analyses"],
     ["Accueil", "Accueil"],
   ];
   for (const [tab, heading] of tabs) {
@@ -33,8 +33,10 @@ test("pas de défilement horizontal sur mobile", async ({ page }) => {
 test("retour quitte Visualisation au lieu de passer de Calendrier à Analyses", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
   await page.getByRole("navigation", { name: "Accueil" }).getByRole("link", { name: "Visualisation" }).click();
-  await page.getByRole("navigation", { name: "Visualisation" }).getByRole("link", { name: "Analyses" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Analyses" })).toBeVisible();
-  await page.getByRole("button", { name: "Retour" }).click();
+  await page.getByRole("combobox", { name: "Visualisation" }).selectOption("calendar");
+  await expect(page.getByRole("heading", { level: 1, name: "Calendrier" })).toBeVisible();
+  // Changer de vue ne crée pas d’entrée : un retour quitte l’écran Visualisation.
+  await page.goBack();
   await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
 });

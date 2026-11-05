@@ -1,42 +1,46 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { BackButton } from "../../components/BackButton";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const TABS = [
-  { to: "/visualisation/calendar", key: "nav.calendar" },
-  { to: "/visualisation/stats", key: "nav.stats" },
-] as const;
+type View = "stats" | "calendar";
 
-/** Onglet « Visualisation » : Calendrier et Analyses côte à côte, sans passer par « Plus ». */
+/**
+ * Onglet « Visualisation » : le titre est la liste de choix (Analyses ou Calendrier).
+ * Changer de vue remplace l’entrée d’historique : « retour » quitte l’écran.
+ */
 export function VisualisationLayout() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const view: View = location.pathname.endsWith("/calendar") ? "calendar" : "stats";
+
   return (
-    <div className="-mx-4 flex flex-col gap-4 px-4">
-      <div className="flex min-h-11 items-center gap-3">
-        <BackButton />
-      <nav aria-label={t("nav.visualisation")} className="min-w-0 flex-1">
-        <ul className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-raised">
-          {TABS.map((tab) => (
-            <li key={tab.to}>
-              {/* replace : changer d’onglet ne crée pas d’entrée dans l’historique, donc « retour » quitte l’écran. */}
-              <NavLink
-                to={tab.to}
-                replace
-                className={({ isActive }) =>
-                  `flex min-h-[44px] items-center justify-center rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-white font-semibold text-ink shadow-sm dark:bg-card dark:text-fg"
-                      : "text-slate-600 dark:text-muted"
-                  }`
-                }
-              >
-                {t(tab.key)}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      </div>
+    <div className="flex flex-col gap-4">
+      <h1 className="relative mx-auto inline-flex items-center gap-1 text-center text-xl font-semibold text-ink dark:text-fg">
+        <label className="sr-only" htmlFor="visualisation-view">
+          {t("nav.visualisation")}
+        </label>
+        <select
+          id="visualisation-view"
+          value={view}
+          onChange={(e) => navigate(`/visualisation/${e.target.value}`, { replace: true })}
+          className="cursor-pointer appearance-none bg-transparent pr-6 text-center text-xl font-semibold text-ink outline-none focus-visible:outline-2 focus-visible:outline-brand-700 dark:text-fg"
+        >
+          <option value="stats">{t("nav.stats")}</option>
+          <option value="calendar">{t("nav.calendar")}</option>
+        </select>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 dark:text-muted"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M5 8l5 5 5-5" />
+        </svg>
+      </h1>
       <Outlet />
     </div>
   );

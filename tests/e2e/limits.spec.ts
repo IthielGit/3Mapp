@@ -147,7 +147,6 @@ test("statistiques : graphiques affichés après une dépense", async ({ page })
   await completeOnboardingUi(page, "Compte BNI");
   await addExpense(page, "7000");
   await page.getByRole("navigation", { name: "Accueil" }).getByRole("link", { name: "Visualisation" }).click();
-  await page.getByRole("navigation", { name: "Visualisation" }).getByRole("link", { name: "Analyses" }).click();
   await expect(page.getByRole("heading", { name: "Dépenses par catégorie" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Top 10 des dépenses" })).toBeVisible();
 });
