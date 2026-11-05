@@ -13,9 +13,11 @@ test("catégorie obligatoire : refusée sans catégorie, création rapide puis e
   await expect(page).toHaveURL(/transactions\/new/);
 
   // Pas de catégorie adaptée : on en crée une depuis le formulaire.
-  await page.getByRole("button", { name: "+ Nouvelle catégorie" }).click();
-  await page.getByRole("textbox", { name: "Nom" }).fill("Café");
-  await page.getByRole("button", { name: "Ajouter", exact: true }).click();
+  // « Nouvelle catégorie » est une option de la liste : elle ouvre une popup de création.
+  await page.locator("select").filter({ has: page.locator("option", { hasText: "Alimentation" }) }).selectOption({ label: "+ Nouvelle catégorie" });
+  await page.getByRole("dialog").getByRole("textbox", { name: "Nom" }).fill("Café");
+  await page.getByRole("dialog").getByRole("button", { name: "Ajouter", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Nouvelle catégorie" })).toHaveCount(0);
   await expect(page.locator("select").filter({ has: page.locator("option", { hasText: "Café" }) })).toHaveValue(/.+/);
 
   await page.getByRole("button", { name: "Enregistrer" }).click();

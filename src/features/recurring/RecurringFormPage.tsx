@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
-import { createCategory } from "../categories/category-service";
+import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
@@ -17,6 +17,7 @@ import { minorToPlainText } from "../../lib/amount-text";
 const EMPTY: never[] = [];
 type TxType = Recurring["type"];
 
+const NEW_CATEGORY = "__new__";
 export function RecurringFormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,7 +31,6 @@ export function RecurringFormPage() {
   const [amountText, setAmountText] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [creatingCategory, setCreatingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
   const [memo, setMemo] = useState("");
   const [unit, setUnit] = useState<RecurrenceUnit>("month");
   const [interval, setInterval] = useState("1");
@@ -65,21 +65,6 @@ export function RecurringFormPage() {
   const effectiveWallet = walletId || active[0]?.id || "";
   const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";
   const kind = type === "income" ? "income" : "expense";
-
-  /** Crée une catégorie du même genre que la récurrence et la sélectionne. */
-  async function createQuickCategory() {
-    const name = newCategoryName.trim();
-    if (!name) return;
-    try {
-      const created = await createCategory({ name, kind, icon: "🏷️", color: "#64748b", archived: false });
-      setCategoryId(created.id);
-      setNewCategoryName("");
-      setCreatingCategory(false);
-      setError(undefined);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
-    }
-  }
 
   /** Ce qui manque avant d'enregistrer ; null quand le formulaire est complet. */
   function missingField(): string | null {
@@ -188,59 +173,44 @@ export function RecurringFormPage() {
             </select>
           </Field>
         ) : (
-          <div className="flex flex-col gap-2">
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={categoryId}
-                required
-                onChange={(e) => setCategoryId(e.target.value)}
-              >
-                <option value="" disabled>
-                  {t("transactions.chooseCategory")}
-                </option>
-                {categories
-                  .filter((c) => c.kind === kind && !c.archived)
-                  .sort(byName)
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.icon} {c.name}
-                    </option>
-                  ))}
-              </select>
+            <>
+          <Field label={t("common.category")}>
+            <select
+              className={inputClass}
+              value={categoryId}
+              required
+              onChange={(e) => {
+                if (e.target.value === NEW_CATEGORY) {
+                  setCreatingCategory(true);
+                  return;
+                }
+                setCategoryId(e.target.value);
+              }}
+            >
+              <option value="" disabled>
+                {t("transactions.chooseCategory")}
+              </option>
+              {categories
+                .filter((c) => c.kind === kind && !c.archived)
+                .sort(byName)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.icon} {c.name}
+                  </option>
+                ))}
+              <option value={NEW_CATEGORY}>+ {t("transactions.newCategory")}</option>
+            </select>
             </Field>
-            {creatingCategory ? (
-              <div className="flex gap-2">
-                <input
-                  className={inputClass}
-                  value={newCategoryName}
-                  aria-label={t("common.name")}
-                  placeholder={t("common.name")}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  className={buttonPrimary}
-                  disabled={!newCategoryName.trim()}
-                  onClick={() => void createQuickCategory()}
-                >
-                  {t("common.add")}
-                </button>
-                <button type="button" className={buttonSecondary} onClick={() => setCreatingCategory(false)}>
-                  {t("common.cancel")}
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className="min-h-[44px] self-start font-medium text-brand-700 dark:text-brand-300"
-                onClick={() => setCreatingCategory(true)}
-              >
-                + {t("transactions.newCategory")}
-              </button>
-            )}
-          </div>
+          <QuickCategorySheet
+            open={creatingCategory}
+            kind={kind}
+            onClose={() => setCreatingCategory(false)}
+            onCreated={(id) => {
+              setCategoryId(id);
+              setCreatingCategory(false);
+            }}
+          />
+          </>
         )}
       </div>
 

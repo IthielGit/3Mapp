@@ -17,7 +17,7 @@ import {
   inputClass,
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
-import { createCategory } from "../categories/category-service";
+import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { minorToPlainText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { createRecurring } from "../recurring/recurring-service";
@@ -66,6 +66,7 @@ interface TransactionSheetProps {
   copyOf?: Transaction | undefined;
 }
 
+const NEW_CATEGORY = "__new__";
 export function TransactionSheet({
   transaction,
   defaultType,
@@ -109,7 +110,6 @@ export function TransactionSheet({
   );
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [creatingCategory, setCreatingCategory] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
   const [subcategoryId, setSubcategoryId] = useState(initial?.subcategoryId ?? "");
   const [dateLocal, setDateLocal] = useState(
     // Une copie prend la date du jour : c'est une nouvelle transaction.
@@ -144,22 +144,6 @@ export function TransactionSheet({
     ) ?? [];
 
 
-
-  /** Crée une catégorie depuis le formulaire et la sélectionne (même genre que la transaction). */
-  async function createQuickCategory() {
-    const name = newCategoryName.trim();
-    if (!name) return;
-    try {
-      const created = await createCategory({ name, kind, icon: "🏷️", color: "#64748b", archived: false });
-      setCategoryId(created.id);
-      setSubcategoryId("");
-      setNewCategoryName("");
-      setCreatingCategory(false);
-      setError(undefined);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
-    }
-  }
 
   /** Construit le brouillon ; toute saisie invalide lève une RuleError lisible. */
   function buildDraft(): TransactionDraft {
@@ -440,63 +424,42 @@ export function TransactionSheet({
               </select>
             </Field>
           ) : (
-            <div className="flex flex-col gap-2">
-              <Field label={t("common.category")}>
-                <select
-                  className={inputClass}
-                  value={categoryId}
-                  required
-                  onChange={(e) => {
-                    setCategoryId(e.target.value);
-                    setSubcategoryId("");
-                  }}
-                >
-                  <option value="" disabled>
-                    {t("transactions.chooseCategory")}
+              <>
+            <Field label={t("common.category")}>
+              <select
+                className={inputClass}
+                value={categoryId}
+                required
+                onChange={(e) => {
+                  if (e.target.value === NEW_CATEGORY) {
+                    setCreatingCategory(true);
+                    return;
+                  }
+                  setCategoryId(e.target.value);
+                  setSubcategoryId("");
+                }}
+              >
+                <option value="" disabled>
+                  {t("transactions.chooseCategory")}
+                </option>
+                {categoryOptions.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.icon} {c.name}
                   </option>
-                  {categoryOptions.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.icon} {c.name}
-                    </option>
-                  ))}
-                </select>
+                ))}
+                <option value={NEW_CATEGORY}>+ {t("transactions.newCategory")}</option>
+              </select>
               </Field>
-              {creatingCategory ? (
-                <div className="flex gap-2">
-                  <input
-                    className={inputClass}
-                    value={newCategoryName}
-                    aria-label={t("common.name")}
-                    placeholder={t("common.name")}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    className={buttonPrimary}
-                    disabled={!newCategoryName.trim()}
-                    onClick={() => void createQuickCategory()}
-                  >
-                    {t("common.add")}
-                  </button>
-                  <button
-                    type="button"
-                    className={buttonSecondary}
-                    onClick={() => setCreatingCategory(false)}
-                  >
-                    {t("common.cancel")}
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className="min-h-[44px] self-start font-medium text-brand-700 dark:text-brand-300"
-                  onClick={() => setCreatingCategory(true)}
-                >
-                  + {t("transactions.newCategory")}
-                </button>
-              )}
-            </div>
+            <QuickCategorySheet
+              open={creatingCategory}
+              kind={kind}
+              onClose={() => setCreatingCategory(false)}
+              onCreated={(id) => {
+                setCategoryId(id);
+                setCreatingCategory(false);
+              }}
+            />
+            </>
           )}
         </div>
 
