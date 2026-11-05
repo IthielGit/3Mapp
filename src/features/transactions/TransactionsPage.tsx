@@ -84,6 +84,7 @@ export function TransactionsPage() {
   const [message, setMessage] = useState<string | undefined>();
 
   const categoryNames = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
+  const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
   const walletName = useMemo(() => new Map(wallets.map((w) => [w.id, w.name])), [wallets]);
 
   const periodBounds = useMemo(() => {
@@ -303,11 +304,11 @@ export function TransactionsPage() {
             ) : null}
             <button
               type="button"
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl px-2 font-medium text-brand-700 dark:text-brand-300"
+              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-brand-700 dark:text-brand-300"
               onClick={() => setOldestFirst((o) => !o)}
               aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+              title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
             >
-              <span>{oldestFirst ? t("transactions.sortOldestShort") : t("transactions.sortNewestShort")}</span>
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
@@ -400,8 +401,8 @@ export function TransactionsPage() {
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-semibold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
-                      <span className="text-sm font-semibold capitalize text-slate-600 dark:text-muted">
-                        {format(new Date(row.day), "EEEE d MMMM yyyy", { locale: fr })}
+                      <span className="text-sm font-semibold text-slate-600 dark:text-muted">
+                        {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
                       </span>
                     </div>
                     <span
@@ -424,6 +425,16 @@ export function TransactionsPage() {
                       row.transaction.categoryId
                         ? (categoryNames.get(row.transaction.categoryId) ?? "")
                         : ""
+                    }
+                    categoryIcon={
+                      row.transaction.categoryId
+                        ? categoryById.get(row.transaction.categoryId)?.icon
+                        : undefined
+                    }
+                    categoryColor={
+                      row.transaction.categoryId
+                        ? categoryById.get(row.transaction.categoryId)?.color
+                        : undefined
                     }
                     selectMode={selectMode}
                     selected={selected.has(row.transaction.id)}
@@ -672,6 +683,8 @@ interface TransactionRowProps {
   walletName: string;
   toWalletName: string;
   categoryName: string;
+  categoryIcon?: string | undefined;
+  categoryColor?: string | undefined;
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
@@ -684,6 +697,8 @@ function TransactionRow({
   walletName,
   toWalletName,
   categoryName,
+  categoryIcon,
+  categoryColor,
   selectMode,
   selected,
   onToggle,
@@ -691,10 +706,11 @@ function TransactionRow({
   time,
 }: TransactionRowProps) {
   const { t: translate } = useTranslation();
+  // Titre comme au calendrier : le mémo d’abord, puis la catégorie ; le détail suit.
   const label =
     t.type === "transfer"
       ? `${walletName} → ${toWalletName}`
-      : categoryName || translate(`transactions.types.${t.type}`);
+      : t.memo || categoryName || translate(`transactions.types.${t.type}`);
   const sign = t.type === "income" || (t.type === "adjustment" && t.amount > 0) ? "+" : "";
 
   const amountClass =
@@ -703,9 +719,11 @@ function TransactionRow({
       : t.type === "income"
         ? "text-[#15803D] dark:text-emerald-400"
         : "text-[#172033] dark:text-fg";
-  const details = [time, t.memo, t.type === "transfer" ? "" : walletName]
-    .filter(Boolean)
-    .join(" · ");
+  const details =
+    t.type === "transfer"
+      ? translate("transactions.types.transfer")
+      : // Sans mémo, la catégorie est déjà le titre : on ne la répète pas.
+        [t.memo ? categoryName : "", walletName].filter(Boolean).join(" · ");
 
   return (
     <button
@@ -724,18 +742,28 @@ function TransactionRow({
           {selected ? "✓" : null}
         </span>
       ) : null}
+      <span
+        aria-hidden="true"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl text-white"
+        style={{ backgroundColor: categoryColor ?? "#64748b" }}
+      >
+        {categoryIcon ?? "•"}
+      </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px] font-medium text-[#172033] dark:text-fg">
           {label}
         </span>
         <span className="truncate text-sm text-[#64748B] dark:text-muted">{details}</span>
       </span>
-      <span
-        className={`shrink-0 whitespace-nowrap text-[15px] font-semibold tabular-nums ${amountClass}`}
-        data-amount
-      >
-        {t.type === "expense" ? "−" : sign}
-        {formatMoney(t.amount, t.currency)}
+      <span className="flex shrink-0 flex-col items-end">
+        <span
+          className={`whitespace-nowrap text-[15px] font-semibold tabular-nums ${amountClass}`}
+          data-amount
+        >
+          {t.type === "expense" ? "−" : sign}
+          {formatMoney(t.amount, t.currency)}
+        </span>
+        <span className="text-xs text-[#64748B] dark:text-muted">{time}</span>
       </span>
     </button>
   );
