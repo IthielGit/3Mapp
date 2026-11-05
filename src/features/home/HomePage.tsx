@@ -146,12 +146,29 @@ export function HomePage() {
       {/* En-tête : salutation à gauche, réglages ronds à droite. */}
       <header className="sticky top-0 z-20 -mx-4 -mt-4 flex items-center justify-between bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <div className="flex items-center gap-3">
-          <span
+          {/* Marque : tuile sombre à anneau de progression et point rouge, comme l'icône de l'app. */}
+          <svg
             aria-hidden="true"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-lg font-semibold text-white dark:bg-white dark:text-ink"
+            focusable="false"
+            viewBox="0 0 44 44"
+            className="h-11 w-11 shrink-0"
           >
-            {t("app.title").charAt(0)}
-          </span>
+            <defs>
+              <linearGradient id="brand-tile" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#34343c" />
+                <stop offset="1" stopColor="#0b0b0d" />
+              </linearGradient>
+              <linearGradient id="brand-arc" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#ffffff" />
+                <stop offset="1" stopColor="#c9c9d1" />
+              </linearGradient>
+            </defs>
+            <rect width="44" height="44" rx="12.5" fill="url(#brand-tile)" />
+            <rect x="0.5" y="0.5" width="43" height="43" rx="12" fill="none" stroke="#ffffff" strokeOpacity="0.12" />
+            <circle cx="22" cy="22" r="11.5" fill="none" stroke="#ffffff" strokeOpacity="0.16" strokeWidth="3.2" />
+            <path d="M22 10.5 A11.5 11.5 0 1 1 10.7 18.4" fill="none" stroke="url(#brand-arc)" strokeWidth="3.2" />
+            <circle cx="10.7" cy="18.4" r="3" fill="#ee4444" />
+          </svg>
           <div className="flex flex-col">
             <span className="font-semibold text-ink dark:text-fg">{t("home.hello")}</span>
             <span className="text-sm text-slate-500 dark:text-muted">{t("app.title")}</span>
