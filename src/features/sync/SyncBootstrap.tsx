@@ -3,8 +3,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { askConfirm } from "../../components/confirm-service";
 import { useAccount } from "../account/AccountProvider";
 import { signOutAndClear } from "../account/sign-out";
+import { createBackup, markBackupDone, serializeBackup, backupFileName } from "../backup/backup-service";
+import { downloadBlob } from "../../lib/download";
 import { checkDeviceOwnership, enableSync, ensureSync } from "./sync-engine";
 import type { DeviceOwnership } from "../../domain/sync";
 
@@ -16,7 +19,8 @@ const INTERVAL_MS = 60_000;
 /**
  * Lance la synchronisation du compte connecté et bloque l'app tant que la première fusion n'est pas faite.
  * Si l'appareil contient des données qui n'appartiennent pas à ce compte, rien n'est envoyé :
- * l'utilisateur choisit explicitement quoi faire.
+ * l'utilisateur choisit explicitement quoi faire. Les actions qui effacent les données locales
+ * ne sont possibles qu'après le téléchargement d'une sauvegarde.
  */
 export function SyncBootstrap({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
@@ -25,6 +29,8 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
   const [choice, setChoice] = useState<{ userId: string; ownership: DeviceOwnership } | undefined>();
   const [decided, setDecided] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [backedUp, setBackedUp] = useState(false);
+  const [backupError, setBackupError] = useState(false);
   const client = account.status === "signedIn" ? account.client : undefined;
   const userId = account.status === "signedIn" ? account.session.user.id : undefined;
   const ready = userId !== undefined && readyFor === userId;
@@ -79,8 +85,34 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
   if (!client || !userId) return <>{children}</>;
 
   if (choice?.userId === userId && !ready) {
+    /** Sauvegarde non chiffrée des données de cet appareil, téléchargée dans le navigateur. */
+    async function downloadBackup() {
+      setBackupError(false);
+      setBusy(true);
+      try {
+        const now = new Date();
+        const file = await createBackup(db, now);
+        const text = await serializeBackup(file);
+        downloadBlob(new Blob([text], { type: "application/json" }), backupFileName(now, false));
+        await markBackupDone(db, now);
+        setBackedUp(true);
+      } catch {
+        setBackupError(true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
     async function choose(mode: "merge" | "remote") {
       if (!client || !userId) return;
+      if (mode === "remote") {
+        const confirmed = await askConfirm({
+          message: t("account.device.replaceConfirm"),
+          confirmLabel: t("account.device.replace"),
+          danger: true,
+        });
+        if (!confirmed) return;
+      }
       setBusy(true);
       try {
         await enableSync(client, userId, mode);
@@ -91,25 +123,51 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
       setChoice(undefined);
       setDecided((n) => n + 1);
     }
+
+    async function leave() {
+      if (!client) return;
+      const confirmed = await askConfirm({
+        message: t("account.device.signOutConfirm"),
+        confirmLabel: t("account.signOut"),
+        danger: true,
+      });
+      if (confirmed) void signOutAndClear(client);
+    }
+
     return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-5 p-6">
+      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 p-6">
         <h1 className="text-2xl font-semibold text-ink dark:text-fg">{t("account.device.title")}</h1>
         <p className="text-neutral-700 dark:text-muted">
           {choice.ownership === "foreign" ? t("account.device.bodyForeign") : t("account.device.bodyUnowned")}
         </p>
+
+        <section className="flex flex-col gap-2 rounded-card border border-neutral-200 p-4 dark:border-white/15">
+          <h2 className="font-semibold">{t("account.device.backupTitle")}</h2>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("account.device.backupHint")}</p>
+          <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void downloadBackup()}>
+            {backedUp ? t("account.device.backupDone") : t("account.device.backupButton")}
+          </button>
+          {backupError ? (
+            <p role="alert" className="text-sm text-red-700 dark:text-red-400">{t("account.device.backupError")}</p>
+          ) : null}
+        </section>
+
         <button type="button" className={buttonPrimary} disabled={busy} onClick={() => void choose("merge")}>
           {t("account.device.merge")}
         </button>
-        <p className="-mt-3 text-sm text-neutral-600 dark:text-muted">{t("account.device.mergeHint")}</p>
-        <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void choose("remote")}>
+        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("account.device.mergeHint")}</p>
+
+        <button type="button" className={buttonSecondary} disabled={busy || !backedUp} onClick={() => void choose("remote")}>
           {t("account.device.replace")}
         </button>
-        <p className="-mt-3 text-sm text-neutral-600 dark:text-muted">{t("account.device.replaceHint")}</p>
+        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("account.device.replaceHint")}</p>
+        {!backedUp ? <p className="-mt-2 text-sm text-red-700 dark:text-red-400">{t("account.device.needBackup")}</p> : null}
+
         <button
           type="button"
-          className="min-h-[44px] self-start text-sm font-medium text-red-700 underline dark:text-red-400"
-          disabled={busy}
-          onClick={() => void signOutAndClear(client)}
+          className="min-h-[44px] self-start text-sm font-medium text-red-700 underline disabled:opacity-50 dark:text-red-400"
+          disabled={busy || !backedUp}
+          onClick={() => void leave()}
         >
           {t("account.signOut")}
         </button>
