@@ -36,7 +36,7 @@ export function WalletsPage() {
         </Link>
       </header>
 
-      {active.length === 0 ? <p className="text-slate-500">{t("wallets.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-slate-600">{t("wallets.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
         {active.map((wallet, index) => (
@@ -52,7 +52,7 @@ export function WalletsPage() {
 
       {archived.length > 0 ? (
         <section className="flex flex-col gap-2">
-          <h2 className="font-semibold text-slate-500">{t("wallets.archivedSection")}</h2>
+          <h2 className="font-semibold text-slate-600">{t("wallets.archivedSection")}</h2>
           <ul className="flex flex-col gap-2">
             {archived.map((wallet) => (
               <li
@@ -111,7 +111,7 @@ function WalletRow({
         </span>
         <span className="flex min-w-0 flex-col">
           <span className="truncate font-semibold">{wallet.name}</span>
-          <span className="text-sm text-slate-500 dark:text-muted">
+          <span className="text-sm text-slate-600 dark:text-muted">
             {t("wallets.balance")} :{" "}
             <span data-amount>{formatMoney(balance, wallet.currency)}</span>
           </span>

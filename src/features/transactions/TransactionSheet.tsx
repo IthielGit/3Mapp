@@ -275,7 +275,7 @@ export function TransactionSheet({
           ))}
         </div>
         {type === "transfer" ? (
-          <p className="text-sm text-slate-500 dark:text-muted">{t("transactions.transferHint")}</p>
+          <p className="text-sm text-slate-600 dark:text-muted">{t("transactions.transferHint")}</p>
         ) : null}
 
         {!transaction && templates.length > 0 ? (
@@ -338,7 +338,7 @@ export function TransactionSheet({
                     </select>
                   </Field>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-muted">{t("repeat.hint")}</p>
+                <p className="text-sm text-slate-600 dark:text-muted">{t("repeat.hint")}</p>
               </>
             ) : null}
           </div>

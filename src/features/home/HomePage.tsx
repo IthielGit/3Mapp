@@ -171,7 +171,7 @@ export function HomePage() {
           </svg>
           <div className="flex flex-col">
             <span className="font-semibold text-ink dark:text-fg">{t("home.hello")}</span>
-            <span className="text-sm text-slate-500 dark:text-muted">{t("app.title")}</span>
+            <span className="text-sm text-slate-600 dark:text-muted">{t("app.title")}</span>
           </div>
         </div>
         <Link
@@ -206,13 +206,13 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
           <Link
             to="/plus/recurring"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
           >
             {t("home.seeAll")}
           </Link>
         </div>
         {upcoming.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-600 dark:border-white/15 dark:text-muted">
             <Icon name="clock" className="h-6 w-6 text-amber-600 dark:text-amber-300" />
             <span>{t("home.noUpcoming")}</span>
           </div>
@@ -231,7 +231,7 @@ export function HomePage() {
                       <span className="text-base font-semibold tabular-nums text-amber-900 dark:text-amber-100">
                         {format(due, "d")}
                       </span>
-                      <span className="mt-0.5 text-[10px] uppercase text-slate-500 dark:text-muted">
+                      <span className="mt-0.5 text-[10px] uppercase text-slate-600 dark:text-muted">
                         {format(due, "MMM")}
                       </span>
                     </span>
@@ -239,7 +239,7 @@ export function HomePage() {
                       <span className="truncate text-sm font-medium text-ink dark:text-fg">
                         {r.memo || t(`transactions.types.${r.type}`)}
                       </span>
-                      <span className="truncate text-xs text-slate-500 dark:text-muted">
+                      <span className="truncate text-xs text-slate-600 dark:text-muted">
                         {walletName(r.walletId)} · {format(due, "HH:mm")}
                       </span>
                     </div>
@@ -323,7 +323,7 @@ export function HomePage() {
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
           <Link
             to="/budgets"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
           >
             {t("home.manage")}
           </Link>
@@ -395,7 +395,7 @@ export function HomePage() {
           <h2 className="font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
           <Link
             to="/plus/wallets"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
           >
             {t("home.manage")}
           </Link>
@@ -414,13 +414,13 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
           <Link
             to="/transactions"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-500 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-slate-600 underline dark:text-muted"
           >
             {t("home.seeAll")}
           </Link>
         </div>
         {recent.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-600 dark:border-white/15 dark:text-muted">
             <Icon name="inbox" className="h-6 w-6 text-teal-600 dark:text-teal-300" />
             <span>{t("home.noTransactions")}</span>
           </div>

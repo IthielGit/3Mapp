@@ -86,7 +86,7 @@ export function CalendarPage() {
 
         <div className="grid grid-cols-3 gap-2 text-center text-sm">
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
               <Icon name="arrowUp" className="h-3 w-3" />
               {t("home.income")}
             </p>
@@ -95,7 +95,7 @@ export function CalendarPage() {
             </p>
           </div>
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
               <Icon name="arrowDown" className="h-3 w-3" />
               {t("home.expense")}
             </p>
@@ -107,7 +107,7 @@ export function CalendarPage() {
             </p>
           </div>
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
               <Icon name="equal" className="h-3 w-3" />
               {t("home.netThisMonth")}
             </p>
@@ -117,7 +117,7 @@ export function CalendarPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-7 text-center text-xs text-slate-500 dark:text-muted">
+        <div className="grid grid-cols-7 text-center text-xs text-slate-600 dark:text-muted">
           {weekdays.map((name, i) => (
             <span key={`${name}-${i}`} className="capitalize">
               {name}
@@ -168,7 +168,7 @@ export function CalendarPage() {
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
         </p>
         {!dayGroup || dayGroup.items.length === 0 ? (
-          <p className="py-4 text-center text-sm text-slate-500 dark:text-muted">
+          <p className="py-4 text-center text-sm text-slate-600 dark:text-muted">
             {t("calendar.empty")}
           </p>
         ) : (

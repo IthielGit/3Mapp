@@ -358,7 +358,7 @@ export function TransactionsPage() {
       ) : null}
 
       {visible.length === 0 ? (
-        <p className="py-10 text-center text-slate-500">{t("transactions.empty")}</p>
+        <p className="py-10 text-center text-slate-600">{t("transactions.empty")}</p>
       ) : null}
 
       <div ref={listRef} className="relative" data-testid="transaction-list">

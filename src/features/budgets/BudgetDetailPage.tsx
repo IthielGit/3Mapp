@@ -61,7 +61,7 @@ export function BudgetDetailPage() {
           />
         }
       />
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-600">
         {t(`budgets.periods.${budget.period}`)} ·{" "}
         {t("budgets.alertAt", { percent: budget.alertThreshold })}
         {budget.rollover ? ` · ${t("budgets.rolloverOn")}` : ""}
@@ -85,7 +85,7 @@ export function BudgetDetailPage() {
 
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("budgets.counted")}</h2>
-        {counted.length === 0 ? <p className="text-slate-500">{t("budgets.noCounted")}</p> : null}
+        {counted.length === 0 ? <p className="text-slate-600">{t("budgets.noCounted")}</p> : null}
         <ul className="flex flex-col gap-1 text-sm">
           {counted.map((tx) => (
             <li key={tx.id}>
@@ -107,7 +107,7 @@ export function BudgetDetailPage() {
 function Figure({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-slate-200 p-2 dark:border-white/15">
-      <p className="text-slate-500">{label}</p>
+      <p className="text-slate-600">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>
   );

@@ -51,7 +51,7 @@ export function CategoriesPage() {
         ))}
       </div>
 
-      {active.length === 0 ? <p className="text-slate-500">{t("categories.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-slate-600">{t("categories.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
         {active.map((category, index) => (
@@ -99,7 +99,7 @@ export function CategoriesPage() {
 
       {archived.length > 0 ? (
         <section className="flex flex-col gap-2">
-          <h2 className="font-semibold text-slate-500">{t("categories.archivedSection")}</h2>
+          <h2 className="font-semibold text-slate-600">{t("categories.archivedSection")}</h2>
           <ul className="flex flex-col gap-2">
             {archived.map((category) => (
               <li

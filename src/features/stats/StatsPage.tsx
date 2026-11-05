@@ -290,7 +290,7 @@ export function StatsPage() {
       {/* Solde actuel : total des portefeuilles inclus dans le total, à la date du jour. */}
       <div className="flex flex-col items-center gap-1 rounded-card bg-teal-50 p-4 text-center dark:bg-teal-900/40">
         <p className="text-sm text-slate-600 dark:text-muted">{t("stats.currentBalance")}</p>
-        <p className="text-xs text-slate-500 dark:text-muted">{t("stats.currentBalanceHint")}</p>
+        <p className="text-xs text-slate-600 dark:text-muted">{t("stats.currentBalanceHint")}</p>
         <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
           {formatMoney(currentBalance, baseCurrency)}
         </p>
@@ -355,7 +355,7 @@ export function StatsPage() {
             : t("stats.savedMore", { amount: formatMoney(summary.net, baseCurrency), when })}
         </p>
         {delta(summary.net, before.net) ? (
-          <p className="text-xs text-slate-500 dark:text-muted">
+          <p className="text-xs text-slate-600 dark:text-muted">
             {t("stats.vsPrevious", { change: delta(summary.net, before.net) })}
           </p>
         ) : null}
@@ -377,7 +377,7 @@ export function StatsPage() {
                     ? t("stats.savings")
                     : t("stats.balanceCurve")}
             </h2>
-            <span className="text-xs text-slate-500 dark:text-muted">
+            <span className="text-xs text-slate-600 dark:text-muted">
               {t("stats.unit", { currency: baseCurrency })}
             </span>
           </div>
@@ -442,9 +442,9 @@ export function StatsPage() {
               ))}
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-slate-500 dark:text-muted">{t("stats.thisMonth")}</p>
+              <p className="text-sm text-slate-600 dark:text-muted">{t("stats.thisMonth")}</p>
               <p
-                className={`text-3xl font-semibold tabular-nums ${thisMonthMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                className={`text-3xl font-semibold tabular-nums ${thisMonthMinor < 0 ? "text-expense" : "text-income dark:text-income-dark"}`}
                 data-amount
               >
                 {formatMoney(thisMonthMinor, baseCurrency)}
@@ -452,20 +452,20 @@ export function StatsPage() {
             </div>
             <div className="grid grid-cols-2 gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
               <div className="flex flex-col">
-                <p className="text-sm text-slate-500 dark:text-muted">{t("stats.lastMonth")}</p>
+                <p className="text-sm text-slate-600 dark:text-muted">{t("stats.lastMonth")}</p>
                 <p
-                  className={`text-lg font-semibold tabular-nums ${lastMonthMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                  className={`text-lg font-semibold tabular-nums ${lastMonthMinor < 0 ? "text-expense" : "text-income dark:text-income-dark"}`}
                   data-amount
                 >
                   {formatMoney(lastMonthMinor, baseCurrency)}
                 </p>
               </div>
               <div className="flex flex-col">
-                <p className="text-sm text-slate-500 dark:text-muted">
+                <p className="text-sm text-slate-600 dark:text-muted">
                   {t("stats.nextMonthForecast")}
                 </p>
                 <p
-                  className={`text-lg font-semibold tabular-nums ${forecastMinor < 0 ? "text-accent" : "text-income dark:text-income-dark"}`}
+                  className={`text-lg font-semibold tabular-nums ${forecastMinor < 0 ? "text-expense" : "text-income dark:text-income-dark"}`}
                   data-amount
                 >
                   {formatMoney(forecastMinor, baseCurrency)}
@@ -475,7 +475,7 @@ export function StatsPage() {
           </div>
         ) : null}
         {!hasData ? (
-          <p className="py-10 text-center text-sm text-slate-500 dark:text-muted">
+          <p className="py-10 text-center text-sm text-slate-600 dark:text-muted">
             {t("stats.noExpenses")}
           </p>
         ) : dataset === "categories" && repr === "donut" ? (
@@ -698,7 +698,7 @@ export function StatsPage() {
         <h2 className="font-semibold text-ink dark:text-fg">{t("stats.byWallet")}</h2>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-slate-500 dark:text-muted">
+            <tr className="text-left text-slate-600 dark:text-muted">
               <th className="py-1">{t("common.name")}</th>
               <th className="py-1 text-right">{t("home.income")}</th>
               <th className="py-1 text-right">{t("home.expense")}</th>

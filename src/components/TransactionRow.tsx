@@ -47,14 +47,14 @@ export function TransactionRow({ transaction: tx, category, walletName }: Transa
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-medium">{title}</span>
-        <span className="truncate text-xs text-slate-500 dark:text-muted">{subtitle}</span>
+        <span className="truncate text-xs text-slate-600 dark:text-muted">{subtitle}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
         <span className={`font-semibold ${amountClass}`} data-amount>
           {isExpense ? "−" : isIncome ? "+" : ""}
           {formatMoney(tx.amount, tx.currency)}
         </span>
-        <span className="text-xs text-slate-500 dark:text-muted">{time}</span>
+        <span className="text-xs text-slate-600 dark:text-muted">{time}</span>
       </span>
     </Link>
   );

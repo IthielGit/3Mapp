@@ -35,7 +35,7 @@ export function ResetAccountSection() {
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 font-medium text-accent focus-visible:outline-2 focus-visible:outline-brand-700"
+        className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 font-medium text-expense focus-visible:outline-2 focus-visible:outline-brand-700"
       >
         <span className="flex items-center gap-3">
           <span
@@ -60,7 +60,7 @@ export function ResetAccountSection() {
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
-            className="min-h-[56px] w-full rounded-2xl bg-accent px-4 text-base font-semibold text-white active:scale-[0.98]"
+            className="min-h-[56px] w-full rounded-2xl bg-expense px-4 text-base font-semibold text-white active:scale-[0.98]"
           >
             {t("resetAccount.confirm")}
           </button>
@@ -92,7 +92,7 @@ export function ResetAccountSection() {
             </button>
             <button
               type="button"
-              className="min-h-[44px] rounded-lg bg-accent px-4 font-semibold text-white disabled:opacity-50"
+              className="min-h-[44px] rounded-lg bg-expense px-4 font-semibold text-white disabled:opacity-50"
               onClick={() => void confirm()}
               disabled={busy}
             >

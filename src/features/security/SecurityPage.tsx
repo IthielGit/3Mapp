@@ -159,7 +159,7 @@ export function SecurityPage() {
             {t("security.biometricEnable")}
           </button>
         ) : (
-          <p className="text-sm text-slate-500">{t("security.biometricUnsupported")}</p>
+          <p className="text-sm text-slate-600">{t("security.biometricUnsupported")}</p>
         )}
       </section>
 

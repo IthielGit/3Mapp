@@ -52,7 +52,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col rounded-lg border border-slate-300 px-3 py-2 dark:border-white/15">
-        <label htmlFor="amount-expression" className="text-sm text-slate-500">
+        <label htmlFor="amount-expression" className="text-sm text-slate-600">
           {label}
         </label>
         <input
@@ -65,7 +65,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
           onChange={(e) => onExpressionChange(e.target.value)}
           aria-describedby="amount-result"
         />
-        <output id="amount-result" aria-live="polite" className="text-sm text-slate-500">
+        <output id="amount-result" aria-live="polite" className="text-sm text-slate-600">
           {result}
         </output>
       </div>

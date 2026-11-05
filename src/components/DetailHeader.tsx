@@ -70,7 +70,7 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
                   role="menuitem"
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className={`${ITEM} ${item.danger ? "text-accent" : "text-ink dark:text-fg"}`}
+                  className={`${ITEM} ${item.danger ? "text-expense" : "text-ink dark:text-fg"}`}
                 >
                   {item.label}
                 </Link>
@@ -82,7 +82,7 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
                     setOpen(false);
                     item.onSelect?.();
                   }}
-                  className={`${ITEM} ${item.danger ? "text-accent" : "text-ink dark:text-fg"}`}
+                  className={`${ITEM} ${item.danger ? "text-expense" : "text-ink dark:text-fg"}`}
                 >
                   {item.label}
                 </button>

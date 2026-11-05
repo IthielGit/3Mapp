@@ -42,7 +42,7 @@ function GoalList() {
 
       {creating ? <GoalForm onDone={() => setCreating(false)} /> : null}
       {goals.length === 0 && !creating ? (
-        <p className="text-slate-500">{t("goals.empty")}</p>
+        <p className="text-slate-600">{t("goals.empty")}</p>
       ) : null}
 
       <ul className="flex flex-col gap-3">
@@ -73,7 +73,7 @@ function GoalList() {
                   >
                     <div className="h-full bg-brand-600" style={{ width: `${p.percent}%` }} />
                   </div>
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm text-slate-600">
                     {formatMoney(p.saved, g.currency)} / {formatMoney(g.targetAmount, g.currency)}
                     {p.reached
                       ? ` · ${t("goals.reached")}`
@@ -208,7 +208,7 @@ function GoalDetail({ id }: { id: string }) {
         {formatMoney(p.saved, goal.currency)} / {formatMoney(goal.targetAmount, goal.currency)} ·{" "}
         {p.percent} %
       </p>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-600">
         {p.reached
           ? t("goals.reached")
           : p.estimatedDate

@@ -243,7 +243,7 @@ export function BackupPage() {
               aria-describedby="backup-password-hint"
             />
           </Field>
-          <p id="backup-password-hint" className="text-sm text-slate-500">
+          <p id="backup-password-hint" className="text-sm text-slate-600">
             {t("backup.passwordHint", { min: MIN_PASSWORD_LENGTH })}
           </p>
           <button
@@ -270,7 +270,7 @@ export function BackupPage() {
                   {t("backup.prepareShare")}
                 </button>
               )}
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-600">
                 {readyShare ? t("backup.readyToShare") : t("backup.shareHint")}
               </p>
             </>
@@ -334,7 +334,7 @@ export function BackupPage() {
                 />
                 <span className="flex flex-col">
                   <span className="font-medium">{t("backup.modeMerge")}</span>
-                  <span className="text-sm text-slate-500">{t("backup.modeMergeHint")}</span>
+                  <span className="text-sm text-slate-600">{t("backup.modeMergeHint")}</span>
                 </span>
               </label>
               <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
@@ -348,7 +348,7 @@ export function BackupPage() {
                 />
                 <span className="flex flex-col">
                   <span className="font-medium">{t("backup.modeReplace")}</span>
-                  <span className="text-sm text-slate-500">{t("backup.modeReplaceHint")}</span>
+                  <span className="text-sm text-slate-600">{t("backup.modeReplaceHint")}</span>
                 </span>
               </label>
             </fieldset>

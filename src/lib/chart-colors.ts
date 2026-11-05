@@ -1,19 +1,17 @@
 /**
- * Palette des graphiques : même intensité pour toutes les teintes, chacune distincte de ses
- * voisines (les parts consécutives d'un anneau restent lisibles). Le rouge n'apparaît pas :
- * il reste réservé aux dépenses et aux suppressions.
+ * Palette des graphiques : chaque teinte atteint au moins 3:1 sur le fond crème (contraste des
+ * éléments graphiques) et reste distincte de ses voisines. Le rouge n'y figure pas : il reste
+ * réservé aux dépenses et aux suppressions.
  */
 export const CHART_COLORS = [
   "#0f766e", // sarcelle (couleur de marque)
-  "#e0a030", // or chaud
+  "#a86b12", // ocre
   "#7c6ad6", // violet doux
-  "#3b9adb", // bleu ciel
-  "#d9689b", // rose framboise
-  "#7aa845", // vert sauge
-  "#e08a4a", // abricot
-  "#4c6fd1", // bleu cobalt
-  "#2fa58a", // jade
-  "#8bc6b0", // menthe
+  "#2b7fc4", // bleu
+  "#c24f85", // framboise
+  "#5a8a2e", // sauge
+  "#c4672c", // abricot
+  "#4c6fd1", // cobalt
 ] as const;
 
 /** Couleur de la série à cette position (les premières positions sont les plus distinctes). */

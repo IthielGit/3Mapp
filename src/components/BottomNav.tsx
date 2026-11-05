@@ -94,7 +94,7 @@ export function BottomNav() {
         to={item.to}
         end={item.end ?? false}
         className={({ isActive }) =>
-          `${TAB} ${isActive ? "font-semibold text-brand-700 dark:text-brand-300" : "font-medium text-slate-500 dark:text-muted"}`
+          `${TAB} ${isActive ? "font-semibold text-brand-700 dark:text-brand-300" : "font-medium text-slate-600 dark:text-muted"}`
         }
       >
         {({ isActive }) => (
@@ -124,7 +124,7 @@ export function BottomNav() {
           >
             <span aria-hidden="true">+</span>
           </Link>
-          <span aria-hidden="true" className="mt-1 text-[11px] font-medium text-slate-500 dark:text-muted">
+          <span aria-hidden="true" className="mt-1 text-[11px] font-medium text-slate-600 dark:text-muted">
             {t("nav.add")}
           </span>
         </li>

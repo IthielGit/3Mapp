@@ -44,7 +44,7 @@ export function InstallCard() {
       <h2 className="font-semibold">{t("pwa.installTitle")}</h2>
       {state === "available" ? (
         <>
-          <p className="text-sm text-slate-500">{t("pwa.installHint")}</p>
+          <p className="text-sm text-slate-600">{t("pwa.installHint")}</p>
           <button
             type="button"
             className={buttonPrimary}
@@ -58,7 +58,7 @@ export function InstallCard() {
           </button>
         </>
       ) : (
-        <p className="text-sm text-slate-500">{t("pwa.installIosHint")}</p>
+        <p className="text-sm text-slate-600">{t("pwa.installIosHint")}</p>
       )}
       {message ? (
         <p role="status" className="text-sm">

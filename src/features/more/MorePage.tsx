@@ -38,7 +38,7 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="px-1 text-sm font-semibold text-slate-500 dark:text-muted">
+      <h2 className="px-1 text-sm font-semibold text-slate-600 dark:text-muted">
         {title}
       </h2>
       <div className="rounded-card border border-slate-200 dark:border-white/15">{children}</div>
@@ -151,7 +151,7 @@ export function MorePage() {
 
       <Group title={t("more.demo")}>
         <div className="flex flex-col gap-2 p-4">
-          <p className="text-sm text-slate-500 dark:text-muted">{t("more.demoHint")}</p>
+          <p className="text-sm text-slate-600 dark:text-muted">{t("more.demoHint")}</p>
           <button type="button" className={buttonSecondary} onClick={() => void addDemo()}>
             {t("more.demoButton")}
           </button>

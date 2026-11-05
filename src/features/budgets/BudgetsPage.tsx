@@ -51,7 +51,7 @@ export function BudgetsPage() {
         </button>
       </div>
 
-      {active.length === 0 ? <p className="text-slate-500">{t("budgets.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-slate-600">{t("budgets.empty")}</p> : null}
 
       <ul className="flex flex-col gap-3">
         {active.map((b) => {
@@ -79,7 +79,7 @@ export function BudgetsPage() {
                     />
                     {b.name}
                   </span>
-                  <span className="text-sm text-slate-500">{t(`budgets.periods.${b.period}`)}</span>
+                  <span className="text-sm text-slate-600">{t(`budgets.periods.${b.period}`)}</span>
                 </div>
                 <div
                   role="progressbar"
@@ -105,7 +105,7 @@ export function BudgetsPage() {
                   </span>
                 </div>
                 {s.dailyAllowance !== null ? (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-600">
                     {t("budgets.dailyAllowance", {
                       amount: formatMoney(s.dailyAllowance, b.currency),
                     })}
@@ -114,7 +114,7 @@ export function BudgetsPage() {
               </Link>
 
               {extended ? (
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   {b.categoryIds
                     .map((id) => names.get(id))
                     .filter(Boolean)

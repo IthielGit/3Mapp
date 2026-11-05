@@ -38,7 +38,7 @@ export function RatesPage() {
   return (
     <section className="flex flex-col gap-4">
       <PageTitle className="text-2xl font-semibold">{t("rates.title")}</PageTitle>
-      <p className="text-sm text-slate-500">{t("rates.hint")}</p>
+      <p className="text-sm text-slate-600">{t("rates.hint")}</p>
 
       <div className="grid grid-cols-2 gap-2">
         <Field label={t("rates.from")}>

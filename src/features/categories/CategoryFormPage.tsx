@@ -201,7 +201,7 @@ export function CategoryFormPage() {
 
           <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
             <h2 className="font-semibold">{t("categories.merge")}</h2>
-            <p className="text-sm text-slate-500">{t("categories.mergeHint")}</p>
+            <p className="text-sm text-slate-600">{t("categories.mergeHint")}</p>
             <select
               className={inputClass}
               value={mergeTarget}
