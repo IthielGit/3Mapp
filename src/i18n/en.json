@@ -727,5 +727,38 @@
     "payModeNone": "No pay to track",
     "payHintIrregular": "The month then follows the calendar month. Add your income as it comes in.",
     "payHintNone": "You can change this in Settings."
+  },
+  "account": {
+    "title": "Account",
+    "unavailable": "Accounts are not available in this version. The app works entirely on this device.",
+    "loading": "Loading…",
+    "signedInAs": "Signed in as",
+    "localNotice": "Your data stays on this device until sync is turned on.",
+    "signOut": "Sign out",
+    "help": {
+      "title": "Account",
+      "p1": "An account is optional. It lets you get your data back on several devices once sync is on.",
+      "p2": "Sign-up is open: no approval is needed. The service administrator can view account data."
+    },
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "email": "Email address",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "createButton": "Create my account",
+    "signInButton": "Sign in",
+    "google": "Continue with Google",
+    "forgotPassword": "Forgot password?",
+    "resetSent": "If an account exists for this address, a reset link has just been sent.",
+    "checkEmail": "Check your inbox to confirm your account.",
+    "errors": {
+      "invalidEmail": "Invalid email address.",
+      "weakPassword": "The password must be at least 8 characters.",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailNotConfirmed": "Confirm your email address first.",
+      "alreadyRegistered": "An account already exists with this address.",
+      "network": "Could not connect. Check your network.",
+      "unknown": "Something went wrong. Try again."
+    }
   }
 }

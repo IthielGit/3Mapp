@@ -5,6 +5,7 @@ import { registerSW } from "virtual:pwa-register";
 import App from "./App";
 import { ConfirmHost } from "./components/confirm";
 import { SecurityProvider } from "./features/security/SecurityProvider";
+import { AccountProvider } from "./features/account/AccountProvider";
 import { ThemeProvider } from "./lib/theme";
 import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
 import "./i18n";
@@ -36,8 +37,10 @@ createRoot(rootElement).render(
     <ThemeProvider>
       <BrowserRouter>
         <SecurityProvider>
-          <App />
-          <ConfirmHost />
+          <AccountProvider>
+            <App />
+            <ConfirmHost />
+          </AccountProvider>
         </SecurityProvider>
       </BrowserRouter>
     </ThemeProvider>
