@@ -74,8 +74,8 @@ export function CalendarPage() {
   const openTx = openId ? inBase.find((tx) => tx.id === openId) : undefined;
 
   return (
-    <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-2 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -189,7 +189,7 @@ export function CalendarPage() {
 
       <section
         id="calendar-day"
-        className="flex min-h-0 flex-1 flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
+        className="flex flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
       >
         <p className="font-semibold capitalize text-ink dark:text-fg">
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
@@ -199,7 +199,7 @@ export function CalendarPage() {
             {t("calendar.empty")}
           </p>
         ) : (
-          <ul className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
+          <ul className="flex flex-col">
             {dayGroup.items.map((tx) => (
               <li key={tx.id}>
                 <TransactionRow
