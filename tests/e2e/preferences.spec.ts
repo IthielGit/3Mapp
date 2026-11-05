@@ -36,7 +36,6 @@ test("récurrence à la création : la case crée une récurrence visible", asyn
     .getByRole("link", { name: "Transactions" })
     .click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
-  await page.getByRole("button", { name: "Plus de détails" }).click();
   await page.getByLabel("Répéter (récurrence)").check();
   await openAmountKeypad(page);
   for (const key of ["1", "0", "0", "0"]) {

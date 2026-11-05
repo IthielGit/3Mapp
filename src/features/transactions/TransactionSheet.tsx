@@ -90,9 +90,6 @@ export function TransactionSheet({
   const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
   const [repeat, setRepeat] = useState(false);
-  // Dépense et revenu : seuls le montant et la catégorie sont visibles ; le reste est sous « Plus de détails ».
-  const [showDetails, setShowDetails] = useState(false);
-  const hidden = (type === "expense" || type === "income") && !showDetails && !transaction;
   const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
   const [repeatEvery, setRepeatEvery] = useState(1);
   const [amountExpr, setAmountExpr] = useState(
@@ -469,18 +466,8 @@ export function TransactionSheet({
           </Field>
         ) : null}
 
-        {hidden ? (
-          <button
-            type="button"
-            aria-expanded={false}
-            onClick={() => setShowDetails(true)}
-            className="flex min-h-[44px] items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm font-medium text-slate-600 dark:border-white/15 dark:text-muted"
-          >
-            {t("transactions.moreDetails")}
-          </button>
-        ) : (
-          <div className="flex flex-col gap-3">
-        {!transaction && type !== "adjustment" && !hidden ? (
+        <div className="flex flex-col gap-3">
+        {!transaction && type !== "adjustment" ? (
           <div className="flex flex-col gap-2">
             <label className="flex min-h-[44px] items-center gap-3">
               <input
@@ -551,8 +538,7 @@ export function TransactionSheet({
                 onChange={(e) => setNote(e.target.value)}
               />
             </Field>
-          </div>
-        )}
+        </div>
 
         {error ? (
           <p role="alert" className="text-red-700 dark:text-red-400">
