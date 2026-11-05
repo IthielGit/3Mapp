@@ -213,3 +213,10 @@ main > * {
     animation-name: none;
   }
 }
+
+/* Calendrier sur écran bas : l'en-tête ne reste pas collé, la page défile et la liste du jour reste accessible. */
+@media (max-height: 760px) {
+  .calendar-head {
+    position: static;
+  }
+}

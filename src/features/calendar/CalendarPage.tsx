@@ -56,8 +56,8 @@ export function CalendarPage() {
   const dayGroup = byDay.get(selected);
 
   return (
-    <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
+    <section className="flex min-h-[calc(100dvh-7rem)] flex-col gap-4 md:min-h-0">
+      <div className="calendar-head sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
           {t("nav.calendar")}
         </h1>
@@ -138,7 +138,11 @@ export function CalendarPage() {
                 type="button"
                 aria-pressed={isSelected}
                 aria-label={`${format(day, "d MMMM", { locale })}${group ? `, ${formatMoney(net, baseCurrency)}` : ""}`}
-                onClick={() => setSelected(key)}
+                onClick={() => {
+                  setSelected(key);
+                  // Sur petit écran, la carte du jour peut être sous la barre de navigation : on la ramène à l'écran.
+                  document.getElementById("calendar-day")?.scrollIntoView({ block: "start", behavior: "smooth" });
+                }}
                 className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
                   isSelected ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink" : ""
                 } ${inMonth ? "text-ink dark:text-fg" : "text-slate-400 dark:text-slate-600"}`}
@@ -163,7 +167,10 @@ export function CalendarPage() {
         </div>
       </div>
 
-      <section className="flex min-h-0 flex-1 flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card">
+      <section
+        id="calendar-day"
+        className="flex min-h-[16rem] flex-1 flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
+      >
         <p className="font-semibold capitalize text-ink dark:text-fg">
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
         </p>
