@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useId, useState, type FormEvent, type ReactNode } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useTranslation } from "react-i18next";
 import { BrandMark } from "../../components/BrandMark";
@@ -17,16 +17,23 @@ export function accountRedirectUrl(): string {
   return `${window.location.origin}/plus/account`;
 }
 
-const fieldClass =
-  "h-11 [@media(max-height:720px)]:h-10 w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-4 text-base text-ink placeholder:text-neutral-500 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-white/15 dark:bg-raised dark:text-fg dark:focus:bg-raised";
+const fieldClass = `h-11 [@media(max-height:720px)]:h-10 w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-4 text-base text-ink placeholder:text-neutral-500 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-200 dark:border-white/15 dark:bg-raised dark:text-fg dark:focus:bg-raised`;
 
-/** Champ avec libellé au-dessus, comme sur les écrans de connexion modernes. */
-function LabeledField({ label, children }: { label: string; children: ReactNode }) {
+/**
+ * Champ avec libellé relié à son contrôle (htmlFor) et une action optionnelle sur la même ligne
+ * (lien « mot de passe oublié », consigne de longueur) : aucune ligne supplémentaire.
+ */
+function Field({ id, label, action, children }: { id: string; label: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <label className="flex flex-col gap-1">
-      <span className="text-sm font-medium text-ink dark:text-fg">{label}</span>
+    <div className="flex flex-col gap-1">
+      <div className="flex min-h-[24px] items-center justify-between gap-2">
+        <label htmlFor={id} className="text-sm font-medium text-ink dark:text-fg">
+          {label}
+        </label>
+        {action}
+      </div>
       {children}
-    </label>
+    </div>
   );
 }
 
@@ -36,6 +43,9 @@ function LabeledField({ label, children }: { label: string; children: ReactNode 
  */
 export function AuthForm({ client }: { client: SupabaseClient }) {
   const { t } = useTranslation();
+  const emailId = useId();
+  const passwordId = useId();
+  const confirmId = useId();
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,9 +94,11 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
 
   return (
     <main className="relative flex h-dvh flex-col overflow-hidden bg-gradient-to-b from-brand-50 via-canvas to-canvas dark:from-raised dark:via-canvas dark:to-canvas">
-      {/* Zone d'accueil : marque et promesse, sans photo ni illustration externe. */}
+      {/* Décor discret : pas de photo ni d'illustration externe. */}
       <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-200/60 dark:bg-brand-dark/10" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-300/40 dark:bg-brand-dark/10" />
+
+      {/* Marque : une ligne sur les écrans bas, centrée et plus grande sinon. */}
       <header className="relative flex items-center gap-3 px-6 pb-1 pt-4 text-left [@media(min-height:720px)]:flex-col [@media(min-height:720px)]:gap-2 [@media(min-height:720px)]:pb-2 [@media(min-height:720px)]:pt-8 [@media(min-height:720px)]:text-center">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md dark:bg-card [@media(min-height:720px)]:h-16 [@media(min-height:720px)]:w-16 [@media(min-height:720px)]:rounded-2xl">
           <BrandMark size={28} className="h-6 w-6 [@media(min-height:720px)]:h-9 [@media(min-height:720px)]:w-9" />
@@ -97,12 +109,12 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
         </div>
       </header>
 
-      <section className="relative mx-auto mt-auto w-full max-w-md rounded-t-[2rem] bg-white px-6 pb-4 pt-5 shadow-[0_-8px_30px_rgba(11,18,32,0.08)] dark:bg-card">
+      <section className={`relative mx-auto mt-auto w-full max-w-md rounded-t-[2rem] bg-white px-6 pb-4 pt-5 shadow-[0_-8px_30px_rgba(11,18,32,0.08)] [@media(max-height:720px)]:pt-4 dark:bg-card`}>
         <div className="mb-3 flex flex-col gap-0.5">
-          <h1 className="text-2xl font-semibold text-ink dark:text-fg">
+          <h1 className={`text-2xl font-semibold text-ink dark:text-fg [@media(max-height:720px)]:text-xl`}>
             {isSignUp ? t("account.screen.createTitle") : t("account.screen.welcomeTitle")}
           </h1>
-          <p className="text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden">
+          <p className={`text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden`}>
             {isSignUp ? t("account.screen.createSub") : t("account.screen.welcomeSub")}
           </p>
         </div>
@@ -127,19 +139,38 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
         </div>
 
         <form className="flex flex-col gap-3" onSubmit={onSubmit} noValidate>
-          <LabeledField label={t("account.email")}>
+          <Field id={emailId} label={t("account.email")}>
             <input
+              id={emailId}
               type="email"
               autoComplete="email"
               className={fieldClass}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </LabeledField>
+          </Field>
 
-          <LabeledField label={t("account.password")}>
+          <Field
+            id={passwordId}
+            label={t("account.password")}
+            action={
+              isSignUp ? (
+                <span className="text-xs text-neutral-600 dark:text-muted">{t("account.passwordHint")}</span>
+              ) : (
+                <button
+                  type="button"
+                  className="min-h-[24px] text-sm font-medium text-brand-700 underline-offset-4 hover:underline disabled:opacity-50 dark:text-brand-dark"
+                  disabled={busy}
+                  onClick={() => void run(() => sendPasswordReset(client, email, accountRedirectUrl()), t("account.resetSent"))}
+                >
+                  {t("account.forgotPassword")}
+                </button>
+              )
+            }
+          >
             <span className="relative block">
               <input
+                id={passwordId}
                 type={showPassword ? "text" : "password"}
                 autoComplete={isSignUp ? "new-password" : "current-password"}
                 className={`${fieldClass} pr-24`}
@@ -155,33 +186,20 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
                 {showPassword ? t("account.hide") : t("account.show")}
               </button>
             </span>
-          </LabeledField>
+          </Field>
 
           {isSignUp ? (
-            <>
-              <LabeledField label={t("account.confirmPassword")}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  className={fieldClass}
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                />
-              </LabeledField>
-              <p className="text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden">{t("account.passwordHint")}</p>
-            </>
-          ) : (
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="min-h-[44px] text-sm font-medium text-brand-700 underline-offset-4 hover:underline dark:text-brand-dark"
-                disabled={busy}
-                onClick={() => void run(() => sendPasswordReset(client, email, accountRedirectUrl()), t("account.resetSent"))}
-              >
-                {t("account.forgotPassword")}
-              </button>
-            </div>
-          )}
+            <Field id={confirmId} label={t("account.confirmPassword")}>
+              <input
+                id={confirmId}
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                className={fieldClass}
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+              />
+            </Field>
+          ) : null}
 
           {error ? (
             <p role="alert" className="text-sm text-red-700 dark:text-red-400">
@@ -203,7 +221,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
           </button>
         </form>
 
-        <div className="my-3 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500">
+        <div className={`my-3 [@media(max-height:720px)]:my-2 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500`}>
           <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
           {t("account.or")}
           <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
@@ -221,7 +239,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
           {t("account.google")}
         </button>
 
-        <p className="mt-4 text-center text-sm text-neutral-600 dark:text-muted">
+        <p className={`mt-3 text-center text-sm text-neutral-600 dark:text-muted [@media(max-height:720px)]:hidden`}>
           {isSignUp ? t("account.haveAccount") : t("account.noAccount")}{" "}
           <button
             type="button"
