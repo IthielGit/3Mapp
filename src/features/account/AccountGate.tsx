@@ -35,15 +35,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
   }
 
   if (account.status === "signedOut") {
-    return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 p-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">{t("account.gate.title")}</h1>
-          <p className="text-neutral-700 dark:text-muted">{t("account.gate.intro")}</p>
-        </div>
-        <AuthForm client={account.client} />
-      </main>
-    );
+    return <AuthForm client={account.client} />;
   }
 
   if (account.status === "suspended") {

@@ -767,7 +767,8 @@
     "gate": {
       "title": "Connexion",
       "intro": "Un compte est nécessaire pour utiliser Fundora. Vos données sont synchronisées avec votre compte et restent accessibles sur vos appareils.",
-      "unconfigured": "Fundora nécessite un compte, mais le service de comptes n'est pas configuré sur cette version. Contactez le support."
+      "unconfigured": "Fundora nécessite un compte, mais le service de comptes n'est pas configuré sur cette version. Contactez le support.",
+      "tagline": "Votre budget, clair et sous contrôle. Vos données suivent votre compte sur tous vos appareils."
     },
     "signOutConfirm": "Vos données seront effacées de cet appareil. Elles restent sur votre compte si elles ont été synchronisées.",
     "signOutLost": "{{count}} modification(s) non envoyée(s) seront perdues.",
@@ -783,6 +784,21 @@
         "suspended": "Compte suspendu : la synchronisation est bloquée.",
         "unknown": "La synchronisation a échoué. Nouvel essai automatique."
       }
-    }
+    },
+    "screen": {
+      "welcomeTitle": "Bon retour",
+      "welcomeSub": "Connectez-vous pour retrouver vos finances.",
+      "createTitle": "Créer un compte",
+      "createSub": "Quelques secondes suffisent. Vos données se synchronisent ensuite."
+    },
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "or": "ou",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un compte ?"
   }
 }
