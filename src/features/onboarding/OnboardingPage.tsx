@@ -87,7 +87,6 @@ export function OnboardingPage() {
             >
               <option value="fr">Français</option>
               <option value="en">English</option>
-              <option value="mg">Malagasy</option>
             </select>
           </Field>
           <Field label={t("onboarding.currency")}>

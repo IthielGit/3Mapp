@@ -659,8 +659,7 @@
     "payOnFridayHint": "Example: the 28th is a Saturday, the cycle starts on Friday the 27th.",
     "payIncome": "My pay income",
     "payIncomeNone": "None for now",
-    "payIncomeHint": "Used to know whether your pay has arrived.",
-    "languageMg": "Malagasy"
+    "payIncomeHint": "Used to know whether your pay has arrived."
   },
   "repeat": {
     "label": "Repeat (recurring)",
