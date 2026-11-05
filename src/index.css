@@ -230,3 +230,30 @@ main > * {
     accent-color: #0f766e;
   }
 }
+
+/* Bandeau « Annuler » après une suppression : il glisse depuis le bas, comme il se range.
+   Transitions et non images-clés : il peut apparaître pendant qu'un autre se referme. */
+.undo-toast {
+  transition:
+    opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@starting-style {
+  .undo-toast {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* Sans mouvement : le bandeau fond seulement. */
+@media (prefers-reduced-motion: reduce) {
+  .undo-toast {
+    transition: opacity 200ms ease-out;
+  }
+  @starting-style {
+    .undo-toast {
+      transform: none;
+    }
+  }
+}
