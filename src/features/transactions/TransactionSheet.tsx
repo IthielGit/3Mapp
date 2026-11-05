@@ -24,7 +24,6 @@ import { occurrenceDate, type Frequency } from "../../domain/recurrence";
 import {
   createTransaction,
   draftFromTransaction,
-  duplicateTransaction,
   updateTransaction,
   type TransactionDraft,
 } from "./transaction-service";
@@ -60,6 +59,10 @@ interface TransactionSheetProps {
   defaultType?: TxType | undefined;
   onClose: () => void;
   onDelete?: ((transaction: Transaction) => void) | undefined;
+  /** Ouvre le formulaire de création pré-rempli avec cette transaction (rien n'est enregistré avant). */
+  onDuplicate?: ((transaction: Transaction) => void) | undefined;
+  /** Source de copie : pré-remplit un nouveau formulaire, sans la modifier. */
+  copyOf?: Transaction | undefined;
 }
 
 export function TransactionSheet({
@@ -67,9 +70,12 @@ export function TransactionSheet({
   defaultType,
   onClose,
   onDelete,
+  onDuplicate,
+  copyOf,
 }: TransactionSheetProps) {
   const { t } = useTranslation();
-  const initial = transaction ? draftFromTransaction(transaction) : undefined;
+  const source = transaction ?? copyOf;
+  const initial = source ? draftFromTransaction(source) : undefined;
 
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? [];
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
@@ -78,7 +84,7 @@ export function TransactionSheet({
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
   // En modification, le pavé est fermé : le montant s'affiche et se modifie au toucher.
-  const [keypadOpen, setKeypadOpen] = useState(!transaction);
+  const [keypadOpen, setKeypadOpen] = useState(!source);
   const [type, setType] = useState<TxType>(initial?.type ?? defaultType ?? "expense");
   const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
@@ -86,7 +92,7 @@ export function TransactionSheet({
   const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
   const [repeatEvery, setRepeatEvery] = useState(1);
   const [amountExpr, setAmountExpr] = useState(
-    transaction ? minorToPlainText(Math.abs(transaction.amount), transaction.currency) : "",
+    source ? minorToPlainText(Math.abs(source.amount), source.currency) : "",
   );
   const [adjustSign, setAdjustSign] = useState<"+" | "-">(
     transaction && transaction.amount < 0 ? "-" : "+",
@@ -104,12 +110,14 @@ export function TransactionSheet({
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [subcategoryId, setSubcategoryId] = useState(initial?.subcategoryId ?? "");
   const [dateLocal, setDateLocal] = useState(
-    format(initial ? new Date(initial.date) : new Date(), "yyyy-MM-dd'T'HH:mm"),
+    // Une copie prend la date du jour : c'est une nouvelle transaction.
+    format(transaction && initial ? new Date(initial.date) : new Date(), "yyyy-MM-dd'T'HH:mm"),
   );
   const [memo, setMemo] = useState(initial?.memo ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   // Plus de saisie de photos : les pièces jointes déjà présentes sont conservées telles quelles.
-  const attachmentIds = initial?.attachmentIds ?? [];
+  // Les pièces jointes ne sont pas copiées.
+  const attachmentIds = transaction ? (initial?.attachmentIds ?? []) : [];
   const [error, setError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
@@ -229,15 +237,9 @@ export function TransactionSheet({
     }
   }
 
-  async function duplicate() {
+  function duplicate() {
     if (!transaction) return;
-    setError(undefined);
-    try {
-      await duplicateTransaction(transaction.id);
-      onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
-    }
+    onDuplicate?.(transaction);
   }
 
   return (
@@ -314,7 +316,7 @@ export function TransactionSheet({
               currency={currency}
               label={t("transactions.amount")}
             />
-            {transaction ? (
+            {source ? (
               <button
                 type="button"
                 className={`${buttonSecondary} w-full`}

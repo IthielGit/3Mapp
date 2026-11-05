@@ -172,6 +172,11 @@ export function TransactionsPage() {
   const target = useLiveQuery(() => (id ? db.transactions.get(id) : undefined), [id]);
   const editing = sheetMode === "edit" ? (target ?? undefined) : undefined;
   const defaultType = params.get("type") as TransactionType | null;
+  const copyFromId = params.get("from");
+  const copySource = useLiveQuery(
+    () => (copyFromId ? db.transactions.get(copyFromId) : undefined),
+    [copyFromId],
+  );
 
   function closeSheet() {
     navigate("/transactions", { replace: true });
@@ -643,11 +648,13 @@ export function TransactionsPage() {
           onEdit={() => navigate(`/transactions/${target.id}/edit`)}
         />
       ) : null}
-      {sheetMode === "new" || (sheetMode === "edit" && editing) ? (
+      {(sheetMode === "new" && (!copyFromId || copySource)) || (sheetMode === "edit" && editing) ? (
         <TransactionSheet
-          key={sheetMode === "edit" ? `edit-${id}` : `new-${defaultType ?? ""}`}
+          key={sheetMode === "edit" ? `edit-${id}` : `new-${defaultType ?? ""}-${copyFromId ?? ""}`}
           transaction={editing}
           defaultType={defaultType ?? undefined}
+          copyOf={copySource ?? undefined}
+          onDuplicate={(tx) => navigate(`/transactions/new?from=${tx.id}`)}
           onClose={closeSheet}
           onDelete={(tx) => {
             void deleteIds([tx.id]).then(closeSheet);
