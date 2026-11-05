@@ -46,7 +46,7 @@ function DebtList() {
             role="tab"
             aria-selected={tab === d}
             onClick={() => setTab(d)}
-            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-300" : "border-slate-300 dark:border-white/15"}`}
+            className={`min-h-[44px] rounded-lg border font-medium ${tab === d ? "border-brand-600 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-dark" : "border-neutral-500 dark:border-white/15"}`}
           >
             {t(`debts.tabs.${d}`)}
           </button>
@@ -55,7 +55,7 @@ function DebtList() {
 
       {creating ? <DebtForm direction={tab} onDone={() => setCreating(false)} /> : null}
       {shown.length === 0 && !creating ? (
-        <p className="text-slate-600 dark:text-muted">{t("debts.empty")}</p>
+        <p className="text-neutral-600 dark:text-muted">{t("debts.empty")}</p>
       ) : null}
 
       <ul className="flex flex-col gap-3">
@@ -69,11 +69,11 @@ function DebtList() {
             <li key={d.id}>
               <Link
                 to={`/plus/debts/${d.id}`}
-                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-white/15"
+                className="flex justify-between rounded-lg border border-neutral-200 p-3 dark:border-white/15"
               >
                 <span>
                   <span className="font-medium">{d.counterparty}</span>
-                  <span className="block text-sm text-slate-600 dark:text-muted">
+                  <span className="block text-sm text-neutral-600 dark:text-muted">
                     {t(`debts.status.${state.status}`)}
                   </span>
                 </span>
@@ -138,7 +138,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+    <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
       <Field label={direction === "borrowed" ? t("debts.creditor") : t("debts.debtor")}>
         <input
           className={inputClass}
@@ -198,7 +198,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
           {error}
         </p>
       ) : null}
-      {missingDebt() ? <p className="text-sm text-slate-600 dark:text-muted">{missingDebt()}</p> : null}
+      {missingDebt() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingDebt()}</p> : null}
       <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingDebt() !== null}>
         {t("common.save")}
       </button>
@@ -254,7 +254,7 @@ function DebtDetail({ id }: { id: string }) {
   return (
     <section className="flex flex-col gap-4">
       <PageTitle className="text-2xl font-semibold">{debt.counterparty}</PageTitle>
-      <p className="text-sm text-slate-600 dark:text-muted">{t(`debts.status.${state.status}`)}</p>
+      <p className="text-sm text-neutral-600 dark:text-muted">{t(`debts.status.${state.status}`)}</p>
       <div className="grid grid-cols-2 gap-2 text-sm">
         <Figure label={t("debts.principal")} value={formatMoney(debt.principal, debt.currency)} />
         <Figure
@@ -266,7 +266,7 @@ function DebtDetail({ id }: { id: string }) {
       </div>
 
       {state.remaining > 0 ? (
-        <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+        <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
           <Field label={`${t("debts.payment")} (${debt.currency})`}>
             <input
               inputMode="decimal"
@@ -307,7 +307,7 @@ function DebtDetail({ id }: { id: string }) {
               {error}
             </p>
           ) : null}
-          {missingPayment() ? <p className="text-sm text-slate-600 dark:text-muted">{missingPayment()}</p> : null}
+          {missingPayment() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingPayment()}</p> : null}
           <button type="button" className={buttonPrimary} onClick={() => void pay()} disabled={missingPayment() !== null}>
             {t("debts.addPayment")}
           </button>
@@ -342,8 +342,8 @@ function DebtDetail({ id }: { id: string }) {
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 p-2 dark:border-white/15">
-      <p className="text-slate-600 dark:text-muted">{label}</p>
+    <div className="rounded-lg border border-neutral-200 p-2 dark:border-white/15">
+      <p className="text-neutral-600 dark:text-muted">{label}</p>
       <p className="font-semibold">{value}</p>
     </div>
   );

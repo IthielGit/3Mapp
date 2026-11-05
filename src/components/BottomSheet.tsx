@@ -67,7 +67,7 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
         aria-label={title}
         tabIndex={-1}
         onClick={onClose}
-        className={`absolute inset-0 bg-slate-900/50 transition-opacity duration-200 ease-out ${
+        className={`absolute inset-0 bg-neutral-900/50 transition-opacity duration-200 ease-out ${
           shown ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -79,7 +79,7 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
           shown ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-white/15">
+        <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-white/15">
           <h2 id={titleId} className="text-lg font-semibold">
             {title}
           </h2>
@@ -99,7 +99,7 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
           {children}
         </div>
         {footer ? (
-          <div className="shrink-0 border-t border-slate-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
+          <div className="shrink-0 border-t border-neutral-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
             {footer}
           </div>
         ) : null}

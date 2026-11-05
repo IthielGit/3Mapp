@@ -309,7 +309,7 @@ export async function executeImport(
           updatedAt: now,
           name,
           icon: "💼",
-          color: "#0f766e",
+          color: "#0B7E9D",
           currency,
           initialBalance: 0,
           sortOrder: nextWalletOrder++,

@@ -199,7 +199,7 @@ export function BudgetFormPage() {
         </p>
       ) : null}
 
-      {missingField() ? <p className="text-sm text-stone-600 dark:text-muted">{missingField()}</p> : null}
+      {missingField() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}

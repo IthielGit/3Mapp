@@ -51,8 +51,8 @@ const TYPE_ICON: Record<TxType, IconName> = {
 const TYPE_ACTIVE: Record<TxType, string> = {
   expense: "bg-expense text-white shadow",
   income: "bg-income text-white shadow",
-  transfer: "bg-brand-700 text-white shadow dark:bg-white dark:text-ink",
-  adjustment: "bg-slate-700 text-white shadow dark:bg-slate-500",
+  transfer: "bg-brand-600 text-white shadow dark:bg-white dark:text-ink",
+  adjustment: "bg-neutral-700 text-white shadow dark:bg-neutral-500",
 };
 
 interface TransactionSheetProps {
@@ -268,7 +268,7 @@ export function TransactionSheet({
       footer={
         <div className="flex flex-col gap-2">
           {missing ? (
-            <p className="text-center text-sm text-slate-600 dark:text-muted">{missing}</p>
+            <p className="text-center text-sm text-neutral-600 dark:text-muted">{missing}</p>
           ) : null}
           <button
             type="button"
@@ -285,7 +285,7 @@ export function TransactionSheet({
         <div
           role="radiogroup"
           aria-label={t("transactions.type")}
-          className={`grid ${typeOptions.length === 4 ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-lg bg-slate-100 p-1 dark:bg-raised`}
+          className={`grid ${typeOptions.length === 4 ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-raised`}
         >
           {typeOptions.map((tp) => (
             <button
@@ -295,7 +295,7 @@ export function TransactionSheet({
               aria-checked={type === tp}
               onClick={() => setType(tp)}
               className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-md text-sm font-semibold transition-colors ${
-                type === tp ? TYPE_ACTIVE[tp] : "text-slate-600 dark:text-muted"
+                type === tp ? TYPE_ACTIVE[tp] : "text-neutral-600 dark:text-muted"
               }`}
             >
               <Icon name={TYPE_ICON[tp]} className="h-4 w-4" />
@@ -304,7 +304,7 @@ export function TransactionSheet({
           ))}
         </div>
         {type === "transfer" ? (
-          <p className="text-sm text-slate-600 dark:text-muted">{t("transactions.transferHint")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("transactions.transferHint")}</p>
         ) : null}
 
 
@@ -328,13 +328,13 @@ export function TransactionSheet({
           <button
             type="button"
             onClick={() => setKeypadOpen(true)}
-            className="flex min-h-[64px] w-full flex-col items-start gap-0.5 rounded-lg border border-slate-300 px-3 py-2 text-left dark:border-white/15"
+            className="flex min-h-[64px] w-full flex-col items-start gap-0.5 rounded-lg border border-neutral-500 px-3 py-2 text-left dark:border-white/15"
           >
-            <span className="text-sm text-slate-600 dark:text-muted">{t("transactions.amount")}</span>
+            <span className="text-sm text-neutral-600 dark:text-muted">{t("transactions.amount")}</span>
             <span className="text-3xl font-semibold tabular-nums" data-amount>
               {amountDisplay}
             </span>
-            <span className="text-sm text-brand-700 dark:text-brand-300">
+            <span className="text-sm text-brand-700 dark:text-brand-dark">
               {source ? t("transactions.amountTapToEdit") : t("transactions.amountTapToEnter")}
             </span>
           </button>
@@ -358,7 +358,7 @@ export function TransactionSheet({
                 role="radio"
                 aria-checked={adjustSign === sign}
                 onClick={() => setAdjustSign(sign)}
-                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-700 bg-brand-50 dark:bg-raised" : "border-slate-300 dark:border-white/15"}`}
+                className={`min-h-[44px] rounded-lg border ${adjustSign === sign ? "border-brand-600 bg-brand-50 dark:bg-raised" : "border-neutral-500 dark:border-white/15"}`}
               >
                 {sign === "+" ? t("transactions.increase") : t("transactions.decrease")}
               </button>
@@ -472,7 +472,7 @@ export function TransactionSheet({
             <label className="flex min-h-[44px] items-center gap-3">
               <input
                 type="checkbox"
-                className="h-5 w-5 accent-brand-700"
+                className="h-5 w-5 accent-brand-600"
                 checked={repeat}
                 onChange={(e) => setRepeat(e.target.checked)}
               />
@@ -507,7 +507,7 @@ export function TransactionSheet({
                     </select>
                   </Field>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-muted">{t("repeat.hint")}</p>
+                <p className="text-sm text-neutral-600 dark:text-muted">{t("repeat.hint")}</p>
               </>
             ) : null}
           </div>

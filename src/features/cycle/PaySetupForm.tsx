@@ -39,7 +39,7 @@ const TONES = {
     label: "text-xs font-medium text-white",
     hint: "text-xs text-white",
     select:
-      "min-h-[44px] w-full rounded-xl bg-white px-3 text-base font-medium text-ink [color-scheme:light] outline-none focus:bg-stone-100",
+      "min-h-[44px] w-full rounded-xl bg-white px-3 text-base font-medium text-ink [color-scheme:light] outline-none focus:bg-neutral-100",
     option:
       "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl bg-white/10 px-3 text-white has-[:checked]:bg-white has-[:checked]:font-semibold has-[:checked]:text-brand-900",
     submit: "min-h-[44px] rounded-xl bg-white font-semibold text-brand-900 disabled:bg-white/25 disabled:text-teal-50",
@@ -49,12 +49,12 @@ const TONES = {
     form: "flex flex-col gap-4",
     title: "text-base font-semibold text-ink dark:text-fg",
     label: "text-sm font-medium text-ink dark:text-fg",
-    hint: "text-sm text-stone-600 dark:text-muted",
+    hint: "text-sm text-neutral-600 dark:text-muted",
     select: inputClass,
     option:
-      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-stone-200 px-3 text-ink has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-white/15 dark:text-fg dark:has-[:checked]:border-brand-dark",
+      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-neutral-200 px-3 text-ink has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50 dark:border-white/15 dark:text-fg dark:has-[:checked]:border-brand-dark",
     submit:
-      "min-h-[44px] rounded-xl bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-brand-dark dark:text-ink",
+      "min-h-[44px] rounded-xl bg-brand-600 font-semibold text-white disabled:opacity-50 dark:bg-brand-dark dark:text-ink",
     link: "inline-flex min-h-[44px] items-center text-brand-700 underline dark:text-brand-dark",
   },
 } as const;
@@ -134,7 +134,7 @@ export function PaySetupForm({
               value={o.value}
               checked={draft.mode === o.value}
               onChange={() => update({ mode: o.value })}
-              className="h-5 w-5 accent-brand-700"
+              className="h-5 w-5 accent-brand-600"
             />
             <span>{o.label}</span>
           </label>

@@ -13,26 +13,26 @@ body {
 
 /* Anneau de focus : couleur de marque (le rouge reste réservé aux suppressions et à l'expression négative). */
 :focus-visible {
-  outline: 2px solid #0f766e;
+  outline: 2px solid #0B7E9D;
   outline-offset: 2px;
 }
 
 :root.dark :focus-visible {
-  outline-color: #2dd4bf;
+  outline-color: #7ADBF5;
 }
 
 ::selection {
-  background: rgb(15 118 110 / 0.18);
+  background: rgb(11 126 157 / 0.18);
 }
 
 input,
 textarea {
-  caret-color: #0f766e;
+  caret-color: #0B7E9D;
 }
 
 :root.dark input,
 :root.dark textarea {
-  caret-color: #2dd4bf;
+  caret-color: #7ADBF5;
 }
 
 input::placeholder,
@@ -222,7 +222,7 @@ main > * {
 @layer base {
   input[type="checkbox"],
   input[type="radio"] {
-    accent-color: #0f766e;
+    accent-color: #0B7E9D;
   }
 }
 

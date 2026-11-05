@@ -74,7 +74,7 @@ export function ReconcilePage() {
         />
       </Field>
       {gap !== null ? (
-        <p className="text-sm text-slate-600 dark:text-muted">
+        <p className="text-sm text-neutral-600 dark:text-muted">
           {gap === 0
             ? t("reconcile.noGap")
             : t("reconcile.gap", { amount: formatMoney(gap, currency) })}
@@ -106,7 +106,7 @@ export function ReconcilePage() {
 
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("reconcile.history")}</h2>
-        {history.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("reconcile.noHistory")}</p> : null}
+        {history.length === 0 ? <p className="text-neutral-600 dark:text-muted">{t("reconcile.noHistory")}</p> : null}
         <ul className="flex flex-col gap-1 text-sm">
           {history.map((r) => (
             <li key={r.id} className="flex justify-between">

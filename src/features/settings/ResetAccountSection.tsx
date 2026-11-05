@@ -35,12 +35,12 @@ export function ResetAccountSection() {
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 font-medium text-expense focus-visible:outline-2 focus-visible:outline-brand-700"
+        className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 font-medium text-expense focus-visible:outline-2 focus-visible:outline-brand-600"
       >
         <span className="flex items-center gap-3">
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-raised"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 dark:bg-raised"
           >
             <Icon name="reset" className="h-4 w-4" />
           </span>
@@ -48,7 +48,7 @@ export function ResetAccountSection() {
         </span>
         <span
           aria-hidden="true"
-          className={`text-xl text-slate-400 transition-transform duration-200 ease-out-strong motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`}
+          className={`text-xl text-neutral-600 transition-transform duration-200 ease-out-strong motion-reduce:transition-none ${expanded ? "rotate-90" : ""}`}
         >
           ›
         </span>
@@ -56,7 +56,7 @@ export function ResetAccountSection() {
 
       {expanded ? (
         <div className="flex flex-col gap-3 px-4 pb-4">
-          <p className="text-sm text-slate-600 dark:text-muted">{t("resetAccount.warning")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("resetAccount.warning")}</p>
           <button
             type="button"
             onClick={() => setSheetOpen(true)}

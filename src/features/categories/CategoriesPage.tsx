@@ -43,8 +43,8 @@ export function CategoriesPage() {
             onClick={() => setKind(k)}
             className={`min-h-[44px] rounded-lg border font-medium ${
               kind === k
-                ? "border-brand-700 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-300"
-                : "border-slate-300 dark:border-white/15"
+                ? "border-brand-600 bg-brand-50 text-brand-700 dark:bg-raised dark:text-brand-dark"
+                : "border-neutral-500 dark:border-white/15"
             }`}
           >
             {t(`categories.${k}`)}
@@ -52,20 +52,20 @@ export function CategoriesPage() {
         ))}
       </div>
 
-      {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("categories.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-neutral-600 dark:text-muted">{t("categories.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
         {active.map((category) => (
           <li key={category.id}>
             <Link
               to={`/plus/categories/${category.id}`}
-              className="flex items-center gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+              className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
             >
               <span aria-hidden="true" className="text-2xl">
                 {category.icon}
               </span>
               <span className="min-w-0 flex-1 font-medium">{category.name}</span>
-              <span aria-hidden="true" className="text-xl text-slate-400">›</span>
+              <span aria-hidden="true" className="text-xl text-neutral-600">›</span>
             </Link>
           </li>
         ))}
@@ -73,12 +73,12 @@ export function CategoriesPage() {
 
       {archived.length > 0 ? (
         <section className="flex flex-col gap-2">
-          <h2 className="font-semibold text-slate-600 dark:text-muted">{t("categories.archivedSection")}</h2>
+          <h2 className="font-semibold text-neutral-600 dark:text-muted">{t("categories.archivedSection")}</h2>
           <ul className="flex flex-col gap-2">
             {archived.map((category) => (
               <li
                 key={category.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+                className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
               >
                 <span>
                   {category.icon} {category.name}

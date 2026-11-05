@@ -61,7 +61,7 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <span className="max-w-full truncate text-sm text-slate-600 dark:text-muted">
+          <span className="max-w-full truncate text-sm text-neutral-600 dark:text-muted">
             {current ? current.name : t("stats.donutTotal")}
           </span>
           <span className="text-lg font-semibold tabular-nums text-ink dark:text-fg" data-amount>
@@ -70,7 +70,7 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
         </div>
       </div>
 
-      <ul className="flex flex-col divide-y divide-slate-200 dark:divide-white/10">
+      <ul className="flex flex-col divide-y divide-neutral-200 dark:divide-white/10">
         {items.map((item, i) => (
           <li key={item.key}>
             <button
@@ -88,7 +88,7 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
               />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium text-ink dark:text-fg">{item.name}</span>
-                <span className="block text-xs text-slate-600 dark:text-muted">
+                <span className="block text-xs text-neutral-600 dark:text-muted">
                   {t("stats.donutOps", { count: item.count })} · {item.share} %
                 </span>
               </span>

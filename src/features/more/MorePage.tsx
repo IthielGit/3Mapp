@@ -16,18 +16,18 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
     <li>
       <Link
         to={to}
-        className="pressable flex min-h-[52px] items-center justify-between gap-3 px-4 font-medium focus-visible:outline-2 focus-visible:outline-brand-700"
+        className="pressable flex min-h-[52px] items-center justify-between gap-3 px-4 font-medium focus-visible:outline-2 focus-visible:outline-brand-600"
       >
         <span className="flex items-center gap-3">
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-ink dark:bg-raised dark:text-fg"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-ink dark:bg-raised dark:text-fg"
           >
             <Icon name={icon} className="h-4 w-4" />
           </span>
           {children}
         </span>
-        <span aria-hidden="true" className="text-xl text-slate-400">
+        <span aria-hidden="true" className="text-xl text-neutral-600">
           ›
         </span>
       </Link>
@@ -38,10 +38,10 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="px-1 text-sm font-semibold text-slate-600 dark:text-muted">
+      <h2 className="px-1 text-sm font-semibold text-neutral-600 dark:text-muted">
         {title}
       </h2>
-      <div className="rounded-card border border-slate-200 dark:border-white/15">{children}</div>
+      <div className="rounded-card border border-neutral-200 dark:border-white/15">{children}</div>
     </section>
   );
 }
@@ -69,7 +69,7 @@ export function MorePage() {
 
       <Group title={t("more.groups.manage")}>
         <nav aria-label={t("more.groups.manage")}>
-          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+          <ul className="divide-y divide-neutral-100 dark:divide-white/10">
             <NavRow to="/plus/wallets" icon="wallet">
               {t("more.wallets")}
             </NavRow>
@@ -94,7 +94,7 @@ export function MorePage() {
 
       <Group title={t("more.groups.data")}>
         <nav aria-label={t("more.groups.data")}>
-          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+          <ul className="divide-y divide-neutral-100 dark:divide-white/10">
             <NavRow to="/plus/security" icon="shield">
               {t("more.security")}
             </NavRow>
@@ -110,7 +110,7 @@ export function MorePage() {
 
       <Group title={t("resetAccount.group")}>
         <nav aria-label={t("resetAccount.group")}>
-          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+          <ul className="divide-y divide-neutral-100 dark:divide-white/10">
             <ResetAccountSection />
           </ul>
         </nav>
@@ -132,7 +132,7 @@ export function MorePage() {
                 value={mode}
                 checked={theme === mode}
                 onChange={() => setTheme(mode)}
-                className="h-5 w-5 accent-brand-700"
+                className="h-5 w-5 accent-brand-600"
               />
               {t(
                 mode === "system"
@@ -148,7 +148,7 @@ export function MorePage() {
 
       <Group title={t("more.demo")}>
         <div className="flex flex-col gap-2 p-4">
-          <p className="text-sm text-slate-600 dark:text-muted">{t("more.demoHint")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("more.demoHint")}</p>
           <button type="button" className={buttonSecondary} onClick={() => void addDemo()}>
             {t("more.demoButton")}
           </button>

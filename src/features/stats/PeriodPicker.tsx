@@ -23,7 +23,7 @@ export function PeriodPicker({ state, period, onChange, onShift }: PeriodPickerP
       <div
         role="radiogroup"
         aria-label={t("period.label")}
-        className="grid grid-cols-5 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-raised"
+        className="grid grid-cols-5 gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-raised"
       >
         {KINDS.map((kind) => (
           <button

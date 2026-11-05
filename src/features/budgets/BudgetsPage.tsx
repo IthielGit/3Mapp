@@ -45,10 +45,10 @@ export function BudgetsPage() {
 
       {active.length === 0 ? (
         // Pas de bouton en haut ici : une seule action, au centre de l’écran vide.
-        <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-slate-300 p-6 text-center dark:border-white/15">
-          <Icon name="donut" className="h-10 w-10 text-brand-700 dark:text-brand-300" />
+        <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-neutral-500 p-6 text-center dark:border-white/15">
+          <Icon name="donut" className="h-10 w-10 text-brand-700 dark:text-brand-dark" />
           <p className="font-semibold text-ink dark:text-fg">{t("budgets.emptyTitle")}</p>
-          <p className="text-sm text-slate-600 dark:text-muted">{t("budgets.emptyHint")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("budgets.emptyHint")}</p>
           <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
             {t("budgets.createFirst")}
           </Link>
@@ -80,7 +80,7 @@ export function BudgetsPage() {
           return (
             <li
               key={b.id}
-              className="flex flex-col gap-2 rounded-card border border-slate-200 p-4 shadow-sm dark:border-white/15"
+              className="flex flex-col gap-2 rounded-card border border-neutral-200 p-4 shadow-sm dark:border-white/15"
             >
               <Link to={`/budgets/${b.id}`} className="flex flex-col gap-2">
                 <div className="flex justify-between gap-2">
@@ -92,7 +92,7 @@ export function BudgetsPage() {
                     />
                     {b.name}
                   </span>
-                  <span className="text-sm text-slate-600 dark:text-muted">{t(`budgets.periods.${b.period}`)}</span>
+                  <span className="text-sm text-neutral-600 dark:text-muted">{t(`budgets.periods.${b.period}`)}</span>
                 </div>
                 <div
                   role="progressbar"
@@ -100,7 +100,7 @@ export function BudgetsPage() {
                   aria-valuemax={100}
                   aria-valuenow={Math.min(100, s.percent)}
                   aria-label={b.name}
-                  className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
+                  className="h-3 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700"
                 >
                   <div
                     className={`progress-fill h-full ${barColor}`}
@@ -118,7 +118,7 @@ export function BudgetsPage() {
                   </span>
                 </div>
                 {s.dailyAllowance !== null ? (
-                  <p className="text-xs text-slate-600 dark:text-muted">
+                  <p className="text-xs text-neutral-600 dark:text-muted">
                     {t("budgets.dailyAllowance", {
                       amount: formatMoney(s.dailyAllowance, b.currency),
                     })}
@@ -127,7 +127,7 @@ export function BudgetsPage() {
               </Link>
 
               {extended ? (
-                <p className="text-xs text-slate-600 dark:text-muted">
+                <p className="text-xs text-neutral-600 dark:text-muted">
                   {b.categoryIds
                     .map((id) => names.get(id))
                     .filter(Boolean)

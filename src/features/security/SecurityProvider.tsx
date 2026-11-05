@@ -109,7 +109,7 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <span
             key={i}
-            className={`h-3 w-3 rounded-full border border-slate-400 ${i < pin.length ? "bg-slate-900 dark:bg-white" : ""}`}
+            className={`h-3 w-3 rounded-full border border-neutral-400 ${i < pin.length ? "bg-neutral-900 dark:bg-white" : ""}`}
           />
         ))}
       </div>
@@ -130,7 +130,7 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
               disabled={wait > 0}
               onClick={() => press(key)}
               aria-label={key === "⌫" ? t("common.delete") : key}
-              className="min-h-[60px] rounded-xl border border-slate-300 text-2xl font-medium disabled:opacity-50 dark:border-white/15"
+              className="min-h-[60px] rounded-xl border border-neutral-500 text-2xl font-medium disabled:opacity-50 dark:border-white/15"
             >
               {key}
             </button>

@@ -205,7 +205,7 @@ export function BackupPage() {
   return (
     <section className="flex flex-col gap-6">
       <PageTitle className="text-2xl font-semibold">{t("backup.title")}</PageTitle>
-      <p className="text-sm text-slate-600 dark:text-muted">{t("backup.intro")}</p>
+      <p className="text-sm text-neutral-600 dark:text-muted">{t("backup.intro")}</p>
 
       {reminder !== "none" ? (
         <p
@@ -228,7 +228,7 @@ export function BackupPage() {
       </div>
 
       {settings ? (
-        <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
+        <section className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">
           <h2 className="font-semibold">{t("backup.exportTitle")}</h2>
           <Field label={t("backup.passwordLabel")}>
             <input
@@ -243,7 +243,7 @@ export function BackupPage() {
               aria-describedby="backup-password-hint"
             />
           </Field>
-          <p id="backup-password-hint" className="text-sm text-slate-600 dark:text-muted">
+          <p id="backup-password-hint" className="text-sm text-neutral-600 dark:text-muted">
             {t("backup.passwordHint", { min: MIN_PASSWORD_LENGTH })}
           </p>
           <button
@@ -270,7 +270,7 @@ export function BackupPage() {
                   {t("backup.prepareShare")}
                 </button>
               )}
-              <p className="text-sm text-slate-600 dark:text-muted">
+              <p className="text-sm text-neutral-600 dark:text-muted">
                 {readyShare ? t("backup.readyToShare") : t("backup.shareHint")}
               </p>
             </>
@@ -278,9 +278,9 @@ export function BackupPage() {
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
+      <section className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">
         <h2 className="font-semibold">{t("backup.importTitle")}</h2>
-        <label className="flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-lg border border-slate-300 px-4 text-center font-medium focus-within:outline focus-within:outline-2 focus-within:outline-accent dark:border-white/15">
+        <label className="flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-lg border border-neutral-500 px-4 text-center font-medium focus-within:outline focus-within:outline-2 focus-within:outline-brand-600 dark:border-white/15">
           {t("backup.chooseFile")}
           <input
             type="file"
@@ -323,7 +323,7 @@ export function BackupPage() {
             </p>
             <fieldset className="flex flex-col gap-2">
               <legend className="mb-1 text-sm font-medium">{t("backup.modeLegend")}</legend>
-              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
                 <input
                   type="radio"
                   name="restore-mode"
@@ -334,10 +334,10 @@ export function BackupPage() {
                 />
                 <span className="flex flex-col">
                   <span className="font-medium">{t("backup.modeMerge")}</span>
-                  <span className="text-sm text-slate-600 dark:text-muted">{t("backup.modeMergeHint")}</span>
+                  <span className="text-sm text-neutral-600 dark:text-muted">{t("backup.modeMergeHint")}</span>
                 </span>
               </label>
-              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
                 <input
                   type="radio"
                   name="restore-mode"
@@ -348,7 +348,7 @@ export function BackupPage() {
                 />
                 <span className="flex flex-col">
                   <span className="font-medium">{t("backup.modeReplace")}</span>
-                  <span className="text-sm text-slate-600 dark:text-muted">{t("backup.modeReplaceHint")}</span>
+                  <span className="text-sm text-neutral-600 dark:text-muted">{t("backup.modeReplaceHint")}</span>
                 </span>
               </label>
             </fieldset>

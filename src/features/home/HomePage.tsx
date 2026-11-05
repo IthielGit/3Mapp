@@ -18,6 +18,7 @@ import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
+import { BrandMark } from "../../components/BrandMark";
 import { updatePreferences } from "../settings/preferences-service";
 import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 
@@ -277,11 +278,14 @@ export function HomePage() {
 
       {/* En-tête : « Bienvenue », le mois en cours, et l'engrenage seul. */}
       <header className="flex items-center justify-between pb-1 pt-3">
-        <div className="flex flex-col">
-          <span className="text-2xl font-semibold tracking-tight text-ink dark:text-fg">{t("home.hello")}</span>
-          <span className="text-sm capitalize text-stone-600 dark:text-muted">
-            {format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}
-          </span>
+        <div className="flex items-center gap-3">
+          <BrandMark size={44} className="shrink-0 rounded-xl shadow-sm" />
+          <div className="flex flex-col">
+            <span className="text-2xl font-semibold tracking-tight text-ink dark:text-fg">{t("home.hello")}</span>
+            <span className="text-sm capitalize text-neutral-600 dark:text-muted">
+              {format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}
+            </span>
+          </div>
         </div>
         <Link
           to="/plus"
@@ -296,7 +300,7 @@ export function HomePage() {
       <section
         aria-labelledby="cycle-title"
         className="relative flex flex-col gap-3 overflow-hidden rounded-3xl p-5 text-white shadow-lg"
-        style={{ background: "linear-gradient(150deg, #0f766e 0%, #0a4f4a 100%)" }}
+        style={{ background: "linear-gradient(150deg, #0B7E9D 0%, #075064 100%)" }}
       >
         <h2 id="cycle-title" className="text-xs font-medium text-teal-50">
           {t("cycle.title", {
@@ -412,7 +416,7 @@ export function HomePage() {
       {backupState !== "none" ? (
         <Link
           to="/plus/backup"
-          className="flex items-center gap-3 rounded-2xl border border-stone-200 border-l-[3px] border-l-brand-700 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
+          className="flex items-center gap-3 rounded-2xl border border-neutral-200 border-l-[3px] border-l-brand-600 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
         >
           {t("home.backupReminder")}
         </Link>
@@ -420,7 +424,7 @@ export function HomePage() {
       {pendingCount > 0 ? (
         <Link
           to="/plus/recurring"
-          className="flex items-center gap-3 rounded-2xl border border-stone-200 border-l-[3px] border-l-brand-700 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
+          className="flex items-center gap-3 rounded-2xl border border-neutral-200 border-l-[3px] border-l-brand-600 bg-white p-3 text-sm text-ink shadow-sm dark:border-white/15 dark:bg-card dark:text-fg"
         >
           {t("home.pendingBanner", { count: pendingCount })}
         </Link>
@@ -441,7 +445,7 @@ export function HomePage() {
             <BarChart data={weekExpenses}>
               <Bar dataKey="value" radius={[8, 8, 4, 4]} isAnimationActive={false}>
                 {weekExpenses.map((entry, i) => (
-                  <Cell key={entry.day} fill={i === weekExpenses.length - 1 ? "#0f766e" : "#4a9d91"} />
+                  <Cell key={entry.day} fill={i === weekExpenses.length - 1 ? "#0B7E9D" : "#4a9d91"} />
                 ))}
               </Bar>
             </BarChart>
@@ -456,7 +460,7 @@ export function HomePage() {
             <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
             <Link
               to="/plus/wallets"
-              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-stone-600 underline dark:text-muted"
+              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
             >
               {t("home.manage")}
             </Link>
@@ -478,27 +482,27 @@ export function HomePage() {
             <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
             <Link
               to="/plus/recurring"
-              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-stone-600 underline dark:text-muted"
+              className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
             >
               {t("home.seeAll")}
             </Link>
           </div>
-          <ul className="flex flex-col divide-y divide-stone-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
+          <ul className="flex flex-col divide-y divide-neutral-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
             {upcoming.slice(0, 3).map((r) => {
               const due = new Date(r.nextDate);
               const income = r.type === "income";
               return (
                 <li key={r.id}>
                   <Link to={`/plus/recurring/${r.id}`} className="pressable flex min-h-[64px] items-center gap-3 py-3">
-                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-stone-100 text-center leading-none dark:bg-raised">
+                    <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-neutral-100 text-center leading-none dark:bg-raised">
                       <span className="text-base font-semibold tabular-nums text-ink dark:text-fg">{format(due, "d")}</span>
-                      <span className="mt-0.5 text-[10px] uppercase text-stone-600 dark:text-muted">{format(due, "MMM")}</span>
+                      <span className="mt-0.5 text-[10px] uppercase text-neutral-600 dark:text-muted">{format(due, "MMM")}</span>
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-medium text-ink dark:text-fg">
                         {r.memo || t(`transactions.types.${r.type}`)}
                       </span>
-                      <span className="truncate text-xs text-stone-600 dark:text-muted">{walletName(r.walletId)}</span>
+                      <span className="truncate text-xs text-neutral-600 dark:text-muted">{walletName(r.walletId)}</span>
                     </span>
                     <span
                       className={`shrink-0 text-sm font-semibold tabular-nums ${income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
@@ -521,7 +525,7 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
           <Link
             to="/budgets"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-stone-600 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
           >
             {t("home.manage")}
           </Link>
@@ -534,7 +538,7 @@ export function HomePage() {
             {t("home.budgetsEmpty")}
           </Link>
         ) : (
-          <ul className="flex flex-col divide-y divide-stone-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
+          <ul className="flex flex-col divide-y divide-neutral-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
             {budgetRows.slice(0, 3).map(({ budget, state }) => {
               const width = Math.min(100, Math.max(0, state.percent));
               const barColor =
@@ -542,13 +546,13 @@ export function HomePage() {
                   ? "bg-expense dark:bg-expense-dark"
                   : state.status === "threshold"
                     ? "bg-amber-500"
-                    : "bg-brand-700 dark:bg-brand-dark";
+                    : "bg-brand-600 dark:bg-brand-dark";
               return (
                 <li key={budget.id} className="py-4">
                   <Link to={`/budgets/${budget.id}`} className="pressable flex min-h-[44px] flex-col gap-2">
                     <div className="flex items-baseline justify-between gap-3 text-sm">
                       <span className="truncate font-medium text-ink dark:text-fg">{budget.name}</span>
-                      <span className="shrink-0 tabular-nums text-stone-600 dark:text-muted" data-amount>
+                      <span className="shrink-0 tabular-nums text-neutral-600 dark:text-muted" data-amount>
                         {formatMoney(state.spent, budget.currency)} / {formatMoney(state.available, budget.currency)}
                       </span>
                     </div>
@@ -558,7 +562,7 @@ export function HomePage() {
                       aria-valuemax={100}
                       aria-valuenow={Math.min(100, state.percent)}
                       aria-label={budget.name}
-                      className="h-2 overflow-hidden rounded-full bg-stone-100 dark:bg-raised"
+                      className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-raised"
                     >
                       <div className={`progress-fill h-full rounded-full ${barColor}`} style={{ transform: `scaleX(${width / 100})` }} />
                     </div>
@@ -584,13 +588,13 @@ export function HomePage() {
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
           <Link
             to="/transactions"
-            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-stone-600 underline dark:text-muted"
+            className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
           >
             {t("home.seeAll")}
           </Link>
         </div>
         {recent.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-stone-500 p-4 text-center text-sm text-stone-600 dark:border-white/15 dark:text-muted">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-neutral-500 p-4 text-center text-sm text-neutral-600 dark:border-white/15 dark:text-muted">
             <Icon name="inbox" className="h-6 w-6 text-teal-600 dark:text-teal-300" />
             <span>{t("home.noTransactions")}</span>
           </div>

@@ -77,8 +77,9 @@ export function StatsPage() {
   // Encre des graphiques : noire en clair, claire en sombre (sinon elle disparaît sur le fond).
   const chartInk = resolved === "dark" ? "#f5f5f7" : "#1a1a1b";
   // Séries vives : bleu-vert pour les courbes, vert pour les revenus, rouge pour les dépenses.
-  const chartMain = resolved === "dark" ? "#2dd4bf" : "#0d9488";
-  const chartIncome = resolved === "dark" ? "#34d399" : "#10b981";
+  const chartMain = resolved === "dark" ? "#7ADBF5" : "#0B7E9D";
+  const chartIncome = resolved === "dark" ? "#67E9C9" : "#11745B";
+  const chartExpense = resolved === "dark" ? "#f87171" : "#b91c1c";
   const settings = usePeriodSettings();
   const monthStartDay = settings.monthStartDay;
   const payOnFriday = settings.payOnFriday === true;
@@ -296,8 +297,8 @@ export function StatsPage() {
 
       {/* Solde actuel : total des portefeuilles inclus dans le total, à la date du jour. */}
       <div className="flex flex-col items-center gap-1 rounded-card bg-teal-50 p-4 text-center dark:bg-teal-900/40">
-        <p className="text-sm text-slate-600 dark:text-muted">{t("stats.currentBalance")}</p>
-        <p className="text-xs text-slate-600 dark:text-muted">{t("stats.currentBalanceHint")}</p>
+        <p className="text-sm text-neutral-600 dark:text-muted">{t("stats.currentBalance")}</p>
+        <p className="text-xs text-neutral-600 dark:text-muted">{t("stats.currentBalanceHint")}</p>
         <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
           {formatMoney(currentBalance, baseCurrency)}
         </p>
@@ -311,7 +312,7 @@ export function StatsPage() {
         <div
           role="img"
           aria-label={`${t("home.income")} ${formatMoney(summary.income, baseCurrency)} · ${t("home.expense")} ${formatMoney(summary.expense, baseCurrency)}`}
-          className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-raised"
+          className="flex h-3 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-raised"
         >
           <div
             className="h-full bg-income dark:bg-income-dark"
@@ -325,7 +326,7 @@ export function StatsPage() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-0.5">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-600 dark:text-muted">
               <span
                 aria-hidden="true"
                 className="h-2.5 w-2.5 rounded-full bg-income dark:bg-income-dark"
@@ -340,7 +341,7 @@ export function StatsPage() {
             </p>
           </div>
           <div className="flex flex-col items-end gap-0.5 text-right">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-muted">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-600 dark:text-muted">
               {t("home.expense")}
               <span
                 aria-hidden="true"
@@ -356,13 +357,13 @@ export function StatsPage() {
           </div>
         </div>
 
-        <p className="border-t border-slate-200 pt-3 text-sm text-slate-600 dark:border-white/15 dark:text-muted">
+        <p className="border-t border-neutral-200 pt-3 text-sm text-neutral-600 dark:border-white/15 dark:text-muted">
           {summary.net < 0
             ? t("stats.spentMore", { when })
             : t("stats.savedMore", { amount: formatMoney(summary.net, baseCurrency), when })}
         </p>
         {delta(summary.net, before.net) ? (
-          <p className="text-xs text-slate-600 dark:text-muted">
+          <p className="text-xs text-neutral-600 dark:text-muted">
             {t("stats.vsPrevious", { change: delta(summary.net, before.net) })}
           </p>
         ) : null}
@@ -371,7 +372,7 @@ export function StatsPage() {
       {/* Graphique principal : un seul, avec son titre, son unité et son sélecteur compact. */}
       <section
         aria-labelledby="stats-chart-title"
-        className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
+        className="flex flex-col gap-3 rounded-card border border-neutral-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
       >
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
@@ -384,7 +385,7 @@ export function StatsPage() {
                     ? t("stats.savings")
                     : t("stats.balanceCurve")}
             </h2>
-            <span className="text-xs text-slate-600 dark:text-muted">
+            <span className="text-xs text-neutral-600 dark:text-muted">
               {t("stats.unit", { currency: baseCurrency })}
             </span>
           </div>
@@ -394,7 +395,7 @@ export function StatsPage() {
             </label>
             <select
               id="stats-dataset"
-              className="min-h-[36px] rounded-lg border border-slate-300 bg-white px-2 text-sm dark:border-white/15 dark:bg-raised"
+              className="min-h-[36px] rounded-lg border border-neutral-500 bg-white px-2 text-sm dark:border-white/15 dark:bg-raised"
               value={dataset}
               onChange={(e) => chooseDataset(e.target.value as Dataset)}
             >
@@ -416,8 +417,8 @@ export function StatsPage() {
                     title={t(`stats.repr.${r}`)}
                     className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full px-3 text-xs font-medium ${
                       repr === r
-                        ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink"
-                        : "text-slate-600 dark:text-muted"
+                        ? "bg-brand-600 text-white dark:bg-brand-dark dark:text-ink"
+                        : "text-neutral-600 dark:text-muted"
                     }`}
                   >
                     <Icon name={REPR_ICON[r]} className="h-4 w-4" />
@@ -440,8 +441,8 @@ export function StatsPage() {
                   onClick={() => setSavingsMonths(n)}
                   className={`min-h-[32px] rounded-full px-3 text-xs font-medium ${
                     savingsMonths === n
-                      ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink"
-                      : "text-slate-600 dark:text-muted"
+                      ? "bg-brand-600 text-white dark:bg-brand-dark dark:text-ink"
+                      : "text-neutral-600 dark:text-muted"
                   }`}
                 >
                   {t("stats.monthsCount", { count: n })}
@@ -449,7 +450,7 @@ export function StatsPage() {
               ))}
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-slate-600 dark:text-muted">{t("stats.thisMonth")}</p>
+              <p className="text-sm text-neutral-600 dark:text-muted">{t("stats.thisMonth")}</p>
               <p
                 className={`text-3xl font-semibold tabular-nums ${thisMonthMinor < 0 ? "text-expense" : "text-income dark:text-income-dark"}`}
                 data-amount
@@ -457,9 +458,9 @@ export function StatsPage() {
                 {formatMoney(thisMonthMinor, baseCurrency)}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
+            <div className="grid grid-cols-2 gap-3 border-t border-neutral-200 pt-3 dark:border-white/15">
               <div className="flex flex-col">
-                <p className="text-sm text-slate-600 dark:text-muted">{t("stats.lastMonth")}</p>
+                <p className="text-sm text-neutral-600 dark:text-muted">{t("stats.lastMonth")}</p>
                 <p
                   className={`text-lg font-semibold tabular-nums ${lastMonthMinor < 0 ? "text-expense" : "text-income dark:text-income-dark"}`}
                   data-amount
@@ -468,7 +469,7 @@ export function StatsPage() {
                 </p>
               </div>
               <div className="flex flex-col">
-                <p className="text-sm text-slate-600 dark:text-muted">
+                <p className="text-sm text-neutral-600 dark:text-muted">
                   {t("stats.nextMonthForecast")}
                 </p>
                 <p
@@ -482,7 +483,7 @@ export function StatsPage() {
           </div>
         ) : null}
         {!hasData ? (
-          <p className="py-10 text-center text-sm text-slate-600 dark:text-muted">
+          <p className="py-10 text-center text-sm text-neutral-600 dark:text-muted">
             {t("stats.noExpenses")}
           </p>
         ) : dataset === "categories" && repr === "donut" ? (
@@ -527,7 +528,7 @@ export function StatsPage() {
                     radius={[6, 6, 0, 0]}
                   >
                     {savingsRows.map((row) => (
-                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : chartIncome} />
+                      <Cell key={row.name} fill={row.net < 0 ? chartExpense : chartIncome} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -582,7 +583,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="expense"
-                    stroke="#ee4444"
+                    stroke={chartExpense}
                     name={t("home.expense")}
                     dot={false}
                   />
@@ -608,7 +609,7 @@ export function StatsPage() {
                   <Bar
                     isAnimationActive={false}
                     dataKey="expense"
-                    fill="#ee4444"
+                    fill={chartExpense}
                     name={t("home.expense")}
                     radius={[6, 6, 0, 0]}
                   />
@@ -654,7 +655,7 @@ export function StatsPage() {
                       ? savingsRows.map((d) => ({ label: d.name, value: d.net }))
                       : evolution.map((d) => ({ label: d.name, value: d.balance }))
                 ).map((row) => (
-                  <tr key={row.label} className="border-t border-slate-200 dark:border-white/15">
+                  <tr key={row.label} className="border-t border-neutral-200 dark:border-white/15">
                     <td className="py-1">{row.label}</td>
                     <td className="py-1 text-right tabular-nums" data-amount>
                       {fmt(row.value)}
@@ -676,7 +677,7 @@ export function StatsPage() {
         >
           {t("transactions.filters")}
           {activeFilterCount > 0 ? (
-            <span className="ml-2 rounded-full bg-brand-700 px-2 text-xs text-white dark:bg-brand-300 dark:text-ink">
+            <span className="ml-2 rounded-full bg-brand-600 px-2 text-xs text-white dark:bg-brand-dark dark:text-ink">
               {activeFilterCount}
             </span>
           ) : null}
@@ -687,7 +688,7 @@ export function StatsPage() {
         <h2 className="font-semibold text-ink dark:text-fg">{t("stats.top10")}</h2>
         <ol className="flex flex-col text-sm">
           {top.map((tx) => (
-            <li key={tx.id} className="border-b border-slate-200 dark:border-white/15">
+            <li key={tx.id} className="border-b border-neutral-200 dark:border-white/15">
               <Link to={`/transactions/${tx.id}`} className="flex justify-between py-2">
                 <span className="truncate">
                   {tx.memo || names.get(tx.categoryId ?? "") || t("transactions.types.expense")}
@@ -705,7 +706,7 @@ export function StatsPage() {
         <h2 className="font-semibold text-ink dark:text-fg">{t("stats.byWallet")}</h2>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-slate-600 dark:text-muted">
+            <tr className="text-left text-neutral-600 dark:text-muted">
               <th className="py-1">{t("common.name")}</th>
               <th className="py-1 text-right">{t("home.income")}</th>
               <th className="py-1 text-right">{t("home.expense")}</th>
@@ -721,7 +722,7 @@ export function StatsPage() {
                 .filter((tx) => isSpending(tx))
                 .reduce((a, tx) => a + tx.amount, 0);
               return (
-                <tr key={w.id} className="border-t border-slate-200 dark:border-white/15">
+                <tr key={w.id} className="border-t border-neutral-200 dark:border-white/15">
                   <td className="py-1">{walletName.get(w.id) ?? w.name}</td>
                   <td className="py-1 text-right tabular-nums">
                     {formatMoney(income, w.currency)}

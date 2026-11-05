@@ -15,7 +15,7 @@ export const DEFAULT_CATEGORIES: readonly DefaultCategory[] = [
   { name: "Loisirs", kind: "expense", icon: "🎮", color: "#db2777" },
   { name: "Vêtements", kind: "expense", icon: "👕", color: "#0891b2" },
   { name: "Famille / entraide", kind: "expense", icon: "👨‍👩‍👧", color: "#059669" },
-  { name: "Investissements", kind: "expense", icon: "📈", color: "#0f766e" },
+  { name: "Investissements", kind: "expense", icon: "📈", color: "#0B7E9D" },
   { name: "Divers", kind: "expense", icon: "📦", color: "#64748b" },
   { name: "Salaire", kind: "income", icon: "💼", color: "#059669" },
   { name: "Remboursements", kind: "income", icon: "🔄", color: "#0891b2" },

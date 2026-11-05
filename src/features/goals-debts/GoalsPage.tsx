@@ -43,7 +43,7 @@ function GoalList() {
 
       {creating ? <GoalForm onDone={() => setCreating(false)} /> : null}
       {goals.length === 0 && !creating ? (
-        <p className="text-slate-600 dark:text-muted">{t("goals.empty")}</p>
+        <p className="text-neutral-600 dark:text-muted">{t("goals.empty")}</p>
       ) : null}
 
       <ul className="flex flex-col gap-3">
@@ -56,7 +56,7 @@ function GoalList() {
               <li key={g.id}>
                 <Link
                   to={`/plus/goals/${g.id}`}
-                  className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+                  className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
                 >
                   <div className="flex justify-between">
                     <span className="font-medium">
@@ -70,11 +70,11 @@ function GoalList() {
                     aria-valuemax={100}
                     aria-valuenow={p.percent}
                     aria-label={g.name}
-                    className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
+                    className="h-3 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700"
                   >
                     <div className="h-full bg-brand-600" style={{ width: `${p.percent}%` }} />
                   </div>
-                  <span className="text-sm text-slate-600 dark:text-muted">
+                  <span className="text-sm text-neutral-600 dark:text-muted">
                     {formatMoney(p.saved, g.currency)} / {formatMoney(g.targetAmount, g.currency)}
                     {p.reached
                       ? ` · ${t("goals.reached")}`
@@ -124,7 +124,7 @@ function GoalForm({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+    <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
       <Field label={t("common.name")} error={nameError}>
         <input
           className={inputClass}
@@ -156,7 +156,7 @@ function GoalForm({ onDone }: { onDone: () => void }) {
           {error}
         </p>
       ) : null}
-      {missingGoal() ? <p className="text-sm text-slate-600 dark:text-muted">{missingGoal()}</p> : null}
+      {missingGoal() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingGoal()}</p> : null}
       <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingGoal() !== null}>
         {t("common.save")}
       </button>
@@ -223,7 +223,7 @@ function GoalDetail({ id }: { id: string }) {
         {formatMoney(p.saved, goal.currency)} / {formatMoney(goal.targetAmount, goal.currency)} ·{" "}
         {p.percent} %
       </p>
-      <p className="text-sm text-slate-600 dark:text-muted">
+      <p className="text-sm text-neutral-600 dark:text-muted">
         {p.reached
           ? t("goals.reached")
           : p.estimatedDate
@@ -231,7 +231,7 @@ function GoalDetail({ id }: { id: string }) {
             : t("goals.noEstimate")}
       </p>
 
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
@@ -290,7 +290,7 @@ function GoalDetail({ id }: { id: string }) {
             {error}
           </p>
         ) : null}
-        {missingMovement() ? <p className="text-sm text-slate-600 dark:text-muted">{missingMovement()}</p> : null}
+        {missingMovement() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingMovement()}</p> : null}
         <button type="button" className={buttonPrimary} onClick={() => void addMovement()} disabled={missingMovement() !== null}>
           {t("common.save")}
         </button>

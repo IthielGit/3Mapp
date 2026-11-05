@@ -26,7 +26,7 @@ export function OnboardingPage() {
   const [name, setName] = useState(() => t("onboarding.defaultWalletName"));
   const [group, setGroup] = useState<Wallet["group"]>("bank");
   const [icon, setIcon] = useState("🏦");
-  const [color, setColor] = useState("#0f766e");
+  const [color, setColor] = useState("#0B7E9D");
   const [balanceText, setBalanceText] = useState("0");
   const [pay, setPay] = useState<PayChoice | null>(null);
   const [error, setError] = useState<string | undefined>();
@@ -62,7 +62,7 @@ export function OnboardingPage() {
   return (
     <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-6 px-6 py-6">
       <progress
-        className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-slate-200 dark:bg-white/15 [&::-moz-progress-bar]:bg-brand-700 [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:bg-brand-700 dark:[&::-moz-progress-bar]:bg-fg dark:[&::-webkit-progress-value]:bg-fg"
+        className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-neutral-200 dark:bg-white/15 [&::-moz-progress-bar]:bg-brand-600 [&::-webkit-progress-bar]:bg-neutral-200 [&::-webkit-progress-value]:bg-brand-600 dark:[&::-moz-progress-bar]:bg-fg dark:[&::-webkit-progress-value]:bg-fg"
         value={step}
         max={2}
         aria-label={t("onboarding.progress")}
@@ -101,7 +101,7 @@ export function OnboardingPage() {
       {step === 2 ? (
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
-          <p className="text-slate-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
+          <p className="text-neutral-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("common.name")} error={nameError}>
             <input
               className={inputClass}
@@ -127,7 +127,7 @@ export function OnboardingPage() {
             onChange={setPay}
           />
           <details className="flex flex-col gap-4">
-            <summary className="flex min-h-[44px] cursor-pointer items-center text-sm font-medium text-slate-600 underline dark:text-muted">
+            <summary className="flex min-h-[44px] cursor-pointer items-center text-sm font-medium text-neutral-600 underline dark:text-muted">
               {t("onboarding.customise")}
             </summary>
             <Field label={t("wallets.group")}>
@@ -156,7 +156,7 @@ export function OnboardingPage() {
 
       <div className="mt-auto flex flex-col gap-2">
         {step === 2 && name.trim() === "" ? (
-          <p className="text-center text-sm text-slate-600 dark:text-muted">
+          <p className="text-center text-sm text-neutral-600 dark:text-muted">
             {t("onboarding.nameRequired")}
           </p>
         ) : null}

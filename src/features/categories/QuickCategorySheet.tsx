@@ -88,7 +88,7 @@ export function QuickCategorySheet({ open, kind, onClose, onCreated }: QuickCate
             autoFocus
           />
         </Field>
-        <p className="text-sm text-slate-600 dark:text-muted">
+        <p className="text-sm text-neutral-600 dark:text-muted">
           {kind === "income" ? t("categories.income") : t("categories.expense")}
         </p>
       </form>

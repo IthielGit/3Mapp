@@ -41,7 +41,7 @@ export function ConfirmHost() {
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
-            className="min-h-[44px] rounded-xl border border-stone-500 font-medium text-ink dark:border-white/20 dark:text-fg"
+            className="min-h-[44px] rounded-xl border border-neutral-500 font-medium text-ink dark:border-white/20 dark:text-fg"
             onClick={() => answer(false)}
           >
             {t("common.cancel")}
@@ -51,7 +51,7 @@ export function ConfirmHost() {
             className={
               danger
                 ? "min-h-[44px] rounded-xl bg-red-700 font-semibold text-white"
-                : "min-h-[44px] rounded-xl bg-brand-700 font-semibold text-white dark:bg-brand-dark dark:text-ink"
+                : "min-h-[44px] rounded-xl bg-brand-600 font-semibold text-white dark:bg-brand-dark dark:text-ink"
             }
             onClick={() => answer(true)}
           >

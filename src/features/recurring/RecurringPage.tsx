@@ -42,12 +42,12 @@ export function RecurringPage() {
         <h2 className="font-semibold">
           {t("recurring.pendingTitle")} ({pending.length})
         </h2>
-        {pending.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("recurring.noPending")}</p> : null}
+        {pending.length === 0 ? <p className="text-neutral-600 dark:text-muted">{t("recurring.noPending")}</p> : null}
         <ul className="flex flex-col gap-2">
           {pending.map((tx) => (
             <li
               key={tx.id}
-              className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+              className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
             >
               <div className="flex justify-between gap-2">
                 <span>
@@ -86,12 +86,12 @@ export function RecurringPage() {
 
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("recurring.listTitle")}</h2>
-        {recurring.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("recurring.empty")}</p> : null}
+        {recurring.length === 0 ? <p className="text-neutral-600 dark:text-muted">{t("recurring.empty")}</p> : null}
         <ul className="flex flex-col gap-2">
           {recurring.map((r) => (
             <li
               key={r.id}
-              className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+              className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
             >
               <Link to={`/plus/recurring/${r.id}`} className="flex flex-col">
                 <span className="font-medium">
@@ -99,7 +99,7 @@ export function RecurringPage() {
                     categoryName.get(r.categoryId ?? "") ||
                     t(`transactions.types.${r.type}`)}
                 </span>
-                <span className="text-sm text-slate-600 dark:text-muted">
+                <span className="text-sm text-neutral-600 dark:text-muted">
                   {formatMoney(r.amount, r.currency)} ·{" "}
                   {t("recurring.every", {
                     interval: r.frequency.interval,
@@ -159,7 +159,7 @@ export function RecurringDetailPage() {
         title={r.memo || t(`transactions.types.${r.type}`)}
         actions={<ActionMenu items={recurringActions} />}
       />
-      <p className="text-sm text-slate-600 dark:text-muted">
+      <p className="text-sm text-neutral-600 dark:text-muted">
         {formatMoney(r.amount, r.currency)} ·{" "}
         {t("recurring.every", {
           interval: r.frequency.interval,
@@ -174,7 +174,7 @@ export function RecurringDetailPage() {
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("recurring.history")}</h2>
         {occurrences.length === 0 ? (
-          <p className="text-slate-600 dark:text-muted">{t("recurring.noHistory")}</p>
+          <p className="text-neutral-600 dark:text-muted">{t("recurring.noHistory")}</p>
         ) : null}
         <ul className="flex flex-col gap-1 text-sm">
           {occurrences.map((tx) => (

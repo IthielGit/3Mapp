@@ -101,7 +101,7 @@ export function CalendarPage() {
 
         <div className="grid grid-cols-3 gap-2 text-center text-sm">
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-neutral-600 dark:text-muted">
               <Icon name="arrowUp" className="h-3 w-3" />
               {t("home.income")}
             </p>
@@ -110,7 +110,7 @@ export function CalendarPage() {
             </p>
           </div>
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-neutral-600 dark:text-muted">
               <Icon name="arrowDown" className="h-3 w-3" />
               {t("home.expense")}
             </p>
@@ -122,7 +122,7 @@ export function CalendarPage() {
             </p>
           </div>
           <div>
-            <p className="flex items-center justify-center gap-1 text-xs text-slate-600 dark:text-muted">
+            <p className="flex items-center justify-center gap-1 text-xs text-neutral-600 dark:text-muted">
               <Icon name="equal" className="h-3 w-3" />
               {t("calendar.netShort")}
             </p>
@@ -132,7 +132,7 @@ export function CalendarPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-7 text-center text-xs text-slate-600 dark:text-muted">
+        <div className="grid grid-cols-7 text-center text-xs text-neutral-600 dark:text-muted">
           {weekdays.map((name, i) => (
             <span key={`${name}-${i}`} className="capitalize">
               {name}
@@ -157,8 +157,8 @@ export function CalendarPage() {
                   setSelected(key);
                 }}
                 className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
-                  isSelected ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink" : ""
-                } ${inMonth ? "text-ink dark:text-fg" : "text-slate-600 dark:text-muted"}`}
+                  isSelected ? "bg-brand-600 text-white dark:bg-brand-dark dark:text-ink" : ""
+                } ${inMonth ? "text-ink dark:text-fg" : "text-neutral-600 dark:text-muted"}`}
               >
                 <span className="tabular-nums">{format(day, "d")}</span>
                 {group ? (
@@ -182,7 +182,7 @@ export function CalendarPage() {
           type="button"
           aria-expanded={!folded}
           onClick={() => setFolded((f) => !f)}
-          className="min-h-[44px] self-center rounded-full bg-white px-5 text-sm font-medium text-brand-700 shadow-sm dark:bg-raised dark:text-brand-300"
+          className="min-h-[44px] self-center rounded-full bg-white px-5 text-sm font-medium text-brand-700 shadow-sm dark:bg-raised dark:text-brand-dark"
         >
           {folded ? t("calendar.showMonth") : t("calendar.showWeek")}
         </button>
@@ -190,13 +190,13 @@ export function CalendarPage() {
 
       <section
         id="calendar-day"
-        className="flex flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
+        className="flex flex-col gap-1 rounded-card border border-neutral-200 bg-white p-3 dark:border-white/15 dark:bg-card"
       >
         <p className="font-semibold capitalize text-ink dark:text-fg">
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
         </p>
         {!dayGroup || dayGroup.items.length === 0 ? (
-          <p className="py-4 text-center text-sm text-slate-600 dark:text-muted">
+          <p className="py-4 text-center text-sm text-neutral-600 dark:text-muted">
             {t("calendar.empty")}
           </p>
         ) : (

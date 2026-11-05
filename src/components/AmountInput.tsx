@@ -109,8 +109,8 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col rounded-lg border border-slate-300 px-3 py-2 dark:border-white/15">
-        <label htmlFor="amount-expression" className="text-sm text-slate-600 dark:text-muted">
+      <div className="flex flex-col rounded-lg border border-neutral-500 px-3 py-2 dark:border-white/15">
+        <label htmlFor="amount-expression" className="text-sm text-neutral-600 dark:text-muted">
           {label}
         </label>
         <div className="relative">
@@ -121,7 +121,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
             autoComplete="off"
             placeholder="0"
             // Le curseur est dessiné par la superposition ci-dessous : celui du navigateur est masqué.
-            className="w-full bg-transparent text-3xl font-semibold caret-transparent outline-none placeholder:text-slate-400 dark:placeholder:text-muted"
+            className="w-full bg-transparent text-3xl font-semibold caret-transparent outline-none placeholder:text-neutral-600 dark:placeholder:text-muted"
             value={expression}
             onChange={(e) => {
               rememberCaret(e.currentTarget);
@@ -138,7 +138,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               className="pointer-events-none absolute inset-0 flex items-center whitespace-pre text-3xl font-semibold"
             >
               <span className="invisible">{expression.slice(0, shownAt)}</span>
-              <span className="h-9 w-0.5 rounded-full bg-brand-700 caret-blink dark:bg-brand-300" />
+              <span className="h-9 w-0.5 rounded-full bg-brand-600 caret-blink dark:bg-brand-dark" />
               <span className="invisible">{expression.slice(shownAt)}</span>
             </div>
           ) : (
@@ -146,11 +146,11 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 flex items-center text-3xl font-semibold"
             >
-              <span className="h-9 w-0.5 rounded-full bg-brand-700 caret-blink dark:bg-brand-300" />
+              <span className="h-9 w-0.5 rounded-full bg-brand-600 caret-blink dark:bg-brand-dark" />
             </div>
           )}
         </div>
-        <output id="amount-result" aria-live="polite" className="text-sm text-slate-600 dark:text-muted">
+        <output id="amount-result" aria-live="polite" className="text-sm text-neutral-600 dark:text-muted">
           {result}
         </output>
       </div>
@@ -164,21 +164,21 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
                 type="button"
                 onClick={() => press(key)}
                 aria-label={key === "⌫" ? t("transactions.erase") : key}
-                className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15"
+                className="min-h-[44px] rounded-lg border border-neutral-500 text-xl font-medium dark:border-white/15"
               >
                 {key}
               </button>
             ))}
           </div>
           <div className="grid grid-cols-4 gap-1.5">
-            <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15">
+            <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-neutral-500 font-medium dark:border-white/15">
               C
             </button>
             <button
               type="button"
               onClick={() => press(zeroKey)}
               aria-label={zeroKey}
-              className="min-h-[44px] rounded-lg border border-slate-300 text-lg font-medium tabular-nums dark:border-white/15"
+              className="min-h-[44px] rounded-lg border border-neutral-500 text-lg font-medium tabular-nums dark:border-white/15"
             >
               {zeroKey}
             </button>
@@ -186,14 +186,14 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               type="button"
               onClick={equals}
               disabled={minor === null}
-              className="min-h-[44px] rounded-lg bg-brand-700 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink dark:disabled:bg-raised dark:disabled:text-muted dark:disabled:opacity-100"
+              className="min-h-[44px] rounded-lg bg-brand-600 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink dark:disabled:bg-raised dark:disabled:text-muted dark:disabled:opacity-100"
             >
               =
             </button>
             <button
               type="button"
               onClick={() => setCalc(false)}
-              className="min-h-[44px] rounded-lg border border-slate-300 text-sm font-medium dark:border-white/15"
+              className="min-h-[44px] rounded-lg border border-neutral-500 text-sm font-medium dark:border-white/15"
             >
               {t("transactions.digits")}
             </button>
@@ -208,21 +208,21 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               type="button"
               onClick={() => press(key === "000" ? zeroKey : key)}
               aria-label={key === "000" ? zeroKey : key}
-              className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium tabular-nums dark:border-white/15"
+              className="min-h-[44px] rounded-lg border border-neutral-500 text-xl font-medium tabular-nums dark:border-white/15"
             >
               {key === "000" ? zeroKey : key}
             </button>
           ))}
-          <button type="button" onClick={() => press("⌫")} aria-label={t("transactions.erase")} className="min-h-[44px] rounded-lg border border-slate-300 text-xl font-medium dark:border-white/15">
+          <button type="button" onClick={() => press("⌫")} aria-label={t("transactions.erase")} className="min-h-[44px] rounded-lg border border-neutral-500 text-xl font-medium dark:border-white/15">
             ⌫
           </button>
-          <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-slate-300 font-medium dark:border-white/15">
+          <button type="button" onClick={clear} className="min-h-[44px] rounded-lg border border-neutral-500 font-medium dark:border-white/15">
             C
           </button>
           <button
             type="button"
             onClick={() => setCalc(true)}
-            className="min-h-[44px] rounded-lg border border-slate-300 text-sm font-medium dark:border-white/15"
+            className="min-h-[44px] rounded-lg border border-neutral-500 text-sm font-medium dark:border-white/15"
           >
             {t("transactions.calc")}
           </button>

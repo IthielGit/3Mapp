@@ -23,7 +23,7 @@ export function WalletFormPage() {
   const [currency, setCurrency] = useState<CurrencyCode>("MGA");
   const [balanceText, setBalanceText] = useState("0");
   const [icon, setIcon] = useState("🏦");
-  const [color, setColor] = useState("#0f766e");
+  const [color, setColor] = useState("#0B7E9D");
   const [includeInTotal, setIncludeInTotal] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
@@ -124,7 +124,7 @@ export function WalletFormPage() {
         </Field>
       </div>
       {existing ? (
-        <span className="-mt-2 text-sm text-slate-600 dark:text-muted">{t("wallets.currencyLocked")}</span>
+        <span className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("wallets.currencyLocked")}</span>
       ) : null}
 
       <div className="grid grid-cols-[1fr_auto] items-end gap-3">
@@ -156,7 +156,7 @@ export function WalletFormPage() {
         </p>
       ) : null}
 
-      {missingField() ? <p className="text-sm text-slate-600 dark:text-muted">{missingField()}</p> : null}
+      {missingField() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}

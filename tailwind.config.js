@@ -18,32 +18,43 @@ export default {
         ],
       },
       colors: {
-        // Palette « bleu calme » : marque, boutons, liens, onglets actifs.
-        // brand-700 (#1E40AF) est la couleur principale ; le texte clair s'utilise en mode sombre.
-        // Palette chaleureuse : bleu-vert profond pour les actions, fond crème, rouge réservé aux dépenses et aux suppressions.
-        // brand-700 (bleu-vert) est la couleur d’action principale ; brand-300 (clair) sert aux textes sombres.
+        // Palette chaleureuse : bleu-vert profond pour les actions (brand-600), fond crème,
+        // rouge réservé aux dépenses et aux suppressions. brand-dark (teal clair) n'existe qu'en mode sombre.
         brand: {
-          50: "#f0faf9",
-          100: "#d9f2ef",
-          200: "#b3e4de",
-          300: "#f5f5f7",
-          400: "#4fa39a",
-          500: "#2d8a80",
-          600: "#13776e",
-          700: "#0f766e",
-          800: "#0b5d57",
-          900: "#084642",
+          50: "#EEFAFE",
+          100: "#D9F5FC",
+          200: "#B3EAF9",
+          300: "#7ADBF5",
+          400: "#2EC6F0",
+          500: "#0FA7D1",
+          600: "#0B7E9D",
+          700: "#096780",
+          800: "#075064",
+          900: "#053947",
+          // Teal clair : accent réservé au mode sombre (onglets actifs, boutons, liens).
+          dark: "#7ADBF5",
         },
-        accent: { DEFAULT: "#ee4444", 600: "#d93a3a" },
-        canvas: "#f6f3ee",
-        ink: "#1a1a1b",
+        neutral: {
+          50: "#F9FAFA",
+          100: "#F3F4F4",
+          200: "#E3E6E8",
+          300: "#D0D5D7",
+          400: "#A1ABAF",
+          500: "#6C787F",
+          600: "#4D565B",
+          700: "#3D4448",
+          800: "#262A2C",
+          900: "#171A1C",
+        },
+        canvas: "#F2F4F5",
+        ink: "#223135",
         card: "#26262d",
         page: "#1c1c22",
         raised: "#32323a",
         fg: "#f5f5f7",
         muted: "#b8b8c0",
         // Sémantique : revenus (vert profit), dépenses (rouge alerte). Variantes pour le mode sombre.
-        income: { DEFAULT: "#047857", dark: "#34d399" },
+        income: { DEFAULT: "#11745B", dark: "#67E9C9" },
         expense: { DEFAULT: "#b91c1c", dark: "#f87171" },
       },
       transitionTimingFunction: {

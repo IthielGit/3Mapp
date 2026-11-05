@@ -70,7 +70,7 @@ export function TransactionDetailSheet({
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center gap-1 text-center">
-          <p className="text-sm text-slate-600 dark:text-muted">
+          <p className="text-sm text-neutral-600 dark:text-muted">
             {format(new Date(tx.date), "EEEE d MMMM yyyy · HH:mm", { locale })}
           </p>
           <p className={`text-3xl font-semibold tabular-nums ${tone}`} data-amount>
@@ -79,10 +79,10 @@ export function TransactionDetailSheet({
           </p>
         </div>
 
-        <dl className="flex flex-col divide-y divide-slate-200 dark:divide-white/10">
+        <dl className="flex flex-col divide-y divide-neutral-200 dark:divide-white/10">
           {rows.map((row) => (
             <div key={row.label} className="flex items-baseline justify-between gap-4 py-3">
-              <dt className="shrink-0 text-sm text-slate-600 dark:text-muted">{row.label}</dt>
+              <dt className="shrink-0 text-sm text-neutral-600 dark:text-muted">{row.label}</dt>
               <dd className="min-w-0 break-words text-right font-medium">{row.value}</dd>
             </div>
           ))}

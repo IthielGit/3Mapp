@@ -24,7 +24,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
     ? "text-expense dark:text-expense-dark"
     : isIncome
       ? "text-income dark:text-income-dark"
-      : "text-slate-700 dark:text-slate-200";
+      : "text-neutral-700 dark:text-neutral-200";
   const title =
     tx.type === "transfer"
       ? `${walletName(tx.walletId)} → ${walletName(tx.toWalletId)}`
@@ -35,7 +35,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
       : [category?.name, walletName(tx.walletId)].filter(Boolean).join(" · ");
   const time = new Date(tx.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  const className = "flex min-h-[64px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors duration-150 active:bg-slate-100 focus-visible:outline-2 focus-visible:outline-brand-700 dark:active:bg-slate-800";
+  const className = "flex min-h-[64px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors duration-150 active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-600 dark:active:bg-neutral-800";
   const content = (
     <>
       <span
@@ -47,14 +47,14 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-medium">{title}</span>
-        <span className="truncate text-xs text-slate-600 dark:text-muted">{subtitle}</span>
+        <span className="truncate text-xs text-neutral-600 dark:text-muted">{subtitle}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
         <span className={`whitespace-nowrap font-semibold tabular-nums ${amountClass}`} data-amount>
           {isExpense ? "−" : isIncome ? "+" : ""}
           {formatMoney(tx.amount, tx.currency)}
         </span>
-        <span className="text-xs text-slate-600 dark:text-muted">{time}</span>
+        <span className="text-xs text-neutral-600 dark:text-muted">{time}</span>
       </span>
     </>
   );

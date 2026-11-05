@@ -78,10 +78,10 @@ export function PreferencesSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="px-1 text-sm font-semibold text-slate-600 dark:text-muted">
+      <h2 className="px-1 text-sm font-semibold text-neutral-600 dark:text-muted">
         {t("prefs.title")}
       </h2>
-      <div className="flex flex-col gap-4 rounded-card border border-slate-200 p-4 dark:border-white/15">
+      <div className="flex flex-col gap-4 rounded-card border border-neutral-200 p-4 dark:border-white/15">
         <Field label={t("prefs.language")}>
           <select
             className={inputClass}
@@ -120,7 +120,7 @@ export function PreferencesSection() {
             ))}
           </select>
         </Field>
-        <p className="-mt-2 text-sm text-slate-600 dark:text-muted" aria-live="polite">
+        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted" aria-live="polite">
           {t("prefs.monthStartPreview", {
             from: format(cycle.from, "d MMM", { locale }),
             to: format(cycleLast, "d MMM", { locale }),
@@ -131,13 +131,13 @@ export function PreferencesSection() {
           <label className="flex min-h-[44px] items-start gap-3">
             <input
               type="checkbox"
-              className="mt-1 h-5 w-5 accent-brand-700"
+              className="mt-1 h-5 w-5 accent-brand-600"
               checked={payOnFriday}
               onChange={(e) => void change({ payOnFriday: e.target.checked })}
             />
             <span className="flex flex-col">
               <span className="font-medium">{t("prefs.payOnFriday")}</span>
-              <span className="text-sm text-slate-600 dark:text-muted">
+              <span className="text-sm text-neutral-600 dark:text-muted">
                 {t("prefs.payOnFridayHint")}
               </span>
             </span>
@@ -164,7 +164,7 @@ export function PreferencesSection() {
             ))}
           </select>
         </Field>
-        <p className="-mt-2 text-sm text-slate-600 dark:text-muted">{t("prefs.payIncomeHint")}</p>
+        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("prefs.payIncomeHint")}</p>
 
         <Field label={t("prefs.keypadZeros")}>
           <select
@@ -180,29 +180,29 @@ export function PreferencesSection() {
         <label className="flex min-h-[44px] items-start gap-3">
           <input
             type="checkbox"
-            className="mt-1 h-5 w-5 accent-brand-700"
+            className="mt-1 h-5 w-5 accent-brand-600"
             checked={settings.ignoreFutureBalance === true}
             onChange={(e) => void change({ ignoreFutureBalance: e.target.checked })}
           />
           <span className="flex flex-col">
             <span className="font-medium">{t("prefs.ignoreFuture")}</span>
-            <span className="text-sm text-slate-600 dark:text-muted">
+            <span className="text-sm text-neutral-600 dark:text-muted">
               {t("prefs.ignoreFutureHint")}
             </span>
           </span>
         </label>
 
-        <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
+        <div className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">
           <label className="flex min-h-[44px] items-start gap-3">
             <input
               type="checkbox"
-              className="mt-1 h-5 w-5 accent-brand-700"
+              className="mt-1 h-5 w-5 accent-brand-600"
               checked={settings.reminderEnabled === true}
               onChange={(e) => void toggleReminder(e.target.checked)}
             />
             <span className="flex flex-col">
               <span className="font-medium">{t("prefs.reminder")}</span>
-              <span className="text-sm text-slate-600 dark:text-muted">
+              <span className="text-sm text-neutral-600 dark:text-muted">
                 {t("prefs.reminderHint")}
               </span>
             </span>

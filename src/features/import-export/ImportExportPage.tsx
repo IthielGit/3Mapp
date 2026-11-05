@@ -123,9 +123,9 @@ export function ImportExportPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="font-semibold">{t("importExport.importTitle")}</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">{t("importExport.importHint")}</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-600">{t("importExport.importHint")}</p>
         <label
-          className={`${buttonSecondary} flex w-full cursor-pointer items-center justify-center text-center focus-within:outline focus-within:outline-2 focus-within:outline-accent`}
+          className={`${buttonSecondary} flex w-full cursor-pointer items-center justify-center text-center focus-within:outline focus-within:outline-2 focus-within:outline-brand-600`}
         >
           {t("importExport.chooseFile")}
           <input
@@ -158,7 +158,7 @@ export function ImportExportPage() {
               {(["dmy", "mdy"] as const).map((order) => (
                 <label
                   key={order}
-                  className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 dark:border-white/15"
+                  className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 px-3 dark:border-white/15"
                 >
                   <input
                     type="radio"
@@ -184,7 +184,7 @@ export function ImportExportPage() {
         ) : null}
 
         {plan ? (
-          <div className="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 dark:border-white/15">
+          <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
             <p>
               {t("importExport.summary", {
                 valid: plan.valid.length,
@@ -246,7 +246,7 @@ export function ImportExportPage() {
         ) : null}
       </section>
 
-      <section className="flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-white/15">
+      <section className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">
         <h2 className="font-semibold">{t("importExport.exportTitle")}</h2>
         <div className="grid grid-cols-3 gap-2">
           <button type="button" className={buttonSecondary} onClick={() => void exportAs("csv")}>

@@ -1,12 +1,1 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-  <defs>
-    <linearGradient id="bg" x2="0.8" y2="1"><stop stop-color="#36363e"/><stop offset="0.55" stop-color="#1a1a20"/><stop offset="1" stop-color="#0a0a0d"/></linearGradient>
-    <linearGradient id="silver" x1="0.15" y1="0" x2="0.85" y2="1"><stop stop-color="#ffffff"/><stop offset="0.45" stop-color="#f5f5f7"/><stop offset="1" stop-color="#a5a5b2"/></linearGradient>
-    <linearGradient id="coral" x2="0.7" y2="1"><stop stop-color="#ff8279"/><stop offset="0.55" stop-color="#ee4444"/><stop offset="1" stop-color="#c82e3c"/></linearGradient>
-  </defs>
-  <rect width="1024" height="1024" fill="url(#bg)"/>
-  <circle cx="512" cy="524" r="268" fill="none" stroke="#000" stroke-opacity="0.24" stroke-width="100"/>
-  <circle cx="512" cy="512" r="268" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="88"/>
-  <path d="M512 244 A268 268 0 1 1 254 439" fill="none" stroke="url(#silver)" stroke-width="88" stroke-linecap="round"/>
-  <circle cx="254" cy="439" r="68" fill="url(#coral)" stroke="#202026" stroke-width="20"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><defs><linearGradient id="bgI" x2="0.8" y2="1"><stop stop-color="#0B7E9D"/><stop offset="1" stop-color="#075064"/></linearGradient></defs><rect width="1024" height="1024" rx="224" fill="url(#bgI)"/><g transform="scale(16)"><circle cx="32" cy="32" r="20" fill="none" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="7"/><path d="M32 12 A20 20 0 1 1 12 32" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/><circle cx="12" cy="32" r="6" fill="#111827" stroke="#FFFFFF" stroke-width="2.5"/></g></svg>

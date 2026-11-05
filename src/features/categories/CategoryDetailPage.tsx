@@ -50,7 +50,7 @@ export function CategoryDetailPage() {
     <section className="flex flex-col gap-4">
       <DetailHeader title={category.name} actions={<ActionMenu items={menu} />} />
 
-      <div className="flex items-center gap-3 rounded-card border border-slate-200 p-4 dark:border-white/15">
+      <div className="flex items-center gap-3 rounded-card border border-neutral-200 p-4 dark:border-white/15">
         <span
           aria-hidden="true"
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-3xl"
@@ -58,7 +58,7 @@ export function CategoryDetailPage() {
         >
           {category.icon}
         </span>
-        <span className="text-sm text-slate-600 dark:text-muted">
+        <span className="text-sm text-neutral-600 dark:text-muted">
           {t(`categories.${category.kind}`)}
         </span>
       </div>
@@ -66,7 +66,7 @@ export function CategoryDetailPage() {
       {subcategories.length > 0 ? (
         <section className="flex flex-col gap-2">
           <h2 className="font-semibold">{t("categories.subcategories")}</h2>
-          <ul className="flex flex-col divide-y divide-slate-200 rounded-card border border-slate-200 dark:divide-white/10 dark:border-white/15">
+          <ul className="flex flex-col divide-y divide-neutral-200 rounded-card border border-neutral-200 dark:divide-white/10 dark:border-white/15">
             {subcategories.map((sub) => (
               <li key={sub.id} className="flex items-center gap-3 p-3">
                 <span aria-hidden="true" className="text-xl">

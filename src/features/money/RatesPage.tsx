@@ -44,7 +44,7 @@ export function RatesPage() {
   return (
     <section className="flex flex-col gap-4">
       <PageTitle className="text-2xl font-semibold">{t("rates.title")}</PageTitle>
-      <p className="text-sm text-slate-600 dark:text-muted">{t("rates.hint")}</p>
+      <p className="text-sm text-neutral-600 dark:text-muted">{t("rates.hint")}</p>
 
       <div className="grid grid-cols-2 gap-2">
         <Field label={t("rates.from")}>
@@ -95,7 +95,7 @@ export function RatesPage() {
           {error}
         </p>
       ) : null}
-      {missingRate() ? <p className="text-sm text-slate-600 dark:text-muted">{missingRate()}</p> : null}
+      {missingRate() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingRate()}</p> : null}
       <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingRate() !== null}>
         {t("rates.add")}
       </button>
@@ -104,7 +104,7 @@ export function RatesPage() {
         {sorted.map((r) => (
           <li
             key={r.id}
-            className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+            className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
           >
             <span>
               {format(new Date(r.date), "dd/MM/yyyy")} · 1 {r.from} = {r.rate} {r.to}

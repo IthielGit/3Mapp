@@ -36,7 +36,7 @@ export function WalletsPage() {
         </Link>
       </header>
 
-      {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("wallets.empty")}</p> : null}
+      {active.length === 0 ? <p className="text-neutral-600 dark:text-muted">{t("wallets.empty")}</p> : null}
 
       <ul className="flex flex-col gap-2">
         {active.map((wallet) => (
@@ -46,12 +46,12 @@ export function WalletsPage() {
 
       {archived.length > 0 ? (
         <section className="flex flex-col gap-2">
-          <h2 className="font-semibold text-slate-600 dark:text-muted">{t("wallets.archivedSection")}</h2>
+          <h2 className="font-semibold text-neutral-600 dark:text-muted">{t("wallets.archivedSection")}</h2>
           <ul className="flex flex-col gap-2">
             {archived.map((wallet) => (
               <li
                 key={wallet.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 p-3 dark:border-white/15"
+                className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
               >
                 <span className="flex items-center gap-2">
                   <span aria-hidden="true">{wallet.icon}</span>
@@ -87,7 +87,7 @@ function WalletRow({ wallet, balance }: { wallet: Wallet; balance: number }) {
     <li>
       <Link
         to={`/plus/wallets/${wallet.id}`}
-        className="flex items-center gap-3 rounded-card border border-slate-200 p-3 shadow-sm dark:border-white/15"
+        className="flex items-center gap-3 rounded-card border border-neutral-200 p-3 shadow-sm dark:border-white/15"
       >
         <span
           aria-hidden="true"
@@ -98,12 +98,12 @@ function WalletRow({ wallet, balance }: { wallet: Wallet; balance: number }) {
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate font-semibold">{wallet.name}</span>
-          <span className="text-sm text-slate-600 dark:text-muted">
+          <span className="text-sm text-neutral-600 dark:text-muted">
             {t("wallets.balance")} :{" "}
             <span data-amount>{formatMoney(balance, wallet.currency)}</span>
           </span>
         </span>
-        <span aria-hidden="true" className="text-xl text-slate-400">›</span>
+        <span aria-hidden="true" className="text-xl text-neutral-600">›</span>
       </Link>
     </li>
   );

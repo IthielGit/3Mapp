@@ -57,16 +57,16 @@ export function WalletDetailPage() {
   return (
     <section className="flex flex-col gap-4">
       <DetailHeader title={wallet.name} actions={<ActionMenu items={walletActions} />}>
-        <p className="text-center text-sm text-slate-600 dark:text-muted">
+        <p className="text-center text-sm text-neutral-600 dark:text-muted">
           {wallet.icon} {t(`groups.${wallet.group}`)}
           {wallet.archived ? ` · ${t("wallets.archivedBadge")}` : ""}
         </p>
       </DetailHeader>
 
-      <div className="rounded-lg border border-slate-200 p-4 dark:border-white/15">
-        <p className="text-sm text-slate-600 dark:text-muted">{t("wallets.balance")}</p>
+      <div className="rounded-lg border border-neutral-200 p-4 dark:border-white/15">
+        <p className="text-sm text-neutral-600 dark:text-muted">{t("wallets.balance")}</p>
         <p className="text-2xl font-semibold">{formatMoney(balance, wallet.currency)}</p>
-        <p className="mt-2 text-sm text-slate-600 dark:text-muted">
+        <p className="mt-2 text-sm text-neutral-600 dark:text-muted">
           {t("wallets.initialBalance")} : {formatMoney(wallet.initialBalance, wallet.currency)}
         </p>
       </div>
@@ -74,14 +74,14 @@ export function WalletDetailPage() {
       <section className="flex flex-col gap-2">
         <h2 className="font-semibold">{t("wallets.movements")}</h2>
         {(movements ?? []).length === 0 ? (
-          <p className="text-slate-600 dark:text-muted">{t("wallets.noMovements")}</p>
+          <p className="text-neutral-600 dark:text-muted">{t("wallets.noMovements")}</p>
         ) : null}
         <ul className="flex flex-col gap-2">
           {(movements ?? []).slice(0, 30).map((tx) => (
             <li key={tx.id}>
               <Link
                 to={`/transactions/${tx.id}`}
-                className="flex justify-between rounded-lg border border-slate-200 p-3 dark:border-white/15"
+                className="flex justify-between rounded-lg border border-neutral-200 p-3 dark:border-white/15"
               >
                 <span className="text-sm">
                   {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}

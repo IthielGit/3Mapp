@@ -13,7 +13,7 @@ export function UpdateBanner() {
   return (
     <div
       role="status"
-      className="fixed inset-x-3 bottom-20 z-40 mx-auto flex max-w-lg items-center justify-between gap-3 rounded-lg bg-slate-900 p-3 text-sm text-white shadow-lg"
+      className="fixed inset-x-3 bottom-20 z-40 mx-auto flex max-w-lg items-center justify-between gap-3 rounded-lg bg-neutral-900 p-3 text-sm text-white shadow-lg"
     >
       <span>{t("pwa.updateAvailable")}</span>
       <button
@@ -40,11 +40,11 @@ export function InstallCard() {
   if (state === "installed" || state === "unavailable") return null;
 
   return (
-    <section className="flex flex-col gap-2 rounded-lg border border-slate-200 p-4 dark:border-white/15">
+    <section className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 dark:border-white/15">
       <h2 className="font-semibold">{t("pwa.installTitle")}</h2>
       {state === "available" ? (
         <>
-          <p className="text-sm text-slate-600 dark:text-muted">{t("pwa.installHint")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("pwa.installHint")}</p>
           <button
             type="button"
             className={buttonPrimary}
@@ -58,7 +58,7 @@ export function InstallCard() {
           </button>
         </>
       ) : (
-        <p className="text-sm text-slate-600 dark:text-muted">{t("pwa.installIosHint")}</p>
+        <p className="text-sm text-neutral-600 dark:text-muted">{t("pwa.installIosHint")}</p>
       )}
       {message ? (
         <p role="status" className="text-sm">
@@ -74,7 +74,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse rounded-lg bg-slate-200 dark:bg-raised ${className}`}
+      className={`animate-pulse rounded-lg bg-neutral-200 dark:bg-raised ${className}`}
     />
   );
 }
@@ -90,11 +90,11 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-white/15">
+    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-neutral-500 p-6 text-center dark:border-white/15">
       <span aria-hidden="true" className="text-4xl">
         {icon}
       </span>
-      <p className="text-slate-600 dark:text-muted">{title}</p>
+      <p className="text-neutral-600 dark:text-muted">{title}</p>
       {action}
     </div>
   );

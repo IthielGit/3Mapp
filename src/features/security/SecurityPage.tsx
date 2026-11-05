@@ -45,11 +45,11 @@ export function SecurityPage() {
       const cred = (await navigator.credentials.create({
         publicKey: {
           challenge: crypto.getRandomValues(new Uint8Array(32)),
-          rp: { name: "Budget", id: window.location.hostname },
+          rp: { name: "Fundora", id: window.location.hostname },
           user: {
             id: crypto.getRandomValues(new Uint8Array(16)),
             name: "budget",
-            displayName: "Budget",
+            displayName: "Fundora",
           },
           pubKeyCredParams: [{ type: "public-key", alg: -7 }],
           authenticatorSelection: { userVerification: "required" },
@@ -159,7 +159,7 @@ export function SecurityPage() {
             {t("security.biometricEnable")}
           </button>
         ) : (
-          <p className="text-sm text-slate-600 dark:text-muted">{t("security.biometricUnsupported")}</p>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("security.biometricUnsupported")}</p>
         )}
       </section>
 

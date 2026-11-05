@@ -24,7 +24,7 @@ const ICON_CHOICES = [
 ] as const;
 
 const COLOR_CHOICES = [
-  "#0f766e",
+  "#0B7E9D",
   "#2563eb",
   "#dc2626",
   "#d97706",
@@ -52,8 +52,8 @@ export function IconPicker({ value, onChange, label }: IconPickerProps) {
           onClick={() => onChange(icon)}
           className={`flex min-h-[44px] items-center justify-center rounded-lg border text-xl ${
             value === icon
-              ? "border-brand-700 bg-brand-50 dark:bg-raised"
-              : "border-slate-200 dark:border-white/15"
+              ? "border-brand-600 bg-brand-50 dark:bg-raised"
+              : "border-neutral-200 dark:border-white/15"
           }`}
         >
           {icon}
@@ -82,7 +82,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
           onClick={() => onChange(color)}
           style={{ backgroundColor: color }}
           className={`h-11 w-11 rounded-full border-4 ${
-            value === color ? "border-slate-900 dark:border-white" : "border-transparent"
+            value === color ? "border-neutral-900 dark:border-white" : "border-transparent"
           }`}
         />
       ))}
