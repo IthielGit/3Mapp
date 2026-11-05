@@ -809,5 +809,59 @@
       "replace": "Use this account only",
       "replaceHint": "This device's data is erased and replaced by the account's data."
     }
+  },
+  "admin": {
+    "title": "Admin console",
+    "group": "Administration",
+    "intro": "User accounts. You can see account contents; every view is logged.",
+    "search": "Search by email",
+    "loading": "Loading…",
+    "none": "No account matches.",
+    "notFound": "Account not found.",
+    "role": {
+      "super_admin": "Super admin",
+      "user": "User"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "recordCount": "{{count}} record(s)",
+    "lastSync": "Sync: {{date}}",
+    "neverSynced": "Never synced",
+    "field": {
+      "status": "Status",
+      "created": "Signed up",
+      "lastSync": "Last sync",
+      "records": "Records"
+    },
+    "selfNote": "You cannot suspend or delete your own account.",
+    "suspend": "Suspend account",
+    "reactivate": "Reactivate account",
+    "delete": "Delete account",
+    "confirmSuspend": "Suspend {{email}}? The account will no longer sign in or sync.",
+    "confirmReactivate": "Reactivate {{email}}?",
+    "confirmDelete": "Permanently delete {{email}} and all its data? This cannot be undone.",
+    "contents": "Contents",
+    "table": "Data",
+    "noRecords": "No records in this category.",
+    "tables": {},
+    "error": {
+      "forbidden": "Reserved for the super administrator.",
+      "network": "Could not connect. Check your network.",
+      "invalid": "Unexpected server response.",
+      "unknown": "Something went wrong. Try again."
+    },
+    "audit": {
+      "open": "Log",
+      "title": "Admin log",
+      "none": "No action recorded.",
+      "view": "Viewed: {{table}}",
+      "action": {
+        "suspend": "Account suspended",
+        "reactivate": "Account reactivated",
+        "delete": "Account deleted"
+      }
+    }
   }
 }
