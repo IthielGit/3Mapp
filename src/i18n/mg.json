@@ -208,7 +208,6 @@
     "newTitle": "Fifanakalozana vaovao",
     "editTitle": "Ovaina ny fifanakalozana",
     "empty": "Tsy misy mbola. Tsindrio + mba hanampiana ny fandaniana voalohany na ny fidiram-bola.",
-    "count": "Fifanakalozana {{count}}",
     "search": "Hitady",
     "searchPlaceholder": "Hitady memo na sokajy",
     "filters": "Sivana",
@@ -286,7 +285,11 @@
     "calc": "+ − × ÷",
     "digits": "123",
     "erase": "Fafao",
-    "noteOptional": "Fanamarihana (tsy voatery)"
+    "noteOptional": "Fanamarihana (tsy voatery)",
+    "count_one": "Fifanakalozana {{count}}",
+    "count_other": "Fifanakalozana {{count}}",
+    "sortNewestShort": "Vaovao indrindra",
+    "sortOldestShort": "Taloha indrindra"
   },
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",

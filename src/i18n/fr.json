@@ -208,7 +208,6 @@
     "newTitle": "Nouvelle transaction",
     "editTitle": "Modifier la transaction",
     "empty": "Rien pour l’instant. Appuyez sur + pour noter votre première dépense ou un revenu.",
-    "count": "{{count}} transaction(s)",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher un mémo ou une catégorie",
     "filters": "Filtres",
@@ -286,7 +285,11 @@
     "calc": "+ − × ÷",
     "digits": "123",
     "erase": "Effacer",
-    "noteOptional": "Note (facultatif)"
+    "noteOptional": "Note (facultatif)",
+    "count_one": "{{count}} transaction",
+    "count_other": "{{count}} transactions",
+    "sortNewestShort": "Plus récentes",
+    "sortOldestShort": "Plus anciennes"
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

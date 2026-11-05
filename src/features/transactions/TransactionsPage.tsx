@@ -303,11 +303,11 @@ export function TransactionsPage() {
             ) : null}
             <button
               type="button"
-              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-brand-700 dark:text-brand-300"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl px-2 font-medium text-brand-700 dark:text-brand-300"
               onClick={() => setOldestFirst((o) => !o)}
               aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
-              title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
             >
+              <span>{oldestFirst ? t("transactions.sortOldestShort") : t("transactions.sortNewestShort")}</span>
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
@@ -400,8 +400,8 @@ export function TransactionsPage() {
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-semibold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
-                      <span className="text-sm font-semibold text-slate-600 dark:text-muted">
-                        {format(new Date(row.day), "EEEE, MMM yyyy", { locale: fr })}
+                      <span className="text-sm font-semibold capitalize text-slate-600 dark:text-muted">
+                        {format(new Date(row.day), "EEEE d MMMM yyyy", { locale: fr })}
                       </span>
                     </div>
                     <span

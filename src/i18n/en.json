@@ -208,7 +208,6 @@
     "newTitle": "New transaction",
     "editTitle": "Edit transaction",
     "empty": "Nothing yet. Tap + to add your first expense or income.",
-    "count": "{{count}} transaction(s)",
     "search": "Search",
     "searchPlaceholder": "Search a memo or a category",
     "filters": "Filters",
@@ -286,7 +285,11 @@
     "calc": "+ − × ÷",
     "digits": "123",
     "erase": "Erase",
-    "noteOptional": "Note (optional)"
+    "noteOptional": "Note (optional)",
+    "count_one": "{{count}} transaction",
+    "count_other": "{{count}} transactions",
+    "sortNewestShort": "Newest first",
+    "sortOldestShort": "Oldest first"
   },
   "errors": {
     "required": "This field is required.",
