@@ -108,7 +108,7 @@ export function CalendarPage() {
               <Icon name="arrowUp" className="h-3 w-3" />
               {t("home.income")}
             </p>
-            <p className="font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
+            <p className="whitespace-nowrap font-semibold tabular-nums text-income dark:text-income-dark" data-amount>
               {formatMoney(monthTotals.income, baseCurrency)}
             </p>
           </div>
@@ -118,7 +118,7 @@ export function CalendarPage() {
               {t("home.expense")}
             </p>
             <p
-              className="font-semibold tabular-nums text-expense dark:text-expense-dark"
+              className="whitespace-nowrap font-semibold tabular-nums text-expense dark:text-expense-dark"
               data-amount
             >
               {formatMoney(monthTotals.expense, baseCurrency)}
@@ -129,7 +129,7 @@ export function CalendarPage() {
               <Icon name="equal" className="h-3 w-3" />
               {t("calendar.netShort")}
             </p>
-            <p className="text-lg font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+            <p className="whitespace-nowrap text-base font-semibold tabular-nums text-ink dark:text-fg" data-amount>
               {formatMoney(monthTotals.net, baseCurrency)}
             </p>
           </div>

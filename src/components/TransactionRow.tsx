@@ -50,7 +50,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
         <span className="truncate text-xs text-slate-600 dark:text-muted">{subtitle}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
-        <span className={`font-semibold ${amountClass}`} data-amount>
+        <span className={`whitespace-nowrap font-semibold tabular-nums ${amountClass}`} data-amount>
           {isExpense ? "−" : isIncome ? "+" : ""}
           {formatMoney(tx.amount, tx.currency)}
         </span>
