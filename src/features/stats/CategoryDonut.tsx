@@ -1,6 +1,7 @@
-import { useState, type ComponentProps } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { chartColor } from "../../lib/chart-colors";
 
 export interface DonutItem {
   /** Identifiant de la catégorie (clé React). */
@@ -13,36 +14,16 @@ export interface DonutItem {
   count: number;
 }
 
-/** Couleurs chaleureuses et distinctes. Le rouge reste réservé aux dépenses et aux suppressions. */
-const COLORS = [
-  "#0f766e",
-  "#f59e0b",
-  "#7c3aed",
-  "#0ea5e9",
-  "#db2777",
-  "#65a30d",
-  "#ea580c",
-  "#4f46e5",
-  "#14b8a6",
-  "#b45309",
-];
-
-/** Couleur de la catégorie à cette position (la liste est triée par montant : les premières sont distinctes). */
-function colorAt(index: number): string {
-  return COLORS[index % COLORS.length] ?? "#0f766e";
-}
-
 interface CategoryDonutProps {
   items: DonutItem[];
   fmt: (value: number) => string;
-  tooltipProps: Omit<ComponentProps<typeof Tooltip>, "formatter">;
 }
 
 /**
  * Répartition des dépenses par catégorie : anneau coloré, centre qui affiche le total ou la
  * catégorie choisie, et liste cliquable. Toucher une ligne ou une part la met en évidence.
  */
-export function CategoryDonut({ items, fmt, tooltipProps }: CategoryDonutProps) {
+export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<number | null>(null);
   const total = items.reduce((sum, item) => sum + item.value, 0);
@@ -72,12 +53,11 @@ export function CategoryDonut({ items, fmt, tooltipProps }: CategoryDonutProps) 
               {items.map((item, i) => (
                 <Cell
                   key={item.key}
-                  fill={colorAt(i)}
+                  fill={chartColor(i)}
                   fillOpacity={selected === null || selected === i ? 1 : 0.3}
                 />
               ))}
             </Pie>
-            <Tooltip {...tooltipProps} formatter={(v) => fmt(Number(v))} />
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
@@ -104,7 +84,7 @@ export function CategoryDonut({ items, fmt, tooltipProps }: CategoryDonutProps) 
               <span
                 aria-hidden="true"
                 className="h-3.5 w-3.5 shrink-0 rounded-full"
-                style={{ backgroundColor: colorAt(i) }}
+                style={{ backgroundColor: chartColor(i) }}
               />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium text-ink dark:text-fg">{item.name}</span>

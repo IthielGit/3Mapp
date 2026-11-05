@@ -40,6 +40,7 @@ import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { PeriodPicker } from "./PeriodPicker";
 import { currentPeriod, shiftPeriod, usePeriodSettings, type PeriodState } from "./period-state";
 import { CategoryDonut } from "./CategoryDonut";
+import { chartColor } from "../../lib/chart-colors";
 
 /** Donnée principale : quelle question on pose au graphique. */
 /** Nom de catégorie raccourci pour tenir dans la colonne des libellés. */
@@ -71,6 +72,9 @@ export function StatsPage() {
   const { resolved } = useTheme();
   // Encre des graphiques : noire en clair, claire en sombre (sinon elle disparaît sur le fond).
   const chartInk = resolved === "dark" ? "#f5f5f7" : "#1a1a1b";
+  // Séries vives : bleu-vert pour les courbes, vert pour les revenus, rouge pour les dépenses.
+  const chartMain = resolved === "dark" ? "#2dd4bf" : "#0d9488";
+  const chartIncome = resolved === "dark" ? "#34d399" : "#10b981";
   const settings = usePeriodSettings();
   const [state, setState] = useState<PeriodState>({ kind: "month", anchor: new Date() });
   const [now] = useState(() => new Date());
@@ -475,7 +479,7 @@ export function StatsPage() {
             {t("stats.noExpenses")}
           </p>
         ) : dataset === "categories" && repr === "donut" ? (
-          <CategoryDonut items={categoryItems} fmt={fmt} tooltipProps={tooltipProps} />
+          <CategoryDonut items={categoryItems} fmt={fmt} />
         ) : (
           <div className="h-64" role="img" aria-label={t("stats.chartAria")}>
             <ResponsiveContainer width="100%" height="100%">
@@ -493,7 +497,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="cumulative"
-                    stroke={chartInk}
+                    stroke={chartMain}
                     strokeWidth={2}
                     dot={false}
                     name={t("stats.cumulative")}
@@ -516,7 +520,7 @@ export function StatsPage() {
                     radius={[6, 6, 0, 0]}
                   >
                     {savingsRows.map((row) => (
-                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : chartInk} />
+                      <Cell key={row.name} fill={row.net < 0 ? "#ee4444" : chartIncome} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -541,9 +545,12 @@ export function StatsPage() {
                     isAnimationActive={false}
                     dataKey="value"
                     name={t("home.expense")}
-                    fill={chartInk}
                     radius={[0, 6, 6, 0]}
-                  />
+                  >
+                    {categoryItems.map((item, i) => (
+                      <Cell key={item.key} fill={chartColor(i)} />
+                    ))}
+                  </Bar>
                 </BarChart>
               ) : dataset === "weeks" && repr === "line" ? (
                 <LineChart data={weekData}>
@@ -560,7 +567,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="income"
-                    stroke={chartInk}
+                    stroke={chartMain}
                     name={t("home.income")}
                     dot={false}
                   />
@@ -587,7 +594,7 @@ export function StatsPage() {
                   <Bar
                     isAnimationActive={false}
                     dataKey="income"
-                    fill="#8e8e96"
+                    fill={chartIncome}
                     name={t("home.income")}
                     radius={[6, 6, 0, 0]}
                   />
@@ -613,7 +620,7 @@ export function StatsPage() {
                     isAnimationActive={false}
                     type="monotone"
                     dataKey="balance"
-                    stroke={chartInk}
+                    stroke={chartMain}
                     dot={false}
                     strokeWidth={2}
                   />

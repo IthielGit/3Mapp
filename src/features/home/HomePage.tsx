@@ -284,8 +284,8 @@ export function HomePage() {
                   <Area
                     type="monotone"
                     dataKey="balance"
-                    stroke="#047857"
-                    fill="#04785722"
+                    stroke="#10b981"
+                    fill="#10b98122"
                     strokeWidth={2}
                     dot={false}
                     isAnimationActive={false}
