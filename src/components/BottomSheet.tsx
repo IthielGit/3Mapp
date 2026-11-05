@@ -6,6 +6,8 @@ interface BottomSheetProps {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** Pied fixe (ex. bouton Enregistrer) : reste en bas de la feuille, hors de la zone qui défile. */
+  footer?: ReactNode;
 }
 
 /** Durée de sortie : la feuille reste montée le temps de glisser vers le bas. */
@@ -16,7 +18,7 @@ const EXIT_MS = 320;
  * le chemin de l'entrée). Fermeture par Échap, par le fond, ou par le bouton ×.
  * Les mouvements disparaissent avec « prefers-reduced-motion » ; le fondu reste.
  */
-export function BottomSheet({ open, title, onClose, children }: BottomSheetProps) {
+export function BottomSheet({ open, title, onClose, children, footer }: BottomSheetProps) {
   const titleId = useId();
   const [present, setPresent] = useState(open);
   const [visible, setVisible] = useState(false);
@@ -86,9 +88,14 @@ export function BottomSheet({ open, title, onClose, children }: BottomSheetProps
             ×
           </button>
         </header>
-        <div className="overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {children}
         </div>
+        {footer ? (
+          <div className="shrink-0 border-t border-slate-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
+            {footer}
+          </div>
+        ) : null}
       </div>
     </div>,
     document.body,

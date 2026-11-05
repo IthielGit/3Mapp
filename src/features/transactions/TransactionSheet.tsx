@@ -259,6 +259,16 @@ export function TransactionSheet({
       open
       title={transaction ? t("transactions.editTitle") : t("transactions.newTitle")}
       onClose={onClose}
+      footer={
+        <button
+          type="button"
+          className={`${buttonPrimary} w-full`}
+          onClick={() => void save()}
+          disabled={saving}
+        >
+          {t("common.save")}
+        </button>
+      }
     >
       <div className="flex flex-col gap-3">
         <div
@@ -530,17 +540,6 @@ export function TransactionSheet({
           </p>
         ) : null}
 
-        {/* Enregistrer reste collé en bas de la feuille : toujours visible, sans zone vide dessous. */}
-        <div className="sticky bottom-0 -mx-4 -mb-[max(1rem,env(safe-area-inset-bottom))] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 dark:bg-card">
-          <button
-            type="button"
-            className={buttonPrimary}
-            onClick={() => void save()}
-            disabled={saving}
-          >
-            {t("common.save")}
-          </button>
-        </div>
 
         {transaction ? (
           <div className="grid grid-cols-2 gap-2">
