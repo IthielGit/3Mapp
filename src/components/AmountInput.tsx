@@ -59,7 +59,8 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
           id="amount-expression"
           inputMode="decimal"
           autoComplete="off"
-          className="bg-transparent text-3xl font-semibold outline-none"
+          placeholder="0"
+          className="bg-transparent text-3xl font-semibold outline-none placeholder:text-slate-400 dark:placeholder:text-muted"
           value={expression}
           onChange={(e) => onExpressionChange(e.target.value)}
           aria-describedby="amount-result"
