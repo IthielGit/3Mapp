@@ -1,23 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2e2e35"/>
-      <stop offset="1" stop-color="#0b0b0d"/>
-    </linearGradient>
-    <radialGradient id="sheen" cx="0.28" cy="0.1" r="0.75">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.13"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="arc" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#d4d4da"/>
-    </linearGradient>
+    <linearGradient id="bg" x2="0.8" y2="1"><stop stop-color="#36363e"/><stop offset="0.55" stop-color="#1a1a20"/><stop offset="1" stop-color="#0a0a0d"/></linearGradient>
+    <linearGradient id="silver" x1="0.15" y1="0" x2="0.85" y2="1"><stop stop-color="#ffffff"/><stop offset="0.45" stop-color="#f5f5f7"/><stop offset="1" stop-color="#a5a5b2"/></linearGradient>
+    <linearGradient id="coral" x2="0.7" y2="1"><stop stop-color="#ff8279"/><stop offset="0.55" stop-color="#ee4444"/><stop offset="1" stop-color="#c82e3c"/></linearGradient>
   </defs>
-  <rect width="1024" height="1024" rx="232" fill="url(#bg)"/>
-  <rect width="1024" height="1024" rx="232" fill="url(#sheen)"/>
-  <g transform="translate(512 512) scale(1) translate(-512 -512)">
-    <circle cx="512" cy="512" r="300" fill="none" stroke="#ffffff" stroke-opacity="0.14" stroke-width="92"/>
-    <path d="M512.00 212.00 A300 300 0 1 1 226.68 419.29" fill="none" stroke="url(#arc)" stroke-width="92"/>
-    <circle cx="226.68" cy="419.29" r="60" fill="#ee4444" stroke="#0b0b0d" stroke-width="22"/>
-  </g>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="512" cy="524" r="268" fill="none" stroke="#000" stroke-opacity="0.24" stroke-width="100"/>
+  <circle cx="512" cy="512" r="268" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="88"/>
+  <path d="M512 244 A268 268 0 1 1 254 439" fill="none" stroke="url(#silver)" stroke-width="88" stroke-linecap="round"/>
+  <circle cx="254" cy="439" r="68" fill="url(#coral)" stroke="#202026" stroke-width="20"/>
 </svg>
