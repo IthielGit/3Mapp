@@ -61,6 +61,8 @@ export async function addGoalMovement(
       database,
     );
     transactionId = tx.id;
+    // Marque : ce mouvement est un versement d’objectif, pas une dépense ni un revenu.
+    await database.transactions.update(tx.id, { goalId });
   }
 
   const now = new Date().toISOString();
@@ -154,6 +156,8 @@ export async function addDebtPayment(
       database,
     );
     transactionId = tx.id;
+    // Marque : ce mouvement est un remboursement, pas une dépense ni un revenu.
+    await database.transactions.update(tx.id, { debtId });
   }
 
   const now = new Date().toISOString();

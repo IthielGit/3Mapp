@@ -27,6 +27,7 @@ import {
   topExpenses,
   transactionsIn,
 } from "../../domain/stats";
+import { isEarning, isSpending } from "../../domain/totals";
 import {
   contains,
   localDayKey,
@@ -718,10 +719,10 @@ export function StatsPage() {
             {activeWallets.map((w) => {
               const own = inPeriod.filter((tx) => tx.walletId === w.id);
               const income = own
-                .filter((tx) => tx.type === "income")
+                .filter((tx) => isEarning(tx))
                 .reduce((a, tx) => a + tx.amount, 0);
               const expense = own
-                .filter((tx) => tx.type === "expense")
+                .filter((tx) => isSpending(tx))
                 .reduce((a, tx) => a + tx.amount, 0);
               return (
                 <tr key={w.id} className="border-t border-slate-200 dark:border-white/15">

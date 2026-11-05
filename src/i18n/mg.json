@@ -659,7 +659,7 @@
     "available": "Vola ao amin’ny kaontinao",
     "income": "Nidiran’ny",
     "expense": "Nivoaka",
-    "saved": "Voatahiry: {{amount}}",
+    "saved": "Sisa amin’io volana: {{amount}}",
     "spentMore": "Nivoaka mihoatra ny nidiran’ny: {{amount}}",
     "thisMonth": "Io volana io",
     "accounts": "Kaontina natao isa: {{names}}",
@@ -676,6 +676,6 @@
     "yes": "Eny",
     "no": "Tsia",
     "addPay": "Ampidiro ny karamako",
-    "plannedSaving": "Tahiry andrasana: {{amount}}"
+    "plannedSaving": "Sisa andrasana amin’io volana: {{amount}}"
   }
 }

@@ -148,7 +148,13 @@ export async function updateTransaction(
   database: AppDatabase = defaultDb,
 ): Promise<Transaction> {
   const record = await validateDraft(draft, database, { isNew: false });
-  return repo(database).update(id, record);
+  // Une modification ne doit pas effacer le lien avec un objectif ou une dette.
+  const existing = await database.transactions.get(id);
+  return repo(database).update(id, {
+    ...record,
+    goalId: existing?.goalId,
+    debtId: existing?.debtId,
+  });
 }
 
 export interface RemovedBundle {

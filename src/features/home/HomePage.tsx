@@ -182,7 +182,7 @@ export function HomePage() {
                 <button
                   type="button"
                   className={buttonPrimary}
-                  onClick={() => void acceptSuggestedPay(suggestion.categoryId, suggestion.date)}
+                  onClick={() => void acceptSuggestedPay(suggestion.categoryId)}
                 >
                   {t("cycle.yes")}
                 </button>
@@ -234,11 +234,9 @@ export function HomePage() {
   }
 
   /** « C'est votre paie ? » : enregistre la catégorie et, si besoin, le jour de paie. */
-  async function acceptSuggestedPay(categoryId: string, date: Date) {
-    const payDay = date.getDate();
-    await updatePreferences(
-      payDay !== 1 ? { payIncomeCategoryId: categoryId, monthStartDay: payDay } : { payIncomeCategoryId: categoryId },
-    );
+  async function acceptSuggestedPay(categoryId: string) {
+    // Seule la catégorie est enregistrée : le jour de paie reste celui que l’utilisateur a réglé.
+    await updatePreferences({ payIncomeCategoryId: categoryId });
   }
 
   // Échéances : récurrences actives, de la plus proche à la plus lointaine.

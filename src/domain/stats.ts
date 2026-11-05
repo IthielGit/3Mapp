@@ -1,7 +1,7 @@
 import type { Transaction, Wallet } from "../db/entities";
 import { sumMinor, type CurrencyCode, type Minor } from "../lib/money";
 import { contains, localDayKey, type Period } from "./period";
-import { totals, type Totals } from "./totals";
+import { isEarning, isSpending, totals, type Totals } from "./totals";
 
 /** Transactions de la devise choisie, comprises dans la période, dans l'ordre chronologique. */
 export function transactionsIn(
@@ -50,7 +50,7 @@ export function expenseByCategory(
   names: ReadonlyMap<string, string>,
   uncategorisedLabel = "Sans catégorie",
 ): CategorySlice[] {
-  const expenses = transactions.filter((t) => t.type === "expense" && t.status === "posted");
+  const expenses = transactions.filter((t) => isSpending(t) && t.status === "posted");
   const groups = new Map<string | null, Minor[]>();
   for (const t of expenses) {
     const key = t.categoryId ?? null;
@@ -92,8 +92,8 @@ export function bucketTotals(
     if (t.status !== "posted") continue;
     const bucket = result.get(keyOf(t));
     if (!bucket) continue;
-    if (t.type === "income") bucket.income.push(t.amount);
-    if (t.type === "expense") bucket.expense.push(t.amount);
+    if (isEarning(t)) bucket.income.push(t.amount);
+    if (isSpending(t)) bucket.expense.push(t.amount);
   }
   return keys.map((key) => {
     const bucket = result.get(key) ?? { income: [], expense: [] };
@@ -104,7 +104,7 @@ export function bucketTotals(
 /** Les N plus grosses dépenses, de la plus grande à la plus petite. */
 export function topExpenses(transactions: readonly Transaction[], count = 10): Transaction[] {
   return transactions
-    .filter((t) => t.type === "expense" && t.status === "posted")
+    .filter((t) => isSpending(t) && t.status === "posted")
     .sort((a, b) => b.amount - a.amount || b.date.localeCompare(a.date))
     .slice(0, count);
 }

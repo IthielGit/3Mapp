@@ -659,7 +659,7 @@
     "available": "Money in your accounts",
     "income": "Received",
     "expense": "Spent",
-    "saved": "Set aside: {{amount}}",
+    "saved": "Left this month: {{amount}}",
     "spentMore": "Spent more than received: {{amount}}",
     "thisMonth": "This month",
     "accounts": "Accounts counted: {{names}}",
@@ -676,6 +676,6 @@
     "yes": "Yes",
     "no": "No",
     "addPay": "Add my pay",
-    "plannedSaving": "Planned savings: {{amount}}"
+    "plannedSaving": "Planned left this month: {{amount}}"
   }
 }

@@ -1,6 +1,16 @@
 import type { Transaction } from "../db/entities";
 import { sumMinor, type Minor } from "../lib/money";
 
+/** Vrai si la transaction compte comme dépense : pas un versement d’objectif ni un remboursement de dette. */
+export function isSpending(t: Pick<Transaction, "type" | "goalId" | "debtId">): boolean {
+  return t.type === "expense" && t.goalId === undefined && t.debtId === undefined;
+}
+
+/** Vrai si la transaction compte comme revenu : pas un retrait d’objectif ni un remboursement reçu. */
+export function isEarning(t: Pick<Transaction, "type" | "goalId" | "debtId">): boolean {
+  return t.type === "income" && t.goalId === undefined && t.debtId === undefined;
+}
+
 export interface Totals {
   income: Minor;
   expense: Minor;
@@ -21,8 +31,8 @@ export function totals(transactions: readonly Transaction[]): Totals {
   const adjustments: Minor[] = [];
   for (const t of transactions) {
     if (t.status !== "posted") continue;
-    if (t.type === "income") incomes.push(t.amount);
-    if (t.type === "expense") expenses.push(t.amount);
+    if (isEarning(t)) incomes.push(t.amount);
+    if (isSpending(t)) expenses.push(t.amount);
     if (t.type === "adjustment") adjustments.push(t.amount);
   }
   const income = sumMinor(incomes);

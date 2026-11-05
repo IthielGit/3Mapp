@@ -13,6 +13,7 @@ import { convertedSum } from "./fx";
 import { contains, type Period } from "./period";
 import { upcomingOccurrences } from "./recurrence";
 import { upTo } from "./cutoff";
+import { isEarning, isSpending } from "./totals";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -46,8 +47,8 @@ export function cycleSummary(
   available: Minor,
 ): CycleSummary {
   const inCycle = transactions.filter((t) => t.status === "posted" && contains(period, t.date));
-  const income = sumOf(inCycle.filter((t) => t.type === "income"));
-  const expense = sumOf(inCycle.filter((t) => t.type === "expense"));
+  const income = sumOf(inCycle.filter(isEarning));
+  const expense = sumOf(inCycle.filter(isSpending));
   const daysLeft = Math.max(1, Math.ceil((period.to.getTime() - now.getTime()) / DAY_MS));
   return { period, income, expense, saved: income - expense, available, daysLeft };
 }

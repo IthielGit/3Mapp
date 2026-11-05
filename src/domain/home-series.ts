@@ -2,6 +2,7 @@ import type { ExchangeRate, Transaction, Wallet } from "../db/entities";
 import { computeBalances } from "./balance";
 import { convertedSum } from "./fx";
 import type { CurrencyCode } from "../lib/money";
+import { isSpending } from "./totals";
 
 /**
  * Séries des mini-graphiques de l'accueil. Chaque point suit la même règle que le solde affiché :
@@ -53,7 +54,7 @@ export function dailyExpenses(
 ): number[] {
   const sums = new Map<string, number>(days.map((d) => [d, 0]));
   for (const tx of transactions) {
-    if (tx.type !== "expense" || tx.currency !== baseCurrency) continue;
+    if (!isSpending(tx) || tx.currency !== baseCurrency) continue;
     const d = new Date(tx.date);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     if (sums.has(key)) sums.set(key, (sums.get(key) ?? 0) + tx.amount);

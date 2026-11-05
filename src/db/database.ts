@@ -70,6 +70,21 @@ export class AppDatabase extends Dexie {
     this.version(2).stores({
       reconciliations: "id, walletId",
     });
+
+    // Version 3 : aucune structure ne change. Les transactions déjà liées à un objectif ou à une dette
+    // reçoivent la marque correspondante, pour ne plus être comptées comme dépenses ou revenus.
+    this.version(3)
+      .stores({})
+      .upgrade(async (tx) => {
+        const goalRows = (await tx.table("goalTransactions").toArray()) as GoalTransaction[];
+        for (const row of goalRows) {
+          if (row.transactionId) await tx.table("transactions").update(row.transactionId, { goalId: row.goalId });
+        }
+        const paymentRows = (await tx.table("debtPayments").toArray()) as DebtPayment[];
+        for (const row of paymentRows) {
+          if (row.transactionId) await tx.table("transactions").update(row.transactionId, { debtId: row.debtId });
+        }
+      });
   }
 }
 
