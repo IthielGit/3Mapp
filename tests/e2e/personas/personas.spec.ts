@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { devices, expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
-import { completeOnboardingUi } from "../helpers";
+import { completeOnboardingUi, openAmountKeypad } from "../helpers";
 
 // Cinq parcours de test « persona », approuvés avant exécution. Chaque parcours continue même
 // après une difficulté : les constats sont consignés puis rendus dans un rapport joint au test.
@@ -93,8 +93,15 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function keypad(page: Page, digits: string) {
+  await openAmountKeypad(page);
   for (const key of digits) {
     await page.getByRole("button", { name: key, exact: true }).click();
+  }
+  // Une dépense ou un revenu exige une catégorie : « Alimentation » si le formulaire en propose.
+  const select = page.locator("select").filter({ has: page.locator("option", { hasText: "Alimentation" }) });
+  if ((await select.count()) > 0) {
+    const value = await select.locator("option", { hasText: "Alimentation" }).first().getAttribute("value");
+    await select.selectOption(value ?? "");
   }
 }
 

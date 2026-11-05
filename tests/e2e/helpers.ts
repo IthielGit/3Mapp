@@ -15,3 +15,15 @@ export async function completeOnboardingUi(page: Page, walletName = "Compte BNI"
   await page.getByRole("button", { name: "Terminer" }).click();
   await page.getByRole("heading", { level: 1, name: "Accueil" }).waitFor();
 }
+
+export async function openAmountKeypad(page: Page): Promise<void> {
+  // Le pavé est replié à l'ouverture d'une transaction : on le déplie avant de saisir.
+  await page.getByRole("button", { name: /Toucher pour saisir le montant/ }).click();
+}
+
+/** Choisit la catégorie « Alimentation » (obligatoire pour une dépense ou un revenu). */
+export async function pickFoodCategory(page: Page): Promise<void> {
+  const select = page.locator("select").filter({ has: page.locator("option", { hasText: "Alimentation" }) });
+  const value = await select.locator("option", { hasText: "Alimentation" }).first().getAttribute("value");
+  await select.selectOption(value ?? "");
+}

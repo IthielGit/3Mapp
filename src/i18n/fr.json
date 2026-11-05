@@ -269,7 +269,11 @@
     "removePhotoN": "Retirer la pièce jointe {{n}}",
     "transferHint": "Virement : déplacer de l’argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas.",
     "amountTapToEdit": "Toucher pour modifier le montant",
-    "amountDone": "Terminé"
+    "amountDone": "Terminé",
+    "amountTapToEnter": "Toucher pour saisir le montant",
+    "chooseCategory": "Choisir une catégorie",
+    "categoryRequired": "Choisissez une catégorie, ou créez-en une.",
+    "newCategory": "Nouvelle catégorie"
   },
   "errors": {
     "required": "Ce champ est obligatoire.",

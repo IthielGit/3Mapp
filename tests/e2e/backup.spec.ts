@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, openAmountKeypad, pickFoodCategory } from "./helpers";
 
 test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", async ({
   page,
@@ -11,9 +11,11 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
   // Une dépense de 1 500 au clavier.
   await page.getByRole("link", { name: "Transactions" }).click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
+  await openAmountKeypad(page);
   for (const key of ["1", "5", "0", "0"]) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }
+  await pickFoodCategory(page);
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByTestId("transaction-list")).toContainText("1.500");
 

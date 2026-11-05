@@ -1,7 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, openAmountKeypad } from "./helpers";
 
 async function typeAmount(page: Page, digits: string) {
+  await openAmountKeypad(page);
   for (const key of digits) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }

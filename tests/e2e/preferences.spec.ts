@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, openAmountKeypad, pickFoodCategory } from "./helpers";
 
 test("touche de zéros : « 00 » choisi dans Paramètres apparaît sur le clavier", async ({
   page,
@@ -13,6 +13,7 @@ test("touche de zéros : « 00 » choisi dans Paramètres apparaît sur le clavi
     .getByRole("link", { name: "Transactions" })
     .click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
+  await openAmountKeypad(page);
   await expect(page.getByRole("button", { name: "00", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "000", exact: true })).toHaveCount(0);
 });
@@ -24,6 +25,7 @@ test("touche de zéros par défaut : « 000 »", async ({ page }) => {
     .getByRole("link", { name: "Transactions" })
     .click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
+  await openAmountKeypad(page);
   await expect(page.getByRole("button", { name: "000", exact: true })).toBeVisible();
 });
 
@@ -35,9 +37,11 @@ test("récurrence à la création : la case crée une récurrence visible", asyn
     .click();
   await page.getByRole("link", { name: "Nouvelle transaction" }).click();
   await page.getByLabel("Répéter (récurrence)").check();
+  await openAmountKeypad(page);
   for (const key of ["1", "0", "0", "0"]) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }
+  await pickFoodCategory(page);
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 

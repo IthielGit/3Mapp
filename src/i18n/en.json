@@ -269,7 +269,11 @@
     "removePhotoN": "Remove attachment {{n}}",
     "transferHint": "Transfer: move money between two of your accounts (for example from the bank to mobile money). Your total does not change.",
     "amountTapToEdit": "Tap to change the amount",
-    "amountDone": "Done"
+    "amountDone": "Done",
+    "amountTapToEnter": "Tap to enter the amount",
+    "chooseCategory": "Choose a category",
+    "categoryRequired": "Choose a category, or create one.",
+    "newCategory": "New category"
   },
   "errors": {
     "required": "This field is required.",

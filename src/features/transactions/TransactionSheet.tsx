@@ -16,6 +16,7 @@ import {
   inputClass,
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
+import { createCategory } from "../categories/category-service";
 import { minorToPlainText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { createRecurring } from "../recurring/recurring-service";
@@ -81,8 +82,8 @@ export function TransactionSheet({
   const settings = useLiveQuery(() => db.settings.toArray(), []) ?? [];
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
-  // En modification, le pavé est fermé : le montant s'affiche et se modifie au toucher.
-  const [keypadOpen, setKeypadOpen] = useState(!source);
+  // Le pavé est replié à l'ouverture (création comme modification) : le montant se saisit au toucher.
+  const [keypadOpen, setKeypadOpen] = useState(false);
   const [type, setType] = useState<TxType>(initial?.type ?? defaultType ?? "expense");
   const typeOptions = typeOptionsFor(transaction?.type);
   // Récurrence à la création : la première échéance est la période suivante (pas de doublon).
@@ -106,6 +107,8 @@ export function TransactionSheet({
     transaction?.fee ? minorToPlainText(transaction.fee, transaction.currency) : "",
   );
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
   const [subcategoryId, setSubcategoryId] = useState(initial?.subcategoryId ?? "");
   const [dateLocal, setDateLocal] = useState(
     // Une copie prend la date du jour : c'est une nouvelle transaction.
@@ -142,6 +145,22 @@ export function TransactionSheet({
 
 
   /** Construit le brouillon ; toute saisie invalide lève une RuleError lisible. */
+  /** Crée une catégorie depuis le formulaire et la sélectionne (même genre que la transaction). */
+  async function createQuickCategory() {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    try {
+      const created = await createCategory({ name, kind, icon: "🏷️", color: "#64748b", archived: false });
+      setCategoryId(created.id);
+      setSubcategoryId("");
+      setNewCategoryName("");
+      setCreatingCategory(false);
+      setError(undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.generic"));
+    }
+  }
+
   function buildDraft(): TransactionDraft {
     if (!sourceWallet) throw new RuleError(t("transactions.chooseWallet"));
     const amount = expressionToMinor(amountExpr, currency);
@@ -163,6 +182,7 @@ export function TransactionSheet({
     }
 
     const isCategorised = type === "expense" || type === "income";
+    if (isCategorised && !categoryId) throw new RuleError(t("transactions.categoryRequired"));
     return {
       type,
       amount: signedAmount,
@@ -275,15 +295,13 @@ export function TransactionSheet({
               currency={currency}
               label={t("transactions.amount")}
             />
-            {source ? (
-              <button
-                type="button"
-                className={`${buttonSecondary} w-full`}
-                onClick={() => setKeypadOpen(false)}
-              >
-                {t("transactions.amountDone")}
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className={`${buttonSecondary} w-full`}
+              onClick={() => setKeypadOpen(false)}
+            >
+              {t("transactions.amountDone")}
+            </button>
           </div>
         ) : (
           <button
@@ -296,7 +314,7 @@ export function TransactionSheet({
               {amountDisplay}
             </span>
             <span className="text-sm text-brand-700 dark:text-brand-300">
-              {t("transactions.amountTapToEdit")}
+              {source ? t("transactions.amountTapToEdit") : t("transactions.amountTapToEnter")}
             </span>
           </button>
         )}
@@ -403,23 +421,63 @@ export function TransactionSheet({
               </select>
             </Field>
           ) : (
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={categoryId}
-                onChange={(e) => {
-                  setCategoryId(e.target.value);
-                  setSubcategoryId("");
-                }}
-              >
-                <option value="">—</option>
-                {categoryOptions.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.icon} {c.name}
+            <div className="flex flex-col gap-2">
+              <Field label={t("common.category")}>
+                <select
+                  className={inputClass}
+                  value={categoryId}
+                  required
+                  onChange={(e) => {
+                    setCategoryId(e.target.value);
+                    setSubcategoryId("");
+                  }}
+                >
+                  <option value="" disabled>
+                    {t("transactions.chooseCategory")}
                   </option>
-                ))}
-              </select>
-            </Field>
+                  {categoryOptions.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.icon} {c.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              {creatingCategory ? (
+                <div className="flex gap-2">
+                  <input
+                    className={inputClass}
+                    value={newCategoryName}
+                    aria-label={t("common.name")}
+                    placeholder={t("common.name")}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    className={buttonPrimary}
+                    disabled={!newCategoryName.trim()}
+                    onClick={() => void createQuickCategory()}
+                  >
+                    {t("common.add")}
+                  </button>
+                  <button
+                    type="button"
+                    className={buttonSecondary}
+                    onClick={() => setCreatingCategory(false)}
+                  >
+                    {t("common.cancel")}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="min-h-[44px] self-start font-medium text-brand-700 dark:text-brand-300"
+                  onClick={() => setCreatingCategory(true)}
+                >
+                  + {t("transactions.newCategory")}
+                </button>
+              )}
+            </div>
           )}
         </div>
 

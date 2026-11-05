@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, openAmountKeypad } from "./helpers";
 
 test("saisie du montant : la touche s'insère à la position du curseur", async ({ page }) => {
   await completeOnboardingUi(page, "Compte BNI");
   await page.goto("/transactions/new");
+  await openAmountKeypad(page);
   await page.getByRole("button", { name: "2", exact: true }).click();
   await page.getByRole("button", { name: "0", exact: true }).click();
   const input = page.locator("#amount-expression");

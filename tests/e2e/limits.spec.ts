@@ -1,12 +1,13 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { completeOnboardingUi } from "./helpers";
+import { completeOnboardingUi, openAmountKeypad } from "./helpers";
 
 // Parcours « limites » : cas non couverts par les autres suites (suppressions protégées,
 // objectifs, dettes, réconciliation, statistiques, import CSV en erreur, montants extrêmes).
 
 async function typeAmount(page: Page, digits: string) {
+  await openAmountKeypad(page);
   for (const key of digits) {
     await page.getByRole("button", { name: key, exact: true }).click();
   }
