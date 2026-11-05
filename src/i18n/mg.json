@@ -676,6 +676,8 @@
     "yes": "Eny",
     "no": "Tsia",
     "addPay": "Ampidiro ny karamako",
-    "plannedSaving": "Sisa andrasana amin’io volana: {{amount}}"
+    "plannedSaving": "Sisa andrasana amin’io volana: {{amount}}",
+    "savedToGoals": "Tahiry natao ho an’ny tanjona: {{amount}}",
+    "debtsPaid": "Trosa sy andraikitra: {{amount}}"
   }
 }

@@ -676,6 +676,8 @@
     "yes": "Yes",
     "no": "No",
     "addPay": "Add my pay",
-    "plannedSaving": "Planned left this month: {{amount}}"
+    "plannedSaving": "Planned left this month: {{amount}}",
+    "savedToGoals": "Saved for goals: {{amount}}",
+    "debtsPaid": "Debts and loans: {{amount}}"
   }
 }

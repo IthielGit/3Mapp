@@ -28,7 +28,11 @@ export interface CycleSummary {
   income: Minor;
   /** Dépenses validées dans le cycle. */
   expense: Minor;
-  /** Mis de côté : revenus − dépenses du cycle (constat, pas une prévision). */
+  /** Versé aux objectifs dans le cycle (sorties marquées objectif). */
+  savedToGoals: Minor;
+  /** Dettes et prêts payés ou accordés dans le cycle (sorties marquées dette). */
+  debtsPaid: Minor;
+  /** Reste du mois : revenus − dépenses − versements aux objectifs − dettes payées (constat, pas une prévision). */
   saved: Minor;
   /** Disponible aujourd'hui : soldes des portefeuilles comptés (hors épargne), en devise de base. */
   available: Minor;
@@ -49,8 +53,12 @@ export function cycleSummary(
   const inCycle = transactions.filter((t) => t.status === "posted" && contains(period, t.date));
   const income = sumOf(inCycle.filter(isEarning));
   const expense = sumOf(inCycle.filter(isSpending));
+  const savedToGoals = sumOf(inCycle.filter((t) => t.type === "expense" && t.goalId !== undefined));
+  const debtsPaid = sumOf(inCycle.filter((t) => t.type === "expense" && t.debtId !== undefined));
   const daysLeft = Math.max(1, Math.ceil((period.to.getTime() - now.getTime()) / DAY_MS));
-  return { period, income, expense, saved: income - expense, available, daysLeft };
+  // Reste du mois : revenus moins dépenses, moins ce qui a été versé aux objectifs et aux dettes.
+  const saved = income - expense - savedToGoals - debtsPaid;
+  return { period, income, expense, savedToGoals, debtsPaid, saved, available, daysLeft };
 }
 
 function sumOf(list: readonly { amount: Minor }[]): Minor {
@@ -276,7 +284,13 @@ export function cycleOverview(input: CycleInput): CycleOverview {
   const plannedSaving =
     expectedPay === undefined
       ? undefined
-      : expectedPay - summary.expense - pendingExpenses - upcomingExpenses - debtsDue;
+      : expectedPay -
+        summary.expense -
+        summary.savedToGoals -
+        summary.debtsPaid -
+        pendingExpenses -
+        upcomingExpenses -
+        debtsDue;
 
   const suggestedPay = input.payCategoryId ? undefined : latestIncome(baseTransactions, now);
 

@@ -145,3 +145,23 @@ describe("dette reliée à un compte à la création", () => {
     db.close();
   });
 });
+
+describe("reste du mois avec objectifs et dettes", () => {
+  it("le reste tient compte des versements et des dettes, mais pas la dépense", async () => {
+    const { cycleSummary } = await import("../../src/domain/cycle");
+    const { accountingMonth } = await import("../../src/domain/period");
+    const period = accountingMonth(new Date(2026, 2, 10, 12), 1);
+    const at = new Date(2026, 2, 3, 12).toISOString();
+    const transactions = [
+      tx({ type: "income", amount: 1_000_000, date: at }),
+      tx({ type: "expense", amount: 200_000, date: at }),
+      tx({ type: "expense", amount: 100_000, date: at, goalId: "00000000-0000-4000-8000-0000000000gg" }),
+      tx({ type: "expense", amount: 50_000, date: at, debtId: "00000000-0000-4000-8000-0000000000dd" }),
+    ];
+    const s = cycleSummary(transactions, period, new Date(2026, 2, 10, 12), 0);
+    expect(s.expense).toBe(200_000);
+    expect(s.savedToGoals).toBe(100_000);
+    expect(s.debtsPaid).toBe(50_000);
+    expect(s.saved).toBe(650_000);
+  });
+});

@@ -402,6 +402,16 @@ export function HomePage() {
               </dd>
             </div>
           </dl>
+          {cycle.savedToGoals > 0 ? (
+            <p className="text-sm text-ink dark:text-fg">
+              {t("cycle.savedToGoals", { amount: formatMoney(cycle.savedToGoals, baseCurrency) })}
+            </p>
+          ) : null}
+          {cycle.debtsPaid > 0 ? (
+            <p className="text-sm text-ink dark:text-fg">
+              {t("cycle.debtsPaid", { amount: formatMoney(cycle.debtsPaid, baseCurrency) })}
+            </p>
+          ) : null}
           <p className="text-sm text-ink dark:text-fg">
             {cycle.saved >= 0
               ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })

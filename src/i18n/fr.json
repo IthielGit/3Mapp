@@ -676,6 +676,8 @@
     "yes": "Oui",
     "no": "Non",
     "addPay": "Ajouter ma paie",
-    "plannedSaving": "Reste prévu du mois : {{amount}}"
+    "plannedSaving": "Reste prévu du mois : {{amount}}",
+    "savedToGoals": "Épargne versée : {{amount}}",
+    "debtsPaid": "Dettes et prêts : {{amount}}"
   }
 }
