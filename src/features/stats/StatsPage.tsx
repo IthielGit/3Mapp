@@ -1,5 +1,5 @@
 import { Icon, type IconName } from "../../components/Icon";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { addMonths, format, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Link } from "react-router-dom";
@@ -90,7 +90,7 @@ export function StatsPage() {
   const baseCurrency: CurrencyCode =
     useLiveQuery(async () => (await db.settings.toArray())[0]?.baseCurrency, []) ?? "MGA";
   /** Les montants sont en unités mineures ; les graphiques affichent des unités majeures (selon la devise). */
-  const toMajor = (minor: number) => minorToMajor(minor, baseCurrency);
+  const toMajor = useCallback((minor: number) => minorToMajor(minor, baseCurrency), [baseCurrency]);
 
   const names = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const walletName = useMemo(() => new Map(wallets.map((w) => [w.id, w.name])), [wallets]);
@@ -176,7 +176,7 @@ export function StatsPage() {
         name: p.day.slice(5),
         balance: toMajor(p.balance),
       })),
-    [scopedWallets, transactions, dayKeys, baseCurrency],
+    [scopedWallets, transactions, dayKeys, baseCurrency, toMajor],
   );
 
   const savingsRows = useMemo(() => {

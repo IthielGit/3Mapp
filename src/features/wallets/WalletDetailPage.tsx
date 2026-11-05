@@ -9,7 +9,7 @@ import { walletBalance } from "../../domain/balance";
 import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { formatMoney } from "../../lib/money";
 import { deleteWallet, moveWallet, setWalletArchived } from "./wallet-service";
-import { buttonPrimary } from "../../components/FormControls";
+import { buttonDanger, buttonPrimary } from "../../components/FormControls";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 
 export function WalletDetailPage() {
@@ -51,7 +51,6 @@ export function WalletDetailPage() {
     wallet.archived
       ? { label: t("common.restore"), onSelect: () => void setWalletArchived(id, false) }
       : { label: t("common.archive"), onSelect: () => void setWalletArchived(id, true) },
-    { label: t("common.delete"), onSelect: () => void remove(), danger: true },
   ];
 
   return (
@@ -107,12 +106,14 @@ export function WalletDetailPage() {
         </ul>
       </section>
 
-      <Link
-        to={`/plus/wallets/${id}/edit`}
-        className={`${buttonPrimary} inline-flex w-full items-center justify-center`}
-      >
-        {t("common.edit")}
-      </Link>
+      <div className="grid grid-cols-2 gap-2">
+        <Link to={`/plus/wallets/${id}/edit`} className={`${buttonPrimary} inline-flex items-center justify-center`}>
+          {t("common.edit")}
+        </Link>
+        <button type="button" className={buttonDanger} onClick={() => void remove()}>
+          {t("common.delete")}
+        </button>
+      </div>
 
       {error ? (
         <p role="alert" className="text-red-700 dark:text-red-400">

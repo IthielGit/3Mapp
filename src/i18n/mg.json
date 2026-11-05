@@ -394,13 +394,6 @@
     "invalidInterval": "Ny elanelana dia tokony ho isa feno 1 farafahakeliny.",
     "editTitle": "Hanova ny fandoavana mandavaka"
   },
-  "templates": {
-    "label": "Modely",
-    "none": "Tsy misy modely",
-    "saveAsTemplate": "Tehirizo ho modely",
-    "templateName": "Anaran'ny modely",
-    "saved": "Voatahiry ny modely."
-  },
   "reconcile": {
     "title": "Hampifanaraka {{name}}",
     "open": "Hampifanaraka ny tahiry",

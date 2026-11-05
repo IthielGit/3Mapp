@@ -18,7 +18,6 @@ import {
 import { expressionToMinor } from "../../lib/calc";
 import { minorToPlainText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
-import { saveTransactionAsTemplate } from "./template-service";
 import { createRecurring } from "../recurring/recurring-service";
 import { occurrenceDate, type Frequency } from "../../domain/recurrence";
 import {
@@ -80,7 +79,6 @@ export function TransactionSheet({
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? [];
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const settings = useLiveQuery(() => db.settings.toArray(), []) ?? [];
-  const templates = useLiveQuery(() => db.templates.toArray(), []) ?? [];
   const activeWallets = wallets.filter((w) => !w.archived || w.id === initial?.walletId);
 
   // En modification, le pavé est fermé : le montant s'affiche et se modifie au toucher.
@@ -141,33 +139,7 @@ export function TransactionSheet({
       [categoryId],
     ) ?? [];
 
-  /** Pré-remplit le formulaire depuis un modèle (SPEC §5.6). La date reste « maintenant ». */
-  function applyTemplate(templateId: string) {
-    const tp = templates.find((x) => x.id === templateId);
-    if (!tp) return;
-    const tpCurrency = wallets.find((w) => w.id === tp.walletId)?.currency ?? tp.currency;
-    setType(tp.type);
-    setAmountExpr(minorToPlainText(tp.amount, tpCurrency));
-    setWalletId(tp.walletId);
-    setToWalletId(tp.toWalletId ?? "");
-    setCategoryId(tp.categoryId ?? "");
-    setSubcategoryId(tp.subcategoryId ?? "");
-    setMemo(tp.memo);
-    setFeeExpr(tp.fee ? minorToPlainText(tp.fee, tpCurrency) : "");
-  }
 
-  async function saveAsTemplate() {
-    if (!transaction) return;
-    const name = window.prompt(t("templates.templateName"), transaction.memo || "");
-    if (!name || name.trim() === "") return;
-    try {
-      await saveTransactionAsTemplate(transaction.id, name, "📄");
-      setError(undefined);
-      window.alert(t("templates.saved"));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
-    }
-  }
 
   /** Construit le brouillon ; toute saisie invalide lève une RuleError lisible. */
   function buildDraft(): TransactionDraft {
@@ -251,7 +223,6 @@ export function TransactionSheet({
         transaction ? (
             <ActionMenu
               items={[
-                { label: t("templates.saveAsTemplate"), onSelect: () => void saveAsTemplate() },
                 { label: t("transactions.duplicate"), onSelect: () => void duplicate() },
                 { label: t("common.delete"), onSelect: () => onDelete?.(transaction), danger: true },
               ]}
@@ -295,18 +266,6 @@ export function TransactionSheet({
           <p className="text-sm text-slate-600 dark:text-muted">{t("transactions.transferHint")}</p>
         ) : null}
 
-        {!transaction && templates.length > 0 ? (
-          <Field label={t("templates.label")}>
-            <select className={inputClass} value="" onChange={(e) => applyTemplate(e.target.value)}>
-              <option value="">{t("templates.none")}</option>
-              {templates.map((tp) => (
-                <option key={tp.id} value={tp.id}>
-                  {tp.icon} {tp.name}
-                </option>
-              ))}
-            </select>
-          </Field>
-        ) : null}
 
         {keypadOpen ? (
           <div className="flex flex-col gap-2">

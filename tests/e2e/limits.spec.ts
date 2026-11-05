@@ -47,9 +47,8 @@ test("portefeuille utilisé : la suppression est refusée", async ({ page }) => 
   await completeOnboardingUi(page, "Compte BNI");
   await addExpense(page, "1500");
   await openWallet(page);
-  await openWalletMenu(page);
   acceptNextDialog(page);
-  await page.getByRole("menuitem", { name: "Supprimer", exact: true }).click();
+  await page.getByRole("button", { name: "Supprimer", exact: true }).click();
   await expect(
     page.getByText("Ce compte contient déjà des opérations. Vous pouvez le ranger en l’archivant."),
   ).toBeVisible();

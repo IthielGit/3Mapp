@@ -394,13 +394,6 @@
     "invalidInterval": "The interval must be a whole number of at least 1.",
     "editTitle": "Edit recurring"
   },
-  "templates": {
-    "label": "Template",
-    "none": "No template",
-    "saveAsTemplate": "Save as template",
-    "templateName": "Template name",
-    "saved": "Template saved."
-  },
   "reconcile": {
     "title": "Reconcile {{name}}",
     "open": "Reconcile balance",

@@ -2,6 +2,7 @@ import { Icon } from "../../components/Icon";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TransactionDetailSheet } from "../transactions/TransactionDetailSheet";
+import { removeTransactions } from "../transactions/transaction-service";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
@@ -223,6 +224,10 @@ export function CalendarPage() {
           walletName={(id) => walletName.get(id ?? "") ?? ""}
           onClose={() => setOpenId(null)}
           onEdit={() => navigate(`/transactions/${openTx.id}/edit`)}
+          onDelete={() => {
+            if (!window.confirm(t("transactions.confirmDelete", { count: 1 }))) return;
+            void removeTransactions([openTx.id]).then(() => setOpenId(null));
+          }}
         />
       ) : null}
     </section>

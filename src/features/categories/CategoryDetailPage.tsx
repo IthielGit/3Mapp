@@ -1,14 +1,16 @@
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
+import { InUseError } from "../../db/errors";
 import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
-import { buttonPrimary } from "../../components/FormControls";
-import { moveCategory, setCategoryArchived } from "./category-service";
+import { buttonDanger, buttonPrimary } from "../../components/FormControls";
+import { deleteCategory, moveCategory, setCategoryArchived } from "./category-service";
 
 const EMPTY: never[] = [];
 
-/** Fiche de consultation d'une catégorie : lecture seule, « Modifier » et les autres actions en menu. */
+/** Fiche de consultation d'une catégorie : « Modifier » et « Supprimer » côte à côte en pied de page. */
 export function CategoryDetailPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ export function CategoryDetailPage() {
   const category = useLiveQuery(() => db.categories.get(id), [id]);
   const subcategories =
     useLiveQuery(() => db.subcategories.where("categoryId").equals(id).toArray(), [id]) ?? EMPTY;
+  const [error, setError] = useState<string | undefined>();
 
   if (category === undefined) return null;
   if (!category) return <p>{t("categories.notFound")}</p>;
@@ -23,6 +26,17 @@ export function CategoryDetailPage() {
   async function archive() {
     await setCategoryArchived(id, true);
     navigate("/plus/categories", { replace: true });
+  }
+
+  async function remove() {
+    setError(undefined);
+    if (!window.confirm(t("categories.deleteConfirm"))) return;
+    try {
+      await deleteCategory(id);
+      navigate("/plus/categories", { replace: true });
+    } catch (err) {
+      setError(err instanceof InUseError ? t("categories.deleteBlocked") : t("errors.generic"));
+    }
   }
 
   const menu: MenuItem[] = [
@@ -64,12 +78,20 @@ export function CategoryDetailPage() {
         </section>
       ) : null}
 
-      <Link
-        to={`/plus/categories/${id}/edit`}
-        className={`${buttonPrimary} inline-flex w-full items-center justify-center`}
-      >
-        {t("common.edit")}
-      </Link>
+      {error ? (
+        <p role="alert" className="text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-2 gap-2">
+        <Link to={`/plus/categories/${id}/edit`} className={`${buttonPrimary} inline-flex items-center justify-center`}>
+          {t("common.edit")}
+        </Link>
+        <button type="button" className={buttonDanger} onClick={() => void remove()}>
+          {t("common.delete")}
+        </button>
+      </div>
     </section>
   );
 }

@@ -9,12 +9,6 @@ import {
   setRecurringPaused,
   validatePending,
 } from "../../src/features/recurring/recurring-service";
-import {
-  createTemplate,
-  draftFromTemplate,
-  saveTransactionAsTemplate,
-} from "../../src/features/transactions/template-service";
-import { createTransaction } from "../../src/features/transactions/transaction-service";
 import { createWallet } from "../../src/features/wallets/wallet-service";
 
 let db: AppDatabase;
@@ -202,40 +196,3 @@ describe("actions sur les transactions en attente", () => {
   });
 });
 
-describe("modèles (SPEC §5.6)", () => {
-  it("créer un modèle depuis une transaction existante et le réutiliser", async () => {
-    const { wallet, rent } = await setup();
-    const tx = await createTransaction(
-      {
-        type: "expense",
-        amount: 500000,
-        walletId: wallet.id,
-        categoryId: rent.id,
-        memo: "Loyer",
-        attachmentIds: [],
-        date: START,
-        status: "posted",
-      },
-      db,
-    );
-    const template = await saveTransactionAsTemplate(tx.id, "Loyer mensuel", "🏠", db);
-    expect(template.name).toBe("Loyer mensuel");
-
-    const draft = draftFromTemplate(template);
-    expect(draft.amount).toBe(500000);
-    expect(draft.categoryId).toBe(rent.id);
-    expect(draft.status).toBe("posted");
-  });
-
-  it("un nom vide est refusé", async () => {
-    const { wallet } = await setup();
-    await expect(
-      createTemplate(
-        " ",
-        "🏠",
-        { type: "expense", amount: 100, walletId: wallet.id, memo: "", attachmentIds: [] },
-        db,
-      ),
-    ).rejects.toThrow();
-  });
-});

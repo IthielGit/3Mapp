@@ -144,7 +144,6 @@ export function RecurringDetailPage() {
       label: r.paused ? t("recurring.resume") : t("recurring.pause"),
       onSelect: () => void setRecurringPaused(id, !r.paused),
     },
-    { label: t("common.delete"), onSelect: () => void remove(), danger: true },
   ];
 
   async function remove() {
@@ -191,12 +190,14 @@ export function RecurringDetailPage() {
         </ul>
       </section>
 
-      <Link
-        to={`/plus/recurring/${id}/edit`}
-        className={`${buttonPrimary} inline-flex w-full items-center justify-center`}
-      >
-        {t("common.edit")}
-      </Link>
+      <div className="grid grid-cols-2 gap-2">
+        <Link to={`/plus/recurring/${id}/edit`} className={`${buttonPrimary} inline-flex items-center justify-center`}>
+          {t("common.edit")}
+        </Link>
+        <button type="button" className={buttonDanger} onClick={() => void remove()}>
+          {t("common.delete")}
+        </button>
+      </div>
     </section>
   );
 }

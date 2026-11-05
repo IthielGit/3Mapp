@@ -394,13 +394,6 @@
     "invalidInterval": "L'intervalle doit être un entier d'au moins 1.",
     "editTitle": "Modifier la récurrence"
   },
-  "templates": {
-    "label": "Modèle",
-    "none": "Aucun modèle",
-    "saveAsTemplate": "Enregistrer comme modèle",
-    "templateName": "Nom du modèle",
-    "saved": "Modèle enregistré."
-  },
   "reconcile": {
     "title": "Réconcilier {{name}}",
     "open": "Réconcilier le solde",

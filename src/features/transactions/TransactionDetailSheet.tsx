@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { BottomSheet } from "../../components/BottomSheet";
-import { buttonPrimary } from "../../components/FormControls";
+import { buttonDanger, buttonPrimary } from "../../components/FormControls";
 import type { Category, Transaction } from "../../db/entities";
 import { formatMoney } from "../../lib/money";
 
@@ -12,11 +12,12 @@ interface TransactionDetailSheetProps {
   walletName: (id: string | undefined) => string;
   onClose: () => void;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
 /**
- * Consultation d'une transaction : lecture seule. La modification passe par le bouton « Modifier »
- * (feuille d'édition), pour ne pas risquer une saisie accidentelle en simple consultation.
+ * Consultation d'une transaction : lecture seule. « Modifier » et « Supprimer » sont côte à côte
+ * en pied de feuille ; la suppression demande confirmation au niveau de l'écran appelant.
  */
 export function TransactionDetailSheet({
   transaction: tx,
@@ -24,6 +25,7 @@ export function TransactionDetailSheet({
   walletName,
   onClose,
   onEdit,
+  onDelete,
 }: TransactionDetailSheetProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language === "en" ? enUS : fr;
@@ -56,9 +58,14 @@ export function TransactionDetailSheet({
       title={t(`transactions.types.${tx.type}`)}
       onClose={onClose}
       footer={
-        <button type="button" className={`${buttonPrimary} w-full`} onClick={onEdit}>
-          {t("common.edit")}
-        </button>
+        <div className="grid grid-cols-2 gap-2">
+          <button type="button" className={buttonPrimary} onClick={onEdit}>
+            {t("common.edit")}
+          </button>
+          <button type="button" className={buttonDanger} onClick={onDelete}>
+            {t("common.delete")}
+          </button>
+        </div>
       }
     >
       <div className="flex flex-col gap-4">

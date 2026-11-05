@@ -646,6 +646,7 @@ export function TransactionsPage() {
           walletName={(wid) => walletName.get(wid ?? "") ?? ""}
           onClose={closeSheet}
           onEdit={() => navigate(`/transactions/${target.id}/edit`)}
+          onDelete={() => void deleteIds([target.id]).then(closeSheet)}
         />
       ) : null}
       {(sheetMode === "new" && (!copyFromId || copySource)) || (sheetMode === "edit" && editing) ? (
