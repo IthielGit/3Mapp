@@ -240,6 +240,17 @@ export function TransactionSheet({
       open
       title={transaction ? t("transactions.editTitle") : t("transactions.newTitle")}
       onClose={onClose}
+      actions={
+        transaction ? (
+            <ActionMenu
+              items={[
+                { label: t("templates.saveAsTemplate"), onSelect: () => void saveAsTemplate() },
+                { label: t("transactions.duplicate"), onSelect: () => void duplicate() },
+                { label: t("common.delete"), onSelect: () => onDelete?.(transaction), danger: true },
+              ]}
+            />
+        ) : undefined
+      }
       footer={
         <button
           type="button"
@@ -489,17 +500,6 @@ export function TransactionSheet({
         ) : null}
 
 
-        {transaction ? (
-          <div className="flex justify-end">
-            <ActionMenu
-              items={[
-                { label: t("templates.saveAsTemplate"), onSelect: () => void saveAsTemplate() },
-                { label: t("transactions.duplicate"), onSelect: () => void duplicate() },
-                { label: t("common.delete"), onSelect: () => onDelete?.(transaction), danger: true },
-              ]}
-            />
-          </div>
-        ) : null}
       </div>
     </BottomSheet>
   );

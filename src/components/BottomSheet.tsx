@@ -1,5 +1,6 @@
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 
 interface BottomSheetProps {
   open: boolean;
@@ -8,6 +9,8 @@ interface BottomSheetProps {
   children: ReactNode;
   /** Pied fixe (ex. bouton Enregistrer) : reste en bas de la feuille, hors de la zone qui défile. */
   footer?: ReactNode;
+  /** Actions secondaires (ex. menu « ⋯ ») placées dans l'en-tête, à gauche du bouton de fermeture. */
+  actions?: ReactNode;
 }
 
 /** Durée de sortie : la feuille reste montée le temps de glisser vers le bas. */
@@ -18,7 +21,8 @@ const EXIT_MS = 320;
  * le chemin de l'entrée). Fermeture par Échap, par le fond, ou par le bouton ×.
  * Les mouvements disparaissent avec « prefers-reduced-motion » ; le fondu reste.
  */
-export function BottomSheet({ open, title, onClose, children, footer }: BottomSheetProps) {
+export function BottomSheet({ open, title, onClose, children, footer, actions }: BottomSheetProps) {
+  const { t } = useTranslation();
   const titleId = useId();
   const [present, setPresent] = useState(open);
   const [visible, setVisible] = useState(false);
@@ -79,14 +83,17 @@ export function BottomSheet({ open, title, onClose, children, footer }: BottomSh
           <h2 id={titleId} className="text-lg font-semibold">
             {title}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="min-h-[44px] min-w-[44px] text-xl"
-            aria-label="×"
-          >
-            ×
-          </button>
+          <div className="flex items-center gap-2">
+            {actions}
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center text-xl"
+              aria-label={t("common.close")}
+            >
+              ×
+            </button>
+          </div>
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {children}

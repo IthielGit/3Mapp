@@ -20,7 +20,8 @@
     "undo": "Undo",
     "back": "Back",
     "wallet": "Wallet",
-    "more": "More actions"
+    "more": "More actions",
+    "close": "Close"
   },
   "nav": {
     "home": "Home",

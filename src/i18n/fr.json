@@ -20,7 +20,8 @@
     "undo": "Annuler",
     "back": "Retour",
     "wallet": "Portefeuille",
-    "more": "Plus d’actions"
+    "more": "Plus d’actions",
+    "close": "Fermer"
   },
   "nav": {
     "home": "Accueil",

@@ -61,10 +61,10 @@ export function ActionMenu({ items }: { items: MenuItem[] }) {
       {open ? (
         <ul
           role="menu"
-          className="menu-pop absolute right-0 top-12 z-30 min-w-[200px] overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg dark:border-white/15 dark:bg-card"
+          className="menu-pop absolute right-0 top-12 z-30 min-w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg dark:border-white/15 dark:bg-card"
         >
           {items.map((item) => (
-            <li key={item.label} role="none">
+            <li key={item.label} role="none" className={item.danger ? "mt-1 border-t border-slate-200 pt-1 dark:border-white/10" : undefined}>
               {item.to ? (
                 <Link
                   role="menuitem"
