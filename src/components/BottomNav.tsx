@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-type IconName = "home" | "list" | "calendar" | "chart" | "wallet" | "user";
+type IconName = "home" | "list" | "calendar" | "chart" | "wallet" | "user" | "budget" | "menu";
 
 /** Pictogrammes en trait : l'état actif s'exprime par la couleur et l'épaisseur du trait. */
 export function NavIcon({ name, active }: { name: IconName; active: boolean }) {
@@ -49,6 +49,19 @@ export function NavIcon({ name, active }: { name: IconName; active: boolean }) {
           <path d="M3 10h18M16.5 14.5h.01" />
         </svg>
       );
+    case "budget":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5H12z" />
+        </svg>
+      );
+    case "menu":
+      return (
+        <svg {...common}>
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      );
     case "user":
       return (
         <svg {...common}>
@@ -59,21 +72,23 @@ export function NavIcon({ name, active }: { name: IconName; active: boolean }) {
   }
 }
 
+/** Barre basse : les pages les plus utilisées ; Calendrier et Analyses sont dans « Plus ». */
 const LEFT = [
   { to: "/", key: "nav.home", icon: "home" as const, end: true },
   { to: "/transactions", key: "nav.transactions", icon: "list" as const },
 ];
 const RIGHT = [
-  { to: "/calendar", key: "nav.calendar", icon: "calendar" as const },
-  { to: "/stats", key: "nav.stats", icon: "chart" as const },
+  { to: "/budgets", key: "nav.budgets", icon: "budget" as const },
+  { to: "/plus", key: "nav.plus", icon: "menu" as const },
 ];
 
-/** Écran large : mêmes entrées, dans une colonne latérale avec libellés complets. */
+/** Écran large : toutes les entrées, dans une colonne latérale avec libellés complets. */
 const SIDE = [
   { to: "/", key: "nav.home", icon: "home" as const, end: true },
   { to: "/transactions", key: "nav.transactions", icon: "list" as const },
   { to: "/calendar", key: "nav.calendar", icon: "calendar" as const },
   { to: "/stats", key: "nav.stats", icon: "chart" as const },
+  { to: "/budgets", key: "nav.budgets", icon: "budget" as const },
   { to: "/plus/wallets", key: "more.wallets", icon: "wallet" as const },
   { to: "/plus", key: "pages.more.title", icon: "user" as const },
 ];
@@ -82,7 +97,7 @@ const TAB =
   "flex min-h-[60px] flex-col items-center justify-center gap-0.5 px-1 text-center text-[11px] transition-colors";
 
 /**
- * Barre basse (téléphone) : Accueil, Transactions, « + » au centre (ajout rapide), Calendrier, Analyses.
+ * Barre basse (téléphone) : Accueil, Transactions, « + » au centre (ajout rapide), Budgets, Plus.
  * Masquée sur grand écran, remplacée par la colonne latérale.
  */
 export function BottomNav() {

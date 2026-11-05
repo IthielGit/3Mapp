@@ -48,10 +48,10 @@ afterEach(async () => {
 });
 
 describe("navigation mobile", () => {
-  it("affiche les 5 onglets de la barre basse", async () => {
+  it("affiche les 5 onglets de la barre basse (Calendrier et Analyses sont dans Plus)", async () => {
     renderAt("/");
     const nav = await screen.findByRole("navigation", { name: "Accueil" }, { timeout: 8000 });
-    for (const label of ["Accueil", "Transactions", "Calendrier", "Analyses"]) {
+    for (const label of ["Accueil", "Transactions", "Budgets", "Plus"]) {
       expect(nav).toHaveTextContent(label);
     }
     // Premier chargement à froid d'une page à la demande (lazy) : plus long que le délai par défaut.
@@ -64,10 +64,10 @@ describe("navigation mobile", () => {
     ).toBeInTheDocument();
   });
 
-  it("redirige une URL inconnue vers l’accueil", async () => {
+  it("affiche une page « introuvable » pour une URL inconnue", async () => {
     renderAt("/inconnue");
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Accueil" }, { timeout: 8000 }),
+      await screen.findByRole("heading", { level: 1, name: "Cette page n'existe pas." }, { timeout: 8000 }),
     ).toBeInTheDocument();
   });
 });

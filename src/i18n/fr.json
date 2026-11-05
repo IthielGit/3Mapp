@@ -32,7 +32,8 @@
     "quickAdd": "Nouvelle transaction",
     "calendar": "Calendrier",
     "main": "Navigation principale",
-    "add": "Ajouter"
+    "add": "Ajouter",
+    "plus": "Plus"
   },
   "pages": {
     "home": {
@@ -72,7 +73,8 @@
     "groups": {
       "manage": "Gestion",
       "data": "Données et sécurité",
-      "appearance": "Apparence"
+      "appearance": "Apparence",
+      "see": "Voir"
     },
     "budgets": "Budgets"
   },
@@ -283,7 +285,9 @@
   "errors": {
     "required": "Ce champ est obligatoire.",
     "invalidAmount": "Montant invalide. Exemple : 12 500 ou 12,50.",
-    "generic": "Une erreur est survenue. Réessayez."
+    "generic": "Une erreur est survenue. Réessayez.",
+    "pageNotFound": "Cette page n'existe pas.",
+    "backHome": "Retour à l'accueil"
   },
   "budgets": {
     "title": "Budgets",

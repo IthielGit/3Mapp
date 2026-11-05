@@ -67,6 +67,19 @@ export function MorePage() {
 
       <PreferencesSection />
 
+      <Group title={t("more.groups.see")}>
+        <nav aria-label={t("more.groups.see")}>
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+            <NavRow to="/calendar" icon="calendar">
+              {t("nav.calendar")}
+            </NavRow>
+            <NavRow to="/stats" icon="line">
+              {t("nav.stats")}
+            </NavRow>
+          </ul>
+        </nav>
+      </Group>
+
       <Group title={t("more.groups.manage")}>
         <nav aria-label={t("more.groups.manage")}>
           <ul className="divide-y divide-slate-100 dark:divide-white/10">
@@ -84,9 +97,6 @@ export function MorePage() {
             </NavRow>
             <NavRow to="/plus/debts" icon="balance">
               {t("more.debts")}
-            </NavRow>
-            <NavRow to="/budgets" icon="donut">
-              {t("more.budgets")}
             </NavRow>
             <NavRow to="/plus/rates" icon="exchange">
               {t("more.rates")}

@@ -112,6 +112,12 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M12 8v4l2.5 2.5" />
     </>
   ),
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof PATHS;

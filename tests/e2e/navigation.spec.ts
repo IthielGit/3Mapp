@@ -5,13 +5,13 @@ test.beforeEach(async ({ page }) => {
   await completeOnboardingUi(page);
 });
 
-test("navigation entre les 5 pages sur mobile", async ({ page }) => {
+test("navigation entre les pages de la barre basse sur mobile", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
 
   const tabs: Array<[string, string]> = [
     ["Transactions", "Transactions"],
-    ["Calendrier", "Calendrier"],
-    ["Analyses", "Analyses"],
+    ["Budgets", "Budgets"],
+    ["Plus", "Paramètres"],
     ["Accueil", "Accueil"],
   ];
   for (const [tab, heading] of tabs) {

@@ -1,7 +1,8 @@
 import { lazy, Suspense, type ComponentType } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { RequireOnboarding } from "./components/RequireOnboarding";
+import { NotFoundPage } from "./components/NotFoundPage";
 import { Skeleton } from "./components/PwaComponents";
 
 /**
@@ -154,7 +155,7 @@ export default function App() {
           <Route path="plus/categories/:id" element={<CategoryDetailPage />} />
           <Route path="plus/categories/new" element={<CategoryFormPage />} />
           <Route path="plus/categories/:id/edit" element={<CategoryFormPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Suspense>

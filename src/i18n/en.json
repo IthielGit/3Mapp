@@ -32,7 +32,8 @@
     "quickAdd": "New transaction",
     "calendar": "Calendar",
     "main": "Main navigation",
-    "add": "Add"
+    "add": "Add",
+    "plus": "More"
   },
   "pages": {
     "home": {
@@ -72,7 +73,8 @@
     "groups": {
       "manage": "Management",
       "data": "Data and security",
-      "appearance": "Appearance"
+      "appearance": "Appearance",
+      "see": "View"
     },
     "budgets": "Budgets"
   },
@@ -283,7 +285,9 @@
   "errors": {
     "required": "This field is required.",
     "invalidAmount": "Invalid amount. Example: 12 500 or 12.50.",
-    "generic": "Something went wrong. Please try again."
+    "generic": "Something went wrong. Please try again.",
+    "pageNotFound": "This page does not exist.",
+    "backHome": "Back to home"
   },
   "budgets": {
     "title": "Budgets",

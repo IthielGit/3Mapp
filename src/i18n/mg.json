@@ -32,7 +32,8 @@
     "quickAdd": "Fampidirana vaovao",
     "calendar": "Kalandrie",
     "main": "Fandaharana fototra",
-    "add": "Ampio"
+    "add": "Ampio",
+    "plus": "Hafa"
   },
   "pages": {
     "home": {
@@ -72,7 +73,8 @@
     "groups": {
       "manage": "Fitantanana",
       "data": "Angona sy fiarovana",
-      "appearance": "Endrika"
+      "appearance": "Endrika",
+      "see": "Jereo"
     },
     "budgets": "Tetibola"
   },
@@ -283,7 +285,9 @@
   "errors": {
     "required": "Tsy maintsy feno ity saha ity.",
     "invalidAmount": "Vola tsy mety. Ohatra : 12 500 na 12,50.",
-    "generic": "Nisy olana. Andramo indray."
+    "generic": "Nisy olana. Andramo indray.",
+    "pageNotFound": "Tsy misy ity pejy ity.",
+    "backHome": "Miverina any amin'ny fandraisana"
   },
   "budgets": {
     "title": "Tetibola",
