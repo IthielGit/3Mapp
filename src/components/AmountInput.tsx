@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db/database";
 import { expressionToMinor } from "../lib/calc";
@@ -23,7 +23,8 @@ interface AmountInputProps {
 /**
  * Saisie du montant avec calculatrice intégrée (SPEC §5.4) : + − × ÷, décimales,
  * « = » remplace l'expression par son résultat arrondi à la devise.
- * Les touches s'insèrent à la position du curseur (et « ⌫ » efface avant le curseur).
+ * Les touches s'insèrent à la position du curseur, et « ⌫ » efface le caractère qui le précède.
+ * Le curseur reste visible dans le champ, même quand on touche le pavé.
  */
 export function AmountInput({ expression, onExpressionChange, currency, label }: AmountInputProps) {
   // Touche de zéros configurable dans Paramètres : « 00 » ou « 000 » (défaut : 000).
@@ -32,10 +33,16 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
   const zeroKey = zeros === 2 ? "00" : "000";
 
   const inputRef = useRef<HTMLInputElement>(null);
-  // Dernière position connue du curseur ; null = fin de l'expression.
+  // Position du curseur ; null = fin de l'expression. La réf sert aux gestionnaires, l'état au rendu.
   const caretRef = useRef<number | null>(null);
-  // Position à appliquer après le rendu suivant (les touches changent la valeur).
+  const [caret, setCaretState] = useState<number | null>(null);
+  // Position à appliquer au champ natif après le rendu suivant.
   const pendingCaret = useRef<number | null>(null);
+
+  function moveCaret(value: number | null) {
+    caretRef.current = value;
+    setCaretState(value);
+  }
 
   useLayoutEffect(() => {
     const el = inputRef.current;
@@ -49,37 +56,40 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
     expression.trim() === "" ? null : expressionToMinor(expression, currency);
 
   function rememberCaret(el: HTMLInputElement) {
-    caretRef.current = el.selectionStart ?? el.value.length;
+    moveCaret(el.selectionStart ?? el.value.length);
   }
 
   function press(key: string) {
     const len = expression.length;
     const pos = Math.min(caretRef.current ?? len, len);
     let next: string;
-    let caret: number;
+    let at: number;
     if (key === "⌫") {
       if (pos === 0) return;
       next = expression.slice(0, pos - 1) + expression.slice(pos);
-      caret = pos - 1;
+      at = pos - 1;
     } else {
       next = expression.slice(0, pos) + key + expression.slice(pos);
-      caret = pos + key.length;
+      at = pos + key.length;
     }
-    caretRef.current = caret;
-    pendingCaret.current = caret;
+    moveCaret(at);
+    pendingCaret.current = at;
     onExpressionChange(next);
   }
 
   function clear() {
-    caretRef.current = 0;
+    moveCaret(0);
     onExpressionChange("");
   }
 
   function equals() {
     if (minor === null) return;
-    caretRef.current = null;
+    moveCaret(null);
     onExpressionChange(minorToPlainText(minor, currency));
   }
+
+  // Position affichée : jamais au-delà de la fin de l'expression.
+  const shownAt = Math.min(caret ?? expression.length, expression.length);
 
   let result = "";
   if (minor !== null) result = formatMoney(minor, currency);
@@ -91,23 +101,43 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
         <label htmlFor="amount-expression" className="text-sm text-slate-600 dark:text-muted">
           {label}
         </label>
-        <input
-          id="amount-expression"
-          ref={inputRef}
-          inputMode="decimal"
-          autoComplete="off"
-          placeholder="0"
-          className="bg-transparent text-3xl font-semibold outline-none placeholder:text-slate-400 dark:placeholder:text-muted"
-          value={expression}
-          onChange={(e) => {
-            rememberCaret(e.currentTarget);
-            onExpressionChange(e.target.value);
-          }}
-          onSelect={(e) => rememberCaret(e.currentTarget)}
-          onKeyUp={(e) => rememberCaret(e.currentTarget)}
-          onClick={(e) => rememberCaret(e.currentTarget)}
-          aria-describedby="amount-result"
-        />
+        <div className="relative">
+          <input
+            id="amount-expression"
+            ref={inputRef}
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="0"
+            // Le curseur est dessiné par la superposition ci-dessous : celui du navigateur est masqué.
+            className="w-full bg-transparent text-3xl font-semibold caret-transparent outline-none placeholder:text-slate-400 dark:placeholder:text-muted"
+            value={expression}
+            onChange={(e) => {
+              rememberCaret(e.currentTarget);
+              onExpressionChange(e.target.value);
+            }}
+            onSelect={(e) => rememberCaret(e.currentTarget)}
+            onKeyUp={(e) => rememberCaret(e.currentTarget)}
+            onClick={(e) => rememberCaret(e.currentTarget)}
+            aria-describedby="amount-result"
+          />
+          {expression !== "" ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-center whitespace-pre text-3xl font-semibold"
+            >
+              <span className="invisible">{expression.slice(0, shownAt)}</span>
+              <span className="h-9 w-0.5 rounded-full bg-brand-700 motion-safe:animate-pulse dark:bg-brand-300" />
+              <span className="invisible">{expression.slice(shownAt)}</span>
+            </div>
+          ) : (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-center text-3xl font-semibold"
+            >
+              <span className="h-9 w-0.5 rounded-full bg-brand-700 motion-safe:animate-pulse dark:bg-brand-300" />
+            </div>
+          )}
+        </div>
         <output id="amount-result" aria-live="polite" className="text-sm text-slate-600 dark:text-muted">
           {result}
         </output>
