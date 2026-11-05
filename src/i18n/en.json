@@ -414,7 +414,22 @@
     "invalidInterval": "The interval must be a whole number of at least 1.",
     "editTitle": "Edit recurring"
   },
+  "help": {
+    "open": "Help"
+  },
   "reconcile": {
+    "help": {
+      "guideTitle": "How to reconcile",
+      "step1": "Enter the real balance shown by your bank, mobile money or cash box.",
+      "step2": "The app calculates the gap between this real balance and its own calculation.",
+      "step3": "If the gap comes from a forgotten or duplicated entry, fix that transaction first: the gap disappears.",
+      "step4": "Otherwise, confirm: the app creates an adjustment that makes both balances equal.",
+      "undetailedTitle": "Undetailed gap",
+      "undetailedP1": "Tick this box when you know the total of the gap but not what makes it up, for example after several months without entries.",
+      "undetailedP2": "The balance is corrected, but the gap counts neither as income nor as expense: your statistics do not change.",
+      "undetailedP3": "Example: after 3 months without entries, your real balance is 50,000 Ar higher. The balance goes up by 50,000 Ar, but income and expenses stay unchanged.",
+      "detailedP": "Without ticking the box, the gap is classified by its sign: positive = income, negative = expense."
+    },
     "title": "Reconcile {{name}}",
     "open": "Reconcile balance",
     "computed": "Calculated balance",

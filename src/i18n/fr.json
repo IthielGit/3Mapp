@@ -414,7 +414,22 @@
     "invalidInterval": "L'intervalle doit être un entier d'au moins 1.",
     "editTitle": "Modifier la récurrence"
   },
+  "help": {
+    "open": "Aide"
+  },
   "reconcile": {
+    "help": {
+      "guideTitle": "Comment réconcilier",
+      "step1": "Saisissez le solde réel affiché par votre banque, votre mobile money ou votre caisse.",
+      "step2": "L'app calcule l'écart entre ce solde réel et son propre calcul.",
+      "step3": "Si l'écart vient d'une saisie oubliée ou en double, corrigez d'abord la transaction concernée : l'écart disparaît.",
+      "step4": "Sinon, validez : l'app crée un ajustement qui rend les deux soldes identiques.",
+      "undetailedTitle": "Écart non détaillé",
+      "undetailedP1": "Cochez cette case quand vous connaissez le total de l'écart mais pas ce qui le compose, par exemple après plusieurs mois sans saisie.",
+      "undetailedP2": "Le solde est corrigé, mais l'écart ne compte ni en revenu ni en dépense : vos statistiques ne changent pas.",
+      "undetailedP3": "Exemple : après 3 mois sans saisie, votre solde réel est 50 000 Ar de plus. Le solde monte de 50 000 Ar, mais les revenus et dépenses restent inchangés.",
+      "detailedP": "Sans cocher la case, l'écart est classé selon son signe : positif = revenu, négatif = dépense."
+    },
     "title": "Réconcilier {{name}}",
     "open": "Réconcilier le solde",
     "computed": "Solde calculé",
