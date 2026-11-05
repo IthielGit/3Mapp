@@ -199,7 +199,7 @@ export function HomePage() {
           );
         }
         return (
-          <Link to="/plus" className="underline">
+          <Link to="/plus" className="inline-flex min-h-[44px] items-center underline">
             {t("cycle.paySet")}
           </Link>
         );
@@ -217,7 +217,7 @@ export function HomePage() {
         return (
           <p>
             {t("cycle.payExpected", { date: day(pay.date) })} ·{" "}
-            <Link to="/transactions/new" className="underline">
+            <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
               {t("cycle.addPay")}
             </Link>
           </p>
@@ -226,7 +226,7 @@ export function HomePage() {
         return (
           <p>
             {t("cycle.payLate", { days: pay.daysLate })} ·{" "}
-            <Link to="/transactions/new" className="underline">
+            <Link to="/transactions/new" className="inline-flex min-h-[44px] items-center underline">
               {t("cycle.addPay")}
             </Link>
           </p>
@@ -355,14 +355,14 @@ export function HomePage() {
               {active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0)
                 ? t("cycle.noStartBalance")
                 : t("cycle.negativeBalance")}{" "}
-              <Link to="/plus/wallets" className="underline">
+              <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
                 {t("cycle.checkAccounts")}
               </Link>
             </p>
           ) : null}
           <p className="text-xs text-slate-600 dark:text-muted">
             {t("cycle.accounts", { names: countedNames || "—" })}{" "}
-            <Link to="/plus/wallets" className="underline">
+            <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
               {t("cycle.editAccounts")}
             </Link>
           </p>
@@ -370,7 +370,9 @@ export function HomePage() {
 
         {/* La réponse à « combien puis-je dépenser ? » et « combien ai-je mis de côté ? ». */}
         <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
-          {cycle.available >= 0 && restView.overdrawn ? (
+          {transactions.length === 0 ? (
+            <p className="text-sm text-ink dark:text-fg">{t("cycle.empty")}</p>
+          ) : cycle.available >= 0 && restView.overdrawn ? (
             <p className="text-base font-semibold text-ink dark:text-fg">
               {t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })}
             </p>

@@ -682,6 +682,7 @@
     "plannedSaving": "Planned left this month: {{amount}}",
     "savedToGoals": "Saved for goals: {{amount}}",
     "debtsPaid": "Debts and loans: {{amount}}",
-    "noStartBalance": "Enter the starting balance of your accounts."
+    "noStartBalance": "Enter the starting balance of your accounts.",
+    "empty": "Add an income or an expense to see how much you can spend."
   }
 }
