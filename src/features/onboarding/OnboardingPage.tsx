@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import { ColorPicker, IconPicker } from "../../components/Pickers";
@@ -10,19 +10,19 @@ import { IntroScreen } from "./IntroScreen";
 import type { Wallet } from "../../db/entities";
 import type { AppLanguage } from "../../i18n";
 
-const SLIDES = ["onboarding.slide1", "onboarding.slide2", "onboarding.slide3"] as const;
-/** Jours de paie proposés à l'onboarding ; 1 par défaut (« je ne sais pas »). */
-const PAY_DAYS = [1, 5, 10, 15, 25, 28, 29, 30, 31] as const;
 const GROUPS: Wallet["group"][] = ["bank", "cash", "mobile", "savings", "credit_card"];
 
+/**
+ * Parcours court : une introduction, puis deux écrans (langue et devise, puis le compte et son solde).
+ * Le jour de paie et les options du compte se règlent plus tard, dans Préférences et le compte.
+ */
 export function OnboardingPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [language, setLanguage] = useState<AppLanguage>("fr");
   const [currency, setCurrency] = useState<CurrencyCode>("MGA");
-  const [monthStartDay, setMonthStartDay] = useState<number>(1);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => t("onboarding.defaultWalletName"));
   const [group, setGroup] = useState<Wallet["group"]>("bank");
   const [icon, setIcon] = useState("🏦");
   const [color, setColor] = useState("#0f766e");
@@ -31,8 +31,8 @@ export function OnboardingPage() {
   const [nameError, setNameError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
-  const SETUP_STEPS = 3;
-  const totalSteps = SLIDES.length + SETUP_STEPS;
+  // Première étape : écran d'introduction sombre, puis les deux écrans de configuration.
+  if (step === 0) return <IntroScreen onStart={() => setStep(1)} />;
 
   async function finish() {
     setError(undefined);
@@ -45,7 +45,6 @@ export function OnboardingPage() {
       await completeOnboarding({
         language,
         baseCurrency: currency,
-        monthStartDay,
         wallet: { name: name.trim(), icon, color, group, currency, initialBalance },
       });
       await i18n.changeLanguage(language);
@@ -57,35 +56,16 @@ export function OnboardingPage() {
     }
   }
 
-  const isSlide = step < SLIDES.length;
-  const slideKey = SLIDES[step];
-
-  // Première étape : écran d'introduction sombre, puis le parcours de configuration.
-  if (step === 0) return <IntroScreen onStart={() => setStep(1)} />;
-
   return (
     <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-6 px-6 py-6">
       <progress
         className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-slate-200 dark:bg-white/15 [&::-moz-progress-bar]:bg-brand-700 [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:bg-brand-700 dark:[&::-moz-progress-bar]:bg-fg dark:[&::-webkit-progress-value]:bg-fg"
-        value={step + 1}
-        max={totalSteps}
+        value={step}
+        max={2}
         aria-label={t("onboarding.progress")}
       />
 
-      {step === 0 ? (
-        <Link to="/restore" className="text-sm font-medium text-brand-700 underline dark:text-fg">
-          {t("onboarding.restoreLink")}
-        </Link>
-      ) : null}
-
-      {isSlide && slideKey ? (
-        <div className="flex flex-1 flex-col gap-3">
-          <h1 className="text-2xl font-semibold">{t(`${slideKey}.title`)}</h1>
-          <p className="text-slate-600 dark:text-muted">{t(`${slideKey}.text`)}</p>
-        </div>
-      ) : null}
-
-      {step === SLIDES.length ? (
+      {step === 1 ? (
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-semibold">{t("onboarding.settingsTitle")}</h1>
           <Field label={t("onboarding.language")}>
@@ -112,27 +92,13 @@ export function OnboardingPage() {
               ))}
             </select>
           </Field>
-          <Field label={t("onboarding.payDay")}>
-            <select
-              className={inputClass}
-              value={monthStartDay}
-              onChange={(e) => setMonthStartDay(Number(e.target.value))}
-            >
-              {PAY_DAYS.map((day) => (
-                <option key={day} value={day}>
-                  {day === 1 ? t("onboarding.firstDay") : t("onboarding.dayOption", { day })}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <p className="text-sm text-slate-600 dark:text-muted">{t("onboarding.payDayHint")}</p>
         </div>
       ) : null}
 
-      {step === SLIDES.length + 1 ? (
+      {step === 2 ? (
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
-          <p className="text-slate-600 dark:text-muted">{t("onboarding.walletHint")}</p>
+          <p className="text-slate-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("common.name")} error={nameError}>
             <input
               className={inputClass}
@@ -141,29 +107,8 @@ export function OnboardingPage() {
                 setName(e.target.value);
                 setNameError(undefined);
               }}
-              placeholder={t("onboarding.walletPlaceholder")}
             />
           </Field>
-          <Field label={t("wallets.group")}>
-            <select
-              className={inputClass}
-              value={group}
-              onChange={(e) => setGroup(e.target.value as Wallet["group"])}
-            >
-              {GROUPS.map((g) => (
-                <option key={g} value={g}>
-                  {t(`groups.${g}`)}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </div>
-      ) : null}
-
-      {step === SLIDES.length + 2 ? (
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold">{t("onboarding.balanceTitle")}</h1>
-          <p className="text-slate-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("wallets.initialBalance")}>
             <input
               inputMode="decimal"
@@ -173,8 +118,26 @@ export function OnboardingPage() {
               placeholder={formatMoney(0, currency, { withSymbol: false })}
             />
           </Field>
-          <IconPicker value={icon} onChange={setIcon} label={t("common.icon")} />
-          <ColorPicker value={color} onChange={setColor} label={t("common.color")} />
+          <details className="flex flex-col gap-4">
+            <summary className="flex min-h-[44px] cursor-pointer items-center text-sm font-medium text-slate-600 underline dark:text-muted">
+              {t("onboarding.customise")}
+            </summary>
+            <Field label={t("wallets.group")}>
+              <select
+                className={inputClass}
+                value={group}
+                onChange={(e) => setGroup(e.target.value as Wallet["group"])}
+              >
+                {GROUPS.map((g) => (
+                  <option key={g} value={g}>
+                    {t(`groups.${g}`)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <IconPicker value={icon} onChange={setIcon} label={t("common.icon")} />
+            <ColorPicker value={color} onChange={setColor} label={t("common.color")} />
+          </details>
           {error ? (
             <p role="alert" className="text-red-700 dark:text-red-400">
               {error}
@@ -184,44 +147,35 @@ export function OnboardingPage() {
       ) : null}
 
       <div className="mt-auto flex flex-col gap-2">
-        {isSlide ? (
-          <button
-            type="button"
-            className="min-h-[44px] self-center px-4 text-sm font-medium text-slate-600 underline dark:text-muted"
-            onClick={() => setStep(SLIDES.length)}
-          >
-            {t("onboarding.skip")}
-          </button>
-        ) : null}
-        {step === SLIDES.length + 1 && name.trim() === "" ? (
+        {step === 2 && name.trim() === "" ? (
           <p className="text-center text-sm text-slate-600 dark:text-muted">
             {t("onboarding.nameRequired")}
           </p>
         ) : null}
-      <div className="flex justify-between gap-3">
-        <button
-          type="button"
-          className={buttonSecondary}
-          onClick={() => setStep((s) => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >
-          {t("common.previous")}
-        </button>
-        {step < totalSteps - 1 ? (
+        <div className="flex justify-between gap-3">
           <button
             type="button"
-            className={buttonPrimary}
-            onClick={() => setStep((s) => s + 1)}
-            disabled={step === SLIDES.length + 1 && name.trim() === ""}
+            className={buttonSecondary}
+            onClick={() => setStep((s) => Math.max(1, s - 1))}
+            disabled={step === 1}
           >
-            {t("common.next")}
+            {t("common.previous")}
           </button>
-        ) : (
-          <button type="button" className={buttonPrimary} onClick={finish} disabled={saving}>
-            {t("onboarding.finish")}
-          </button>
-        )}
-      </div>
+          {step === 1 ? (
+            <button type="button" className={buttonPrimary} onClick={() => setStep(2)}>
+              {t("common.next")}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={buttonPrimary}
+              onClick={finish}
+              disabled={saving || name.trim() === ""}
+            >
+              {t("onboarding.finish")}
+            </button>
+          )}
+        </div>
       </div>
     </section>
   );

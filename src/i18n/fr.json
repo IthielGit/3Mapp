@@ -154,7 +154,9 @@
     "payDay": "Quel jour recevez-vous votre salaire ?",
     "firstDay": "Je ne sais pas (le 1er)",
     "dayOption": "Le {{day}}",
-    "payDayHint": "Votre mois commencera ce jour-là. Vous pourrez le changer dans les Préférences."
+    "payDayHint": "Votre mois commencera ce jour-là. Vous pourrez le changer dans les Préférences.",
+    "defaultWalletName": "Mon compte",
+    "customise": "Personnaliser (facultatif)"
   },
   "groups": {
     "bank": "Banque",

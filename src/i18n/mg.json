@@ -154,7 +154,9 @@
     "payDay": "Andro firy no ahazoanao karama?",
     "firstDay": "Tsy fantatro (ny 1)",
     "dayOption": "Ny {{day}}",
-    "payDayHint": "Hanomboka amin’io andro io ny volanao. Azonao ovaina any amin’ny Safidy."
+    "payDayHint": "Hanomboka amin’io andro io ny volanao. Azonao ovaina any amin’ny Safidy.",
+    "defaultWalletName": "Ny kaontiko",
+    "customise": "Ovaina (tsy voatery)"
   },
   "groups": {
     "bank": "Banky",

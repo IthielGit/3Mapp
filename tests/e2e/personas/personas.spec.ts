@@ -132,20 +132,11 @@ test("persona 1 — personne âgée peu à l'aise avec le numérique", async ({ 
 
   await j.step("introduction", async () => {
     await page.getByRole("button", { name: "Commencer" }).click();
-    for (let i = 0; i < 3; i++) {
-      await page.getByRole("button", { name: "Suivant" }).click();
-    }
-    const hasSkip = await page.getByRole("button", { name: /Passer|Ignorer/ }).count();
-    if (hasSkip === 0) j.note("gêne", "introduction", "aucun bouton « Passer » : il faut lire les 3 écrans");
+    await page.getByRole("button", { name: "Suivant" }).click();
   });
 
   await j.step("premier portefeuille", async () => {
-    const next = page.getByRole("button", { name: "Suivant" });
-    if (await next.isDisabled()) {
-      j.note("gêne", "premier portefeuille", "« Suivant » grisé sans explication tant que le nom est vide");
-    }
     await page.getByLabel("Nom").fill("Mon argent");
-    await next.click();
     await j.shot(page, "p1-02-solde");
   });
 

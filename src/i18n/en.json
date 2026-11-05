@@ -154,7 +154,9 @@
     "payDay": "Which day do you get paid?",
     "firstDay": "Not sure (the 1st)",
     "dayOption": "The {{day}}",
-    "payDayHint": "Your month will start on this day. You can change it in Preferences."
+    "payDayHint": "Your month will start on this day. You can change it in Preferences.",
+    "defaultWalletName": "My account",
+    "customise": "Customise (optional)"
   },
   "groups": {
     "bank": "Bank",
