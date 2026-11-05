@@ -6,6 +6,7 @@ import { ColorPicker, IconPicker } from "../../components/Pickers";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import { completeOnboarding } from "./onboarding-service";
+import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 import { IntroScreen } from "./IntroScreen";
 import type { Wallet } from "../../db/entities";
 import type { AppLanguage } from "../../i18n";
@@ -27,6 +28,7 @@ export function OnboardingPage() {
   const [icon, setIcon] = useState("🏦");
   const [color, setColor] = useState("#0f766e");
   const [balanceText, setBalanceText] = useState("0");
+  const [pay, setPay] = useState<PayChoice | null>(null);
   const [error, setError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
@@ -46,6 +48,7 @@ export function OnboardingPage() {
         language,
         baseCurrency: currency,
         wallet: { name: name.trim(), icon, color, group, currency, initialBalance },
+        ...(pay ? { pay } : {}),
       });
       await i18n.changeLanguage(language);
       navigate("/", { replace: true });
@@ -118,6 +121,11 @@ export function OnboardingPage() {
               placeholder={formatMoney(0, currency, { withSymbol: false })}
             />
           </Field>
+          <PaySetupForm
+            tone="page"
+            monthStartDay={1}
+            onChange={setPay}
+          />
           <details className="flex flex-col gap-4">
             <summary className="flex min-h-[44px] cursor-pointer items-center text-sm font-medium text-slate-600 underline dark:text-muted">
               {t("onboarding.customise")}

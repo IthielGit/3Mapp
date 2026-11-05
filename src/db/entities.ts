@@ -14,6 +14,8 @@ const positiveMinor = minorAmount.positive();
 const currencyCode = z.enum(["MGA", "EUR", "USD"]);
 const isoDateTime = z.iso.datetime();
 
+export type PayMode = "fixed" | "irregular" | "none";
+
 export const settingsSchema = baseEntity.extend({
   baseCurrency: currencyCode,
   monthStartDay: z.number().int().min(1).max(31),
@@ -21,6 +23,8 @@ export const settingsSchema = baseEntity.extend({
   payOnFriday: z.boolean().optional(),
   /** Catégorie de revenu qui correspond à la paie (choisie par l'utilisateur, jamais devinée). */
   payIncomeCategoryId: z.uuid().optional(),
+  /** Réponse à la question de paie : jour fixe, revenus irréguliers, ou pas de paie à suivre. Absent : pas encore répondu. */
+  payMode: z.enum(["fixed", "irregular", "none"]).optional(),
   weekStartDay: z.number().int().min(0).max(6),
   language: z.enum(["fr", "en", "mg"]),
   theme: z.enum(["light", "dark", "system"]),

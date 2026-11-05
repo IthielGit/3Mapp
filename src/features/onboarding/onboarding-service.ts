@@ -5,12 +5,13 @@ import { createCategory } from "../categories/category-service";
 import { DEFAULT_CATEGORIES } from "../categories/defaults";
 import { createWallet } from "../wallets/wallet-service";
 import { CURRENCIES, type CurrencyCode, type Minor } from "../../lib/money";
+import type { PayChoice } from "../cycle/PaySetupForm";
 
 export interface OnboardingInput {
   language: "fr" | "en" | "mg";
   baseCurrency: CurrencyCode;
-  /** Jour de paie / début du mois (1 à 31) ; 1 par défaut. */
-  monthStartDay?: number;
+  /** Réponse à la question de paie ; absente si l’utilisateur n’a pas répondu (la carte d’accueil la reposera). */
+  pay?: PayChoice;
   wallet: {
     name: string;
     icon: string;
@@ -47,7 +48,8 @@ export async function completeOnboarding(
     async () => {
       await createRepository(database.settings, settingsSchema).create({
         baseCurrency: input.baseCurrency,
-        monthStartDay: input.monthStartDay ?? 1,
+        monthStartDay: input.pay?.mode === "fixed" ? input.pay.day : 1,
+        ...(input.pay ? { payMode: input.pay.mode } : {}),
         ignoreFutureBalance: true,
         weekStartDay: 1,
         language: input.language,
@@ -73,8 +75,16 @@ export async function completeOnboarding(
         s.defaultWalletId = wallet.id;
       });
 
+      let salaryId: string | undefined;
       for (const category of DEFAULT_CATEGORIES) {
-        await createCategory({ ...category, archived: false }, database);
+        const created = await createCategory({ ...category, archived: false }, database);
+        if (category.kind === "income" && category.name === "Salaire") salaryId = created.id;
+      }
+      // Paie à date fixe : la catégorie « Salaire » par défaut est celle de la paie.
+      if (input.pay?.mode === "fixed" && salaryId) {
+        await database.settings.toCollection().modify((s) => {
+          s.payIncomeCategoryId = salaryId;
+        });
       }
     },
   );

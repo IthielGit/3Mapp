@@ -11,6 +11,7 @@ export type PreferencePatch = Partial<
     | "monthStartDay"
     | "payOnFriday"
     | "payIncomeCategoryId"
+    | "payMode"
     | "keypadZeros"
     | "ignoreFutureBalance"
     | "reminderEnabled"

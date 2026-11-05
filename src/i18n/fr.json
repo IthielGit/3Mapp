@@ -699,8 +699,13 @@
     "paySetupDay": "Jour du mois",
     "paySetupCategory": "Revenu concerné",
     "paySetupPick": "Choisir…",
-    "paySetupHint": "Si vous n’avez pas de jour fixe, laissez 1 : le cycle suit le mois calendaire.",
+    "paySetupHint": "Le cycle commence ce jour-là, et le revenu choisi sert de paie.",
     "paySetupNoCategory": "Créez d’abord une catégorie de revenu",
-    "paySetupSave": "Enregistrer"
+    "paySetupSave": "Enregistrer",
+    "payModeFixed": "Salaire à date fixe",
+    "payModeIrregular": "Revenus irréguliers",
+    "payModeNone": "Pas de paie à suivre",
+    "payHintIrregular": "Le cycle suit alors le mois calendaire. Ajoutez vos revenus au fil de l’eau.",
+    "payHintNone": "Vous pourrez changer cela dans Réglages."
   }
 }

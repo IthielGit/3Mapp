@@ -699,8 +699,13 @@
     "paySetupDay": "Andro amin’ny volana",
     "paySetupCategory": "Azo avy amin’ny",
     "paySetupPick": "Misafidiana…",
-    "paySetupHint": "Raha tsy misy andro maharitra: avelao 1, ary manaraka ny volana kalandrier ny cycle-nao.",
+    "paySetupHint": "Ny volana dia manomboka amin’io andro io, ary ny vola miditra voafidy no lasa karama.",
     "paySetupNoCategory": "Mamorona sokajy vola miditra aloha",
-    "paySetupSave": "Tehirizo"
+    "paySetupSave": "Tehirizo",
+    "payModeFixed": "Karama amin’andro voafaritra",
+    "payModeIrregular": "Vola miditra tsy mitovy",
+    "payModeNone": "Tsy misy karama hotazonina",
+    "payHintIrregular": "Ny volana dia manaraka ny kalandrie. Ampidiro ny vola miditra rehefa tonga.",
+    "payHintNone": "Azonao ovaina ao amin’ny Fikirana izany."
   }
 }

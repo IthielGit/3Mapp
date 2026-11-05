@@ -148,7 +148,11 @@ export function PreferencesSection() {
             className={inputClass}
             value={settings.payIncomeCategoryId ?? ""}
             onChange={(e) =>
-              void change({ payIncomeCategoryId: e.target.value === "" ? undefined : e.target.value })
+              void change(
+                e.target.value === ""
+                  ? { payIncomeCategoryId: undefined }
+                  : { payIncomeCategoryId: e.target.value, payMode: "fixed" },
+              )
             }
           >
             <option value="">{t("prefs.payIncomeNone")}</option>

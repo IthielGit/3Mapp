@@ -699,8 +699,13 @@
     "paySetupDay": "Day of the month",
     "paySetupCategory": "Income it comes from",
     "paySetupPick": "Choose…",
-    "paySetupHint": "No fixed day? Leave 1: your month then follows the calendar month.",
+    "paySetupHint": "Your month starts on this day, and the income you choose counts as pay.",
     "paySetupNoCategory": "First create an income category",
-    "paySetupSave": "Save"
+    "paySetupSave": "Save",
+    "payModeFixed": "Fixed-date salary",
+    "payModeIrregular": "Irregular income",
+    "payModeNone": "No pay to track",
+    "payHintIrregular": "The month then follows the calendar month. Add your income as it comes in.",
+    "payHintNone": "You can change this in Settings."
   }
 }
