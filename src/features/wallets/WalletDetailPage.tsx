@@ -11,6 +11,7 @@ import { formatMoney } from "../../lib/money";
 import { deleteWallet, moveWallet, setWalletArchived } from "./wallet-service";
 import { buttonDanger, buttonPrimary } from "../../components/FormControls";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
+import { askConfirm } from "../../components/confirm-service";
 
 export function WalletDetailPage() {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ export function WalletDetailPage() {
 
   async function remove() {
     setError(undefined);
-    if (!window.confirm(t("wallets.deleteConfirm"))) return;
+    if (!(await askConfirm({ message: t("wallets.deleteConfirm") }))) return;
     try {
       await deleteWallet(id);
       navigate("/plus/wallets", { replace: true });

@@ -7,6 +7,7 @@ import { InUseError } from "../../db/errors";
 import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { buttonDanger, buttonPrimary } from "../../components/FormControls";
 import { deleteCategory, moveCategory, setCategoryArchived } from "./category-service";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -30,7 +31,7 @@ export function CategoryDetailPage() {
 
   async function remove() {
     setError(undefined);
-    if (!window.confirm(t("categories.deleteConfirm"))) return;
+    if (!(await askConfirm({ message: t("categories.deleteConfirm") }))) return;
     try {
       await deleteCategory(id);
       navigate("/plus/categories", { replace: true });

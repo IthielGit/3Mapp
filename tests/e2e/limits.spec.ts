@@ -39,17 +39,20 @@ async function openWalletMenu(page: Page) {
   await page.getByRole("button", { name: "Plus d’actions" }).click();
 }
 
-/** Les confirmations du navigateur (window.confirm) sont acceptées explicitement. */
-function acceptNextDialog(page: Page) {
-  page.once("dialog", (dialog) => void dialog.accept());
+/** La confirmation est une feuille de l'application (titre « Confirmer »), plus une boîte native. */
+async function confirmInSheet(page: Page) {
+  const sheet = page.getByRole("dialog", { name: "Confirmer" });
+  await sheet.getByRole("button", { name: "Supprimer", exact: true }).click();
+  // La feuille se referme en glissant : on attend qu'elle ait disparu (sinon son « Annuler » fait doublon).
+  await expect(sheet).toHaveCount(0);
 }
 
 test("portefeuille utilisé : la suppression est refusée", async ({ page }) => {
   await completeOnboardingUi(page, "Compte BNI");
   await addExpense(page, "1500");
   await openWallet(page);
-  acceptNextDialog(page);
   await page.getByRole("button", { name: "Supprimer", exact: true }).click();
+  await confirmInSheet(page);
   await expect(
     page.getByText("Ce compte contient déjà des opérations. Vous pouvez le ranger en l’archivant."),
   ).toBeVisible();
@@ -63,8 +66,8 @@ test("catégorie utilisée : la suppression est refusée", async ({ page }) => {
   await page.getByRole("link", { name: /Alimentation/ }).click();
   // La fiche est en lecture seule : la suppression se fait depuis le formulaire de modification.
   await page.getByRole("link", { name: "Modifier", exact: true }).click();
-  acceptNextDialog(page);
   await page.getByRole("button", { name: "Supprimer", exact: true }).last().click();
+  await confirmInSheet(page);
   await expect(page.getByText(/Cette catégorie contient déjà des opérations/)).toBeVisible();
 });
 
@@ -94,8 +97,8 @@ test("suppression d'une transaction : « Annuler » la restaure", async ({ page 
   await page.getByRole("button", { name: "Modifier", exact: true }).click();
   await page.getByRole("button", { name: "Plus d’actions" }).click();
   // La suppression depuis la feuille demande confirmation, puis propose « Annuler ».
-  acceptNextDialog(page);
   await page.getByRole("menuitem", { name: "Supprimer", exact: true }).click();
+  await confirmInSheet(page);
   await expect(page.getByTestId("transaction-list")).not.toContainText("4.200");
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
   await expect(page.getByTestId("transaction-list")).toContainText("4.200");

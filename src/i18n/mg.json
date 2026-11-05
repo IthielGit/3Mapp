@@ -21,7 +21,9 @@
     "back": "Miverina",
     "wallet": "Kitapo vola",
     "more": "Hetsika hafa",
-    "close": "Hikatona"
+    "close": "Hikatona",
+    "confirm": "Ekena",
+    "confirmTitle": "Hamarino"
   },
   "nav": {
     "home": "Fandraisana",

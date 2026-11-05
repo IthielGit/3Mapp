@@ -16,6 +16,7 @@ import { compactAmount } from "../../lib/compact";
 import { usePeriodSettings } from "../stats/period-state";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -220,8 +221,8 @@ export function CalendarPage() {
           walletName={(id) => walletName.get(id ?? "") ?? ""}
           onClose={() => setOpenId(null)}
           onEdit={() => navigate(`/transactions/${openTx.id}/edit`)}
-          onDelete={() => {
-            if (!window.confirm(t("transactions.confirmDelete", { count: 1 }))) return;
+          onDelete={async () => {
+            if (!(await askConfirm({ message: t("transactions.confirmDelete", { count: 1 }) }))) return;
             void removeTransactions([openTx.id]).then(() => setOpenId(null));
           }}
         />

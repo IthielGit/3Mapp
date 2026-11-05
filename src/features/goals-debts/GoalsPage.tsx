@@ -16,6 +16,7 @@ import {
 import { goalProgress } from "../../domain/goals";
 import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import { addGoalMovement, createGoal, deleteGoal, setGoalArchived } from "./goals-debts-service";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -318,7 +319,7 @@ function GoalDetail({ id }: { id: string }) {
           type="button"
           className={buttonDanger}
           onClick={async () => {
-            if (!window.confirm(t("goals.deleteConfirm"))) return;
+            if (!(await askConfirm({ message: t("goals.deleteConfirm") }))) return;
             await deleteGoal(id);
             navigate("/plus/goals", { replace: true });
           }}

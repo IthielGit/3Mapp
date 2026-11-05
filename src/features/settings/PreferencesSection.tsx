@@ -9,6 +9,7 @@ import { Field, inputClass } from "../../components/FormControls";
 import { accountingMonth } from "../../domain/period";
 import { byName } from "../../lib/compare";
 import { updatePreferences } from "./preferences-service";
+import { askConfirm } from "../../components/confirm-service";
 
 /** Jours de la semaine, lundi d'abord. La valeur est celle de Date.getDay() (dimanche = 0). */
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
@@ -37,7 +38,7 @@ export function PreferencesSection() {
   async function changeMonthStart(day: number) {
     if (day === settings?.monthStartDay) return;
     // Le cycle est calculé à la lecture : changer le jour recalcule aussi les cycles passés.
-    if (!window.confirm(t("prefs.monthStartConfirm"))) return;
+    if (!(await askConfirm({ message: t("prefs.monthStartConfirm"), danger: false }))) return;
     await change({ monthStartDay: day });
   }
 

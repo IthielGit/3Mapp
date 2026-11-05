@@ -11,6 +11,7 @@ import { debtState } from "../../domain/debts";
 import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Debt } from "../../db/entities";
 import { addDebtPayment, createDebt, deleteDebt } from "./goals-debts-service";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -328,7 +329,7 @@ function DebtDetail({ id }: { id: string }) {
         type="button"
         className={buttonDanger}
         onClick={async () => {
-          if (!window.confirm(t("debts.deleteConfirm"))) return;
+          if (!(await askConfirm({ message: t("debts.deleteConfirm") }))) return;
           await deleteDebt(id);
           navigate("/plus/debts", { replace: true });
         }}

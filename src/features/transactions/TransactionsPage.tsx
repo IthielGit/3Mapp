@@ -35,6 +35,7 @@ import { TransactionSheet } from "./TransactionSheet";
 import { TransactionDetailSheet } from "./TransactionDetailSheet";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
+import { askConfirm } from "../../components/confirm-service";
 
 const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustment"];
 type Period = "all" | "month" | "thirty";
@@ -186,7 +187,7 @@ export function TransactionsPage() {
 
   async function deleteIds(ids: string[]) {
     if (ids.length === 0) return;
-    if (!window.confirm(t("transactions.confirmDelete", { count: ids.length }))) return;
+    if (!(await askConfirm({ message: t("transactions.confirmDelete", { count: ids.length }) }))) return;
     const removed = await removeTransactions(ids);
     setUndo({ bundle: removed });
     setSelected(new Set());

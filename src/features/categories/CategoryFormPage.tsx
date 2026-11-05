@@ -22,6 +22,7 @@ import {
   mergeCategories,
   updateCategory,
 } from "./category-service";
+import { askConfirm } from "../../components/confirm-service";
 
 export function CategoryFormPage() {
   const { t } = useTranslation();
@@ -84,7 +85,7 @@ export function CategoryFormPage() {
   async function remove() {
     if (!existing) return;
     setError(undefined);
-    if (!window.confirm(t("categories.deleteConfirm"))) return;
+    if (!(await askConfirm({ message: t("categories.deleteConfirm") }))) return;
     try {
       await deleteCategory(existing.id);
       navigate("/plus/categories", { replace: true });
@@ -96,7 +97,7 @@ export function CategoryFormPage() {
   async function merge() {
     if (!existing || !mergeTarget) return;
     setError(undefined);
-    if (!window.confirm(t("categories.mergeConfirm"))) return;
+    if (!(await askConfirm({ message: t("categories.mergeConfirm"), danger: false }))) return;
     try {
       await mergeCategories(existing.id, mergeTarget);
       navigate("/plus/categories", { replace: true });

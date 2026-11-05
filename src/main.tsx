@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { registerSW } from "virtual:pwa-register";
 import App from "./App";
+import { ConfirmHost } from "./components/confirm";
 import { SecurityProvider } from "./features/security/SecurityProvider";
 import { ThemeProvider } from "./lib/theme";
 import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
@@ -36,6 +37,7 @@ createRoot(rootElement).render(
       <BrowserRouter>
         <SecurityProvider>
           <App />
+          <ConfirmHost />
         </SecurityProvider>
       </BrowserRouter>
     </ThemeProvider>

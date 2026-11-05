@@ -13,6 +13,7 @@ import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { formatMoney } from "../../lib/money";
 import { usePeriodSettings } from "../stats/period-state";
 import { deleteBudget } from "./budget-service";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -44,7 +45,7 @@ export function BudgetDetailPage() {
     .sort((a, b) => b.date.localeCompare(a.date));
 
   async function remove() {
-    if (!window.confirm(t("budgets.deleteConfirm"))) return;
+    if (!(await askConfirm({ message: t("budgets.deleteConfirm") }))) return;
     await deleteBudget(id);
     navigate("/budgets", { replace: true });
   }

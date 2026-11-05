@@ -14,6 +14,7 @@ import {
   setRecurringPaused,
   deleteRecurring,
 } from "./recurring-service";
+import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
 
@@ -147,7 +148,7 @@ export function RecurringDetailPage() {
   ];
 
   async function remove() {
-    if (!window.confirm(t("recurring.deleteConfirm"))) return;
+    if (!(await askConfirm({ message: t("recurring.deleteConfirm") }))) return;
     await deleteRecurring(id);
     navigate("/plus/recurring", { replace: true });
   }

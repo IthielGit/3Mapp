@@ -21,7 +21,9 @@
     "back": "Back",
     "wallet": "Wallet",
     "more": "More actions",
-    "close": "Close"
+    "close": "Close",
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm"
   },
   "nav": {
     "home": "Home",

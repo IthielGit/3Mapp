@@ -21,7 +21,9 @@
     "back": "Retour",
     "wallet": "Portefeuille",
     "more": "Plus d’actions",
-    "close": "Fermer"
+    "close": "Fermer",
+    "confirm": "Valider",
+    "confirmTitle": "Confirmer"
   },
   "nav": {
     "home": "Accueil",
