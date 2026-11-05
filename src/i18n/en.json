@@ -733,11 +733,11 @@
     "unavailable": "Accounts are not available in this version. The app works entirely on this device.",
     "loading": "Loading…",
     "signedInAs": "Signed in as",
-    "localNotice": "Your data stays on this device until sync is turned on.",
+    "localNotice": "Your data syncs with this account. Signing out erases the data from this device.",
     "signOut": "Sign out",
     "help": {
       "title": "Account",
-      "p1": "An account is optional. It lets you get your data back on several devices once sync is on.",
+      "p1": "An account is required. It lets you get your data back on all your devices.",
       "p2": "Sign-up is open: no approval is needed. The service administrator can view account data."
     },
     "signIn": "Sign in",
@@ -751,10 +751,10 @@
     "forgotPassword": "Forgot password?",
     "resetSent": "If an account exists for this address, a reset link has just been sent.",
     "checkEmail": "Check your inbox to confirm your account.",
-    "suspended": {
-      "title": "Account suspended",
-      "body": "Your account has been suspended by the service administrator. The app is blocked on this device. Contact the administrator for more information."
-    },
+    "suspended": {
+      "title": "Account suspended",
+      "body": "Your account has been suspended by the service administrator. The app is blocked on this device. Contact the administrator for more information."
+    },
     "errors": {
       "invalidEmail": "Invalid email address.",
       "weakPassword": "The password must be at least 8 characters.",
@@ -763,6 +763,26 @@
       "alreadyRegistered": "An account already exists with this address.",
       "network": "Could not connect. Check your network.",
       "unknown": "Something went wrong. Try again."
+    },
+    "gate": {
+      "title": "Sign in",
+      "intro": "An account is required to use Fundora. Your data syncs with your account and stays available on your devices.",
+      "unconfigured": "Fundora requires an account, but the account service is not configured in this version. Contact support."
+    },
+    "signOutConfirm": "Your data will be erased from this device. It stays on your account if it was synced.",
+    "signOutLost": "{{count}} unsent change(s) will be lost.",
+    "sync": {
+      "title": "Sync",
+      "lastSync": "Last sync",
+      "never": "never",
+      "pending": "{{count}} change(s) waiting to be sent",
+      "syncNow": "Sync now",
+      "starting": "Syncing…",
+      "error": {
+        "network": "No connection: sync will resume when the network is back.",
+        "suspended": "Account suspended: sync is blocked.",
+        "unknown": "Sync failed. Retrying automatically."
+      }
     }
   }
 }

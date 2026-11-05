@@ -24,9 +24,8 @@ export const SETTINGS_DEVICE_FIELDS = [
 
 /** Retire les champs propres à l'appareil d'un réglage avant envoi. */
 export function stripDeviceFields<T extends Record<string, unknown>>(settings: T): Partial<T> {
-  const copy: Record<string, unknown> = { ...settings };
-  for (const field of SETTINGS_DEVICE_FIELDS) delete copy[field];
-  return copy as Partial<T>;
+  const device = new Set<string>(SETTINGS_DEVICE_FIELDS);
+  return Object.fromEntries(Object.entries(settings).filter(([key]) => !device.has(key))) as Partial<T>;
 }
 
 /** Vrai si la version distante doit remplacer la locale : absente localement, ou strictement plus récente. */
