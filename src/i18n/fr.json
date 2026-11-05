@@ -624,7 +624,9 @@
     "unit": "Unité"
   },
   "calendar": {
-    "empty": "Aucune transaction ce jour."
+    "empty": "Aucune transaction ce jour.",
+    "showWeek": "Réduire à la semaine",
+    "showMonth": "Voir le mois"
   },
   "resetAccount": {
     "button": "Réinitialiser le compte",

@@ -624,7 +624,9 @@
     "unit": "Unité"
   },
   "calendar": {
-    "empty": "Tsy misy raharaha androany."
+    "empty": "Tsy misy raharaha androany.",
+    "showWeek": "Hampihena ho herinandro",
+    "showMonth": "Hijery ny volana"
   },
   "resetAccount": {
     "button": "Averina ny kaonty",

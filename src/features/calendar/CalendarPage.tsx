@@ -23,6 +23,8 @@ export function CalendarPage() {
   const locale = i18n.language === "en" ? enUS : fr;
   const [cursor, setCursor] = useState(() => startOfMonth(new Date()));
   const [selected, setSelected] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  // Écran bas : on affiche la semaine du jour choisi, pour que la liste reste assez haute.
+  const [folded, setFolded] = useState(() => window.matchMedia("(max-height: 760px)").matches);
 
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
@@ -41,10 +43,20 @@ export function CalendarPage() {
 
   const weekStart = (settings.weekStartDay ?? 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6;
   const gridStart = startOfWeek(cursor, { weekStartsOn: weekStart });
-  const cells = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
-  const weekdays = Array.from({ length: 7 }, (_, i) =>
-    format(addDays(gridStart, i), "EEE", { locale }),
-  );
+  const selectedDate = new Date(`${selected}T12:00:00`);
+  const visibleStart = folded ? startOfWeek(selectedDate, { weekStartsOn: weekStart }) : gridStart;
+  const cells = Array.from({ length: folded ? 7 : 42 }, (_, i) => addDays(visibleStart, i));
+  const weekdays = Array.from({ length: 7 }, (_, i) => format(addDays(visibleStart, i), "EEE", { locale }));
+  // Flèches : par mois, ou par semaine quand la vue est repliée.
+  function shift(direction: -1 | 1) {
+    if (folded) {
+      const next = addDays(selectedDate, 7 * direction);
+      setSelected(format(next, "yyyy-MM-dd"));
+      setCursor(startOfMonth(next));
+    } else {
+      setCursor((c) => addMonths(c, direction));
+    }
+  }
   const monthKey = format(cursor, "yyyy-MM");
   const calendarCutoff = useBalanceCutoff();
   const monthTotals = totals(
@@ -56,8 +68,8 @@ export function CalendarPage() {
   const dayGroup = byDay.get(selected);
 
   return (
-    <section className="flex min-h-[calc(100dvh-7rem)] flex-col gap-4 md:min-h-0">
-      <div className="calendar-head sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
+    <section className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-auto">
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex shrink-0 flex-col gap-3 bg-canvas px-4 pb-2 pt-5 dark:bg-page">
         <h1 className="text-center text-xl font-semibold text-ink dark:text-fg">
           {t("nav.calendar")}
         </h1>
@@ -66,7 +78,7 @@ export function CalendarPage() {
           <button
             type="button"
             aria-label={t("common.previous")}
-            onClick={() => setCursor((c) => addMonths(c, -1))}
+            onClick={() => shift(-1)}
             className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
           >
             ‹
@@ -77,7 +89,7 @@ export function CalendarPage() {
           <button
             type="button"
             aria-label={t("common.next")}
-            onClick={() => setCursor((c) => addMonths(c, 1))}
+            onClick={() => shift(1)}
             className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
           >
             ›
@@ -140,8 +152,6 @@ export function CalendarPage() {
                 aria-label={`${format(day, "d MMMM", { locale })}${group ? `, ${formatMoney(net, baseCurrency)}` : ""}`}
                 onClick={() => {
                   setSelected(key);
-                  // Sur petit écran, la carte du jour peut être sous la barre de navigation : on la ramène à l'écran.
-                  document.getElementById("calendar-day")?.scrollIntoView({ block: "start", behavior: "smooth" });
                 }}
                 className={`flex min-h-[44px] flex-col items-center gap-0.5 rounded-xl py-1 text-sm ${
                   isSelected ? "bg-brand-700 text-white dark:bg-brand-300 dark:text-ink" : ""
@@ -165,11 +175,19 @@ export function CalendarPage() {
             );
           })}
         </div>
+        <button
+          type="button"
+          aria-expanded={!folded}
+          onClick={() => setFolded((f) => !f)}
+          className="min-h-[44px] self-center px-4 text-sm font-medium text-brand-700 underline dark:text-brand-300"
+        >
+          {folded ? t("calendar.showMonth") : t("calendar.showWeek")}
+        </button>
       </div>
 
       <section
         id="calendar-day"
-        className="flex min-h-[16rem] flex-1 flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
+        className="flex min-h-0 flex-1 flex-col gap-1 rounded-card border border-slate-200 bg-white p-3 dark:border-white/15 dark:bg-card"
       >
         <p className="font-semibold capitalize text-ink dark:text-fg">
           {format(new Date(`${selected}T12:00:00`), "EEEE d MMMM yyyy", { locale })}
