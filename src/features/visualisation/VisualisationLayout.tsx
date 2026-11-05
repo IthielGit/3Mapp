@@ -23,10 +23,15 @@ export function VisualisationLayout() {
           id="visualisation-view"
           value={view}
           onChange={(e) => navigate(`/visualisation/${e.target.value}`, { replace: true })}
-          className="cursor-pointer appearance-none bg-transparent pr-6 text-center text-xl font-semibold text-ink outline-none focus-visible:outline-2 focus-visible:outline-brand-700 dark:text-fg"
+          // Le menu natif suit le thème (color-scheme) : texte et fond lisibles dans les deux modes.
+          className="cursor-pointer appearance-none rounded-lg bg-transparent px-2 py-1 pr-7 text-center text-xl font-semibold text-ink [color-scheme:light] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2 dark:text-fg dark:[color-scheme:dark]"
         >
-          <option value="stats">{t("nav.stats")}</option>
-          <option value="calendar">{t("nav.calendar")}</option>
+          <option value="stats" className="bg-white text-ink dark:bg-card dark:text-fg">
+            {t("nav.stats")}
+          </option>
+          <option value="calendar" className="bg-white text-ink dark:bg-card dark:text-fg">
+            {t("nav.calendar")}
+          </option>
         </select>
         <svg
           aria-hidden="true"
