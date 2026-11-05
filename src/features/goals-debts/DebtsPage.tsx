@@ -87,6 +87,8 @@ function DebtList() {
 }
 
 function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone: () => void }) {
+  const formWallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
+  const [linkWallet, setLinkWallet] = useState("");
   const { t } = useTranslation();
   const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
   const currency: CurrencyCode = wallets[0]?.currency ?? "MGA";
@@ -118,6 +120,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
       return setError(t("debts.invalidRate"));
     try {
       await createDebt({
+        linkWalletId: linkWallet || undefined,
         direction,
         counterparty,
         principal: amount,
@@ -173,6 +176,18 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
+      </Field>
+      <Field label={t("debts.linkWallet")}>
+        <select className={inputClass} value={linkWallet} onChange={(e) => setLinkWallet(e.target.value)}>
+          <option value="">{t("goals.noLink")}</option>
+          {formWallets
+            .filter((w) => w.currency === currency && !w.archived)
+            .map((w) => (
+              <option key={w.id} value={w.id}>
+                {w.name}
+              </option>
+            ))}
+        </select>
       </Field>
       <Field label={t("transactions.memo")}>
         <input className={inputClass} value={notes} onChange={(e) => setNotes(e.target.value)} />

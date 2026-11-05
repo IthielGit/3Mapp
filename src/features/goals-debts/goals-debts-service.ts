@@ -97,6 +97,8 @@ export async function setGoalArchived(
 /* ---------- Dettes et prêts ---------- */
 
 export interface DebtInputFields {
+  /** Portefeuille où l’argent est reçu (emprunt) ou sort (prêt). Sans lui, aucune transaction n’est créée. */
+  linkWalletId?: string | undefined;
   direction: Debt["direction"];
   counterparty: string;
   principal: Minor;
@@ -112,10 +114,11 @@ export async function createDebt(
   database: AppDatabase = defaultDb,
 ): Promise<Debt> {
   if (input.counterparty.trim() === "") throw new RuleError("Nom de la contrepartie requis");
+  const { linkWalletId, ...fields } = input;
   const now = new Date().toISOString();
   const parsed = debtSchema.safeParse({
-    ...input,
-    counterparty: input.counterparty.trim(),
+    ...fields,
+    counterparty: fields.counterparty.trim(),
     id: crypto.randomUUID(),
     createdAt: now,
     updatedAt: now,
@@ -123,6 +126,22 @@ export async function createDebt(
   });
   if (!parsed.success) throw new RuleError(parsed.error.issues[0]?.message ?? "Dette invalide");
   await database.debts.add(parsed.data);
+  if (linkWalletId) {
+    // Emprunt : l’argent entre dans le compte. Prêt : il en sort. Marque : ce n’est ni un revenu ni une dépense.
+    const tx = await createTransaction(
+      {
+        type: parsed.data.direction === "borrowed" ? "income" : "expense",
+        amount: parsed.data.principal,
+        walletId: linkWalletId,
+        memo: parsed.data.counterparty,
+        attachmentIds: [],
+        date: parsed.data.startDate,
+        status: "posted",
+      },
+      database,
+    );
+    await database.transactions.update(tx.id, { debtId: parsed.data.id });
+  }
   return parsed.data;
 }
 

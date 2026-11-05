@@ -1,5 +1,7 @@
 import Dexie from "dexie";
 import { describe, expect, it } from "vitest";
+import { createDebt } from "../../src/features/goals-debts/goals-debts-service";
+import { createWallet } from "../../src/features/wallets/wallet-service";
 import { AppDatabase } from "../../src/db/database";
 import type { Transaction } from "../../src/db/entities";
 import { debtState } from "../../src/domain/debts";
@@ -113,5 +115,33 @@ describe("migration vers la version 3 de la base", () => {
     );
     db.close();
     await Dexie.delete(name);
+  });
+});
+
+describe("dette reliée à un compte à la création", () => {
+  it("un emprunt relié à un compte crée un revenu marqué dans ce compte", async () => {
+    const db = new AppDatabase(`test-${crypto.randomUUID()}`);
+    const wallet = await createWallet(
+      { name: "BNI", icon: "🏦", color: "#000000", group: "bank", currency: "MGA", initialBalance: 0, includeInTotal: true, archived: false },
+      db,
+    );
+    await createDebt(
+      {
+        linkWalletId: wallet.id,
+        direction: "borrowed",
+        counterparty: "Cousin",
+        principal: 300_000,
+        currency: "MGA",
+        startDate: new Date().toISOString(),
+        notes: "",
+      },
+      db,
+    );
+    const rows = await db.transactions.toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.type).toBe("income");
+    expect(rows[0]?.walletId).toBe(wallet.id);
+    expect(rows[0]?.debtId).toBeDefined();
+    db.close();
   });
 });
