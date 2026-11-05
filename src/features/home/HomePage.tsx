@@ -213,7 +213,7 @@ export function HomePage() {
         </div>
         {upcoming.length === 0 ? (
           <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
-            <Icon name="clock" className="h-6 w-6" />
+            <Icon name="clock" className="h-6 w-6 text-amber-600 dark:text-amber-300" />
             <span>{t("home.noUpcoming")}</span>
           </div>
         ) : (
@@ -352,8 +352,13 @@ export function HomePage() {
                     className="pressable flex min-h-[44px] flex-col gap-1.5"
                   >
                     <div className="flex items-baseline justify-between gap-3 text-sm">
-                      <span className="truncate font-medium text-ink dark:text-fg">
-                        {budget.name}
+                      <span className="flex min-w-0 items-center gap-2 font-medium text-ink dark:text-fg">
+                        <span
+                          aria-hidden="true"
+                          className="h-3 w-3 shrink-0 rounded-full"
+                          style={{ backgroundColor: categoryById.get(budget.categoryIds[0] ?? "")?.color ?? "#64748b" }}
+                        />
+                        <span className="truncate">{budget.name}</span>
                       </span>
                       <span
                         className="shrink-0 tabular-nums text-slate-600 dark:text-muted"
@@ -416,7 +421,7 @@ export function HomePage() {
         </div>
         {recent.length === 0 ? (
           <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500 dark:border-white/15 dark:text-muted">
-            <Icon name="inbox" className="h-6 w-6" />
+            <Icon name="inbox" className="h-6 w-6 text-teal-600 dark:text-teal-300" />
             <span>{t("home.noTransactions")}</span>
           </div>
         ) : (

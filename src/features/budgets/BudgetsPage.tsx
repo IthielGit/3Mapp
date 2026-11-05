@@ -23,6 +23,7 @@ export function BudgetsPage() {
   const cutoff = useBalanceCutoff();
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
   const names = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
+  const colors = useMemo(() => new Map(categories.map((c) => [c.id, c.color])), [categories]);
 
   const active = budgets.filter((b) => !b.archived);
   const states = useMemo(
@@ -70,7 +71,14 @@ export function BudgetsPage() {
             >
               <Link to={`/budgets/${b.id}`} className="flex flex-col gap-2">
                 <div className="flex justify-between gap-2">
-                  <span className="font-medium">{b.name}</span>
+                  <span className="flex items-center gap-2 font-medium">
+                    <span
+                      aria-hidden="true"
+                      className="h-3 w-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: colors.get(b.categoryIds[0] ?? "") ?? "#64748b" }}
+                    />
+                    {b.name}
+                  </span>
                   <span className="text-sm text-slate-500">{t(`budgets.periods.${b.period}`)}</span>
                 </div>
                 <div

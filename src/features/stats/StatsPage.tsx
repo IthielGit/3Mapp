@@ -288,7 +288,7 @@ export function StatsPage() {
       ) : null}
 
       {/* Solde actuel : total des portefeuilles inclus dans le total, à la date du jour. */}
-      <div className="flex flex-col items-center gap-1 text-center">
+      <div className="flex flex-col items-center gap-1 rounded-card bg-teal-50 p-4 text-center dark:bg-teal-900/40">
         <p className="text-sm text-slate-600 dark:text-muted">{t("stats.currentBalance")}</p>
         <p className="text-xs text-slate-500 dark:text-muted">{t("stats.currentBalanceHint")}</p>
         <p className="text-4xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
@@ -299,7 +299,7 @@ export function StatsPage() {
       {/* Période : une seule barre compare revenus et dépenses ; le sens se lit d'un coup d'œil. */}
       <section
         aria-label={t("stats.periodFlow")}
-        className="flex flex-col gap-3 rounded-card border border-slate-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
+        className="flex flex-col gap-3 rounded-card border border-amber-100 bg-amber-50 p-4 shadow-sm dark:border-amber-900/50 dark:bg-amber-950/40"
       >
         <div
           role="img"
