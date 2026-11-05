@@ -139,7 +139,6 @@ export function HomePage() {
     payCategoryId,
   ]);
   const cycle = cycleView.summary;
-  const restView = cycleView.rest;
   // Les comptes comptés dans « Disponible » sont nommés, pour que l'utilisateur sache ce qui est inclus.
   const countedList = active
     .filter((w) => w.includeInTotal && w.group !== "savings")
@@ -317,17 +316,6 @@ export function HomePage() {
         <div className="flex flex-col gap-2 border-t border-white/20 pt-3">
           {transactions.length === 0 ? (
             <p className="text-sm text-white/90">{t("cycle.empty")}</p>
-          ) : cycle.available >= 0 && restView.overdrawn ? (
-            <p className="text-[15px] leading-snug">
-              {t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })}
-            </p>
-          ) : cycle.available >= 0 ? (
-            <p className="text-[15px] leading-snug">
-              {t("cycle.perDay", {
-                amount: formatMoney(restView.perDay, baseCurrency),
-                date: format(cycle.period.to, "d MMM", { locale: cycleLocale }),
-              })}
-            </p>
           ) : null}
           <p className="text-sm text-white/85">
             {cycle.saved >= 0

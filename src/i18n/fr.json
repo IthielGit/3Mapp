@@ -680,8 +680,6 @@
     "editAccounts": "Modifier",
     "negativeBalance": "Votre solde est négatif.",
     "checkAccounts": "Vérifiez vos comptes",
-    "perDay": "Vous pouvez dépenser environ {{amount}} par jour jusqu’au {{date}}",
-    "overdrawn": "Vos engagements dépassent votre argent de {{amount}}.",
     "payReceived": "Paie reçue : {{amount}} le {{date}}",
     "payExpected": "Paie attendue le {{date}}",
     "payLate": "Paie en retard de {{days}} jours",

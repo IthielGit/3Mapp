@@ -680,8 +680,6 @@
     "editAccounts": "Ovaina",
     "negativeBalance": "Miara-mihoatra ny volanao.",
     "checkAccounts": "Jereo ny kaontinao",
-    "perDay": "Azonao atao ny manary {{amount}} isan’andro hatramin’ny {{date}}",
-    "overdrawn": "Mihoatra ny volanao ny adidinao: {{amount}}.",
     "payReceived": "Karama voaray: {{amount}} tamin’ny {{date}}",
     "payExpected": "Karama andrasana tamin’ny {{date}}",
     "payLate": "Karama tara {{days}} andro",

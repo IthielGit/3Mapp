@@ -680,8 +680,6 @@
     "editAccounts": "Edit",
     "negativeBalance": "Your balance is negative.",
     "checkAccounts": "Check your accounts",
-    "perDay": "You can spend about {{amount}} a day until {{date}}",
-    "overdrawn": "Your commitments exceed your money by {{amount}}.",
     "payReceived": "Pay received: {{amount}} on {{date}}",
     "payExpected": "Pay expected on {{date}}",
     "payLate": "Pay is {{days}} days late",
