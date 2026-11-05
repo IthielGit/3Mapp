@@ -26,6 +26,10 @@ async function runPass(): Promise<void> {
   const settings = await db.settings.toCollection().first();
   if (!settings) return;
 
+  // Réglage hérité (ancienne langue retirée) : repassé en français.
+  if ((settings.language as string) !== "fr" && (settings.language as string) !== "en") {
+    await db.settings.toCollection().modify({ language: "fr" });
+  }
   if (settings.language !== i18n.language) {
     await i18n.changeLanguage(settings.language);
   }

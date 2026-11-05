@@ -8,7 +8,7 @@ import { CURRENCIES, type CurrencyCode, type Minor } from "../../lib/money";
 import type { PayChoice } from "../cycle/PaySetupForm";
 
 export interface OnboardingInput {
-  language: "fr" | "en" | "mg";
+  language: "fr" | "en";
   baseCurrency: CurrencyCode;
   /** Réponse à la question de paie ; absente si l’utilisateur n’a pas répondu (la carte d’accueil la reposera). */
   pay?: PayChoice;

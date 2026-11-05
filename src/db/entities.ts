@@ -26,7 +26,8 @@ export const settingsSchema = baseEntity.extend({
   /** Réponse à la question de paie : jour fixe, revenus irréguliers, ou pas de paie à suivre. Absent : pas encore répondu. */
   payMode: z.enum(["fixed", "irregular", "none"]).optional(),
   weekStartDay: z.number().int().min(0).max(6),
-  language: z.enum(["fr", "en", "mg"]),
+  // « mg » n'est plus pris en charge : les réglages enregistrés avec cette valeur repassent en français.
+  language: z.preprocess((v) => (v === "mg" ? "fr" : v), z.enum(["fr", "en"])),
   theme: z.enum(["light", "dark", "system"]),
   numberFormat: z.string().optional(),
   defaultWalletId: z.uuid().optional(),

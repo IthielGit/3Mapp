@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import fr from "../../src/i18n/fr.json";
 import en from "../../src/i18n/en.json";
-import mg from "../../src/i18n/mg.json";
 
 type Tree = { [key: string]: string | Tree };
 
@@ -24,7 +23,6 @@ const reference = leaves(fr as unknown as Tree);
 describe("traductions (SPEC §5.17)", () => {
   for (const [name, locale] of [
     ["anglais", en],
-    ["malgache", mg],
   ] as const) {
     const translated = leaves(locale as unknown as Tree);
 

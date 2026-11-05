@@ -124,7 +124,7 @@ Devise de référence et devises supplémentaires + taux, **jour de début de mo
 
 ### 5.17 Transversal
 
-Mode sombre, i18n fr/en/mg, états vides illustrés, squelettes de chargement, retours haptiques (`navigator.vibrate`), raccourcis d'app, installation PWA guidée, mise à jour du service worker avec bandeau « Nouvelle version disponible ».
+Mode sombre, i18n fr/en, états vides illustrés, squelettes de chargement, retours haptiques (`navigator.vibrate`), raccourcis d'app, installation PWA guidée, mise à jour du service worker avec bandeau « Nouvelle version disponible ».
 
 ## 6. Règles métier clés
 
