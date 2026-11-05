@@ -655,25 +655,27 @@
     "missingRate": "Saisissez un taux supérieur à 0."
   },
   "cycle": {
-    "title": "Mon cycle du {{from}} au {{to}}",
-    "available": "Disponible",
-    "income": "Entré",
-    "expense": "Sorti",
-    "saved": "Mis de côté",
-    "daysLeft": "Jours restants : {{days}}",
-    "counted": "Compté : {{names}}",
-    "rest": "Reste à vivre : {{amount}} · {{perDay}} par jour",
-    "overdrawn": "Dépassé de {{amount}}",
+    "title": "Période : du {{from}} au {{to}}",
+    "available": "Argent sur vos comptes",
+    "income": "Reçu",
+    "expense": "Dépensé",
+    "saved": "Mis de côté : {{amount}}",
+    "spentMore": "Dépensé plus que reçu : {{amount}}",
+    "thisMonth": "Ce mois-ci",
+    "accounts": "Comptes pris en compte : {{names}}",
+    "editAccounts": "Modifier",
+    "negativeBalance": "Votre solde est négatif.",
+    "checkAccounts": "Vérifiez vos comptes",
+    "perDay": "Vous pouvez dépenser environ {{amount}} par jour jusqu’au {{date}}",
+    "overdrawn": "Vos engagements dépassent votre argent de {{amount}}.",
     "payReceived": "Paie reçue : {{amount}} le {{date}}",
     "payExpected": "Paie attendue le {{date}}",
     "payLate": "Paie en retard de {{days}} jours",
-    "paySet": "Choisir mon revenu de paie",
+    "paySet": "Vous recevez un salaire ou une pension ? Indiquez-le",
+    "lastEntry": "Dernière entrée : {{amount}} le {{date}}, {{category}}. C’est votre paie ?",
+    "yes": "Oui",
+    "no": "Non",
     "addPay": "Ajouter ma paie",
-    "plannedSaving": "Épargne prévue : {{amount}}",
-    "runway": "Vous tenez environ {{days}} jours",
-    "confidence": {
-      "fragile": "estimation fragile : moins de 2 semaines de saisie",
-      "approx": "à peu près : moins d’un mois de saisie"
-    }
+    "plannedSaving": "Épargne prévue : {{amount}}"
   }
 }

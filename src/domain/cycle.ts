@@ -126,56 +126,38 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days, date.getHours());
 }
 
-export type RunwayConfidence = "fragile" | "approx" | "solid";
-
-export interface RunwayResult {
-  /** Nombre de jours de dépenses couverts par le disponible, au rythme des 30 derniers jours. */
-  days: number;
-  /** Fiabilité : dépend de la durée de l'historique de dépenses saisi. */
-  confidence: RunwayConfidence;
-}
-
-const RUNWAY_WINDOW_DAYS = 30;
-
-/**
- * « Je tiens X jours » : disponible ÷ dépense moyenne par jour sur les 30 derniers jours (ou depuis la
- * première dépense saisie, si elle est plus récente). Sans dépense saisie : null (rien à estimer).
- * `expenses` : dépenses validées, dans la devise de base.
- */
-export function runwayDays(
-  available: Minor,
-  expenses: readonly { amount: Minor; date: string }[],
-  now: Date,
-): RunwayResult | null {
-  const windowStart = now.getTime() - RUNWAY_WINDOW_DAYS * DAY_MS;
-  const recent = expenses.filter((e) => {
-    const time = new Date(e.date).getTime();
-    return time >= windowStart && time <= now.getTime();
-  });
-  if (recent.length === 0) return null;
-  const earliest = Math.min(...recent.map((e) => new Date(e.date).getTime()));
-  const basisDays = Math.max(1, Math.min(RUNWAY_WINDOW_DAYS, Math.ceil((now.getTime() - earliest) / DAY_MS)));
-  const spent = sumOf(recent);
-  const perDay = spent / basisDays;
-  const days = perDay > 0 && available > 0 ? Math.floor(available / perDay) : 0;
-  const confidence: RunwayConfidence = basisDays < 14 ? "fragile" : basisDays < 30 ? "approx" : "solid";
-  return { days, confidence };
-}
-
 export interface CycleOverview {
   summary: CycleSummary;
   rest: RestResult;
-  /** « Je tiens X jours » : utile surtout quand aucun revenu de paie n'est défini. Null sans dépense saisie. */
-  runway: RunwayResult | null;
   pendingExpenses: Minor;
   upcomingExpenses: Minor;
   debtsDue: Minor;
   pay: PayStatus;
+  /** Dernière entrée de revenu, proposée comme paie quand aucun revenu de paie n'est choisi. */
+  suggestedPay?: { categoryId: string; amount: Minor; date: Date } | undefined;
   /**
    * Épargne prévue : paie du cycle (reçue, sinon la dernière paie connue) moins toutes les dépenses
    * connues. Absente tant qu'aucune paie n'est connue.
    */
   plannedSaving?: Minor;
+}
+
+/** Dernière entrée de revenu validée, avec sa catégorie. */
+function latestIncome(
+  transactions: readonly Transaction[],
+  now: Date,
+): { categoryId: string; amount: Minor; date: Date } | undefined {
+  const last = transactions
+    .filter(
+      (t) =>
+        t.type === "income" &&
+        t.status === "posted" &&
+        t.categoryId !== undefined &&
+        new Date(t.date).getTime() <= now.getTime(),
+    )
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  if (!last || last.categoryId === undefined) return undefined;
+  return { categoryId: last.categoryId, amount: last.amount, date: new Date(last.date) };
 }
 
 /** Montant de la dernière paie validée reçue avant le cycle (sans compter les paies en cours de cycle). */
@@ -295,13 +277,16 @@ export function cycleOverview(input: CycleInput): CycleOverview {
       ? undefined
       : expectedPay - summary.expense - pendingExpenses - upcomingExpenses - debtsDue;
 
-  const runway = runwayDays(
-    available,
-    baseTransactions
-      .filter((t) => t.type === "expense" && t.status === "posted")
-      .map((t) => ({ amount: t.amount, date: t.date })),
-    now,
-  );
+  const suggestedPay = input.payCategoryId ? undefined : latestIncome(baseTransactions, now);
 
-  return { summary, rest, runway, pendingExpenses, upcomingExpenses, debtsDue, pay, plannedSaving };
+  return {
+    summary,
+    rest,
+    pendingExpenses,
+    upcomingExpenses,
+    debtsDue,
+    pay,
+    plannedSaving,
+    suggestedPay,
+  };
 }

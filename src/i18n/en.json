@@ -655,25 +655,27 @@
     "missingRate": "Enter a rate greater than 0."
   },
   "cycle": {
-    "title": "My cycle from {{from}} to {{to}}",
-    "available": "Available",
-    "income": "In",
-    "expense": "Out",
-    "saved": "Set aside",
-    "daysLeft": "Days left: {{days}}",
-    "counted": "Counted: {{names}}",
-    "rest": "Left to spend: {{amount}} · {{perDay}} per day",
-    "overdrawn": "Over by {{amount}}",
+    "title": "Period: {{from}} to {{to}}",
+    "available": "Money in your accounts",
+    "income": "Received",
+    "expense": "Spent",
+    "saved": "Set aside: {{amount}}",
+    "spentMore": "Spent more than received: {{amount}}",
+    "thisMonth": "This month",
+    "accounts": "Accounts counted: {{names}}",
+    "editAccounts": "Edit",
+    "negativeBalance": "Your balance is negative.",
+    "checkAccounts": "Check your accounts",
+    "perDay": "You can spend about {{amount}} a day until {{date}}",
+    "overdrawn": "Your commitments exceed your money by {{amount}}.",
     "payReceived": "Pay received: {{amount}} on {{date}}",
     "payExpected": "Pay expected on {{date}}",
     "payLate": "Pay is {{days}} days late",
-    "paySet": "Choose my pay income",
+    "paySet": "Do you receive a salary or a pension? Tell us",
+    "lastEntry": "Last income: {{amount}} on {{date}}, {{category}}. Is it your pay?",
+    "yes": "Yes",
+    "no": "No",
     "addPay": "Add my pay",
-    "plannedSaving": "Planned savings: {{amount}}",
-    "runway": "You can cover about {{days}} days",
-    "confidence": {
-      "fragile": "rough estimate: less than 2 weeks of entries",
-      "approx": "approximate: less than a month of entries"
-    }
+    "plannedSaving": "Planned savings: {{amount}}"
   }
 }

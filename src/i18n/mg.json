@@ -655,25 +655,27 @@
     "missingRate": "Ampidiro ny tahan'ny vola mihoatra ny 0."
   },
   "cycle": {
-    "title": "Ny tsikera-kaleja hatramin’ny {{from}} ka hatramin’ny {{to}}",
-    "available": "Azo ampiasaina",
+    "title": "Vanim-potoana: hatramin’ny {{from}} ka hatramin’ny {{to}}",
+    "available": "Vola ao amin’ny kaontinao",
     "income": "Nidiran’ny",
     "expense": "Nivoaka",
-    "saved": "Voatahiry",
-    "daysLeft": "Andro mijanona: {{days}}",
-    "counted": "Isaina: {{names}}",
-    "rest": "Mijanona azo ampiasaina: {{amount}} · {{perDay}} isan’andro",
-    "overdrawn": "Mihoatra lavitra {{amount}}",
+    "saved": "Voatahiry: {{amount}}",
+    "spentMore": "Nivoaka mihoatra ny nidiran’ny: {{amount}}",
+    "thisMonth": "Io volana io",
+    "accounts": "Kaontina natao isa: {{names}}",
+    "editAccounts": "Ovaina",
+    "negativeBalance": "Miara-mihoatra ny volanao.",
+    "checkAccounts": "Jereo ny kaontinao",
+    "perDay": "Azonao atao ny manary {{amount}} isan’andro hatramin’ny {{date}}",
+    "overdrawn": "Mihoatra ny volanao ny adidinao: {{amount}}.",
     "payReceived": "Karama voaray: {{amount}} tamin’ny {{date}}",
     "payExpected": "Karama andrasana tamin’ny {{date}}",
     "payLate": "Karama tara {{days}} andro",
-    "paySet": "Safidio ny karamako",
+    "paySet": "Mandray karama na pensiona ianao? Ampidiro izany",
+    "lastEntry": "Fidiram-bola farany: {{amount}} tamin’ny {{date}}, {{category}}. Karamanao ve izany?",
+    "yes": "Eny",
+    "no": "Tsia",
     "addPay": "Ampidiro ny karamako",
-    "plannedSaving": "Tahiry andrasana: {{amount}}",
-    "runway": "Mety hitana andro {{days}} eo ianao",
-    "confidence": {
-      "fragile": "tombana tsy azo antoka: latsaky ny 2 herinandro ny fanoratana",
-      "approx": "eo ho eo: latsaky ny iray volana ny fanoratana"
-    }
+    "plannedSaving": "Tahiry andrasana: {{amount}}"
   }
 }

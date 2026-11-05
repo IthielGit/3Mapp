@@ -1,5 +1,5 @@
 import { Icon } from "../../components/Icon";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,8 @@ import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
+import { updatePreferences } from "../settings/preferences-service";
+import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
 
 const EMPTY: never[] = [];
 const EMPTY_DEBTS: never[] = [];
@@ -59,6 +61,7 @@ function lastDays(count: number): string[] {
  */
 export function HomePage() {
   const { t, i18n } = useTranslation();
+  const [suggestionHidden, setSuggestionHidden] = useState(false);
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const walletsLoaded = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
   const loading = walletsLoaded === undefined;
@@ -162,36 +165,80 @@ export function HomePage() {
   function payLine(pay: PayStatus) {
     const day = (d: Date) => format(d, "d MMM", { locale: cycleLocale });
     switch (pay.kind) {
-      case "unset":
+      case "unset": {
+        const suggestion = cycleView.suggestedPay;
+        if (suggestion && !suggestionHidden) {
+          const category = categories.find((c) => c.id === suggestion.categoryId)?.name ?? "";
+          return (
+            <>
+              <p>
+                {t("cycle.lastEntry", {
+                  amount: formatMoney(suggestion.amount, baseCurrency),
+                  date: day(suggestion.date),
+                  category,
+                })}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className={buttonPrimary}
+                  onClick={() => void acceptSuggestedPay(suggestion.categoryId, suggestion.date)}
+                >
+                  {t("cycle.yes")}
+                </button>
+                <button
+                  type="button"
+                  className={buttonSecondary}
+                  onClick={() => setSuggestionHidden(true)}
+                >
+                  {t("cycle.no")}
+                </button>
+              </div>
+            </>
+          );
+        }
         return (
           <Link to="/plus" className="underline">
             {t("cycle.paySet")}
           </Link>
         );
+      }
       case "received":
-        return t("cycle.payReceived", {
-          amount: formatMoney(pay.amount, baseCurrency),
-          date: day(pay.date),
-        });
+        return (
+          <p>
+            {t("cycle.payReceived", {
+              amount: formatMoney(pay.amount, baseCurrency),
+              date: day(pay.date),
+            })}
+          </p>
+        );
       case "expected":
         return (
-          <>
+          <p>
             {t("cycle.payExpected", { date: day(pay.date) })} ·{" "}
             <Link to="/transactions/new" className="underline">
               {t("cycle.addPay")}
             </Link>
-          </>
+          </p>
         );
       case "late":
         return (
-          <>
+          <p>
             {t("cycle.payLate", { days: pay.daysLate })} ·{" "}
             <Link to="/transactions/new" className="underline">
               {t("cycle.addPay")}
             </Link>
-          </>
+          </p>
         );
     }
+  }
+
+  /** « C'est votre paie ? » : enregistre la catégorie et, si besoin, le jour de paie. */
+  async function acceptSuggestedPay(categoryId: string, date: Date) {
+    const payDay = date.getDate();
+    await updatePreferences(
+      payDay !== 1 ? { payIncomeCategoryId: categoryId, monthStartDay: payDay } : { payIncomeCategoryId: categoryId },
+    );
   }
 
   // Échéances : récurrences actives, de la plus proche à la plus lointaine.
@@ -287,7 +334,7 @@ export function HomePage() {
         </Link>
       ) : null}
 
-      {/* Mon cycle : ce qui est entré, sorti et mis de côté depuis le dernier jour de paie. */}
+      {/* Ma période : l'argent réel, ce que je peux dépenser par jour, et ce que j'ai mis de côté ce mois-ci. */}
       <section
         aria-labelledby="cycle-title"
         className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
@@ -298,61 +345,70 @@ export function HomePage() {
             to: format(cycleLastDay, "d MMM", { locale: cycleLocale }),
           })}
         </h2>
-        <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-          {formatMoney(cycle.available, baseCurrency)}
-        </p>
-        <p className="text-sm text-slate-600 dark:text-muted">
-          {t("cycle.available")}
-          {countedNames ? (
-            <span className="block truncate text-xs">{t("cycle.counted", { names: countedNames })}</span>
-          ) : null}
-        </p>
-        <dl className="grid grid-cols-3 gap-2 border-t border-slate-200 pt-3 text-center dark:border-white/15">
-          <div className="flex flex-col gap-0.5">
-            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
-            <dd
-              className="text-sm font-semibold tabular-nums text-income dark:text-income-dark"
-              data-amount
-            >
-              {formatMoney(cycle.income, baseCurrency)}
-            </dd>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.expense")}</dt>
-            <dd
-              className="text-sm font-semibold tabular-nums text-expense dark:text-expense-dark"
-              data-amount
-            >
-              {formatMoney(cycle.expense, baseCurrency)}
-            </dd>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.saved")}</dt>
-            <dd className="text-sm font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-              {formatMoney(cycle.saved, baseCurrency)}
-            </dd>
-          </div>
-        </dl>
-        <div className="flex flex-col gap-1 border-t border-slate-200 pt-3 dark:border-white/15">
-          <p className="text-sm font-semibold text-ink dark:text-fg">
-            {restView.overdrawn
-              ? t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })
-              : t("cycle.rest", {
-                  amount: formatMoney(restView.rest, baseCurrency),
-                  perDay: formatMoney(restView.perDay, baseCurrency),
-                })}
+
+        <div className="flex flex-col gap-1">
+          <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+            {formatMoney(cycle.available, baseCurrency)}
           </p>
-          <p className="text-xs text-slate-600 dark:text-muted">
-            {payLine(cycleView.pay)}
-          </p>
-          {cycleView.pay.kind === "unset" && cycleView.runway ? (
-            <p className="text-xs text-slate-600 dark:text-muted">
-              {t("cycle.runway", { days: cycleView.runway.days })}
-              {cycleView.runway.confidence !== "solid"
-                ? ` · ${t(`cycle.confidence.${cycleView.runway.confidence}`)}`
-                : null}
+          <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
+          {cycle.available < 0 ? (
+            <p className="text-sm font-medium text-ink dark:text-fg">
+              {t("cycle.negativeBalance")}{" "}
+              <Link to="/plus/wallets" className="underline">
+                {t("cycle.checkAccounts")}
+              </Link>
             </p>
           ) : null}
+          <p className="text-xs text-slate-600 dark:text-muted">
+            {t("cycle.accounts", { names: countedNames || "—" })}{" "}
+            <Link to="/plus/wallets" className="underline">
+              {t("cycle.editAccounts")}
+            </Link>
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1 border-t border-slate-200 pt-3 dark:border-white/15">
+          {cycle.available >= 0 && restView.overdrawn ? (
+            <p className="text-sm font-semibold text-ink dark:text-fg">
+              {t("cycle.overdrawn", { amount: formatMoney(-restView.rest, baseCurrency) })}
+            </p>
+          ) : cycle.available >= 0 ? (
+            <p className="text-sm font-semibold text-ink dark:text-fg">
+              {t("cycle.perDay", {
+                amount: formatMoney(restView.perDay, baseCurrency),
+                date: format(cycle.period.to, "d MMM", { locale: cycleLocale }),
+              })}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
+          <p className="text-xs font-medium text-slate-600 dark:text-muted">{t("cycle.thisMonth")}</p>
+          <dl className="grid grid-cols-2 gap-2 text-center">
+            <div className="flex flex-col gap-0.5">
+              <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
+              <dd
+                className="text-sm font-semibold tabular-nums text-income dark:text-income-dark"
+                data-amount
+              >
+                {formatMoney(cycle.income, baseCurrency)}
+              </dd>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.expense")}</dt>
+              <dd
+                className="text-sm font-semibold tabular-nums text-expense dark:text-expense-dark"
+                data-amount
+              >
+                {formatMoney(cycle.expense, baseCurrency)}
+              </dd>
+            </div>
+          </dl>
+          <p className="text-sm text-ink dark:text-fg">
+            {cycle.saved >= 0
+              ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
+              : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
+          </p>
           {cycleView.plannedSaving !== undefined ? (
             <p className="text-xs text-slate-600 dark:text-muted">
               {t("cycle.plannedSaving", {
@@ -361,9 +417,10 @@ export function HomePage() {
             </p>
           ) : null}
         </div>
-        <p className="text-xs text-slate-600 dark:text-muted">
-          {t("cycle.daysLeft", { days: cycle.daysLeft })}
-        </p>
+
+        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 text-xs text-slate-600 dark:border-white/15 dark:text-muted">
+          {payLine(cycleView.pay)}
+        </div>
       </section>
 
       {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
