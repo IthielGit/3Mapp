@@ -668,13 +668,13 @@
     "missingRate": "Saisissez un taux supérieur à 0."
   },
   "cycle": {
-    "title": "Période : du {{from}} au {{to}}",
-    "available": "Argent sur vos comptes",
+    "title": "Votre mois : du {{from}} au {{to}}",
+    "available": "Disponible sur vos comptes",
     "income": "Reçu",
     "expense": "Dépensé",
     "saved": "Reste du mois : {{amount}}",
     "spentMore": "Dépensé plus que reçu : {{amount}}",
-    "thisMonth": "Ce mois-ci",
+    "thisMonth": "Détail du mois",
     "accounts": "Comptes pris en compte : {{names}}",
     "editAccounts": "Modifier",
     "negativeBalance": "Votre solde est négatif.",
@@ -694,6 +694,7 @@
     "debtsPaid": "Dettes et prêts : {{amount}}",
     "noStartBalance": "Indiquez le solde de départ de vos comptes.",
     "empty": "Ajoutez un revenu ou une dépense pour voir combien vous pouvez dépenser.",
-    "accountsCount": "Comptes pris en compte : {{count}}"
+    "accountsCount": "Comptes pris en compte : {{count}}",
+    "setStartBalances": "Renseigner les soldes de départ"
   }
 }

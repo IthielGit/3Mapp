@@ -668,13 +668,13 @@
     "missingRate": "Enter a rate greater than 0."
   },
   "cycle": {
-    "title": "Period: {{from}} to {{to}}",
-    "available": "Money in your accounts",
+    "title": "Your month: {{from}} to {{to}}",
+    "available": "Available in your accounts",
     "income": "Received",
     "expense": "Spent",
     "saved": "Left this month: {{amount}}",
     "spentMore": "Spent more than received: {{amount}}",
-    "thisMonth": "This month",
+    "thisMonth": "Month details",
     "accounts": "Accounts counted: {{names}}",
     "editAccounts": "Edit",
     "negativeBalance": "Your balance is negative.",
@@ -694,6 +694,7 @@
     "debtsPaid": "Debts and loans: {{amount}}",
     "noStartBalance": "Enter the starting balance of your accounts.",
     "empty": "Add an income or an expense to see how much you can spend.",
-    "accountsCount": "Accounts counted: {{count}}"
+    "accountsCount": "Accounts counted: {{count}}",
+    "setStartBalances": "Enter opening balances"
   }
 }

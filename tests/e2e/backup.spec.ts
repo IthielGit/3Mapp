@@ -24,7 +24,8 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
     .getByRole("link", { name: "Accueil" })
     .click();
   await expect(page.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
-  const balanceBefore = await page.locator("[data-amount]").first().innerText();
+  // Le solde du compte est la dernière ligne de sa tuile.
+  const balanceBefore = (await page.getByRole("link", { name: /Compte BNI/ }).first().innerText()).split("\n").pop() ?? "";
 
   // Sauvegarde en clair, téléchargée par le navigateur.
   await page.goto("/plus");
@@ -58,7 +59,7 @@ test("sauvegarde puis restauration sur un navigateur vierge : mêmes soldes", as
 
   await fresh.getByRole("link", { name: "Aller à l'accueil" }).click();
   await expect(fresh.getByRole("heading", { level: 1, name: "Accueil" })).toBeVisible();
-  await expect(fresh.locator("[data-amount]").first()).toHaveText(balanceBefore);
+  await expect(fresh.getByRole("link", { name: /Compte BNI/ }).first()).toContainText(balanceBefore);
 
   await context.close();
 });

@@ -668,13 +668,13 @@
     "missingRate": "Ampidiro ny tahan'ny vola mihoatra ny 0."
   },
   "cycle": {
-    "title": "Vanim-potoana: hatramin’ny {{from}} ka hatramin’ny {{to}}",
-    "available": "Vola ao amin’ny kaontinao",
+    "title": "Ny volanao: {{from}} ka hatramin'ny {{to}}",
+    "available": "Azo ampiasaina amin'ny kaontinao",
     "income": "Nidiran’ny",
     "expense": "Nivoaka",
     "saved": "Sisa amin’io volana: {{amount}}",
     "spentMore": "Nivoaka mihoatra ny nidiran’ny: {{amount}}",
-    "thisMonth": "Io volana io",
+    "thisMonth": "Antsipirian'ny volana",
     "accounts": "Kaontina natao isa: {{names}}",
     "editAccounts": "Ovaina",
     "negativeBalance": "Miara-mihoatra ny volanao.",
@@ -694,6 +694,7 @@
     "debtsPaid": "Trosa sy andraikitra: {{amount}}",
     "noStartBalance": "Ampidiro ny vola niandohana amin’ny kaontinao.",
     "empty": "Ampio vola miditra na fandaniana iray mba hahitana ny azo lanjaina.",
-    "accountsCount": "Kaonty voaisa : {{count}}"
+    "accountsCount": "Kaonty voaisa : {{count}}",
+    "setStartBalances": "Ampidiro ny soldy voalohany"
   }
 }

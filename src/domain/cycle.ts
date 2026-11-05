@@ -159,19 +159,29 @@ export interface CycleOverview {
   plannedSaving?: Minor;
 }
 
-/** Dernière entrée de revenu validée, avec sa catégorie. */
+/**
+ * Dernière entrée de revenu validée, avec sa catégorie. Seules les catégories qui reviennent
+ * (entrées dans au moins deux mois différents) sont proposées : pas de remboursement isolé.
+ */
 function latestIncome(
   transactions: readonly Transaction[],
   now: Date,
 ): { categoryId: string; amount: Minor; date: Date } | undefined {
-  const last = transactions
-    .filter(
-      (t) =>
-        t.type === "income" &&
-        t.status === "posted" &&
-        t.categoryId !== undefined &&
-        new Date(t.date).getTime() <= now.getTime(),
-    )
+  const known = transactions.filter(
+    (t) =>
+      t.type === "income" &&
+      t.status === "posted" &&
+      t.categoryId !== undefined &&
+      new Date(t.date).getTime() <= now.getTime(),
+  );
+  const monthsByCategory = new Map<string, Set<string>>();
+  for (const t of known) {
+    const months = monthsByCategory.get(t.categoryId ?? "") ?? new Set<string>();
+    months.add(t.date.slice(0, 7));
+    monthsByCategory.set(t.categoryId ?? "", months);
+  }
+  const last = known
+    .filter((t) => (monthsByCategory.get(t.categoryId ?? "")?.size ?? 0) >= 2)
     .sort((a, b) => b.date.localeCompare(a.date))[0];
   if (!last || last.categoryId === undefined) return undefined;
   return { categoryId: last.categoryId, amount: last.amount, date: new Date(last.date) };

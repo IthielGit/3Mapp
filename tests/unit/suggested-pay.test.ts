@@ -60,3 +60,19 @@ describe("proposition de revenu de paie (suggestedPay)", () => {
     expect(v.suggestedPay).toBeUndefined();
   });
 });
+
+describe("proposition de paie : catégories qui reviennent seulement", () => {
+  const now = new Date(2026, 2, 10, 12);
+  const period = accountingMonth(now, 1);
+
+  it("une entrée isolée (remboursement, vente ponctuelle) n'est pas proposée", () => {
+    const transactions = [
+      tx({ type: "income", amount: 130_000, categoryId: "00000000-0000-4000-8000-0000000000rr", date: new Date(2026, 2, 4, 9).toISOString() }),
+    ];
+    const v = cycleOverview({
+      wallets, transactions, recurring: [], debts: [], debtPayments: [], rates: [],
+      baseCurrency: "MGA", period, now, payCategoryId: undefined,
+    });
+    expect(v.suggestedPay).toBeUndefined();
+  });
+});

@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { addDays, format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
-import { Area, AreaChart, Bar, BarChart, ReferenceLine, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, ResponsiveContainer } from "recharts";
 import { db } from "../../db/database";
 import { computeBalances } from "../../domain/balance";
 import { backupReminder } from "../../domain/backup";
@@ -13,9 +13,7 @@ import { budgetStates } from "../../domain/budget";
 import { cycleOverview, type PayStatus } from "../../domain/cycle";
 import { periodFor } from "../../domain/period";
 import { usePeriodSettings } from "../stats/period-state";
-import { convertedSum } from "../../domain/fx";
-import { dailyExpenses, dailyTotals } from "../../domain/home-series";
-import { Skeleton } from "../../components/PwaComponents";
+import { dailyExpenses } from "../../domain/home-series";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
@@ -63,9 +61,7 @@ export function HomePage() {
   const { t, i18n } = useTranslation();
   const [suggestionHidden, setSuggestionHidden] = useState(false);
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
-  const walletsLoaded = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []);
-  const loading = walletsLoaded === undefined;
-  const wallets = walletsLoaded ?? EMPTY;
+  const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? EMPTY;
   const transactions =
     useLiveQuery(() => db.transactions.orderBy("date").reverse().toArray(), []) ?? EMPTY;
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
@@ -104,17 +100,6 @@ export function HomePage() {
         return state ? [{ budget, state }] : [];
       });
   }, [budgets, transactions, periodSettings, cutoff]);
-  const converted = convertedSum(
-    active
-      .filter((w) => w.includeInTotal)
-      .map((w) => ({
-        amount: balances[w.id] ?? w.initialBalance,
-        currency: w.currency,
-        date: new Date().toISOString(),
-      })),
-    baseCurrency,
-    rates,
-  );
 
   // Mon cycle : du jour de début du mois comptable au suivant, constat sur les transactions validées.
   const debts = useLiveQuery(() => db.debts.toArray(), []) ?? EMPTY_DEBTS;
@@ -163,6 +148,9 @@ export function HomePage() {
   const countedNames = countedList.join(", ");
   const cycleLocale = i18n.language.startsWith("en") ? enUS : fr;
   const cycleLastDay = new Date(cycle.period.to.getTime() - 1);
+  const noStartBalance =
+    cycle.available < 0 &&
+    active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0);
   function payLine(pay: PayStatus) {
     const day = (d: Date) => format(d, "d MMM", { locale: cycleLocale });
     switch (pay.kind) {
@@ -250,17 +238,8 @@ export function HomePage() {
     [recurring],
   );
 
-  // Vue d'ensemble : solde sur 30 jours, dépenses sur 7 jours.
-  // Mini-graphiques : mêmes règles que le solde et les dépenses affichés (voir domain/home-series).
-  const days30 = useMemo(() => lastDays(30), []);
-  const days7 = useMemo(() => days30.slice(-7), [days30]);
-  const evolution = useMemo(
-    () =>
-      dailyTotals(active, transactions, days30, baseCurrency, rates, cutoff).map((minor) => ({
-        balance: minor / 100,
-      })),
-    [active, transactions, days30, baseCurrency, rates, cutoff],
-  );
+  // Vue d'ensemble : dépenses sur 7 jours (même règle que les dépenses affichées, voir domain/home-series).
+  const days7 = useMemo(() => lastDays(30).slice(-7), []);
   const expenseMinor = useMemo(
     () => dailyExpenses(upTo(transactions, cutoff), days7, baseCurrency),
     [transactions, days7, baseCurrency, cutoff],
@@ -304,7 +283,7 @@ export function HomePage() {
           </svg>
           <div className="flex flex-col">
             <span className="font-semibold text-ink dark:text-fg">{t("home.hello")}</span>
-            <span className="text-sm text-slate-600 dark:text-muted">{t("app.title")}</span>
+            <span className="text-sm capitalize text-slate-600 dark:text-muted">{format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}</span>
           </div>
         </div>
         <Link
@@ -316,24 +295,7 @@ export function HomePage() {
         </Link>
       </header>
 
-      {backupState !== "none" ? (
-        <Link
-          to="/plus/backup"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
-        >
-          {t("home.backupReminder")}
-        </Link>
-      ) : null}
-      {pendingCount > 0 ? (
-        <Link
-          to="/plus/recurring"
-          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
-        >
-          {t("home.pendingBanner", { count: pendingCount })}
-        </Link>
-      ) : null}
-
-      {/* Ma période : l'argent réel, ce que je peux dépenser par jour, et ce que j'ai mis de côté ce mois-ci. */}
+      {/* Ma période : le disponible, ce que je peux dépenser par jour, et ce que j'ai mis de côté. */}
       <section
         aria-labelledby="cycle-title"
         className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card"
@@ -345,30 +307,33 @@ export function HomePage() {
           })}
         </h2>
 
-        <div className="flex flex-col gap-1">
-          <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
-          <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
-            {formatMoney(cycle.available, baseCurrency)}
-          </p>
-          {cycle.available < 0 ? (
-            <p className="text-sm font-medium text-ink dark:text-fg">
-              {active.filter((w) => w.includeInTotal && w.group !== "savings").every((w) => w.initialBalance === 0)
-                ? t("cycle.noStartBalance")
-                : t("cycle.negativeBalance")}{" "}
-              <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
-                {t("cycle.checkAccounts")}
-              </Link>
-            </p>
-          ) : null}
-          <p className="text-xs text-slate-600 dark:text-muted">
-            {countedList.length <= 2
-              ? t("cycle.accounts", { names: countedNames || "—" })
-              : t("cycle.accountsCount", { count: countedList.length })}{" "}
-            <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
-              {t("cycle.editAccounts")}
+        {noStartBalance ? (
+          // Sans solde de départ, un découvert n'a pas de sens : on demande le solde au lieu d'afficher un montant négatif.
+          <div className="flex flex-col gap-3">
+            <p className="text-base font-semibold text-ink dark:text-fg">{t("cycle.noStartBalance")}</p>
+            <Link
+              to="/plus/wallets"
+              className="inline-flex min-h-[44px] items-center self-start rounded-xl bg-brand-700 px-4 font-semibold text-white dark:bg-white dark:text-ink"
+            >
+              {t("cycle.setStartBalances")}
             </Link>
-          </p>
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-slate-600 dark:text-muted">{t("cycle.available")}</p>
+            <p className="text-2xl font-semibold tabular-nums text-ink dark:text-fg" data-amount>
+              {formatMoney(cycle.available, baseCurrency)}
+            </p>
+            {cycle.available < 0 ? (
+              <p className="text-sm font-medium text-ink dark:text-fg">
+                {t("cycle.negativeBalance")}{" "}
+                <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
+                  {t("cycle.checkAccounts")}
+                </Link>
+              </p>
+            ) : null}
+          </div>
+        )}
 
         {/* La réponse à « combien puis-je dépenser ? » et « combien ai-je mis de côté ? ». */}
         <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 dark:border-white/15">
@@ -393,7 +358,7 @@ export function HomePage() {
           </p>
         </div>
 
-        {/* Détail replié : entrées, sorties et versements, pour qui veut vérifier. */}
+        {/* Détail replié : comptes pris en compte, entrées, sorties et versements. */}
         <details className="group flex flex-col gap-3 border-t border-slate-200 pt-3 dark:border-white/15">
           <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium text-slate-600 dark:text-muted [&::-webkit-details-marker]:hidden">
             {t("cycle.thisMonth")}
@@ -413,6 +378,14 @@ export function HomePage() {
               />
             </svg>
           </summary>
+          <p className="text-xs text-slate-600 dark:text-muted">
+            {countedList.length <= 2
+              ? t("cycle.accounts", { names: countedNames || "—" })
+              : t("cycle.accountsCount", { count: countedList.length })}{" "}
+            <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
+              {t("cycle.editAccounts")}
+            </Link>
+          </p>
           <dl className="grid grid-cols-2 gap-2 text-center">
             <div className="flex flex-col gap-0.5">
               <dt className="text-xs text-slate-600 dark:text-muted">{t("cycle.income")}</dt>
@@ -451,13 +424,33 @@ export function HomePage() {
             </p>
           ) : null}
         </details>
-
-        <div className="flex flex-col gap-2 border-t border-slate-200 pt-3 text-xs text-slate-600 dark:border-white/15 dark:text-muted">
-          {payLine(cycleView.pay)}
-        </div>
       </section>
 
-      {/* Échéances à venir : cartes défilantes, la suivante reste entrevue. */}
+      {/* La question de paie vit à part de la carte : elle ne concurrence plus le détail. */}
+      <section className="flex flex-col gap-2 rounded-3xl bg-white p-4 text-xs text-slate-600 shadow-sm dark:bg-card dark:text-muted">
+        {payLine(cycleView.pay)}
+      </section>
+
+      {/* Alertes : une seule à la fois, sous la carte. */}
+      {backupState !== "none" ? (
+        <Link
+          to="/plus/backup"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
+        >
+          {t("home.backupReminder")}
+        </Link>
+      ) : null}
+      {pendingCount > 0 ? (
+        <Link
+          to="/plus/recurring"
+          className="rounded-2xl bg-amber-100 p-3 text-sm font-medium text-amber-900 dark:bg-raised dark:text-fg"
+        >
+          {t("home.pendingBanner", { count: pendingCount })}
+        </Link>
+      ) : null}
+
+      {/* Échéances à venir : affichées seulement s'il y en a. */}
+      {upcoming.length > 0 ? (
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
@@ -514,43 +507,12 @@ export function HomePage() {
           </ul>
         )}
       </section>
+      ) : null}
 
-      {/* Vue d'ensemble
-      {/* Vue d'ensemble : deux cartes, chacune avec un mini-graphique. */}
+      {/* Vue d'ensemble : dépenses des 7 derniers jours, avec leur mini-graphique. */}
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.overviewTitle")}</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1 rounded-3xl bg-teal-50 p-4 shadow-sm dark:bg-teal-900/40">
-            <span className="text-sm font-medium text-teal-800 dark:text-teal-200">
-              {t("home.balanceCard")}
-            </span>
-            {loading ? (
-              <Skeleton className="h-8 w-24" />
-            ) : (
-              <span
-                className="text-lg font-semibold tabular-nums text-ink dark:text-fg"
-                data-amount
-              >
-                {formatMoney(converted.total, baseCurrency)}
-              </span>
-            )}
-            <div className="h-12">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={evolution}>
-                  <ReferenceLine y={0} stroke="#b8b8c0" strokeDasharray="3 3" />
-                  <Area
-                    type="monotone"
-                    dataKey="balance"
-                    stroke="#10b981"
-                    fill="#10b98122"
-                    strokeWidth={2}
-                    dot={false}
-                    isAnimationActive={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 gap-3">
           <div className="flex flex-col gap-1 rounded-3xl bg-rose-50 p-4 shadow-sm dark:bg-rose-900/30">
             <span className="text-sm font-medium text-rose-800 dark:text-rose-200">
               {t("home.expenseCard")}
@@ -588,7 +550,7 @@ export function HomePage() {
         {budgetRows.length === 0 ? (
           <Link
             to="/budgets/new"
-            className="rounded-card border border-dashed border-slate-300 p-4 text-sm text-slate-600 dark:border-white/15 dark:text-muted"
+            className="inline-flex min-h-[44px] items-center text-sm font-medium text-brand-700 underline dark:text-brand-300"
           >
             {t("home.budgetsEmpty")}
           </Link>

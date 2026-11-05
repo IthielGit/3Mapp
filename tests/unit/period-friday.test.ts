@@ -41,7 +41,7 @@ describe("cycle de paie : vendredi quand le jour tombe un week-end", () => {
         }
       }
     }
-  });
+  }, 30_000); // ~40 000 cycles vérifiés : plus long que le délai par défaut sous charge.
 
   it("splitPeriods découpe une année en cycles entiers avec l'option", () => {
     const settings = { monthStartDay: 28, weekStartDay: 1, payOnFriday: true };
