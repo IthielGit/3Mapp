@@ -30,6 +30,7 @@ import {
 } from "./export";
 
 import type { DateOrder } from "./csv-format";
+import { balanceCutoffNow } from "../settings/balance-cutoff";
 
 export function ImportExportPage() {
   const { t } = useTranslation();
@@ -105,7 +106,8 @@ export function ImportExportPage() {
         `transactions-${stamp}.json`,
       );
     } else {
-      const bytes = await transactionsToXlsx(transactions, names, wallets ?? []);
+      const cutoff = await balanceCutoffNow();
+      const bytes = await transactionsToXlsx(transactions, names, wallets ?? [], cutoff);
       downloadBlob(
         new Blob([bytes.slice().buffer], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

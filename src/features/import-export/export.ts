@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import { db as defaultDb, type AppDatabase } from "../../db/database";
 import type { Transaction, Wallet } from "../../db/entities";
 import { computeBalances } from "../../domain/balance";
+import { upTo } from "../../domain/cutoff";
 import { minorToPlainText } from "../../lib/amount-text";
 import { formatNativeDate, NATIVE_HEADERS } from "./csv-format";
 
@@ -73,10 +74,16 @@ export function transactionsToJson(
 }
 
 /** Classeur : feuille « Transactions » et feuille « Résumé » (soldes par portefeuille). */
+/**
+ * Classeur XLSX : toutes les transactions, et la feuille « Résumé » avec les soldes.
+ * Les soldes respectent la coupure `cutoff` (option « Ignorer le solde futur ») ; les transactions
+ * ne sont jamais coupées, pour que l'export reste une copie complète.
+ */
 export async function transactionsToXlsx(
   transactions: readonly Transaction[],
   names: ExportNames,
   wallets: readonly Wallet[],
+  cutoff?: Date,
 ): Promise<Uint8Array> {
   // Chargé à la demande : ExcelJS est lourd et inutile sans export XLSX.
   const { default: ExcelJS } = await import("exceljs");
@@ -94,7 +101,7 @@ export async function transactionsToXlsx(
   const summary = workbook.addWorksheet("Résumé");
   summary.addRow(["Portefeuille", "Devise", "Solde"]);
   summary.getRow(1).font = { bold: true };
-  const balances = computeBalances(wallets, transactions);
+  const balances = computeBalances(wallets, upTo(transactions, cutoff));
   for (const wallet of wallets) {
     summary.addRow([
       wallet.name,
