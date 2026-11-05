@@ -229,6 +229,8 @@ test("persona 2 — jeune actif avec plusieurs comptes et abonnements", async ({
   });
 
   await j.step("modifier l'abonnement", async () => {
+    // Attendre le retour à la liste après l'enregistrement, pour ne pas cliquer pendant la sauvegarde.
+    await expect(page).toHaveURL(/\/plus\/recurring$/);
     await page.getByRole("link", { name: /Abonnement internet/ }).click();
     await page.getByRole("link", { name: "Modifier" }).click();
     await page.getByLabel("Mémo").fill("Internet fibre");

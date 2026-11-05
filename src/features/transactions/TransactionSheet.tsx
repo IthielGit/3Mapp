@@ -1,5 +1,5 @@
 import { Icon, type IconName } from "../../components/Icon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -18,7 +18,6 @@ import {
 import { expressionToMinor } from "../../lib/calc";
 import { minorToPlainText } from "../../lib/amount-text";
 import type { CurrencyCode } from "../../lib/money";
-import { addAttachment, removeAttachment } from "./attachment-service";
 import { saveTransactionAsTemplate } from "./template-service";
 import { createRecurring } from "../recurring/recurring-service";
 import { occurrenceDate, type Frequency } from "../../domain/recurrence";
@@ -107,7 +106,8 @@ export function TransactionSheet({
   );
   const [memo, setMemo] = useState(initial?.memo ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
-  const [attachmentIds, setAttachmentIds] = useState<string[]>(initial?.attachmentIds ?? []);
+  // Plus de saisie de photos : les pièces jointes déjà présentes sont conservées telles quelles.
+  const attachmentIds = initial?.attachmentIds ?? [];
   const [error, setError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
@@ -234,24 +234,6 @@ export function TransactionSheet({
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errors.generic"));
     }
-  }
-
-  async function onFiles(files: FileList | null) {
-    if (!files) return;
-    setError(undefined);
-    for (const file of Array.from(files)) {
-      try {
-        const id = await addAttachment(file);
-        setAttachmentIds((ids) => [...ids, id]);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("errors.generic"));
-      }
-    }
-  }
-
-  async function detach(id: string) {
-    setAttachmentIds((ids) => ids.filter((x) => x !== id));
-    await removeAttachment(id);
   }
 
   return (
@@ -501,39 +483,6 @@ export function TransactionSheet({
           />
         </Field>
 
-        <div className="flex flex-col gap-2">
-          <label
-            className={buttonSecondary + " inline-flex cursor-pointer items-center justify-center"}
-          >
-            {t("transactions.addAttachment")}
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              className="sr-only"
-              onChange={(e) => void onFiles(e.target.files)}
-            />
-          </label>
-          {attachmentIds.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              <span className="text-sm text-slate-500">
-                {t("transactions.attachmentCount", { count: attachmentIds.length })}
-              </span>
-              <ul className="grid grid-cols-3 gap-2">
-                {attachmentIds.map((id, index) => (
-                  <li key={id}>
-                    <AttachmentThumb
-                      id={id}
-                      index={index + 1}
-                      onRemove={() => void detach(id)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-
         {error ? (
           <p role="alert" className="text-red-700 dark:text-red-400">
             {error}
@@ -565,54 +514,4 @@ function transactionTargetCurrency(
   wallets: readonly { id: string; currency: CurrencyCode }[],
 ): CurrencyCode {
   return wallets.find((w) => w.id === transaction.toWalletId)?.currency ?? transaction.currency;
-}
-
-/** Vignette d'une pièce jointe, chargée depuis la base locale (aucun envoi réseau). */
-function AttachmentThumb({
-  id,
-  index,
-  onRemove,
-}: {
-  id: string;
-  index: number;
-  onRemove: () => void;
-}) {
-  const { t } = useTranslation();
-  const [url, setUrl] = useState<string | undefined>();
-
-  useEffect(() => {
-    let objectUrl: string | undefined;
-    let cancelled = false;
-    void db.attachments.get(id).then((record) => {
-      if (!record || cancelled) return;
-      objectUrl = URL.createObjectURL(record.blob);
-      setUrl(objectUrl);
-    });
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [id]);
-
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="aspect-square w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/15 dark:bg-raised">
-        {url ? (
-          <img
-            src={url}
-            alt={t("transactions.photoAlt", { n: index })}
-            className="h-full w-full object-cover"
-          />
-        ) : null}
-      </div>
-      <button
-        type="button"
-        aria-label={t("transactions.removePhotoN", { n: index })}
-        className="min-h-[44px] text-sm text-red-700 underline dark:text-red-400"
-        onClick={onRemove}
-      >
-        {t("transactions.removePhoto")}
-      </button>
-    </div>
-  );
 }
