@@ -751,6 +751,10 @@
     "forgotPassword": "Mot de passe oublié ?",
     "resetSent": "Si un compte existe pour cette adresse, un lien de réinitialisation vient d'être envoyé.",
     "checkEmail": "Vérifiez votre boîte e-mail pour confirmer votre compte.",
+    "suspended": {
+      "title": "Compte suspendu",
+      "body": "Votre compte a été suspendu par l’administrateur du service. L’application est bloquée sur cet appareil. Contactez l’administrateur pour plus d’informations."
+    },
     "errors": {
       "invalidEmail": "Adresse e-mail invalide.",
       "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",

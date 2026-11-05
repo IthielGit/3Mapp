@@ -1,22 +1,54 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { getSupabase } from "./supabase-client";
+import {
+  fetchProfile,
+  PROFILE_TIMEOUT_MS,
+  readCachedStatus,
+  resolveStatus,
+  writeCachedStatus,
+  type AccountProfile,
+} from "./profile";
 
-/** État du compte : « unconfigured » = app locale sans service de comptes (cas par défaut). */
+/**
+ * État du compte.
+ * - unconfigured : service de comptes absent (app 100 % locale, cas par défaut).
+ * - loading : session ou profil en cours de lecture.
+ * - signedOut : aucune session.
+ * - signedIn : connecté et actif. `profile` est absent si le serveur est injoignable.
+ * - suspended : connecté mais suspendu par un administrateur ; l'app est bloquée (SPEC §5.14).
+ */
 export type AccountState =
   | { status: "unconfigured" }
   | { status: "loading"; client: SupabaseClient }
   | { status: "signedOut"; client: SupabaseClient }
-  | { status: "signedIn"; client: SupabaseClient; session: Session };
+  | { status: "signedIn"; client: SupabaseClient; session: Session; profile?: AccountProfile }
+  | { status: "suspended"; client: SupabaseClient; session: Session; profile?: AccountProfile };
 
 const AccountContext = createContext<AccountState>({ status: "unconfigured" });
 
 /**
- * Fournit la session. Le compte est optionnel : sans configuration, l'app reste entièrement locale.
- * L'état est écouté via onAuthStateChange, donc une connexion Google (retour de redirection) est prise en compte.
+ * Fournit la session et le profil. Le compte est optionnel : sans configuration, l'app reste locale.
+ * Le profil est relu à la connexion, au retour du réseau, et à chaque changement de session.
  */
-export function AccountProvider({ children, client = getSupabase() }: { children: ReactNode; client?: SupabaseClient | null }) {
+export function AccountProvider({
+  children,
+  client = getSupabase(),
+}: {
+  children: ReactNode;
+  client?: SupabaseClient | null;
+}) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const [profile, setProfile] = useState<AccountProfile | undefined>(undefined);
+  const [profileSettled, setProfileSettled] = useState(false);
+  const [online, setOnline] = useState(0);
+  const userId = session?.user.id;
+
+  useEffect(() => {
+    const bump = () => setOnline((n) => n + 1);
+    window.addEventListener("online", bump);
+    return () => window.removeEventListener("online", bump);
+  }, []);
 
   useEffect(() => {
     if (!client) return;
@@ -38,12 +70,42 @@ export function AccountProvider({ children, client = getSupabase() }: { children
     };
   }, [client]);
 
+  useEffect(() => {
+    if (!client || !userId) {
+      setProfile(undefined);
+      setProfileSettled(false);
+      return;
+    }
+    let active = true;
+    setProfileSettled(false);
+    const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), PROFILE_TIMEOUT_MS));
+    void Promise.race([fetchProfile(client, userId), timeout])
+      .then((next) => {
+        if (!active) return;
+        setProfile(next);
+        if (next) writeCachedStatus(userId, next.status);
+      })
+      .catch(() => {
+        if (active) setProfile(undefined);
+      })
+      .finally(() => {
+        if (active) setProfileSettled(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [client, userId, online]);
+
   const value = useMemo<AccountState>(() => {
     if (!client) return { status: "unconfigured" };
     if (session === undefined) return { status: "loading", client };
     if (session === null) return { status: "signedOut", client };
-    return { status: "signedIn", client, session };
-  }, [client, session]);
+    if (!profileSettled) return { status: "loading", client };
+    const cached = readCachedStatus(session.user.id);
+    const status = resolveStatus(profile, cached);
+    if (status === "suspended") return { status: "suspended", client, session, profile };
+    return { status: "signedIn", client, session, profile };
+  }, [client, session, profile, profileSettled]);
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }
