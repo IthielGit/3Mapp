@@ -64,7 +64,7 @@ test("budget dépassé : une dépense au-delà du plafond est signalée", async 
 
   // Budget « Courses » de 50 000 sur la catégorie Alimentation.
   await await page.goto("/budgets");
-  await page.getByRole("link", { name: "Ajouter" }).click();
+  await page.getByRole("link", { name: "Créer mon premier budget" }).click();
   await page.getByLabel("Nom").fill("Courses");
   await page.getByLabel(/Montant/).fill("50000");
   await page.getByRole("checkbox", { name: /Alimentation/ }).check();

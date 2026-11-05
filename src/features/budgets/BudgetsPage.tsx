@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { Icon } from "../../components/Icon";
 import { budgetStates } from "../../domain/budget";
 import { formatMoney } from "../../lib/money";
 import { usePeriodSettings } from "../stats/period-state";
@@ -35,23 +36,35 @@ export function BudgetsPage() {
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
         <PageTitle className="text-2xl font-semibold">{t("budgets.title")}</PageTitle>
-        <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
-          {t("common.add")}
-        </Link>
+        {active.length > 0 ? (
+          <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
+            {t("common.add")}
+          </Link>
+        ) : null}
       </header>
 
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className={buttonSecondary}
-          aria-pressed={extended}
-          onClick={() => setExtended((e) => !e)}
-        >
-          {extended ? t("budgets.simpleView") : t("budgets.extendedView")}
-        </button>
-      </div>
-
-      {active.length === 0 ? <p className="text-slate-600 dark:text-muted">{t("budgets.empty")}</p> : null}
+      {active.length === 0 ? (
+        // Pas de bouton en haut ici : une seule action, au centre de l’écran vide.
+        <div className="flex flex-col items-center gap-3 rounded-card border border-dashed border-slate-300 p-6 text-center dark:border-white/15">
+          <Icon name="donut" className="h-10 w-10 text-brand-700 dark:text-brand-300" />
+          <p className="font-semibold text-ink dark:text-fg">{t("budgets.emptyTitle")}</p>
+          <p className="text-sm text-slate-600 dark:text-muted">{t("budgets.emptyHint")}</p>
+          <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
+            {t("budgets.createFirst")}
+          </Link>
+        </div>
+      ) : (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className={buttonSecondary}
+            aria-pressed={extended}
+            onClick={() => setExtended((e) => !e)}
+          >
+            {extended ? t("budgets.hideDetails") : t("budgets.showDetails")}
+          </button>
+        </div>
+      )}
 
       <ul className="flex flex-col gap-3">
         {active.map((b) => {

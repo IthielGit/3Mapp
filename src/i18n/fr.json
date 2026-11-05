@@ -298,11 +298,8 @@
   },
   "budgets": {
     "title": "Budgets",
-    "empty": "Aucun budget. Appuyez sur Ajouter pour en créer un.",
     "newTitle": "Nouveau budget",
     "editTitle": "Modifier le budget",
-    "simpleView": "Vue simple",
-    "extendedView": "Vue étendue",
     "periods": {
       "week": "Semaine",
       "month": "Mois",
@@ -332,7 +329,12 @@
     "remainingLabel": "Reste",
     "percentUsed": "{{percent}} % consommé",
     "counted": "Dépenses comptées",
-    "noCounted": "Aucune dépense comptée sur cette période."
+    "noCounted": "Aucune dépense comptée sur cette période.",
+    "emptyTitle": "Aucun budget pour l’instant",
+    "emptyHint": "Un budget fixe une somme par catégorie et vous montre ce qu’il reste.",
+    "createFirst": "Créer mon premier budget",
+    "showDetails": "Afficher les détails",
+    "hideDetails": "Masquer les détails"
   },
   "goals": {
     "title": "Objectifs d'épargne",

@@ -298,11 +298,8 @@
   },
   "budgets": {
     "title": "Tetibola",
-    "empty": "Tsy misy tetibola. Tsindrio Ampio mba hamorona iray.",
     "newTitle": "Tetibola vaovao",
     "editTitle": "Ovaina ny tetibola",
-    "simpleView": "Fijerena tsotra",
-    "extendedView": "Fijerena lehibe",
     "periods": {
       "week": "Herinandro",
       "month": "Volana",
@@ -332,7 +329,12 @@
     "remainingLabel": "Sisa",
     "percentUsed": "{{percent}} % efa nampiasaina",
     "counted": "Fandaniana isaina",
-    "noCounted": "Tsy misy fandaniana isaina amin'ity vanim-potoana ity."
+    "noCounted": "Tsy misy fandaniana isaina amin'ity vanim-potoana ity.",
+    "emptyTitle": "Tsy misy tetibola mbola",
+    "emptyHint": "Ny tetibola dia mametra vola isaky ny sokajy ary mampiseho ny sisa.",
+    "createFirst": "Mamorona ny tetibola voalohany",
+    "showDetails": "Asehoy ny antsipiriany",
+    "hideDetails": "Afenio ny antsipiriany"
   },
   "goals": {
     "title": "Tanjon'ny tahiry",

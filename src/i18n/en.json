@@ -298,11 +298,8 @@
   },
   "budgets": {
     "title": "Budgets",
-    "empty": "No budget. Tap Add to create one.",
     "newTitle": "New budget",
     "editTitle": "Edit budget",
-    "simpleView": "Simple view",
-    "extendedView": "Detailed view",
     "periods": {
       "week": "Week",
       "month": "Month",
@@ -332,7 +329,12 @@
     "remainingLabel": "Left",
     "percentUsed": "{{percent}} % used",
     "counted": "Counted expenses",
-    "noCounted": "No counted expenses for this period."
+    "noCounted": "No counted expenses for this period.",
+    "emptyTitle": "No budget yet",
+    "emptyHint": "A budget sets an amount per category and shows what is left.",
+    "createFirst": "Create my first budget",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details"
   },
   "goals": {
     "title": "Savings goals",
