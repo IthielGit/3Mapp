@@ -1,7 +1,7 @@
 import type { Transaction, Wallet } from "../db/entities";
 import { sumMinor, type CurrencyCode, type Minor } from "../lib/money";
 import { contains, localDayKey, type Period } from "./period";
-import { isEarning, isSpending, totals, type Totals } from "./totals";
+import { countedAmount, isEarning, isSpending, totals, type Totals } from "./totals";
 
 /** Transactions de la devise choisie, comprises dans la période, dans l'ordre chronologique. */
 export function transactionsIn(
@@ -55,10 +55,10 @@ export function expenseByCategory(
   for (const t of expenses) {
     const key = t.categoryId ?? null;
     const bucket = groups.get(key);
-    if (bucket) bucket.push(t.amount);
-    else groups.set(key, [t.amount]);
+    if (bucket) bucket.push(countedAmount(t));
+    else groups.set(key, [countedAmount(t)]);
   }
-  const total = sumMinor(expenses.map((t) => t.amount));
+  const total = sumMinor(expenses.map((t) => countedAmount(t)));
   return [...groups.entries()]
     .map(([categoryId, amounts]) => {
       const amount = sumMinor(amounts);
@@ -79,7 +79,7 @@ export interface Bucket {
   expense: Minor;
 }
 
-/** Totaux par seau (semaine, mois…). Virements et ajustements exclus. */
+/** Totaux par seau (semaine, mois…). Virements exclus ; réconciliations comptées en revenu ou dépense. */
 export function bucketTotals(
   transactions: readonly Transaction[],
   keyOf: (t: Transaction) => string,
@@ -92,8 +92,8 @@ export function bucketTotals(
     if (t.status !== "posted") continue;
     const bucket = result.get(keyOf(t));
     if (!bucket) continue;
-    if (isEarning(t)) bucket.income.push(t.amount);
-    if (isSpending(t)) bucket.expense.push(t.amount);
+    if (isEarning(t)) bucket.income.push(countedAmount(t));
+    if (isSpending(t)) bucket.expense.push(countedAmount(t));
   }
   return keys.map((key) => {
     const bucket = result.get(key) ?? { income: [], expense: [] };
@@ -105,7 +105,7 @@ export function bucketTotals(
 export function topExpenses(transactions: readonly Transaction[], count = 10): Transaction[] {
   return transactions
     .filter((t) => isSpending(t) && t.status === "posted")
-    .sort((a, b) => b.amount - a.amount || b.date.localeCompare(a.date))
+    .sort((a, b) => countedAmount(b) - countedAmount(a) || b.date.localeCompare(a.date))
     .slice(0, count);
 }
 
