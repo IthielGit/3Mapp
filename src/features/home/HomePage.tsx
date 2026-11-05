@@ -157,10 +157,10 @@ export function HomePage() {
   const cycle = cycleView.summary;
   const restView = cycleView.rest;
   // Les comptes comptés dans « Disponible » sont nommés, pour que l'utilisateur sache ce qui est inclus.
-  const countedNames = active
+  const countedList = active
     .filter((w) => w.includeInTotal && w.group !== "savings")
-    .map((w) => w.name)
-    .join(", ");
+    .map((w) => w.name);
+  const countedNames = countedList.join(", ");
   const cycleLocale = i18n.language.startsWith("en") ? enUS : fr;
   const cycleLastDay = new Date(cycle.period.to.getTime() - 1);
   function payLine(pay: PayStatus) {
@@ -361,7 +361,9 @@ export function HomePage() {
             </p>
           ) : null}
           <p className="text-xs text-slate-600 dark:text-muted">
-            {t("cycle.accounts", { names: countedNames || "—" })}{" "}
+            {countedList.length <= 2
+              ? t("cycle.accounts", { names: countedNames || "—" })
+              : t("cycle.accountsCount", { count: countedList.length })}{" "}
             <Link to="/plus/wallets" className="inline-flex min-h-[44px] items-center underline">
               {t("cycle.editAccounts")}
             </Link>

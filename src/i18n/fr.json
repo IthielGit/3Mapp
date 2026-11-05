@@ -690,6 +690,7 @@
     "savedToGoals": "Épargne versée : {{amount}}",
     "debtsPaid": "Dettes et prêts : {{amount}}",
     "noStartBalance": "Indiquez le solde de départ de vos comptes.",
-    "empty": "Ajoutez un revenu ou une dépense pour voir combien vous pouvez dépenser."
+    "empty": "Ajoutez un revenu ou une dépense pour voir combien vous pouvez dépenser.",
+    "accountsCount": "Comptes pris en compte : {{count}}"
   }
 }

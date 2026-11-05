@@ -690,6 +690,7 @@
     "savedToGoals": "Tahiry natao ho an’ny tanjona: {{amount}}",
     "debtsPaid": "Trosa sy andraikitra: {{amount}}",
     "noStartBalance": "Ampidiro ny vola niandohana amin’ny kaontinao.",
-    "empty": "Ampio vola miditra na fandaniana iray mba hahitana ny azo lanjaina."
+    "empty": "Ampio vola miditra na fandaniana iray mba hahitana ny azo lanjaina.",
+    "accountsCount": "Kaonty voaisa : {{count}}"
   }
 }
