@@ -496,6 +496,7 @@ test("persona 5 — changement de téléphone : sauvegarde, restauration, hors l
     // 3. Confirmer dans la feuille (dialogue).
     await next.getByRole("button", { name: "Réinitialiser le compte", exact: true }).click();
     await next.getByRole("button", { name: "Oui, recommencer", exact: true }).first().click();
+    await next.getByRole("dialog").getByRole("textbox").fill("RÉINITIALISER");
     await next.getByRole("dialog").getByRole("button", { name: "Oui, recommencer", exact: true }).click();
     await expect(
       next.getByRole("heading", { level: 1, name: "Vos finances deviennent simples !" }),

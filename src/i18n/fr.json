@@ -71,7 +71,9 @@
     "groups": {
       "manage": "Gestion",
       "data": "Données et sécurité",
-      "appearance": "Apparence"
+      "appearance": "Apparence",
+      "myData": "Mes données",
+      "myAccount": "Mon compte"
     },
     "budgets": "Budgets"
   },
@@ -114,8 +116,8 @@
   "pwa": {
     "updateAvailable": "Nouvelle version disponible.",
     "update": "Mettre à jour",
-    "installTitle": "Installer l'application",
-    "installHint": "Ajoutez Money Manager à l'écran d'accueil pour l'ouvrir comme une app, même hors ligne.",
+    "installTitle": "Installer Fundora",
+    "installHint": "Ajoutez Fundora à l’écran d’accueil pour l’ouvrir comme une app, même hors ligne.",
     "installButton": "Installer l'application",
     "installDone": "Application installée.",
     "installIosHint": "Sur iPhone ou iPad : touchez Partager, puis « Sur l'écran d'accueil »."
@@ -630,7 +632,7 @@
     "weekStart": "Premier jour de la semaine",
     "monthStart": "Mon mois commence le",
     "monthDay": "Le {{day}}",
-    "keypadZeros": "Touche zéros du clavier",
+    "keypadZeros": "Touche rapide des zéros",
     "ignoreFuture": "Ignorer le solde futur",
     "ignoreFutureHint": "Les soldes n'incluent que les transactions datées jusqu'à aujourd'hui.",
     "reminder": "Rappel de saisie",
@@ -664,7 +666,9 @@
     "payOnFridayHint": "Exemple : le 28 est un samedi, le cycle commence le vendredi 27.",
     "payIncome": "Mon revenu de paie",
     "payIncomeNone": "Aucun pour l’instant",
-    "payIncomeHint": "Sert à savoir si votre paie est arrivée."
+    "payIncomeHint": "Sert à savoir si votre paie est arrivée.",
+    "keypadZerosHint": "Nombre de zéros ajoutés d’un coup quand vous saisissez un montant. 000 par défaut.",
+    "advanced": "Avancé"
   },
   "repeat": {
     "label": "Répéter (récurrence)",
@@ -687,7 +691,9 @@
     "title": "Réinitialiser le compte ?",
     "warning": "Toutes vos données sur cet appareil seront effacées. Pensez à télécharger une sauvegarde avant si vous voulez la garder.",
     "confirm": "Oui, recommencer",
-    "group": "Réinitialisation"
+    "group": "Réinitialisation",
+    "typeWord": "RÉINITIALISER",
+    "typeLabel": "Pour confirmer, tapez {{word}} :"
   },
   "forms": {
     "missingName": "Donnez un nom.",
@@ -915,14 +921,14 @@
       "action": {
         "suspend": "Compte suspendu",
         "reactivate": "Compte réactivé",
-        "delete": "Compte supprimé",
-   "consult_start": "Consultation ouverte",
-   "confirmDelete": "Supprimer cette entrée du journal ? Elle disparaîtra définitivement.",
-   "delete": "Supprimer",
-   "consult_end": "Consultation fermée",
-   "role_super_admin": "Passé super administrateur",
-   "role_user": "Passé utilisateur standard"
+        "delete": "Supprimer",
+        "consult_start": "Consultation ouverte",
+        "confirmDelete": "Supprimer cette entrée du journal ? Elle disparaîtra définitivement.",
+        "consult_end": "Consultation fermée",
+        "role_super_admin": "Passé super administrateur",
+        "role_user": "Passé utilisateur standard"
       }
-    }
+    },
+    "badge": "Admin"
   }
 }

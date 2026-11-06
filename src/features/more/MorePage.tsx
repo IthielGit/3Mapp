@@ -3,15 +3,14 @@ import { PageTitle } from "../../components/PageHeader";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../../lib/theme-context";
 import { InstallCard } from "../../components/PwaComponents";
 import { PreferencesSection } from "../settings/PreferencesSection";
 import { ResetAccountSection } from "../settings/ResetAccountSection";
 import { useAccount } from "../account/AccountProvider";
 import { isSuperAdmin } from "../account/profile";
 
-/** Ligne de liste cliquable avec chevron : pour les pages de réglages et de gestion. */
-function NavRow({ to, icon, children }: { to: string; icon: IconName; children: ReactNode }) {
+/** Ligne de liste cliquable avec chevron. `badge` signale une zone particulière (ex. administration). */
+function NavRow({ to, icon, badge, children }: { to: string; icon: IconName; badge?: string; children: ReactNode }) {
   return (
     <li>
       <Link
@@ -27,39 +26,48 @@ function NavRow({ to, icon, children }: { to: string; icon: IconName; children: 
           </span>
           {children}
         </span>
-        <span aria-hidden="true" className="text-xl text-neutral-600">
-          ›
+        <span className="flex items-center gap-2">
+          {badge ? (
+            <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-900 dark:bg-brand-900 dark:text-brand-100">
+              {badge}
+            </span>
+          ) : null}
+          <span aria-hidden="true" className="text-xl text-neutral-600 dark:text-muted">
+            ›
+          </span>
         </span>
       </Link>
     </li>
   );
 }
 
+/** Section de l'écran Paramètres : un titre clair, puis un bloc de lignes. */
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="px-1 text-sm font-semibold text-neutral-600 dark:text-muted">
-        {title}
-      </h2>
+      <h2 className="px-1 text-sm font-semibold text-neutral-600 dark:text-muted">{title}</h2>
       <div className="rounded-card border border-neutral-200 dark:border-white/15">{children}</div>
     </section>
   );
 }
 
+/**
+ * Paramètres, organisé par intention : préférences, données, compte, administration (super administrateurs),
+ * puis la réinitialisation tout en bas, la seule action destructive de l'écran.
+ */
 export function MorePage() {
   const { t } = useTranslation();
-  const { theme, setTheme } = useTheme();
   const account = useAccount();
   const profile = account.status === "signedIn" || account.status === "suspended" ? account.profile : undefined;
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-8">
       <PageTitle className="text-2xl font-semibold">{t("pages.more.title")}</PageTitle>
 
       <PreferencesSection />
 
-      <Group title={t("more.groups.manage")}>
-        <nav aria-label={t("more.groups.manage")}>
+      <Group title={t("more.groups.myData")}>
+        <nav aria-label={t("more.groups.myData")}>
           <ul className="divide-y divide-neutral-100 dark:divide-white/10">
             <NavRow to="/plus/wallets" icon="wallet">
               {t("more.wallets")}
@@ -83,22 +91,10 @@ export function MorePage() {
         </nav>
       </Group>
 
-      {isSuperAdmin(profile) ? (
-        <Group title={t("admin.group")}>
-          <nav aria-label={t("admin.group")}>
-            <ul className="divide-y divide-neutral-100 dark:divide-white/10">
-              <NavRow to="/plus/admin" icon="shield">
-                {t("admin.title")}
-              </NavRow>
-            </ul>
-          </nav>
-        </Group>
-      ) : null}
-
-      <Group title={t("more.groups.data")}>
-        <nav aria-label={t("more.groups.data")}>
+      <Group title={t("more.groups.myAccount")}>
+        <nav aria-label={t("more.groups.myAccount")}>
           <ul className="divide-y divide-neutral-100 dark:divide-white/10">
-            <NavRow to="/plus/account" icon="inbox">
+            <NavRow to="/plus/account" icon="user">
               {t("account.title")}
             </NavRow>
             <NavRow to="/plus/security" icon="shield">
@@ -114,42 +110,26 @@ export function MorePage() {
         </nav>
       </Group>
 
+      <InstallCard />
+
+      {isSuperAdmin(profile) ? (
+        <Group title={t("admin.group")}>
+          <nav aria-label={t("admin.group")}>
+            <ul className="divide-y divide-neutral-100 dark:divide-white/10">
+              <NavRow to="/plus/admin" icon="crown" badge={t("admin.badge")}>
+                {t("admin.title")}
+              </NavRow>
+            </ul>
+          </nav>
+        </Group>
+      ) : null}
+
       <Group title={t("resetAccount.group")}>
         <nav aria-label={t("resetAccount.group")}>
           <ul className="divide-y divide-neutral-100 dark:divide-white/10">
             <ResetAccountSection />
           </ul>
         </nav>
-      </Group>
-
-      <InstallCard />
-
-      <Group title={t("more.groups.appearance")}>
-        <fieldset className="flex flex-col">
-          <legend className="sr-only">{t("pages.more.theme")}</legend>
-          {(["system", "light", "dark"] as const).map((mode) => (
-            <label
-              key={mode}
-              className="flex min-h-[52px] cursor-pointer items-center gap-3 px-4 font-medium"
-            >
-              <input
-                type="radio"
-                name="theme"
-                value={mode}
-                checked={theme === mode}
-                onChange={() => setTheme(mode)}
-                className="h-5 w-5 accent-brand-600"
-              />
-              {t(
-                mode === "system"
-                  ? "pages.more.themeSystem"
-                  : mode === "light"
-                    ? "pages.more.themeLight"
-                    : "pages.more.themeDark",
-              )}
-            </label>
-          ))}
-        </fieldset>
       </Group>
     </section>
   );
