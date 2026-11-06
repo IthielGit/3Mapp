@@ -50,5 +50,5 @@ Exécuté sur le projet de production, par la fonction SQL de l'éditeur Supabas
 
 ## 4. État à la date de ce document
 
-- Compte `harinosy.dev@gmail.com` : **suspendu**. Réactivation à faire (console admin, « Réactiver le compte »).
+- Compte `harinosy.dev@gmail.com` : **réactivé** par le propriétaire (après le test A2).
 - Tests marqués « NON VÉRIFIÉ (accepté) » : à refaire si le propriétaire veut une preuve.
