@@ -54,7 +54,7 @@ describe("menu du compte", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
     const menu = screen.getByRole("menu");
     const items = within(menu).getAllByRole("menuitem");
-    expect(items.map((item) => item.textContent)).toEqual(["Compte", "Paramètres", "Se déconnecter"]);
+    expect(items.map((item) => item.textContent)).toEqual(["Paramètres", "Compte", "Se déconnecter"]);
     expect(within(menu).getByText("ana@exemple.be")).toBeTruthy();
     expect(within(menu).getByRole("menuitem", { name: "Compte" }).getAttribute("href")).toBe("/plus/account");
   });
