@@ -1,5 +1,5 @@
 import { PageTitle } from "../../components/PageHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,11 @@ import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import type { Category } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
-import { restoreDefaultCategories, setCategoryArchived } from "./category-service";
+import {
+  removeDuplicateDefaultCategories,
+  restoreDefaultCategories,
+  setCategoryArchived,
+} from "./category-service";
 
 type Kind = Category["kind"];
 
@@ -15,6 +19,11 @@ export function CategoriesPage() {
   const { t } = useTranslation();
   const [kind, setKind] = useState<Kind>("expense");
   const [restoreMessage, setRestoreMessage] = useState<string | undefined>();
+
+  // Nettoie les doublons de catégories par défaut déjà présents (comptes non synchronisés inclus).
+  useEffect(() => {
+    void removeDuplicateDefaultCategories().catch(() => undefined);
+  }, []);
 
   async function restoreDefaults() {
     const added = await restoreDefaultCategories();

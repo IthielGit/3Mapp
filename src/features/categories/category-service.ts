@@ -10,10 +10,13 @@ import { createRepository } from "../../db/repositories";
 import { moveItem, sortOrderChanges } from "../../domain/ordering";
 import {
   DEFAULTS_VERSION,
+  defaultCategoryId,
   defaultCategoryVersion,
   defaultOrigin,
+  isDefaultCategoryKey,
   missingDefaultCategories,
   originBackfill,
+  type DefaultCategory,
 } from "./defaults";
 
 export type CategoryInput = Omit<Category, "id" | "createdAt" | "updatedAt" | "sortOrder">;
@@ -63,18 +66,52 @@ export async function createCategory(input: CategoryInput, database: AppDatabase
 }
 
 /**
+ * Insère les catégories par défaut données, avec leur identifiant stable. Une catégorie dont l'identifiant
+ * existe déjà n'est pas réinsérée. À appeler dans une transaction « rw » sur les catégories.
+ * Retourne le nombre de catégories insérées.
+ */
+async function insertDefaultCategories(
+  categories: readonly DefaultCategory[],
+  database: AppDatabase,
+): Promise<number> {
+  let inserted = 0;
+  for (const category of categories) {
+    const id = defaultCategoryId(category.kind, category.name);
+    if (await database.categories.get(id)) continue;
+    const sameKind = (await database.categories.toArray()).filter((c) => c.kind === category.kind);
+    const sortOrder = sameKind.reduce((max, c) => Math.max(max, c.sortOrder), -1) + 1;
+    const now = new Date().toISOString();
+    await database.categories.put(
+      categorySchema.parse({
+        id,
+        name: category.name,
+        kind: category.kind,
+        icon: category.icon,
+        color: category.color,
+        archived: false,
+        origin: defaultOrigin(category),
+        sortOrder,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+    inserted++;
+  }
+  return inserted;
+}
+
+/**
  * Ajoute les catégories par défaut qui manquent (jamais de doublon, rien n'est modifié ni supprimé).
+ * La liste des manquantes est calculée dans la transaction, pour qu'un appel concurrent ne double rien.
  * Retourne le nombre de catégories ajoutées.
  */
 export async function restoreDefaultCategories(database: AppDatabase = defaultDb): Promise<number> {
-  const missing = missingDefaultCategories(await database.categories.toArray());
-  if (missing.length === 0) return 0;
+  let added = 0;
   await database.transaction("rw", database.categories, async () => {
-    for (const category of missing) {
-      await createCategory({ ...category, archived: false, origin: defaultOrigin(category) }, database);
-    }
+    const missing = missingDefaultCategories(await database.categories.toArray());
+    added = await insertDefaultCategories(missing, database);
   });
-  return missing.length;
+  return added;
 }
 
 /**
@@ -89,17 +126,47 @@ export async function applyDefaultCategoryUpdates(database: AppDatabase = defaul
   const stored = settings.defaultCategoriesVersion ?? 1;
   if (stored >= DEFAULTS_VERSION) return 0;
 
-  const toAdd = missingDefaultCategories(await database.categories.toArray()).filter(
-    (d) => defaultCategoryVersion(d) > stored,
-  );
-
+  let added = 0;
   await database.transaction("rw", database.categories, database.settings, async () => {
-    for (const category of toAdd) {
-      await createCategory({ ...category, archived: false, origin: defaultOrigin(category) }, database);
-    }
+    const toAdd = missingDefaultCategories(await database.categories.toArray()).filter(
+      (d) => defaultCategoryVersion(d) > stored,
+    );
+    added = await insertDefaultCategories(toAdd, database);
     await database.settings.update(settings.id, { defaultCategoriesVersion: DEFAULTS_VERSION });
   });
-  return toAdd.length;
+  return added;
+}
+
+/**
+ * Fusionne les catégories par défaut dupliquées (même nature, même nom du jeu par défaut) dans une seule.
+ * Les références sont déplacées vers la catégorie conservée : active de préférence, puis rattachée au jeu
+ * par défaut, puis la plus ancienne. Retourne le nombre de doublons supprimés.
+ */
+export async function removeDuplicateDefaultCategories(database: AppDatabase = defaultDb): Promise<number> {
+  const groups = new Map<string, Category[]>();
+  for (const category of await database.categories.toArray()) {
+    const key = defaultOrigin(category);
+    if (!isDefaultCategoryKey(key)) continue;
+    groups.set(key, [...(groups.get(key) ?? []), category]);
+  }
+
+  let removed = 0;
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const [keep, ...duplicates] = [...group].sort(
+      (a, b) =>
+        Number(a.archived) - Number(b.archived) ||
+        Number(b.origin !== undefined) - Number(a.origin !== undefined) ||
+        a.createdAt.localeCompare(b.createdAt) ||
+        a.id.localeCompare(b.id),
+    );
+    if (!keep) continue;
+    for (const duplicate of duplicates) {
+      await mergeCategories(duplicate.id, keep.id, database);
+      removed++;
+    }
+  }
+  return removed;
 }
 
 /** Donne l'origine « par défaut » aux catégories qui en ont une sans la porter encore (une seule fois). */
