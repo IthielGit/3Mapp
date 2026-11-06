@@ -25,7 +25,11 @@ import {
   shouldApplyTombstone,
 } from "../../domain/sync";
 import type { TableName } from "../backup/backup-format";
-import { applyDefaultCategoryUpdates, restoreDefaultCategories } from "../categories/category-service";
+import {
+  applyDefaultCategoryUpdates,
+  removeDuplicateDefaultCategories,
+  restoreDefaultCategories,
+} from "../categories/category-service";
 import { decodeRecord, encodeRecord } from "./sync-records";
 
 const PUSH_BATCH = 100;
@@ -311,6 +315,8 @@ async function runSyncOnce(client: SupabaseClient, database: AppDatabase): Promi
     await flushOutbox(database);
     const pushed = await pushOutbox(client, database);
     const pulled = await pullChanges(client, database);
+    // Doublons de catégories par défaut venus de plusieurs appareils : fusionnés après la récupération.
+    await removeDuplicateDefaultCategories(database);
     // Nouvelles catégories par défaut : proposées une fois à ce compte, après la fusion (pas de doublon).
     // Le numéro de version ainsi mis à jour part aussi vers le serveur.
     await applyDefaultCategoryUpdates(database);

@@ -61,6 +61,34 @@ export function defaultOrigin(category: Pick<DefaultCategory, "kind" | "name">):
   return defaultKey(category.kind, category.name);
 }
 
+/** Vrai si la clé (nature|nom) désigne une catégorie du jeu par défaut. */
+export function isDefaultCategoryKey(key: string): boolean {
+  return DEFAULT_CATEGORIES.some((d) => defaultKey(d.kind, d.name) === key);
+}
+
+function hash32(input: string, seed: number): number {
+  let h = (seed ^ 0x811c9dc5) >>> 0;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h >>> 0;
+}
+
+/**
+ * Identifiant stable (UUID, format v4) d'une catégorie par défaut, dérivé de sa nature et de son nom.
+ * Deux appareils qui créent le même jeu produisent les mêmes identifiants : la synchro fusionne au lieu
+ * de dupliquer.
+ */
+export function defaultCategoryId(kind: DefaultCategory["kind"], name: string): string {
+  const key = defaultKey(kind, name);
+  const hex = [0x811c9dc5, 0x9e3779b9, 0x85ebca6b, 0xc2b2ae35]
+    .map((seed) => hash32(key, seed).toString(16).padStart(8, "0"))
+    .join("");
+  const variant = "89ab"[parseInt(hex[16] ?? "0", 16) & 3];
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
 /**
  * Catégories existantes sans origine qui correspondent à une catégorie par défaut : on leur donne
  * l'origine (une fois). Une catégorie déjà rattachée n'est pas revendiquée deux fois.
