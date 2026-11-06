@@ -467,7 +467,7 @@ export function HomePage() {
         </div>
         <div className="h-16">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={weekExpenses}>
+            <BarChart accessibilityLayer={false} data={weekExpenses}>
               <Bar dataKey="value" radius={[8, 8, 4, 4]} isAnimationActive={false}>
                 {weekExpenses.map((entry, i) => (
                   <Cell key={entry.day} fill={i === weekExpenses.length - 1 ? "#0B7E9D" : "#4a9d91"} />

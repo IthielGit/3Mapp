@@ -1,3 +1,4 @@
+import { onRadioGroupKeyDown } from "../../components/radio-keys";
 import { Icon, type IconName } from "../../components/Icon";
 import { useCallback, useMemo, useState } from "react";
 import { addMonths, format } from "date-fns";
@@ -405,13 +406,19 @@ export function StatsPage() {
               <option value="savings">{t("stats.savings")}</option>
             </select>
             {REPRS[dataset].length > 1 ? (
-              <div role="radiogroup" aria-label={t("stats.representation")} className="flex gap-1">
+              <div
+                role="radiogroup"
+                aria-label={t("stats.representation")}
+                onKeyDown={onRadioGroupKeyDown}
+                className="flex gap-1"
+              >
                 {REPRS[dataset].map((r) => (
                   <button
                     key={r}
                     type="button"
                     role="radio"
                     aria-checked={repr === r}
+                    tabIndex={repr === r ? 0 : -1}
                     onClick={() => setRepr(r)}
                     aria-label={t(`stats.repr.${r}`)}
                     title={t(`stats.repr.${r}`)}
@@ -431,13 +438,19 @@ export function StatsPage() {
 
         {dataset === "savings" ? (
           <div className="flex flex-col gap-3">
-            <div role="radiogroup" aria-label={t("stats.savingsDuration")} className="flex gap-1">
+            <div
+              role="radiogroup"
+              aria-label={t("stats.savingsDuration")}
+              onKeyDown={onRadioGroupKeyDown}
+              className="flex gap-1"
+            >
               {([3, 6, 12] as const).map((n) => (
                 <button
                   key={n}
                   type="button"
                   role="radio"
                   aria-checked={savingsMonths === n}
+                  tabIndex={savingsMonths === n ? 0 : -1}
                   onClick={() => setSavingsMonths(n)}
                   className={`min-h-[32px] rounded-full px-3 text-xs font-medium ${
                     savingsMonths === n
@@ -489,10 +502,10 @@ export function StatsPage() {
         ) : dataset === "categories" && repr === "donut" ? (
           <CategoryDonut items={categoryItems} fmt={fmt} />
         ) : (
-          <div className="h-64" role="img" aria-label={t("stats.chartAria")}>
+          <div className="h-64" role="img" aria-labelledby="stats-chart-title">
             <ResponsiveContainer width="100%" height="100%">
               {dataset === "savings" && repr === "line" ? (
-                <LineChart data={savingsCumulative}>
+                <LineChart accessibilityLayer={false} data={savingsCumulative}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
                   <YAxis
@@ -512,7 +525,7 @@ export function StatsPage() {
                   />
                 </LineChart>
               ) : dataset === "savings" ? (
-                <BarChart data={savingsRows}>
+                <BarChart accessibilityLayer={false} data={savingsRows}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
                   <YAxis
@@ -533,7 +546,7 @@ export function StatsPage() {
                   </Bar>
                 </BarChart>
               ) : dataset === "categories" ? (
-                <BarChart data={categoryData} layout="vertical" margin={{ left: 4, right: 8 }}>
+                <BarChart accessibilityLayer={false} data={categoryData} layout="vertical" margin={{ left: 4, right: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} horizontal={false} />
                   <XAxis
                     type="number"
@@ -561,7 +574,7 @@ export function StatsPage() {
                   </Bar>
                 </BarChart>
               ) : dataset === "weeks" && repr === "line" ? (
-                <LineChart data={weekData}>
+                <LineChart accessibilityLayer={false} data={weekData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
                   <YAxis
@@ -589,7 +602,7 @@ export function StatsPage() {
                   />
                 </LineChart>
               ) : dataset === "weeks" ? (
-                <BarChart data={weekData}>
+                <BarChart accessibilityLayer={false} data={weekData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
                   <YAxis
@@ -615,7 +628,7 @@ export function StatsPage() {
                   />
                 </BarChart>
               ) : (
-                <LineChart data={evolution}>
+                <LineChart accessibilityLayer={false} data={evolution}>
                   <CartesianGrid strokeDasharray="3 3" stroke={grid} vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: tick, fontSize: 11 }} />
                   <YAxis

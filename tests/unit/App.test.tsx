@@ -50,7 +50,7 @@ afterEach(async () => {
 describe("navigation mobile", () => {
   it("affiche les 5 onglets de la barre basse", async () => {
     renderAt("/");
-    const nav = await screen.findByRole("navigation", { name: "Accueil" }, { timeout: 8000 });
+    const nav = await screen.findByRole("navigation", { name: "Navigation mobile" }, { timeout: 8000 });
     for (const label of ["Accueil", "Transactions", "Budgets", "Visualisation"]) {
       expect(nav).toHaveTextContent(label);
     }

@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
@@ -26,10 +26,14 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
   const titleId = useId();
   const [present, setPresent] = useState(open);
   const [visible, setVisible] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Élément qui avait le focus avant l'ouverture (bouton « Nouvelle transaction », etc.) : on y revient à la fermeture.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   // Aucun setState de façon synchrone dans l'effet : tout passe par des minuteurs ou des images.
   useEffect(() => {
     if (open) {
+      returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const mount = window.setTimeout(() => setPresent(true));
       // Deux images : la feuille doit d'abord exister hors écran, puis glisser.
       const frame = window.requestAnimationFrame(() =>
@@ -44,9 +48,16 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
     const exit = window.setTimeout(() => {
       setPresent(false);
       setVisible(false);
+      const back = returnFocusRef.current;
+      if (back?.isConnected) back.focus({ preventScroll: true });
     }, EXIT_MS);
     return () => window.clearTimeout(exit);
   }, [open]);
+
+  // Le focus entre dans la feuille dès qu'elle est présente : Tab reste à l'intérieur, Échap ferme.
+  useEffect(() => {
+    if (open && present) panelRef.current?.focus({ preventScroll: true });
+  }, [open, present]);
 
   useEffect(() => {
     if (!open) return;
@@ -72,6 +83,8 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
         }`}
       />
       <div
+        ref={panelRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

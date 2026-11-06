@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ComponentType } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
+import { Announcer } from "./components/Announcer";
 import { RequireOnboarding } from "./components/RequireOnboarding";
 import { NotFoundPage } from "./components/NotFoundPage";
 import { VisualisationLayout } from "./features/visualisation/VisualisationLayout";
@@ -125,6 +126,7 @@ export default function App() {
         </div>
       }
     >
+      <Announcer />
       <Routes>
         <Route path="onboarding" element={<OnboardingPage />} />
         {/* Restauration sur un navigateur vierge : accessible avant l'onboarding (SPEC §5.14). */}

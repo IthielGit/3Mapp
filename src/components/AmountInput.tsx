@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../db/database";
@@ -27,7 +27,12 @@ interface AmountInputProps {
   onExpressionChange: (expression: string) => void;
   currency: CurrencyCode;
   label: string;
+  /** Appelé par Entrée une fois le calcul fait (ferme le pavé, sans enregistrer). */
+  onConfirm?: () => void;
 }
+
+/** Caractères acceptés au clavier physique : chiffres et opérateurs de la calculatrice. */
+const TYPABLE = /^[0-9,+\-−*/×÷()]$/;
 
 /**
  * Saisie du montant avec calculatrice intégrée (SPEC §5.4) : + − × ÷, décimales,
@@ -35,7 +40,7 @@ interface AmountInputProps {
  * Les touches s'insèrent à la position du curseur, et « ⌫ » efface le caractère qui le précède.
  * Le curseur reste visible dans le champ, même quand on touche le pavé.
  */
-export function AmountInput({ expression, onExpressionChange, currency, label }: AmountInputProps) {
+export function AmountInput({ expression, onExpressionChange, currency, label, onConfirm }: AmountInputProps) {
   // Touche de zéros configurable dans Paramètres : « 00 » ou « 000 » (défaut : 000).
   const zeros =
     useLiveQuery(async () => (await db.settings.toCollection().first())?.keypadZeros, []) ?? 3;
@@ -56,6 +61,11 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
     setCaretState(value);
   }
 
+  // Le champ prend le focus à l'ouverture du pavé : les touches du clavier vont directement dans le montant.
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   useLayoutEffect(() => {
     const el = inputRef.current;
     if (el && pendingCaret.current !== null) {
@@ -63,6 +73,28 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
       pendingCaret.current = null;
     }
   }, [expression]);
+
+  /** Clavier physique : chiffres, virgule ou point, opérateurs, Retour arrière, Entrée pour valider. */
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (/[+\-−*/×÷]/.test(expression.slice(1))) equals();
+      onConfirm?.();
+      return;
+    }
+    if (event.key === "." || event.key === ",") {
+      event.preventDefault();
+      press(",");
+      return;
+    }
+    if (event.key === "x" || event.key === "X") {
+      event.preventDefault();
+      press("×");
+      return;
+    }
+    if (event.key.length === 1 && !TYPABLE.test(event.key)) event.preventDefault();
+  }
 
   const minor: Minor | null =
     expression.trim() === "" ? null : expressionToMinor(expression, currency);
@@ -127,6 +159,7 @@ export function AmountInput({ expression, onExpressionChange, currency, label }:
               rememberCaret(e.currentTarget);
               onExpressionChange(e.target.value);
             }}
+            onKeyDown={onKeyDown}
             onSelect={(e) => rememberCaret(e.currentTarget)}
             onKeyUp={(e) => rememberCaret(e.currentTarget)}
             onClick={(e) => rememberCaret(e.currentTarget)}

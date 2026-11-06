@@ -1,5 +1,6 @@
 import { PageTitle } from "../../components/PageHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { announce } from "../../components/announce";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -34,6 +35,8 @@ export function BudgetFormPage() {
   const [threshold, setThreshold] = useState("80");
   const [error, setError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
+  // Relie la raison du bouton « Enregistrer » désactivé au bouton (lecteurs d'écran).
+  const hintId = useId();
 
   useEffect(() => {
     if (!id) return;
@@ -95,9 +98,12 @@ export function BudgetFormPage() {
     try {
       if (existing) await updateBudget(existing.id, input);
       else await createBudget(input);
+      announce(t("a11y.saved"));
       navigate("/budgets", { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
+      const message = err instanceof Error ? err.message : t("errors.generic");
+      setError(message);
+      announce(message, "assertive");
     }
   }
 
@@ -199,12 +205,18 @@ export function BudgetFormPage() {
         </p>
       ) : null}
 
-      {missingField() ? <p className="text-sm text-neutral-600 dark:text-muted">{missingField()}</p> : null}
+      {missingField() ? <p id={hintId} className="text-sm text-neutral-600 dark:text-muted">{missingField()}</p> : null}
       <div className="flex justify-end gap-3">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}
         </button>
-        <button type="button" className={buttonPrimary} onClick={() => void save()} disabled={missingField() !== null}>
+        <button
+          type="button"
+          className={buttonPrimary}
+          onClick={() => void save()}
+          disabled={missingField() !== null}
+          aria-describedby={missingField() ? hintId : undefined}
+        >
           {t("common.save")}
         </button>
       </div>

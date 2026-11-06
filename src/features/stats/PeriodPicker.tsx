@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { buttonSecondary, inputClass } from "../../components/FormControls";
+import { onRadioGroupKeyDown } from "../../components/radio-keys";
 import type { Period, PeriodKind } from "../../domain/period";
 import type { PeriodState } from "./period-state";
 
@@ -23,6 +24,7 @@ export function PeriodPicker({ state, period, onChange, onShift }: PeriodPickerP
       <div
         role="radiogroup"
         aria-label={t("period.label")}
+        onKeyDown={onRadioGroupKeyDown}
         className="grid grid-cols-5 gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-raised"
       >
         {KINDS.map((kind) => (
@@ -31,6 +33,7 @@ export function PeriodPicker({ state, period, onChange, onShift }: PeriodPickerP
             type="button"
             role="radio"
             aria-checked={state.kind === kind}
+            tabIndex={state.kind === kind ? 0 : -1}
             onClick={() => onChange({ kind, anchor: new Date(), custom: undefined })}
             className={`min-h-[44px] rounded-md text-sm font-medium ${state.kind === kind ? "bg-white shadow dark:bg-fg dark:text-ink" : ""}`}
           >

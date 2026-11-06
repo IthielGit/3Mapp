@@ -35,7 +35,8 @@
     "calendar": "Calendrier",
     "main": "Navigation principale",
     "add": "Ajouter",
-    "visualisation": "Visualisation"
+    "visualisation": "Visualisation",
+    "mobile": "Navigation mobile"
   },
   "pages": {
     "home": {
@@ -292,7 +293,8 @@
     "erase": "Effacer",
     "noteOptional": "Note (facultatif)",
     "count_one": "{{count}} transaction",
-    "count_other": "{{count}} transactions"
+    "count_other": "{{count}} transactions",
+    "noSearchResults": "Aucun résultat pour « {{query}} »."
   },
   "errors": {
     "required": "Ce champ est obligatoire.",
@@ -820,8 +822,6 @@
     "show": "Afficher",
     "hide": "Masquer",
     "or": "ou",
-    "noAccount": "Pas encore de compte ?",
-    "haveAccount": "Déjà un compte ?",
     "device": {
       "title": "Données sur cet appareil",
       "bodyForeign": "Cet appareil contient des données d'un autre compte. Elles ne peuvent pas être fusionnées avec ce compte.",
@@ -846,12 +846,10 @@
       "deleteHint": "Supprime définitivement votre compte, vos données sur le serveur et celles de cet appareil. Exportez vos données avant si vous voulez les garder.",
       "delete": "Supprimer définitivement mon compte",
       "deleteConfirm": "Supprimer définitivement votre compte et toutes vos données ? Cette action est irréversible. Avez-vous exporté vos données ?",
-      "consent": "Un administrateur peut consulter les données de votre compte.",
       "error": {
         "network": "Suppression impossible sans connexion. Rien n'a été effacé.",
         "unknown": "La suppression a échoué. Rien n'a été effacé. Réessayez."
-      },
-      "consentTitle": "Vos données"
+      }
     }
   },
   "admin": {
@@ -870,7 +868,8 @@
       "active": "Actif",
       "suspended": "Suspendu"
     },
-    "recordCount": "{{count}} enregistrement(s)",
+    "recordCount_one": "{{count}} enregistrement",
+    "recordCount_other": "{{count}} enregistrements",
     "lastSync": "Synchro : {{date}}",
     "neverSynced": "Jamais synchronisé",
     "field": {
@@ -936,5 +935,11 @@
       }
     },
     "badge": "Admin"
+  },
+  "a11y": {
+    "saved": "Enregistré.",
+    "deleted": "Supprimé.",
+    "syncDone": "Synchronisation terminée.",
+    "syncFailed": "La synchronisation a échoué."
   }
 }
