@@ -87,6 +87,14 @@ textarea {
   color-scheme: dark;
 }
 
+/* Changement de thème : fondu croisé de la page (transition de vue, opacité seule), 220 ms.
+   Aucun élément n'est forcé en transition : les transitions des composants restent intactes. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease;
+}
+
 /* Retour au toucher : un bouton répond immédiatement à l'appui (transition ciblée, pas « all »). */
 button:not(:disabled),
 a {

@@ -1,6 +1,6 @@
 import { onRadioGroupKeyDown } from "./radio-keys";
 
-const ICON_CHOICES = [
+const ICON_CHOICES: readonly string[] = [
   "🏦",
   "💵",
   "📱",
