@@ -139,6 +139,13 @@
       "text": "Tout est stocké sur cet appareil, hors ligne. Vous gardez le contrôle des sauvegardes."
     },
     "settingsTitle": "Langue et devise",
+    "currencyTitle": "Votre devise",
+    "signedInAs": "Connecté en tant que",
+    "notYou": "Pas vous ? Se déconnecter",
+    "syncRequiredTitle": "Synchronisation nécessaire",
+    "syncRequiredBody": "Nous n’avons pas pu récupérer les données de votre compte. Vérifiez votre connexion : rien n’est effacé et aucune configuration n’est demandée.",
+    "syncFailed": "Toujours hors ligne ou injoignable. Réessayez dans un instant.",
+    "retry": "Réessayer",
     "language": "Langue",
     "currency": "Devise principale",
     "walletTitle": "Votre premier portefeuille",

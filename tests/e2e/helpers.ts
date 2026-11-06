@@ -3,11 +3,8 @@ import type { Page } from "@playwright/test";
 /** Parcourt l'onboarding complet via l'interface (premier lancement). */
 export async function completeOnboardingUi(page: Page, walletName = "Compte BNI"): Promise<void> {
   await page.goto("/");
-  await page
-    .getByRole("heading", { level: 1, name: "Vos finances deviennent simples !" })
-    .waitFor();
-  await page.getByRole("button", { name: "Commencer" }).click();
-  // Deux écrans seulement : langue et devise, puis le compte et son solde.
+  // Pas d'écran d'introduction : la connexion en tient lieu. Deux écrans : devise, puis le compte et son solde.
+  await page.getByRole("heading", { level: 1, name: "Votre devise" }).waitFor();
   await page.getByRole("button", { name: "Suivant" }).click();
   await page.getByLabel("Nom").fill(walletName);
   await page.getByRole("button", { name: "Terminer" }).click();
