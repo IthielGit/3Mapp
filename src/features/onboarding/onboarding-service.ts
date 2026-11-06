@@ -2,7 +2,7 @@ import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { currencySchema, settingsSchema, type Wallet } from "../../db/entities";
 import { createRepository } from "../../db/repositories";
 import { createCategory } from "../categories/category-service";
-import { DEFAULT_CATEGORIES } from "../categories/defaults";
+import { DEFAULT_CATEGORIES, defaultOrigin } from "../categories/defaults";
 import { createWallet } from "../wallets/wallet-service";
 import { CURRENCIES, type CurrencyCode, type Minor } from "../../lib/money";
 import type { PayChoice } from "../cycle/PaySetupForm";
@@ -77,7 +77,10 @@ export async function completeOnboarding(
 
       let salaryId: string | undefined;
       for (const category of DEFAULT_CATEGORIES) {
-        const created = await createCategory({ ...category, archived: false }, database);
+        const created = await createCategory(
+          { ...category, archived: false, origin: defaultOrigin(category) },
+          database,
+        );
         if (category.kind === "income" && category.name === "Salaire") salaryId = created.id;
       }
       // Paie à date fixe : la catégorie « Salaire » par défaut est celle de la paie.

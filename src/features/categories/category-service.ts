@@ -8,7 +8,13 @@ import {
 } from "../../db/entities";
 import { createRepository } from "../../db/repositories";
 import { moveItem, sortOrderChanges } from "../../domain/ordering";
-import { DEFAULTS_VERSION, defaultCategoriesAfter, missingDefaultCategories } from "./defaults";
+import {
+  DEFAULTS_VERSION,
+  defaultCategoryVersion,
+  defaultOrigin,
+  missingDefaultCategories,
+  originBackfill,
+} from "./defaults";
 
 export type CategoryInput = Omit<Category, "id" | "createdAt" | "updatedAt" | "sortOrder">;
 
@@ -65,7 +71,7 @@ export async function restoreDefaultCategories(database: AppDatabase = defaultDb
   if (missing.length === 0) return 0;
   await database.transaction("rw", database.categories, async () => {
     for (const category of missing) {
-      await createCategory({ ...category, archived: false }, database);
+      await createCategory({ ...category, archived: false, origin: defaultOrigin(category) }, database);
     }
   });
   return missing.length;
@@ -79,22 +85,33 @@ export async function restoreDefaultCategories(database: AppDatabase = defaultDb
 export async function applyDefaultCategoryUpdates(database: AppDatabase = defaultDb): Promise<number> {
   const settings = await database.settings.toCollection().first();
   if (!settings) return 0;
+  await backfillCategoryOrigins(database);
   const stored = settings.defaultCategoriesVersion ?? 1;
   if (stored >= DEFAULTS_VERSION) return 0;
 
-  const existing = await database.categories.toArray();
-  const present = new Set(existing.map((c) => `${c.kind}|${c.name.trim().toLocaleLowerCase("fr")}`));
-  const toAdd = defaultCategoriesAfter(stored).filter(
-    (d) => !present.has(`${d.kind}|${d.name.trim().toLocaleLowerCase("fr")}`),
+  const toAdd = missingDefaultCategories(await database.categories.toArray()).filter(
+    (d) => defaultCategoryVersion(d) > stored,
   );
 
   await database.transaction("rw", database.categories, database.settings, async () => {
     for (const category of toAdd) {
-      await createCategory({ ...category, archived: false }, database);
+      await createCategory({ ...category, archived: false, origin: defaultOrigin(category) }, database);
     }
     await database.settings.update(settings.id, { defaultCategoriesVersion: DEFAULTS_VERSION });
   });
   return toAdd.length;
+}
+
+/** Donne l'origine « par défaut » aux catégories qui en ont une sans la porter encore (une seule fois). */
+export async function backfillCategoryOrigins(database: AppDatabase = defaultDb): Promise<number> {
+  const updates = originBackfill(await database.categories.toArray());
+  if (updates.length === 0) return 0;
+  await database.transaction("rw", database.categories, async () => {
+    for (const update of updates) {
+      await database.categories.update(update.id, { origin: update.origin });
+    }
+  });
+  return updates.length;
 }
 
 export async function updateCategory(

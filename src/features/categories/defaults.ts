@@ -45,10 +45,40 @@ function defaultKey(kind: DefaultCategory["kind"], name: string): string {
  * on ne recrée pas un doublon, l'utilisateur la restaure depuis la liste des archives.
  */
 export function missingDefaultCategories(
-  existing: readonly { name: string; kind: DefaultCategory["kind"] }[],
+  existing: readonly { name: string; kind: DefaultCategory["kind"]; origin?: string }[],
 ): DefaultCategory[] {
   const present = new Set(existing.map((c) => defaultKey(c.kind, c.name)));
-  return DEFAULT_CATEGORIES.filter((d) => !present.has(defaultKey(d.kind, d.name)));
+  const origins = new Set(existing.map((c) => c.origin).filter((o): o is string => o !== undefined));
+  // Présente si une catégorie porte son nom d'origine, ou son origine, même renommée.
+  return DEFAULT_CATEGORIES.filter((d) => {
+    const key = defaultKey(d.kind, d.name);
+    return !present.has(key) && !origins.has(key);
+  });
+}
+
+/** Origine d'une catégorie créée à partir du jeu par défaut. */
+export function defaultOrigin(category: Pick<DefaultCategory, "kind" | "name">): string {
+  return defaultKey(category.kind, category.name);
+}
+
+/**
+ * Catégories existantes sans origine qui correspondent à une catégorie par défaut : on leur donne
+ * l'origine (une fois). Une catégorie déjà rattachée n'est pas revendiquée deux fois.
+ */
+export function originBackfill(
+  existing: readonly { id: string; name: string; kind: DefaultCategory["kind"]; origin?: string }[],
+): { id: string; origin: string }[] {
+  const claimed = new Set(existing.map((c) => c.origin).filter((o): o is string => o !== undefined));
+  const updates: { id: string; origin: string }[] = [];
+  for (const category of existing) {
+    if (category.origin !== undefined) continue;
+    const key = defaultKey(category.kind, category.name);
+    const isDefault = DEFAULT_CATEGORIES.some((d) => defaultKey(d.kind, d.name) === key);
+    if (!isDefault || claimed.has(key)) continue;
+    updates.push({ id: category.id, origin: key });
+    claimed.add(key);
+  }
+  return updates;
 }
 
 /**
