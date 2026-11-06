@@ -1,6 +1,7 @@
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useTranslation } from "react-i18next";
+import { LogoTile } from "../../components/LogoTile";
 import {
   sendPasswordReset,
   signInWithEmail,
@@ -41,18 +42,6 @@ function GoogleMark() {
       <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
       <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
     </svg>
-  );
-}
-
-/** Tuile du logo : repère en jauge (arc et point cyan) sur fond charbon, variante sombre de la charte. */
-function LogoTile() {
-  return (
-    <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[linear-gradient(160deg,#1F2937,#0B1220)] shadow-md shadow-[#0B1220]/25">
-      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M32 12 A20 20 0 1 1 12 32" fill="none" stroke="#F4F6F7" strokeWidth="6" strokeLinecap="round" />
-        <circle cx="12" cy="32" r="4.5" fill="#10B0DC" stroke="#0B1220" strokeWidth="1.5" />
-      </svg>
-    </span>
   );
 }
 
@@ -104,7 +93,8 @@ function Field({ id, label, action, children }: { id: string; label: string; act
  * champs gris, bouton principal, puis connexion Google. L'inscription est un second écran (retour en haut à gauche).
  */
 export function AuthForm({ client }: { client: SupabaseClient }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.resolvedLanguage === "en" ? "en" : "fr";
   const emailId = useId();
   const passwordId = useId();
   const confirmId = useId();
@@ -184,7 +174,7 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
           )}
           <div className="flex flex-col items-center gap-2">
             <LogoTile />
-            <p className="text-xl font-semibold tracking-tight text-brand-600 dark:text-brand-dark">Fundora</p>
+            <p className="text-xl font-semibold tracking-tight text-brand-600 dark:text-brand-dark">{t("app.title")}</p>
           </div>
           <span />
         </div>
@@ -289,6 +279,21 @@ export function AuthForm({ client }: { client: SupabaseClient }) {
             </button>
           </p>
         )}
+
+        {/* Langue choisie ici : l'onboarding la reprend, il ne la redemande pas. */}
+        <div className="mt-6 flex justify-center">
+          <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-muted">
+            <span>{t("onboarding.language")}</span>
+            <select
+              className="min-h-[44px] rounded-lg border border-neutral-300 bg-white px-3 text-ink dark:border-white/15 dark:bg-card dark:text-fg"
+              value={language}
+              onChange={(e) => void i18n.changeLanguage(e.target.value)}
+            >
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+        </div>
       </div>
     </main>
   );

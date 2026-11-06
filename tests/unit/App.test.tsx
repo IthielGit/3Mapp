@@ -77,7 +77,7 @@ describe("premier lancement", () => {
     await Promise.all(db.tables.map((table) => table.clear()));
     renderAt("/plus/wallets");
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Vos finances deviennent simples !" }),
+      await screen.findByRole("heading", { level: 1, name: "Votre devise" }),
     ).toBeInTheDocument();
   });
 });

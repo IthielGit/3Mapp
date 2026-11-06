@@ -139,6 +139,13 @@
       "text": "Everything is stored on this device, offline. You stay in control of your backups."
     },
     "settingsTitle": "Language and currency",
+    "currencyTitle": "Your currency",
+    "signedInAs": "Signed in as",
+    "notYou": "Not you? Sign out",
+    "syncRequiredTitle": "Sync required",
+    "syncRequiredBody": "We couldn’t load your account’s data. Check your connection: nothing is erased and no setup is needed.",
+    "syncFailed": "Still offline or unreachable. Try again in a moment.",
+    "retry": "Try again",
     "language": "Language",
     "currency": "Main currency",
     "walletTitle": "Your first wallet",
