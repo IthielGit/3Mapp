@@ -10,12 +10,7 @@ import { byName } from "../../lib/compare";
 import type { Transaction } from "../../db/entities";
 import { BottomSheet } from "../../components/BottomSheet";
 import { AccountMenu } from "../../components/AccountMenu";
-import {
-  Field,
-  buttonPrimary,
-  buttonSecondary,
-  inputClass,
-} from "../../components/FormControls";
+import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import {
   filterTransactions,
   type TransactionFilters,
@@ -191,7 +186,8 @@ export function TransactionsPage() {
 
   async function deleteIds(ids: string[]) {
     if (ids.length === 0) return;
-    if (!(await askConfirm({ message: t("transactions.confirmDelete", { count: ids.length }) }))) return;
+    if (!(await askConfirm({ message: t("transactions.confirmDelete", { count: ids.length }) })))
+      return;
     const removed = await removeTransactions(ids);
     setUndo({ bundle: removed });
     setSelected(new Set());
@@ -256,9 +252,7 @@ export function TransactionsPage() {
       {/* Haut de page collé : titre, recherche, compte et résumé restent visibles pendant le défilement de la liste. */}
       <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-col gap-2 bg-canvas px-4 pb-2 pt-4 dark:bg-page">
         <header className="flex items-center justify-between gap-2">
-          <h1 className="text-xl font-semibold text-ink dark:text-fg">
-            {t("transactions.title")}
-          </h1>
+          <h1 className="text-xl font-semibold text-ink dark:text-fg">{t("transactions.title")}</h1>
           <AccountMenu />
         </header>
 
@@ -296,7 +290,11 @@ export function TransactionsPage() {
           </span>
           <div className="flex items-center gap-3">
             {activeFilterCount > 0 ? (
-              <button type="button" className="font-medium text-brand-700 dark:text-brand-dark" onClick={resetAll}>
+              <button
+                type="button"
+                className="font-medium text-brand-700 dark:text-brand-dark"
+                onClick={resetAll}
+              >
                 {t("transactions.resetFilters")}
               </button>
             ) : null}
@@ -358,7 +356,9 @@ export function TransactionsPage() {
 
       {visible.length === 0 ? (
         <p className="py-10 text-center text-neutral-600 dark:text-muted">
-          {query.trim() ? t("transactions.noSearchResults", { query: query.trim() }) : t("transactions.empty")}
+          {query.trim()
+            ? t("transactions.noSearchResults", { query: query.trim() })
+            : t("transactions.empty")}
         </p>
       ) : null}
 
@@ -480,7 +480,11 @@ export function TransactionsPage() {
         <BottomSheet open title={t("transactions.setCategory")} onClose={() => setBulkSheet(null)}>
           <div className="flex flex-col gap-4">
             <Field label={t("common.category")}>
-              <select className={inputClass} value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)}>
+              <select
+                className={inputClass}
+                value={bulkCategory}
+                onChange={(e) => setBulkCategory(e.target.value)}
+              >
                 <option value="">—</option>
                 {[...categories].sort(byName).map((c) => (
                   <option key={c.id} value={c.id}>
@@ -494,7 +498,11 @@ export function TransactionsPage() {
               className={buttonPrimary}
               onClick={() => {
                 setBulkSheet(null);
-                void applyBulk((d) => ({ ...d, categoryId: bulkCategory || undefined, subcategoryId: undefined }));
+                void applyBulk((d) => ({
+                  ...d,
+                  categoryId: bulkCategory || undefined,
+                  subcategoryId: undefined,
+                }));
               }}
             >
               {t("transactions.apply")}
@@ -507,7 +515,11 @@ export function TransactionsPage() {
         <BottomSheet open title={t("transactions.setWallet")} onClose={() => setBulkSheet(null)}>
           <div className="flex flex-col gap-4">
             <Field label={t("common.wallet")}>
-              <select className={inputClass} value={bulkWallet} onChange={(e) => setBulkWallet(e.target.value)}>
+              <select
+                className={inputClass}
+                value={bulkWallet}
+                onChange={(e) => setBulkWallet(e.target.value)}
+              >
                 <option value="">—</option>
                 {wallets.map((w) => (
                   <option key={w.id} value={w.id}>
@@ -548,56 +560,79 @@ export function TransactionsPage() {
       ) : null}
 
       {filtersOpen ? (
-        <BottomSheet open title={t("transactions.filters")} onClose={() => setFiltersOpen(false)}>
-          <div className="flex flex-col gap-4">
-            <Field label={t("transactions.period")}>
-              <select
-                className={inputClass}
-                value={draftPeriod}
-                onChange={(e) => setDraftPeriod(e.target.value as Period)}
-              >
-                <option value="all">{t("transactions.periodAll")}</option>
-                <option value="month">{t("transactions.periodMonth")}</option>
-                <option value="thirty">{t("transactions.period30")}</option>
-              </select>
-            </Field>
+        <BottomSheet
+          open
+          title={t("transactions.filters")}
+          onClose={() => setFiltersOpen(false)}
+          footer={
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" className={buttonSecondary} onClick={resetFilters}>
+                {t("transactions.reset")}
+              </button>
+              <button type="button" className={buttonPrimary} onClick={applyFilters}>
+                {t("transactions.apply")}
+              </button>
+            </div>
+          }
+        >
+          <div className="flex flex-col gap-3">
+            {/* Période et tri côte à côte : deux réglages courts, une seule ligne. */}
+            <div className="grid grid-cols-2 gap-2">
+              <Field label={t("transactions.period")}>
+                <select
+                  className={inputClass}
+                  value={draftPeriod}
+                  onChange={(e) => setDraftPeriod(e.target.value as Period)}
+                >
+                  <option value="all">{t("transactions.periodAll")}</option>
+                  <option value="month">{t("transactions.periodMonth")}</option>
+                  <option value="thirty">{t("transactions.period30")}</option>
+                </select>
+              </Field>
+              {/* Le tri est ici (et non plus sur la ligne de compte) : moins d'icônes à déchiffrer. */}
+              <Field label={t("transactions.sort")}>
+                <select
+                  className={inputClass}
+                  value={oldestFirst ? "oldest" : "newest"}
+                  onChange={(e) => setOldestFirst(e.target.value === "oldest")}
+                >
+                  <option value="newest">{t("transactions.sortNewest")}</option>
+                  <option value="oldest">{t("transactions.sortOldest")}</option>
+                </select>
+              </Field>
+            </div>
 
-            {/* Le tri est ici (et non plus sur la ligne de compte) : moins d'icônes à déchiffrer. */}
-            <Field label={t("transactions.sort")}>
-              <select
-                className={inputClass}
-                value={oldestFirst ? "oldest" : "newest"}
-                onChange={(e) => setOldestFirst(e.target.value === "oldest")}
-              >
-                <option value="newest">{t("transactions.sortNewest")}</option>
-                <option value="oldest">{t("transactions.sortOldest")}</option>
-              </select>
-            </Field>
-
-            <fieldset className="flex flex-col gap-2">
-              <legend className="mb-1 text-sm font-medium">{t("transactions.type")}</legend>
-              {ALL_TYPES.map((tp) => {
-                const checked = draftFilters.types?.includes(tp) ?? false;
-                return (
-                  <label key={tp} className="flex min-h-[44px] items-center gap-3">
-                    <input
-                      type="checkbox"
-                      className="h-5 w-5"
-                      checked={checked}
-                      onChange={(e) =>
+            {/* Types en puces activables : une seule rangée au lieu de quatre cases à cocher. */}
+            <fieldset className="flex flex-col gap-1.5">
+              <legend className="text-sm font-medium">{t("transactions.type")}</legend>
+              <div className="flex flex-wrap gap-2">
+                {ALL_TYPES.map((tp) => {
+                  const pressed = draftFilters.types?.includes(tp) ?? false;
+                  return (
+                    <button
+                      key={tp}
+                      type="button"
+                      aria-pressed={pressed}
+                      onClick={() =>
                         setDraftFilters((f) => {
                           const current = f.types ?? [];
-                          const types = e.target.checked
-                            ? [...current, tp]
-                            : current.filter((x) => x !== tp);
+                          const types = pressed
+                            ? current.filter((x) => x !== tp)
+                            : [...current, tp];
                           return { ...f, types };
                         })
                       }
-                    />
-                    {t(`transactions.types.${tp}`)}
-                  </label>
-                );
-              })}
+                      className={`min-h-[44px] rounded-full border px-4 text-sm font-medium transition-colors ${
+                        pressed
+                          ? "border-brand-600 bg-brand-600 text-white"
+                          : "border-neutral-500 bg-white text-ink dark:border-white/15 dark:bg-card dark:text-fg"
+                      }`}
+                    >
+                      {t(`transactions.types.${tp}`)}
+                    </button>
+                  );
+                })}
+              </div>
             </fieldset>
 
             <Field label={t("transactions.wallet")}>
@@ -636,7 +671,9 @@ export function TransactionsPage() {
 
             <div className="grid grid-cols-2 gap-2">
               <Field label={t("transactions.minAmount")}>
-                <AmountTextInput className={inputClass} defaultValue=""
+                <AmountTextInput
+                  className={inputClass}
+                  defaultValue=""
                   onBlur={(e) => {
                     const value =
                       e.target.value.trim() === ""
@@ -647,7 +684,9 @@ export function TransactionsPage() {
                 />
               </Field>
               <Field label={t("transactions.maxAmount")}>
-                <AmountTextInput className={inputClass} defaultValue=""
+                <AmountTextInput
+                  className={inputClass}
+                  defaultValue=""
                   onBlur={(e) => {
                     const value =
                       e.target.value.trim() === ""
@@ -658,15 +697,6 @@ export function TransactionsPage() {
                 />
               </Field>
             </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button type="button" className={buttonSecondary} onClick={resetFilters}>
-                {t("transactions.reset")}
-              </button>
-              <button type="button" className={buttonPrimary} onClick={applyFilters}>
-                {t("transactions.apply")}
-              </button>
-            </div>
           </div>
         </BottomSheet>
       ) : null}
@@ -674,7 +704,9 @@ export function TransactionsPage() {
       {sheetMode === "view" && target ? (
         <TransactionDetailSheet
           transaction={target}
-          category={target.categoryId ? categories.find((c) => c.id === target.categoryId) : undefined}
+          category={
+            target.categoryId ? categories.find((c) => c.id === target.categoryId) : undefined
+          }
           walletName={(wid) => walletName.get(wid ?? "") ?? ""}
           onClose={closeSheet}
           onEdit={() => navigate(`/transactions/${target.id}/edit`)}
@@ -777,9 +809,7 @@ function TransactionRow({
         {categoryIcon ?? "•"}
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[15px] font-medium text-ink dark:text-fg">
-          {label}
-        </span>
+        <span className="truncate text-[15px] font-medium text-ink dark:text-fg">{label}</span>
         <span className="truncate text-sm text-neutral-600 dark:text-muted">{details}</span>
       </span>
       <span className="flex shrink-0 flex-col items-end">
