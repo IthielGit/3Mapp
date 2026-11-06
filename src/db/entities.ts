@@ -88,6 +88,8 @@ export const categorySchema = baseEntity.extend({
   icon: z.string(),
   color: z.string(),
   sortOrder: z.number().int(),
+  /** Catégorie par défaut d'origine (clé « nature|nom »). Reste pendant un renommage : elle n'est pas recréée. */
+  origin: z.string().optional(),
 });
 
 export const subcategorySchema = baseEntity.extend({
