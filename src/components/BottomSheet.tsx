@@ -62,6 +62,33 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
     if (open && present) panelRef.current?.focus({ preventScroll: true });
   }, [open, present]);
 
+  // Tab ne sort pas de la feuille : au dernier élément on repart au premier (et inversement).
+  function trapTab(event: KeyboardEvent) {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const items = Array.from(
+      panel.querySelectorAll<HTMLElement>("a[href], button, input, select, textarea, summary, [tabindex], [role='radio']"),
+    ).filter((el) => el.tabIndex >= 0 && !el.hasAttribute("disabled") && el.getClientRects().length > 0);
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (!first || !last) {
+      event.preventDefault();
+      panel.focus({ preventScroll: true });
+      return;
+    }
+    const active = document.activeElement;
+    const inside = active instanceof Node && panel.contains(active);
+    if (event.shiftKey) {
+      if (!inside || active === first || active === panel) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else if (!inside || active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   // Feuilles ouvertes, de la plus ancienne à la plus récente : Échap ne ferme que la feuille du dessus.
   const closeRef = useRef(onClose);
   useEffect(() => {
@@ -73,7 +100,9 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
     const token = tokenRef.current;
     sheetStack.push(token);
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && sheetStack[sheetStack.length - 1] === token) closeRef.current();
+      if (sheetStack[sheetStack.length - 1] !== token) return;
+      if (event.key === "Escape") closeRef.current();
+      if (event.key === "Tab") trapTab(event);
     };
     window.addEventListener("keydown", onKey);
     return () => {
