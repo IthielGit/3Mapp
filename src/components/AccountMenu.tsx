@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAccount } from "../features/account/AccountProvider";
-import { useAccountIdentity } from "../features/account/account-identity";
+import { currentAccount, useAccountIdentity } from "../features/account/account-identity";
 import { useSignOut } from "../features/account/use-sign-out";
 import { useTheme, type ThemeMode } from "../lib/theme-context";
 import { Icon, type IconName } from "./Icon";
@@ -90,7 +90,8 @@ export function AccountMenu() {
     if (open) menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
   }, [open]);
 
-  if (account.status !== "signedIn") {
+  const current = currentAccount(account);
+  if (!current) {
     return (
       <Link
         to="/plus"
@@ -102,7 +103,7 @@ export function AccountMenu() {
     );
   }
 
-  const email = account.session.user.email ?? "";
+  const email = current.user.email ?? "";
   const initial = email.charAt(0).toUpperCase() || "?";
 
   // Flèches haut/bas entre les entrées (y compris les choix de thème), sans sortir du menu.

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { Session, SupabaseClient } from "@supabase/supabase-js";
+import { isAuthRetryableFetchError, type AuthError, type Session, type SupabaseClient } from "@supabase/supabase-js";
 import { getSupabase } from "./supabase-client";
 import {
   fetchProfile,
@@ -11,6 +11,7 @@ import {
   writeCachedStatus,
   type AccountProfile,
 } from "./profile";
+import { clearCachedUser, readCachedUser, writeCachedUser, type CachedUser } from "./offline-user";
 
 /**
  * État du compte.
@@ -19,15 +20,25 @@ import {
  * - signedOut : aucune session.
  * - signedIn : connecté et actif. `profile` est absent si le serveur est injoignable.
  * - suspended : connecté mais suspendu par un administrateur ; l'app est bloquée (SPEC §5.14).
+ * - offline : session non renouvelable faute de réseau, identité mémorisée sur l'appareil.
+ *   L'app reste ouverte avec les données locales ; la synchro reprend au retour du réseau.
+ *   `blocked` reprend le dernier statut connu (un compte suspendu reste bloqué).
  */
 export type AccountState =
   | { status: "unconfigured" }
   | { status: "loading"; client: SupabaseClient }
   | { status: "signedOut"; client: SupabaseClient }
   | { status: "signedIn"; client: SupabaseClient; session: Session; profile?: AccountProfile }
-  | { status: "suspended"; client: SupabaseClient; session: Session; profile?: AccountProfile };
+  | { status: "suspended"; client: SupabaseClient; session: Session; profile?: AccountProfile }
+  | { status: "offline"; client: SupabaseClient; user: CachedUser; blocked: boolean };
 
 const AccountContext = createContext<AccountState>({ status: "unconfigured" });
+
+/** Erreur de réseau (ou navigateur hors ligne) : la session n'est pas remise en cause. */
+function isTransient(error: AuthError | null): boolean {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return true;
+  return error !== null && isAuthRetryableFetchError(error);
+}
 
 /**
  * Fournit la session et le profil. Le compte est optionnel : sans configuration, l'app reste locale.
@@ -41,6 +52,8 @@ export function AccountProvider({
   client?: SupabaseClient | null;
 }) {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  // Identité mémorisée, utilisée seulement quand la session n'a pas pu être relue faute de réseau.
+  const [offlineUser, setOfflineUser] = useState<CachedUser | undefined>();
   // Profil lu pour un compte donné ; il ne vaut que pour ce compte.
   const [profileRead, setProfileRead] = useState<{ userId: string; profile?: AccountProfile } | undefined>();
   const [online, setOnline] = useState(0);
@@ -57,19 +70,50 @@ export function AccountProvider({
   useEffect(() => {
     if (!client) return;
     let active = true;
-    void client.auth
-      .getSession()
-      .then(({ data }) => {
-        if (active) setSession(data.session);
-      })
-      .catch(() => {
-        if (active) setSession(null);
-      });
-    const { data } = client.auth.onAuthStateChange((_event, next) => {
-      if (active) setSession(next);
+    const apply = (next: Session | null, transient: boolean) => {
+      if (!active) return;
+      if (next) {
+        writeCachedUser(next.user);
+        setOfflineUser(undefined);
+        setSession(next);
+        return;
+      }
+      // Pas de réseau : on garde l'identité mémorisée au lieu de considérer l'utilisateur comme déconnecté.
+      const cached = transient ? readCachedUser() : undefined;
+      if (cached) {
+        setOfflineUser(cached);
+        setSession(null);
+        return;
+      }
+      clearCachedUser();
+      setOfflineUser(undefined);
+      setSession(null);
+    };
+    const restore = () => {
+      client.auth
+        .getSession()
+        .then(({ data, error }) => apply(data.session, isTransient(error)))
+        .catch(() => apply(null, true));
+    };
+    restore();
+    const { data } = client.auth.onAuthStateChange((event, next) => {
+      if (!active) return;
+      if (next) {
+        writeCachedUser(next.user);
+        setOfflineUser(undefined);
+        setSession(next);
+      } else if (event === "SIGNED_OUT") {
+        clearCachedUser();
+        setOfflineUser(undefined);
+        setSession(null);
+      }
+      // Les autres événements sans session (ex. INITIAL_SESSION hors ligne) sont ignorés : getSession tranche.
     });
+    // Au retour du réseau, on tente de renouveler la session tout de suite.
+    window.addEventListener("online", restore);
     return () => {
       active = false;
+      window.removeEventListener("online", restore);
       data.subscription.unsubscribe();
     };
   }, [client]);
@@ -114,13 +158,19 @@ export function AccountProvider({
   const value = useMemo<AccountState>(() => {
     if (!client) return { status: "unconfigured" };
     if (session === undefined) return { status: "loading", client };
-    if (session === null) return { status: "signedOut", client };
+    if (session === null) {
+      if (offlineUser) {
+        const blocked = readCachedStatus(offlineUser.id) === "suspended";
+        return { status: "offline", client, user: offlineUser, blocked };
+      }
+      return { status: "signedOut", client };
+    }
     if (!profileSettled) return { status: "loading", client };
     const cached = readCachedStatus(session.user.id);
     const status = resolveStatus(profile, cached);
     if (status === "suspended") return { status: "suspended", client, session, profile };
     return { status: "signedIn", client, session, profile };
-  }, [client, session, profile, profileSettled]);
+  }, [client, session, offlineUser, profile, profileSettled]);
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }

@@ -1,5 +1,6 @@
-import type { User } from "@supabase/supabase-js";
-import { useAccount } from "./AccountProvider";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { useAccount, type AccountState } from "./AccountProvider";
+import type { CachedUser } from "./offline-user";
 
 /**
  * Nom et photo du compte, lus dans les métadonnées de la session.
@@ -25,10 +26,20 @@ export function accountIdentity(user: Pick<User, "email" | "user_metadata"> | un
   return { name, avatarUrl };
 }
 
-/** Identité du compte connecté ; vide hors session. */
+/**
+ * Client et utilisateur du compte affiché : connecté, suspendu, ou hors ligne (identité mémorisée).
+ * `undefined` sans compte chargé.
+ */
+export function currentAccount(account: AccountState): { client: SupabaseClient; user: CachedUser } | undefined {
+  if (account.status === "signedIn" || account.status === "suspended") {
+    return { client: account.client, user: account.session.user };
+  }
+  if (account.status === "offline") return { client: account.client, user: account.user };
+  return undefined;
+}
+
+/** Identité du compte affiché ; vide hors session. */
 export function useAccountIdentity(): AccountIdentity {
-  const account = useAccount();
-  return account.status === "signedIn" || account.status === "suspended"
-    ? accountIdentity(account.session.user)
-    : { name: "" };
+  const current = currentAccount(useAccount());
+  return current ? accountIdentity(current.user) : { name: "" };
 }

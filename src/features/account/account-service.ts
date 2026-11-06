@@ -1,4 +1,5 @@
 import type { AuthError, SupabaseClient } from "@supabase/supabase-js";
+import { clearCachedUser } from "./offline-user";
 
 /** Erreurs métier du service de comptes ; l'interface traduit chaque code (i18n, jamais de texte en dur). */
 export type AccountErrorCode =
@@ -91,6 +92,8 @@ export async function sendPasswordReset(
 }
 
 export async function signOutAccount(client: SupabaseClient): Promise<AccountResult> {
+  // L'identité mémorisée pour le mode hors ligne ne doit pas survivre à la déconnexion.
+  clearCachedUser();
   const { error } = await client.auth.signOut();
   return error ? { ok: false, code: mapAuthError(error) } : { ok: true };
 }
