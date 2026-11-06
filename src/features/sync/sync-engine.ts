@@ -78,7 +78,7 @@ interface PushRow {
   data: Record<string, unknown> | null;
 }
 
-function classify(error: { code?: string; message?: string } | null): SyncError {
+export function classify(error: { code?: string; message?: string } | null): SyncError {
   const message = (error?.message ?? "").toLowerCase();
   if (error?.code === "42501" || message.includes("account suspended")) return new SyncError("suspended");
   if (message.includes("fetch") || message.includes("network")) return new SyncError("network");

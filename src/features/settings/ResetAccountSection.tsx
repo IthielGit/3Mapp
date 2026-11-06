@@ -4,6 +4,8 @@ import { BottomSheet } from "../../components/BottomSheet";
 import { Icon } from "../../components/Icon";
 import { buttonSecondary, inputClass } from "../../components/FormControls";
 import { db } from "../../db/database";
+import { useAccount } from "../account/AccountProvider";
+import { SyncError, type SyncErrorCode } from "../sync/sync-engine";
 import { resetAccount } from "./reset-account";
 
 /**
@@ -17,6 +19,7 @@ export function ResetAccountSection() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [typed, setTyped] = useState("");
+  const account = useAccount();
   const word = t("resetAccount.typeWord");
   const typedOk = typed.trim().toLocaleUpperCase() === word.toLocaleUpperCase();
 
@@ -24,11 +27,15 @@ export function ResetAccountSection() {
     if (!typedOk) return;
     setBusy(true);
     setError(undefined);
+    // Compte connecté : les données du serveur sont effacées aussi, sinon elles reviendraient à la synchro.
+    const remote =
+      account.status === "signedIn" ? { client: account.client, userId: account.session.user.id } : undefined;
     try {
-      await resetAccount(db);
+      await resetAccount(db, remote);
       window.location.assign("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
+      const code: SyncErrorCode = err instanceof SyncError ? err.code : "unknown";
+      setError(t(`account.sync.error.${code}`, { defaultValue: t("errors.generic") }));
       setBusy(false);
     }
   }
