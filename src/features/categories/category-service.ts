@@ -8,6 +8,7 @@ import {
 } from "../../db/entities";
 import { createRepository } from "../../db/repositories";
 import { moveItem, sortOrderChanges } from "../../domain/ordering";
+import { missingDefaultCategories } from "./defaults";
 
 export type CategoryInput = Omit<Category, "id" | "createdAt" | "updatedAt" | "sortOrder">;
 
@@ -53,6 +54,21 @@ export async function createCategory(input: CategoryInput, database: AppDatabase
   const sameKind = (await repo.list()).filter((c) => c.kind === input.kind);
   const sortOrder = sameKind.reduce((max, c) => Math.max(max, c.sortOrder), -1) + 1;
   return repo.create({ ...input, sortOrder });
+}
+
+/**
+ * Ajoute les catégories par défaut qui manquent (jamais de doublon, rien n'est modifié ni supprimé).
+ * Retourne le nombre de catégories ajoutées.
+ */
+export async function restoreDefaultCategories(database: AppDatabase = defaultDb): Promise<number> {
+  const missing = missingDefaultCategories(await database.categories.toArray());
+  if (missing.length === 0) return 0;
+  await database.transaction("rw", database.categories, async () => {
+    for (const category of missing) {
+      await createCategory({ ...category, archived: false }, database);
+    }
+  });
+  return missing.length;
 }
 
 export async function updateCategory(

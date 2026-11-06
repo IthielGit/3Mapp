@@ -84,12 +84,19 @@ describe("inscription libre", () => {
 
   it("remonte l'erreur serveur sous forme de code", async () => {
     const { client } = fakeClient({
-      signUp: vi.fn(async () => ({ data: {}, error: { message: "User already registered" } })),
+      signUp: vi.fn(async () => ({ data: {}, error: { message: "Database error saving new user" } })),
     });
     expect(await signUpWithEmail(client, "a@b.be", "motdepasse1", "x")).toEqual({
       ok: false,
-      code: "alreadyRegistered",
+      code: "unknown",
     });
+  });
+
+  it("ne révèle pas qu'une adresse est déjà inscrite : même réponse qu'une inscription réussie", async () => {
+    const { client } = fakeClient({
+      signUp: vi.fn(async () => ({ data: {}, error: { message: "User already registered" } })),
+    });
+    expect(await signUpWithEmail(client, "a@b.be", "motdepasse1", "x")).toEqual({ ok: true });
   });
 });
 

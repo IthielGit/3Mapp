@@ -3,6 +3,7 @@ import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { disableSync, runSync } from "../sync/sync-engine";
 import { resetAccount } from "../settings/reset-account";
 import { signOutAccount, type AccountResult } from "./account-service";
+import { leaveConsultLocally } from "../admin/consult";
 
 /**
  * Déconnexion (compte obligatoire) : dernier envoi si possible, puis effacement des données de cet appareil,
@@ -13,6 +14,8 @@ export async function signOutAndClear(
   client: SupabaseClient,
   database: AppDatabase = defaultDb,
 ): Promise<AccountResult> {
+  // Consultation en cours : on la ferme avant le nettoyage (sinon la lecture seule refuserait l'effacement).
+  await leaveConsultLocally(client);
   try {
     await runSync(client, database);
   } catch {

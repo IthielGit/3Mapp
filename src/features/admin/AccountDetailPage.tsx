@@ -12,25 +12,32 @@ import {
   deleteAccount,
   listAccounts,
   listRecords,
+  setAccountRole,
   setAccountStatus,
   type AdminAccount,
   type AdminRecord,
 } from "./admin-service";
+import { startConsult } from "./consult";
+import { pendingCount } from "../sync/sync-engine";
 import { summarizeRecord } from "./format";
 
-/** Fiche d'un compte : identité, contenu en lecture seule, suspension, réactivation, suppression. */
+/** Fiche d'un compte : identité, contenu en lecture seule, consultation, rôle, suspension, réactivation, suppression. */
 export function AccountDetailPage() {
   const { t } = useTranslation();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const account = useAccount();
   const client = account.status === "signedIn" ? account.client : undefined;
+  const selfId = account.status === "signedIn" ? account.session.user.id : undefined;
+  const isSelf = selfId !== undefined && id === selfId;
   const [target, setTarget] = useState<AdminAccount | undefined>();
   const [notFound, setNotFound] = useState(false);
   const [table, setTable] = useState<string>("transactions");
   const [records, setRecords] = useState<AdminRecord[] | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [busy, setBusy] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState("");
   const [reload, setReload] = useState(0);
   const tables = SYNCED_TABLES.filter((name) => name !== "settings");
 
@@ -97,14 +104,55 @@ export function AccountDetailPage() {
     }
   }
 
-  async function remove() {
+  async function changeRole() {
     if (!client || !target) return;
+    // Son propre rôle : refus affiché tout de suite, sans appel à la base.
+    if (isSelf) {
+      setError("selfAction");
+      return;
+    }
+    const promote = target.role !== "super_admin";
     const confirmed = await askConfirm({
-      message: t("admin.confirmDelete", { email: target.email }),
-      confirmLabel: t("admin.delete"),
-      danger: true,
+      message: promote ? t("admin.confirmPromote", { email: target.email }) : t("admin.confirmDemote", { email: target.email }),
+      confirmLabel: promote ? t("admin.makeSuperAdmin") : t("admin.makeStandard"),
+      danger: !promote,
     });
     if (!confirmed) return;
+    setBusy(true);
+    try {
+      await setAccountRole(client, target.id, promote ? "super_admin" : "user");
+      setReload((n) => n + 1);
+    } catch (err) {
+      setError(err instanceof AdminError ? err.code : "unknown");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function viewAs() {
+    if (!client || !selfId || !target) return;
+    const unsent = await pendingCount().catch(() => 0);
+    if (unsent > 0) {
+      const confirmed = await askConfirm({
+        message: t("admin.consult.confirmUnsent"),
+        confirmLabel: t("admin.consult.start"),
+        danger: true,
+      });
+      if (!confirmed) return;
+    }
+    setBusy(true);
+    try {
+      await startConsult(client, selfId, target.id, { discardUnsent: unsent > 0 });
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError(err instanceof AdminError ? err.code : "unknown");
+      setBusy(false);
+    }
+  }
+
+  /** Suppression : seulement si l'e-mail du compte est saisi exactement. */
+  async function remove() {
+    if (!client || !target || confirmEmail.trim() !== target.email) return;
     setBusy(true);
     try {
       await deleteAccount(client, target.id);
@@ -137,9 +185,20 @@ export function AccountDetailPage() {
       ) : null}
 
       <div className="flex flex-col gap-2">
-        {target.role === "super_admin" ? (
-          <p className="text-sm text-neutral-600 dark:text-muted">{t("admin.selfNote")}</p>
-        ) : (
+        {isSelf ? <p className="text-sm text-neutral-600 dark:text-muted">{t("admin.selfNote")}</p> : null}
+        {!isSelf ? (
+          <>
+            <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void viewAs()}>
+              {t("admin.consult.start")}
+            </button>
+            <p className="-mt-1 text-sm text-neutral-600 dark:text-muted">{t("admin.consult.hint")}</p>
+          </>
+        ) : null}
+        {/* Affiché aussi pour son propre compte : le refus s'affiche alors au clic. */}
+        <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void changeRole()}>
+          {target.role === "super_admin" ? t("admin.makeStandard") : t("admin.makeSuperAdmin")}
+        </button>
+        {!isSelf ? (
           <>
             <button
               type="button"
@@ -149,16 +208,56 @@ export function AccountDetailPage() {
             >
               {target.status === "active" ? t("admin.suspend") : t("admin.reactivate")}
             </button>
-            <button
-              type="button"
-              className="min-h-[44px] rounded-xl bg-red-700 font-semibold text-white disabled:opacity-50"
-              disabled={busy}
-              onClick={() => void remove()}
-            >
-              {t("admin.delete")}
-            </button>
+            {!deleteOpen ? (
+              <button
+                type="button"
+                className="min-h-[44px] rounded-xl bg-red-700 font-semibold text-white disabled:opacity-50"
+                disabled={busy}
+                onClick={() => setDeleteOpen(true)}
+              >
+                {t("admin.delete")}
+              </button>
+            ) : (
+              <section className="flex flex-col gap-2 rounded-card border border-red-300 p-3 dark:border-red-800" aria-labelledby="delete-title">
+                <h3 id="delete-title" className="font-semibold text-red-700 dark:text-red-400">
+                  {t("admin.deleteTitle")}
+                </h3>
+                <p className="text-sm">{t("admin.deleteWarning")}</p>
+                <label className="flex flex-col gap-1 text-sm">
+                  <span className="font-medium">{t("admin.deleteTypeEmail", { email: target.email })}</span>
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    className={inputClass}
+                    value={confirmEmail}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
+                  />
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="min-h-[44px] rounded-xl bg-red-700 px-4 font-semibold text-white disabled:opacity-50"
+                    disabled={busy || confirmEmail.trim() !== target.email}
+                    onClick={() => void remove()}
+                  >
+                    {t("admin.deleteForever")}
+                  </button>
+                  <button
+                    type="button"
+                    className={buttonSecondary}
+                    disabled={busy}
+                    onClick={() => {
+                      setDeleteOpen(false);
+                      setConfirmEmail("");
+                    }}
+                  >
+                    {t("admin.cancel")}
+                  </button>
+                </div>
+              </section>
+            )}
           </>
-        )}
+        ) : null}
       </div>
 
       <section className="flex flex-col gap-2">

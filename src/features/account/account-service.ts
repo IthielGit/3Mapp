@@ -55,7 +55,10 @@ export async function signUpWithEmail(
     password,
     options: { emailRedirectTo: redirectTo },
   });
-  return error ? { ok: false, code: mapAuthError(error) } : { ok: true };
+  if (!error) return { ok: true };
+  // Adresse déjà utilisée : même réponse qu'une inscription réussie, pour ne pas révéler qu'un compte existe.
+  if (mapAuthError(error) === "alreadyRegistered") return { ok: true };
+  return { ok: false, code: mapAuthError(error) };
 }
 
 export async function signInWithEmail(

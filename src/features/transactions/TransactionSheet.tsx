@@ -22,6 +22,7 @@ import { minorToPlainText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { createRecurring } from "../recurring/recurring-service";
 import { occurrenceDate, type Frequency } from "../../domain/recurrence";
+import { resolveSourceWalletId } from "../../domain/default-wallet";
 import {
   createTransaction,
   draftFromTransaction,
@@ -123,7 +124,11 @@ export function TransactionSheet({
   const [error, setError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
-  const effectiveWalletId = walletId || settings[0]?.defaultWalletId || activeWallets[0]?.id || "";
+  const effectiveWalletId = resolveSourceWalletId({
+    selected: walletId,
+    defaultWalletId: settings[0]?.defaultWalletId,
+    activeWalletIds: activeWallets.map((w) => w.id),
+  });
   const sourceWallet = wallets.find((w) => w.id === effectiveWalletId);
   const currency: CurrencyCode = sourceWallet?.currency ?? "MGA";
   const amountMinor = amountExpr.trim() === "" ? null : expressionToMinor(amountExpr, currency);

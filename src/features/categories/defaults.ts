@@ -23,3 +23,19 @@ export const DEFAULT_CATEGORIES: readonly DefaultCategory[] = [
   { name: "Cadeaux", kind: "income", icon: "🎁", color: "#db2777" },
   { name: "Autres revenus", kind: "income", icon: "💰", color: "#64748b" },
 ];
+
+/** Clé de comparaison : même nature et même nom, sans tenir compte de la casse ni des espaces. */
+function defaultKey(kind: DefaultCategory["kind"], name: string): string {
+  return `${kind}|${name.trim().toLocaleLowerCase("fr")}`;
+}
+
+/**
+ * Catégories par défaut absentes de la liste donnée. Une catégorie archivée compte comme présente :
+ * on ne recrée pas un doublon, l'utilisateur la restaure depuis la liste des archives.
+ */
+export function missingDefaultCategories(
+  existing: readonly { name: string; kind: DefaultCategory["kind"] }[],
+): DefaultCategory[] {
+  const present = new Set(existing.map((c) => defaultKey(c.kind, c.name)));
+  return DEFAULT_CATEGORIES.filter((d) => !present.has(defaultKey(d.kind, d.name)));
+}

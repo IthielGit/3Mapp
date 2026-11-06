@@ -7,13 +7,19 @@ import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import type { Category } from "../../db/entities";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
-import { setCategoryArchived } from "./category-service";
+import { restoreDefaultCategories, setCategoryArchived } from "./category-service";
 
 type Kind = Category["kind"];
 
 export function CategoriesPage() {
   const { t } = useTranslation();
   const [kind, setKind] = useState<Kind>("expense");
+  const [restoreMessage, setRestoreMessage] = useState<string | undefined>();
+
+  async function restoreDefaults() {
+    const added = await restoreDefaultCategories();
+    setRestoreMessage(added === 0 ? t("categories.restoreNone") : t("categories.restoreDone", { count: added }));
+  }
   const categories = useLiveQuery(() => db.categories.orderBy("sortOrder").toArray(), []);
   if (!categories) return null;
 
@@ -95,6 +101,18 @@ export function CategoriesPage() {
           </ul>
         </section>
       ) : null}
+
+      <section className="flex flex-col gap-2 border-t border-neutral-200 pt-4 dark:border-white/15">
+        <p className="text-sm text-neutral-600 dark:text-muted">{t("categories.restoreHint")}</p>
+        <button type="button" className={buttonSecondary} onClick={() => void restoreDefaults()}>
+          {t("categories.restoreDefaults")}
+        </button>
+        {restoreMessage ? (
+          <p role="status" className="text-sm">
+            {restoreMessage}
+          </p>
+        ) : null}
+      </section>
     </section>
   );
 }

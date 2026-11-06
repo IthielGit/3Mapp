@@ -99,6 +99,7 @@
     "modeMergeHint": "Ajoute les éléments absents et garde les plus récents. Vos réglages actuels sont conservés.",
     "modeReplace": "Remplacer toutes les données",
     "modeReplaceHint": "Efface les données de cet appareil avant la restauration.",
+    "replaceUnavailable": "Le remplacement n'est pas proposé avec un compte : il n'effacerait pas les données déjà présentes sur le compte. La fusion ajoute les éléments de la sauvegarde.",
     "confirmReplace": "Je comprends que les données actuelles seront effacées.",
     "restore": "Restaurer",
     "restored": "Restauration terminée : {{count}} enregistrements traités.",
@@ -187,6 +188,10 @@
     "expense": "Dépenses",
     "income": "Revenus",
     "archivedSection": "Archivées",
+    "restoreDefaults": "Restaurer les catégories par défaut",
+    "restoreHint": "Ajoute les catégories de départ qui ont été supprimées. Vos catégories existantes ne sont pas modifiées.",
+    "restoreDone": "{{count}} catégorie(s) ajoutée(s).",
+    "restoreNone": "Toutes les catégories par défaut sont déjà présentes.",
     "newTitle": "Nouvelle catégorie",
     "editTitle": "Modifier la catégorie",
     "kind": "Type",
@@ -811,6 +816,8 @@
       "bodyUnowned": "Cet appareil contient des données qui ne sont liées à aucun compte. Elles ne peuvent pas être fusionnées avec ce compte.",
       "replace": "Utiliser seulement ce compte",
       "replaceHint": "Les données de cet appareil sont effacées et remplacées par celles du compte.",
+      "keepTitle": "Pour garder ces données dans ce compte",
+      "keepSteps": "1. Téléchargez la sauvegarde. 2. Touchez « Utiliser seulement ce compte ». 3. Une fois connecté, ouvrez Paramètres, puis Sauvegarde et restauration, et choisissez « Fusionner avec les données actuelles » pour restaurer le fichier. Les données partent alors vers votre compte.",
       "backupTitle": "1. Sauvegardez d'abord",
       "backupHint": "Un fichier de sauvegarde est téléchargé sur cet appareil. Gardez-le en lieu sûr : c'est la seule copie des données de cet appareil si vous les effacez.",
       "backupButton": "Télécharger une sauvegarde",
@@ -860,13 +867,32 @@
       "lastSync": "Dernière synchro",
       "records": "Enregistrements"
     },
-    "selfNote": "Vous ne pouvez pas suspendre ni supprimer votre propre compte.",
+    "selfNote": "Vous ne pouvez pas suspendre, supprimer ni modifier le rôle de votre propre compte.",
+    "you": "(vous)",
+    "makeSuperAdmin": "Rendre super administrateur",
+    "makeStandard": "Rendre utilisateur standard",
+    "confirmPromote": "{{email}} deviendra super administrateur : il pourra voir, suspendre et supprimer tous les comptes. Continuer ?",
+    "confirmDemote": "{{email}} ne pourra plus administrer les comptes. Le changement prend effet à sa prochaine connexion. Continuer ?",
+    "consult": {
+      "label": "Consultation du compte",
+      "start": "Voir comme cet utilisateur",
+      "hint": "Lecture seule : vous voyez son application, sans pouvoir la modifier. La consultation est journalisée.",
+      "banner": "Consultation de {{email}} (lecture seule)",
+      "back": "Retour à mon compte",
+      "blocked": "Lecture seule : un administrateur ne peut pas modifier ce compte.",
+      "confirmUnsent": "Vos modifications non envoyées seront perdues. Continuer ?"
+    },
     "suspend": "Suspendre le compte",
     "reactivate": "Réactiver le compte",
     "delete": "Supprimer le compte",
     "confirmSuspend": "Suspendre {{email}} ? Le compte ne pourra plus se connecter ni synchroniser.",
     "confirmReactivate": "Réactiver {{email}} ?",
     "confirmDelete": "Supprimer définitivement {{email}} et toutes ses données ? Action irréversible.",
+    "deleteTitle": "Supprimer ce compte",
+    "deleteWarning": "Cette action supprime définitivement le compte et toutes ses données. Elle est irréversible.",
+    "deleteTypeEmail": "Pour confirmer, saisissez exactement l'adresse : {{email}}",
+    "deleteForever": "Supprimer définitivement",
+    "cancel": "Annuler",
     "contents": "Contenu",
     "table": "Données",
     "noRecords": "Aucun enregistrement dans cette catégorie.",
@@ -875,6 +901,8 @@
       "forbidden": "Accès réservé au super administrateur.",
       "network": "Connexion impossible. Vérifiez votre réseau.",
       "invalid": "Réponse inattendue du serveur.",
+      "selfAction": "Action impossible sur votre propre compte.",
+      "lastSuperAdmin": "Au moins un super administrateur actif doit rester.",
       "unknown": "Une erreur est survenue. Réessayez."
     },
     "audit": {
@@ -885,7 +913,13 @@
       "action": {
         "suspend": "Compte suspendu",
         "reactivate": "Compte réactivé",
-        "delete": "Compte supprimé"
+        "delete": "Compte supprimé",
+   "consult_start": "Consultation ouverte",
+   "confirmDelete": "Supprimer cette entrée du journal ? Elle disparaîtra définitivement.",
+   "delete": "Supprimer",
+   "consult_end": "Consultation fermée",
+   "role_super_admin": "Passé super administrateur",
+   "role_user": "Passé utilisateur standard"
       }
     }
   }

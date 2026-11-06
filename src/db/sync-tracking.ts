@@ -73,6 +73,48 @@ export function endRemoteWrites(keys: readonly string[]): void {
   for (const key of keys) applying.delete(key);
 }
 
+/**
+ * Consultation en lecture seule (vue administrateur) : aucune écriture locale sur les tables synchronisées,
+ * sauf celles déclarées « de confiance » (chargement du compte consulté). Garde réelle, dans la base locale,
+ * et non seulement dans l'interface.
+ */
+let readOnly = false;
+let trustedWrites = 0;
+
+/** Événement émis à chaque écriture refusée, pour afficher un message discret. */
+export const READ_ONLY_BLOCKED_EVENT = "fundora:readonly-blocked";
+
+export class ReadOnlyError extends Error {
+  constructor() {
+    super("read-only");
+    this.name = "ReadOnlyError";
+  }
+}
+
+export function setReadOnly(enabled: boolean): void {
+  readOnly = enabled;
+}
+
+export function isReadOnly(): boolean {
+  return readOnly;
+}
+
+/** Exécute une écriture autorisée en lecture seule (chargement ou déchargement du compte consulté). */
+export async function withTrustedWrites<T>(action: () => Promise<T>): Promise<T> {
+  trustedWrites += 1;
+  try {
+    return await action();
+  } finally {
+    trustedWrites -= 1;
+  }
+}
+
+function guardWrite(): void {
+  if (!readOnly || trustedWrites > 0) return;
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(READ_ONLY_BLOCKED_EVENT));
+  throw new ReadOnlyError();
+}
+
 let seqCounter = 0;
 
 /** Numéro d'ordre croissant, même si plusieurs modifications tombent dans la même milliseconde. */
@@ -133,13 +175,16 @@ export function installSyncTracking(db: AppDatabase): void {
   for (const name of SYNCED_TABLES) {
     const table = db.table(name);
     table.hook("creating", function (primKey) {
+      guardWrite();
       enqueue(db, name, String(primKey), "upsert");
     });
     table.hook("updating", function (_modifications, primKey) {
+      guardWrite();
       enqueue(db, name, String(primKey), "upsert");
       return undefined;
     });
     table.hook("deleting", function (primKey) {
+      guardWrite();
       enqueue(db, name, String(primKey), "delete");
     });
   }

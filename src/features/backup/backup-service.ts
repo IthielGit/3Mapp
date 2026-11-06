@@ -173,9 +173,13 @@ export async function restoreBackup(
   mode: RestoreMode,
   database: AppDatabase = defaultDb,
 ): Promise<number> {
+  // Avec un compte, le remplacement est refusé : il n'efface pas les données déjà présentes sur le compte.
+  if (mode === "replace" && isSyncTracking()) {
+    throw new RuleError(
+      "Le remplacement n'est pas disponible avec un compte : utilisez la fusion.",
+    );
+  }
   let written = 0;
-  // Synchro active + remplacement : les versions restaurées doivent l'emporter sur celles du compte (le plus récent gagne).
-  const stamp = mode === "replace" && isSyncTracking() ? new Date().toISOString() : undefined;
   await database.transaction("rw", database.tables, async () => {
     if (mode === "replace") {
       for (const table of database.tables) await table.clear();
@@ -189,7 +193,7 @@ export async function restoreBackup(
           const local = (await table.get(record.id)) as StoredRecord | undefined;
           if (local && local.updatedAt >= record.updatedAt) continue;
         }
-        await table.put(stamp ? { ...record, updatedAt: stamp } : record);
+        await table.put(record);
         written++;
       }
     }

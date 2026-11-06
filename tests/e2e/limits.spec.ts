@@ -39,6 +39,7 @@ async function openWalletMenu(page: Page) {
   await page.getByRole("button", { name: "Plus d’actions" }).click();
 }
 
+/** Les confirmations du navigateur (window.confirm) sont acceptées explicitement. */
 /** La confirmation est une feuille de l'application (titre « Confirmer »), plus une boîte native. */
 async function confirmInSheet(page: Page) {
   const sheet = page.getByRole("dialog", { name: "Confirmer" });
