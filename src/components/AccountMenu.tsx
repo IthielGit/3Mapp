@@ -6,6 +6,7 @@ import { useAccountIdentity } from "../features/account/account-identity";
 import { useSignOut } from "../features/account/use-sign-out";
 import { useTheme, type ThemeMode } from "../lib/theme-context";
 import { Icon, type IconName } from "./Icon";
+import { AccountAvatar } from "./AccountAvatar";
 
 /** Engrenage des réglages (tracé ISC, Lucide). */
 export function GearIcon() {
@@ -63,8 +64,6 @@ export function AccountMenu() {
   const { busy, signOut } = useSignOut();
   const { theme, setTheme } = useTheme();
   const identity = useAccountIdentity();
-  // Photo du compte (Google) : si elle ne charge pas, on revient à l'initiale.
-  const [avatarFailed, setAvatarFailed] = useState(false);
 
   // Fermeture au clic dehors et à Échap (Échap rend le focus au bouton).
   useEffect(() => {
@@ -138,17 +137,7 @@ export function AccountMenu() {
         onClick={() => setOpen((o) => !o)}
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-base font-semibold text-brand-700 shadow-sm dark:bg-raised dark:text-brand-dark"
       >
-        {identity.avatarUrl && !avatarFailed ? (
-          <img
-            src={identity.avatarUrl}
-            alt=""
-            referrerPolicy="no-referrer"
-            onError={() => setAvatarFailed(true)}
-            className="h-full w-full rounded-full object-cover"
-          />
-        ) : (
-          <span aria-hidden="true">{initial}</span>
-        )}
+        <AccountAvatar avatarUrl={identity.avatarUrl} initial={initial} />
       </button>
       {open ? (
         <ul
