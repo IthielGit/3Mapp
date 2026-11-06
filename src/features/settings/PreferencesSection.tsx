@@ -22,6 +22,7 @@ export function PreferencesSection() {
   const settings = useLiveQuery(() => db.settings.toCollection().first(), []);
   const allCategories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const [message, setMessage] = useState<string | undefined>();
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   if (!settings) return null;
@@ -200,13 +201,19 @@ export function PreferencesSection() {
         </Field>
         <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("prefs.payIncomeHint")}</p>
 
-        <details className="group rounded-xl border border-neutral-200 p-3 dark:border-white/15">
+        {/* Contenu monté seulement quand la section est ouverte : replié, rien n'est atteignable au clavier ni lu. */}
+        <details
+          className="group rounded-xl border border-neutral-200 p-3 dark:border-white/15"
+          open={advancedOpen}
+          onToggle={(e) => setAdvancedOpen(e.currentTarget.open)}
+        >
           <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-3 font-medium focus-visible:outline-2 focus-visible:outline-brand-600">
             {t("prefs.advanced")}
             <span aria-hidden="true" className="text-xl text-neutral-600 transition-transform duration-200 ease-out-strong group-open:rotate-90 motion-reduce:transition-none dark:text-muted">
               ›
             </span>
           </summary>
+          {advancedOpen ? (
           <div className="mt-3 flex flex-col gap-4">
             <Field label={t("prefs.keypadZeros")}>
               <select
@@ -235,6 +242,7 @@ export function PreferencesSection() {
               </span>
             </label>
           </div>
+          ) : null}
         </details>
 
         <div className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">

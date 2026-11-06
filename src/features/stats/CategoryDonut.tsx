@@ -35,9 +35,18 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative mx-auto h-56 w-56" role="img" aria-label={t("stats.chartAria")}>
+      {/* Le nom du graphique liste les catégories et leurs montants : un lecteur d'écran donne les données, pas seulement le titre. */}
+      <div
+        className="relative mx-auto h-56 w-56"
+        role="img"
+        aria-label={
+          items.length > 0
+            ? `${t("stats.chartAria")} : ${items.map((i) => `${i.name} ${fmt(i.value)}, ${Math.round(i.share)} %`).join(" ; ")}`
+            : t("stats.chartAria")
+        }
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+          <PieChart accessibilityLayer={false}>
             <Pie
               data={items}
               dataKey="value"

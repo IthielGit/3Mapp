@@ -36,6 +36,7 @@ import { TransactionDetailSheet } from "./TransactionDetailSheet";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { askConfirm } from "../../components/confirm-service";
+import { announce } from "../../components/announce";
 
 const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustment"];
 type Period = "all" | "month" | "thirty";
@@ -192,6 +193,7 @@ export function TransactionsPage() {
     setUndo({ bundle: removed });
     setSelected(new Set());
     setSelectMode(false);
+    announce(t("a11y.deleted"));
   }
 
   async function runUndo() {
@@ -375,7 +377,9 @@ export function TransactionsPage() {
       ) : null}
 
       {visible.length === 0 ? (
-        <p className="py-10 text-center text-neutral-600 dark:text-muted">{t("transactions.empty")}</p>
+        <p className="py-10 text-center text-neutral-600 dark:text-muted">
+          {query.trim() ? t("transactions.noSearchResults", { query: query.trim() }) : t("transactions.empty")}
+        </p>
       ) : null}
 
       <div ref={listRef} className="relative" data-testid="transaction-list">
@@ -726,10 +730,17 @@ function TransactionRow({
       : // Sans mémo, la catégorie est déjà le titre : on ne la répète pas.
         [t.memo ? categoryName : "", walletName].filter(Boolean).join(" · ");
 
+  // Nom lisible : titre, détail, type et montant en toutes lettres (sans emoji ni signes décoratifs).
+  const kind = translate(`transactions.types.${t.type}`);
+  const rowName = [label, details, kind, `${formatMoney(Math.abs(t.amount), t.currency)}`, time]
+    .filter(Boolean)
+    .join(", ");
+
   return (
     <button
       type="button"
       onClick={selectMode ? onToggle : onOpen}
+      aria-label={rowName}
       className="flex min-h-[56px] w-full items-center gap-3 border-b border-neutral-200 py-2.5 text-left active:bg-neutral-100 dark:border-white/15 dark:active:bg-neutral-800/60"
       aria-pressed={selectMode ? selected : undefined}
     >

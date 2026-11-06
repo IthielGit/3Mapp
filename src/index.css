@@ -21,6 +21,21 @@ body {
   outline-color: #7ADBF5;
 }
 
+/* Champs date : le focus passe d'un segment (jour, mois, année) à l'autre ; l'anneau doit entourer tout le champ. */
+input[type="date"]:focus,
+input[type="date"]:focus-visible,
+input[type="date"]:focus-within {
+  outline: 2px solid #0B7E9D;
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+:root.dark input[type="date"]:focus,
+:root.dark input[type="date"]:focus-visible,
+:root.dark input[type="date"]:focus-within {
+  outline-color: #7ADBF5;
+}
+
 ::selection {
   background: rgb(11 126 157 / 0.18);
 }
@@ -374,5 +389,93 @@ main > * {
   }
   .onb-progress-fill {
     transition: none;
+  }
+}
+
+/* Connexion : bascule Connexion / Inscription (flou bref pour masquer le croisement), bandeau et erreurs. Sans rebond. */
+@keyframes auth-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes auth-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.auth-swap {
+  animation: auth-swap 240ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+.auth-drop {
+  animation: auth-drop 280ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+.auth-fade {
+  animation: intro-fade 180ms ease-out backwards;
+}
+
+/* Connexion : la jauge de la marque se dessine (arc de 270°), puis le point apparaît au bout. */
+.gauge-arc {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: gauge-draw 1100ms cubic-bezier(0.23, 1, 0.32, 1) 120ms forwards;
+}
+
+.gauge-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: gauge-dot 260ms cubic-bezier(0.23, 1, 0.32, 1) 1150ms forwards;
+}
+
+@keyframes gauge-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes gauge-dot {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-arc {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .gauge-dot {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-swap,
+  .auth-drop,
+  .auth-fade {
+    animation: intro-fade 200ms ease-out backwards;
+    filter: none;
   }
 }

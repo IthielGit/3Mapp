@@ -35,7 +35,8 @@
     "calendar": "Calendar",
     "main": "Main navigation",
     "add": "Add",
-    "visualisation": "Visualisation"
+    "visualisation": "Visualisation",
+    "mobile": "Mobile navigation"
   },
   "pages": {
     "home": {
@@ -292,7 +293,8 @@
     "erase": "Erase",
     "noteOptional": "Note (optional)",
     "count_one": "{{count}} transaction",
-    "count_other": "{{count}} transactions"
+    "count_other": "{{count}} transactions",
+    "noSearchResults": "No result for “{{query}}”."
   },
   "errors": {
     "required": "This field is required.",
@@ -820,8 +822,6 @@
     "show": "Show",
     "hide": "Hide",
     "or": "or",
-    "noAccount": "No account yet?",
-    "haveAccount": "Already have an account?",
     "device": {
       "title": "Data on this device",
       "bodyForeign": "This device holds data from another account. It cannot be merged into this account.",
@@ -846,12 +846,10 @@
       "deleteHint": "Permanently deletes your account, your data on the server and this device's data. Export your data first if you want to keep it.",
       "delete": "Permanently delete my account",
       "deleteConfirm": "Permanently delete your account and all your data? This cannot be undone. Have you exported your data?",
-      "consent": "An administrator can view your account data.",
       "error": {
         "network": "Deletion needs a connection. Nothing was erased.",
         "unknown": "Deletion failed. Nothing was erased. Try again."
-      },
-      "consentTitle": "Your data"
+      }
     }
   },
   "admin": {
@@ -870,7 +868,8 @@
       "active": "Active",
       "suspended": "Suspended"
     },
-    "recordCount": "{{count}} record(s)",
+    "recordCount_one": "{{count}} record",
+    "recordCount_other": "{{count}} records",
     "lastSync": "Sync: {{date}}",
     "neverSynced": "Never synced",
     "field": {
@@ -936,5 +935,11 @@
       }
     },
     "badge": "Admin"
+  },
+  "a11y": {
+    "saved": "Saved.",
+    "deleted": "Deleted.",
+    "syncDone": "Sync complete.",
+    "syncFailed": "Sync failed."
   }
 }

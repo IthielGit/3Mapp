@@ -1,5 +1,6 @@
 import { Icon, type IconName } from "../../components/Icon";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { announce } from "../../components/announce";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -123,6 +124,8 @@ export function TransactionSheet({
   const attachmentIds = transaction ? (initial?.attachmentIds ?? []) : [];
   const [error, setError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  // Relie la raison du bouton « Enregistrer » désactivé au bouton (lecteurs d'écran).
+  const missingId = useId();
 
   const effectiveWalletId = resolveSourceWalletId({
     selected: walletId,
@@ -211,9 +214,12 @@ export function TransactionSheet({
           });
         }
       }
+      announce(t("a11y.saved"));
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("errors.generic"));
+      const message = err instanceof Error ? err.message : t("errors.generic");
+      setError(message);
+      announce(message, "assertive");
     } finally {
       setSaving(false);
     }
@@ -273,13 +279,14 @@ export function TransactionSheet({
       footer={
         <div className="flex flex-col gap-2">
           {missing ? (
-            <p className="text-center text-sm text-neutral-600 dark:text-muted">{missing}</p>
+            <p id={missingId} className="text-center text-sm text-neutral-600 dark:text-muted">{missing}</p>
           ) : null}
           <button
             type="button"
             className={`${buttonPrimary} w-full`}
             onClick={() => void save()}
             disabled={saving || missing !== null}
+            aria-describedby={missing ? missingId : undefined}
           >
             {t("common.save")}
           </button>
@@ -320,6 +327,7 @@ export function TransactionSheet({
               onExpressionChange={setAmountExpr}
               currency={currency}
               label={t("transactions.amount")}
+              onConfirm={() => setKeypadOpen(false)}
             />
             <button
               type="button"
@@ -333,6 +341,8 @@ export function TransactionSheet({
           <button
             type="button"
             onClick={() => setKeypadOpen(true)}
+            // Nom complet : « Montant, 0 Ar, toucher pour saisir » (et non un libellé éclaté en trois morceaux).
+            aria-label={`${t("transactions.amount")}, ${amountDisplay}, ${source ? t("transactions.amountTapToEdit") : t("transactions.amountTapToEnter")}`}
             className="flex min-h-[64px] w-full flex-col items-start gap-0.5 rounded-lg border border-neutral-500 px-3 py-2 text-left dark:border-white/15"
           >
             <span className="text-sm text-neutral-600 dark:text-muted">{t("transactions.amount")}</span>

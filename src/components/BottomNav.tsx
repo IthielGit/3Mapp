@@ -123,7 +123,7 @@ export function BottomNav() {
 
   return (
     <nav
-      aria-label={t("nav.home")}
+      aria-label={t("nav.mobile")}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-white/15 dark:bg-card"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-[1fr_1fr_3.5rem_1fr_1fr] items-center">
