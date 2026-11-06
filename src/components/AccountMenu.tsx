@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAccount } from "../features/account/AccountProvider";
+import { useAccountIdentity } from "../features/account/account-identity";
 import { useSignOut } from "../features/account/use-sign-out";
 import { useTheme, type ThemeMode } from "../lib/theme-context";
 import { Icon, type IconName } from "./Icon";
@@ -61,6 +62,9 @@ export function AccountMenu() {
   const menuRef = useRef<HTMLUListElement>(null);
   const { busy, signOut } = useSignOut();
   const { theme, setTheme } = useTheme();
+  const identity = useAccountIdentity();
+  // Photo du compte (Google) : si elle ne charge pas, on revient à l'initiale.
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   // Fermeture au clic dehors et à Échap (Échap rend le focus au bouton).
   useEffect(() => {
@@ -117,7 +121,14 @@ export function AccountMenu() {
   }
 
   return (
-    <div ref={wrapRef} className="relative shrink-0">
+    <div
+      ref={wrapRef}
+      className="relative shrink-0"
+      // Tab qui quitte le menu (vers la suite de la page) le referme : le focus reste où Tab l'a porté.
+      onBlur={(event) => {
+        if (!wrapRef.current?.contains(event.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -127,7 +138,17 @@ export function AccountMenu() {
         onClick={() => setOpen((o) => !o)}
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-base font-semibold text-brand-700 shadow-sm dark:bg-raised dark:text-brand-dark"
       >
-        <span aria-hidden="true">{initial}</span>
+        {identity.avatarUrl && !avatarFailed ? (
+          <img
+            src={identity.avatarUrl}
+            alt=""
+            referrerPolicy="no-referrer"
+            onError={() => setAvatarFailed(true)}
+            className="h-full w-full rounded-full object-cover"
+          />
+        ) : (
+          <span aria-hidden="true">{initial}</span>
+        )}
       </button>
       {open ? (
         <ul
