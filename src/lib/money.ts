@@ -31,8 +31,32 @@ export const CURRENCIES: Readonly<Record<CurrencyCode, CurrencyDef>> = {
   },
 };
 
-const GROUP_SEPARATOR = "."; // séparateur de milliers : 1.000.000
-const DECIMAL_SEPARATOR = ","; // décimales : 1.000.000,00 (devises à centimes)
+/**
+ * Style d'affichage des montants (réglage « Format des montants »).
+ * dot : 1.000.000,00 (défaut) · space : 1 000 000,00 · comma : 1,000,000.00 · plain : 1000000,00
+ */
+export const AMOUNT_FORMATS = ["dot", "space", "comma", "plain"] as const;
+export type AmountFormat = (typeof AMOUNT_FORMATS)[number];
+
+/** Séparateur de milliers et séparateur décimal de chaque style. */
+export const AMOUNT_SEPARATORS: Readonly<Record<AmountFormat, { group: string; decimal: string }>> = {
+  dot: { group: ".", decimal: "," },
+  space: { group: " ", decimal: "," }, // espace fine insécable
+  comma: { group: ",", decimal: "." },
+  plain: { group: "", decimal: "," },
+};
+
+/** Style utilisé par formatMoney quand l'appelant n'en précise pas. Mis à jour depuis les réglages. */
+let activeAmountFormat: AmountFormat = "dot";
+
+export function setAmountFormat(format: AmountFormat | undefined): void {
+  activeAmountFormat = format ?? "dot";
+}
+
+export function getAmountFormat(): AmountFormat {
+  return activeAmountFormat;
+}
+
 const MINUS_SIGN = "−";
 const NBSP = " ";
 
@@ -159,6 +183,8 @@ interface FormatOptions {
   withSymbol?: boolean;
   /** Affiche « + » devant les montants positifs (défaut : false). */
   showPlus?: boolean;
+  /** Style de séparateurs (défaut : le réglage de l'app). */
+  format?: AmountFormat;
 }
 
 /**
@@ -172,7 +198,8 @@ export function formatMoney(
   options: FormatOptions = {},
 ): string {
   assertMinor(amount);
-  const { withSymbol = true, showPlus = false } = options;
+  const { withSymbol = true, showPlus = false, format = activeAmountFormat } = options;
+  const { group, decimal } = AMOUNT_SEPARATORS[format];
   const def = getCurrency(code);
 
   const digits = Math.abs(amount)
@@ -180,8 +207,8 @@ export function formatMoney(
     .padStart(def.decimals + 1, "0");
   const intPart = digits.slice(0, digits.length - def.decimals);
   const fracPart = digits.slice(digits.length - def.decimals);
-  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, GROUP_SEPARATOR);
-  const number = def.decimals > 0 ? `${grouped}${DECIMAL_SEPARATOR}${fracPart}` : grouped;
+  const grouped = group ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, group) : intPart;
+  const number = def.decimals > 0 ? `${grouped}${decimal}${fracPart}` : grouped;
 
   const sign = amount < 0 ? MINUS_SIGN : showPlus && amount > 0 ? "+" : "";
   if (!withSymbol) return `${sign}${number}`;

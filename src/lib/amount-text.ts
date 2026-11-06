@@ -14,3 +14,11 @@ export function minorToPlainText(minor: Minor, currency: CurrencyCode): string {
   const frac = digits.slice(digits.length - decimals);
   return decimals > 0 ? `${sign}${int}.${frac}` : `${sign}${int}`;
 }
+
+/**
+ * Montant en unités mineures → texte de la calculatrice (virgule décimale, comme la saisie au clavier).
+ * Même valeur que minorToPlainText, sans le point : l'affichage du montant suit le réglage de format.
+ */
+export function minorToEntryText(minor: Minor, currency: CurrencyCode): string {
+  return minorToPlainText(minor, currency).replace(".", ",");
+}

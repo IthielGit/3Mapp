@@ -13,6 +13,7 @@ export type PreferencePatch = Partial<
     | "payIncomeCategoryId"
     | "payMode"
     | "keypadZeros"
+    | "amountFormat"
     | "ignoreFutureBalance"
     | "reminderEnabled"
     | "reminderTime"

@@ -9,6 +9,7 @@ import { Field, inputClass } from "../../components/FormControls";
 import { accountingMonth } from "../../domain/period";
 import { byName } from "../../lib/compare";
 import { updatePreferences } from "./preferences-service";
+import { AMOUNT_FORMATS, formatMoney, type AmountFormat } from "../../lib/money";
 import { askConfirm } from "../../components/confirm-service";
 import { useTheme } from "../../lib/theme-context";
 
@@ -127,6 +128,21 @@ export function PreferencesSection() {
             ))}
           </div>
         </fieldset>
+
+        <Field label={t("prefs.amountFormat")}>
+          <select
+            className={inputClass}
+            value={settings.amountFormat ?? "dot"}
+            onChange={(e) => void change({ amountFormat: e.target.value as AmountFormat })}
+          >
+            {AMOUNT_FORMATS.map((format) => (
+              <option key={format} value={format}>
+                {t(`prefs.amountFormats.${format}`)} · {formatMoney(1500000, "MGA", { format, withSymbol: false })}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("prefs.amountFormatHint")}</p>
 
         <Field label={t("prefs.weekStart")}>
           <select

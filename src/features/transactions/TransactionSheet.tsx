@@ -20,7 +20,7 @@ import {
 import { expressionToMinor } from "../../lib/calc";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { CategoryPicker } from "./CategoryPicker";
-import { minorToPlainText } from "../../lib/amount-text";
+import { minorToEntryText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { createRecurring } from "../recurring/recurring-service";
 import { occurrenceDate, type Frequency } from "../../domain/recurrence";
@@ -95,7 +95,7 @@ export function TransactionSheet({
   const [repeatUnit, setRepeatUnit] = useState<Frequency["unit"]>("month");
   const [repeatEvery, setRepeatEvery] = useState(1);
   const [amountExpr, setAmountExpr] = useState(
-    source ? minorToPlainText(Math.abs(source.amount), source.currency) : "",
+    source ? minorToEntryText(Math.abs(source.amount), source.currency) : "",
   );
   const [adjustSign, setAdjustSign] = useState<"+" | "-">(
     transaction && transaction.amount < 0 ? "-" : "+",
@@ -104,11 +104,11 @@ export function TransactionSheet({
   const [toWalletId, setToWalletId] = useState(initial?.toWalletId ?? "");
   const [toAmountExpr, setToAmountExpr] = useState(
     transaction?.toAmount !== undefined && transaction.toWalletId
-      ? minorToPlainText(transaction.toAmount, transactionTargetCurrency(transaction, wallets))
+      ? minorToEntryText(transaction.toAmount, transactionTargetCurrency(transaction, wallets))
       : "",
   );
   const [feeExpr, setFeeExpr] = useState(
-    transaction?.fee ? minorToPlainText(transaction.fee, transaction.currency) : "",
+    transaction?.fee ? minorToEntryText(transaction.fee, transaction.currency) : "",
   );
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [creatingCategory, setCreatingCategory] = useState(false);
