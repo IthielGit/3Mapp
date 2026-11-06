@@ -22,6 +22,7 @@ import { upTo } from "../../domain/cutoff";
 import { BrandMark } from "../../components/BrandMark";
 import { SyncButton } from "../sync/SyncButton";
 import { AccountMenu } from "../../components/AccountMenu";
+import { useAccountIdentity } from "../account/account-identity";
 import { updatePreferences } from "../settings/preferences-service";
 import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 
@@ -45,6 +46,7 @@ function lastDays(count: number): string[] {
  */
 export function HomePage() {
   const { t, i18n } = useTranslation();
+  const identity = useAccountIdentity();
   const [suggestionHidden, setSuggestionHidden] = useState(false);
   const rates = useLiveQuery(() => db.exchangeRates.toArray(), []) ?? EMPTY;
   const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? EMPTY;
@@ -264,15 +266,15 @@ export function HomePage() {
     <section className="-mx-4 flex flex-col gap-5 px-4">
       <h1 className="sr-only">{t("nav.home")}</h1>
 
-      {/* En-tête : « Bienvenue », le mois en cours, et l'engrenage seul. */}
+      {/* En-tête : « Bienvenue », le nom du compte, et l'avatar du compte. */}
       <header className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex items-center justify-between bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
         <div className="flex items-center gap-3">
           <BrandMark size={44} className="shrink-0 rounded-xl shadow-sm" />
           <div className="flex flex-col">
             <span className="text-2xl font-semibold tracking-tight text-ink dark:text-fg">{t("home.hello")}</span>
-            <span className="text-sm capitalize text-neutral-600 dark:text-muted">
-              {format(cycleNow, "MMMM yyyy", { locale: cycleLocale })}
-            </span>
+            {identity.name ? (
+              <span className="truncate text-sm text-neutral-600 dark:text-muted">{identity.name}</span>
+            ) : null}
           </div>
         </div>
         <div className="flex items-center gap-2">
