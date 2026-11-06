@@ -12,9 +12,9 @@ import {
 
 type Mode = "signIn" | "signUp";
 
-/** Adresse de retour après connexion (autorisée dans Supabase, voir SUPABASE_GOOGLE_SETUP). */
+/** Adresse de retour après connexion : l'accueil (autorisée dans Supabase, voir SUPABASE_GOOGLE_SETUP). */
 export function accountRedirectUrl(): string {
-  return `${window.location.origin}/plus/account`;
+  return `${window.location.origin}/`;
 }
 
 const fieldClass =
