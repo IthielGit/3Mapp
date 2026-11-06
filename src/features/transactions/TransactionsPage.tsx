@@ -576,8 +576,8 @@ export function TransactionsPage() {
           }
         >
           <div className="flex flex-col gap-5">
-            {/* Période et tri côte à côte : deux réglages courts, une seule ligne. */}
-            <div className="grid grid-cols-2 gap-2">
+            {/* Période et tri en pleine largeur, empilés : des champs lisibles plutôt que deux demi-colonnes étroites. */}
+            <div className="flex flex-col gap-3">
               <Field label={t("transactions.period")}>
                 <select
                   className={inputClass}
@@ -672,7 +672,7 @@ export function TransactionsPage() {
               </Field>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-3">
               <Field label={t("transactions.minAmount")}>
                 <AmountTextInput
                   className={inputClass}
