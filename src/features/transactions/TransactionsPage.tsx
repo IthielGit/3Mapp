@@ -19,6 +19,7 @@ import {
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { AmountRangeSlider } from "../../components/AmountRangeSlider";
 import {
   bulkUpdate,
   removeTransactions,
@@ -680,55 +681,18 @@ export function TransactionsPage() {
               </Field>
             </div>
 
-            {/* Fourchette choisie parmi les montants existants : chaque borne ne propose que des valeurs cohérentes. */}
-            <div className="flex flex-col gap-3">
-              <Field label={t("transactions.minAmount")}>
-                <select
-                  className={inputClass}
-                  value={draftFilters.minAmount === undefined ? "" : String(draftFilters.minAmount)}
-                  onChange={(e) =>
-                    setDraftFilters((f) => ({
-                      ...f,
-                      minAmount: e.target.value === "" ? undefined : Number(e.target.value),
-                    }))
-                  }
-                >
-                  <option value="">{t("transactions.anyAmount")}</option>
-                  {amountOptions
-                    .filter(
-                      (v) => draftFilters.maxAmount === undefined || v <= draftFilters.maxAmount,
-                    )
-                    .map((v) => (
-                      <option key={v} value={String(v)}>
-                        {formatMoney(v, baseCurrency)}
-                      </option>
-                    ))}
-                </select>
-              </Field>
-              <Field label={t("transactions.maxAmount")}>
-                <select
-                  className={inputClass}
-                  value={draftFilters.maxAmount === undefined ? "" : String(draftFilters.maxAmount)}
-                  onChange={(e) =>
-                    setDraftFilters((f) => ({
-                      ...f,
-                      maxAmount: e.target.value === "" ? undefined : Number(e.target.value),
-                    }))
-                  }
-                >
-                  <option value="">{t("transactions.anyAmount")}</option>
-                  {amountOptions
-                    .filter(
-                      (v) => draftFilters.minAmount === undefined || v >= draftFilters.minAmount,
-                    )
-                    .map((v) => (
-                      <option key={v} value={String(v)}>
-                        {formatMoney(v, baseCurrency)}
-                      </option>
-                    ))}
-                </select>
-              </Field>
-            </div>
+            {/* Fourchette à deux poignées sur les montants existants. */}
+            <AmountRangeSlider
+              label={t("transactions.amount")}
+              options={amountOptions}
+              min={draftFilters.minAmount}
+              max={draftFilters.maxAmount}
+              format={(v) => formatMoney(v, baseCurrency)}
+              anyLabel={t("transactions.anyAmount")}
+              onChange={(minAmount, maxAmount) =>
+                setDraftFilters((f) => ({ ...f, minAmount, maxAmount }))
+              }
+            />
           </div>
         </BottomSheet>
       ) : null}
