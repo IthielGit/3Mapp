@@ -7,7 +7,7 @@ import { askConfirm } from "../../components/confirm-service";
 import { format } from "date-fns";
 import { useSyncStatus } from "../sync/useSyncStatus";
 import { useAccount } from "./AccountProvider";
-import { signOutAndClear } from "./sign-out";
+import { useSignOut } from "./use-sign-out";
 import { deleteOwnAccount } from "./delete-account";
 import { downloadLocalBackup } from "../backup/export-backup";
 
@@ -19,7 +19,8 @@ export function AccountPage() {
   const { t } = useTranslation();
   const account = useAccount();
   const sync = useSyncStatus();
-  const [signingOut, setSigningOut] = useState(false);
+  const signOutFlow = useSignOut();
+  const [deleting, setDeleting] = useState(false);
   const [exportError, setExportError] = useState(false);
   const [deleteError, setDeleteError] = useState<"network" | "unknown" | undefined>();
 
@@ -35,7 +36,7 @@ export function AccountPage() {
   const client = account.client;
   const state = sync.state;
   const pending = sync.pending;
-  const busy = sync.busy || signingOut;
+  const busy = sync.busy || signOutFlow.busy || deleting;
   const syncNow = () => sync.syncNow();
   const shownError = sync.error;
   const email = account.session.user.email ?? "";
@@ -48,19 +49,6 @@ export function AccountPage() {
     : pending
       ? t("account.sync.pending", { count: pending })
       : t("account.sync.upToDate");
-
-  async function signOut() {
-    const lost = pending;
-    const confirmed = await askConfirm({
-      message:
-        t("account.signOutConfirm") + (lost > 0 ? " " + t("account.signOutLost", { count: lost }) : ""),
-      confirmLabel: t("account.signOut"),
-    });
-    if (!confirmed) return;
-    setSigningOut(true);
-    await signOutAndClear(client);
-    setSigningOut(false);
-  }
 
   /** Export RGPD : une sauvegarde complète de cet appareil, téléchargée. */
   async function exportData() {
@@ -80,10 +68,10 @@ export function AccountPage() {
       danger: true,
     });
     if (!confirmed) return;
-    setSigningOut(true);
+    setDeleting(true);
     setDeleteError(undefined);
     const result = await deleteOwnAccount(client);
-    setSigningOut(false);
+    setDeleting(false);
     if (!result.ok) setDeleteError(result.code === "network" ? "network" : "unknown");
   }
 
@@ -143,7 +131,7 @@ export function AccountPage() {
           <p role="alert" className="px-4 pb-3 text-sm text-red-700 dark:text-red-400">{t("account.privacy.exportError")}</p>
         ) : null}
         <div className="flex flex-col gap-3 border-t border-neutral-200 p-4 dark:border-white/15">
-          <button type="button" className={`${buttonSecondary} w-full`} disabled={busy} onClick={() => void signOut()}>
+          <button type="button" className={`${buttonSecondary} w-full`} disabled={busy} onClick={() => void signOutFlow.signOut()}>
             {t("account.signOut")}
           </button>
           <p className="text-sm text-neutral-600 dark:text-muted">{t("account.localNotice")}</p>

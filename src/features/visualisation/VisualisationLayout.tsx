@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { AccountMenu } from "../../components/AccountMenu";
 
 type View = "stats" | "calendar";
 
@@ -15,8 +16,10 @@ export function VisualisationLayout() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex justify-center bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] text-center text-xl font-semibold text-ink dark:bg-page dark:text-fg">
-        <span className="relative inline-flex items-center gap-1">
+      {/* Ligne d'en-tête : titre aligné à gauche, avatar du compte à droite. */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex items-center gap-2 bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
+        <h1 className="flex min-w-0 flex-1 justify-start text-left text-xl font-semibold text-ink dark:text-fg">
+        <span className="relative -ml-2 inline-flex items-center gap-1">
         <label className="sr-only" htmlFor="visualisation-view">
           {t("nav.visualisation")}
         </label>
@@ -25,7 +28,7 @@ export function VisualisationLayout() {
           value={view}
           onChange={(e) => navigate(`/visualisation/${e.target.value}`, { replace: true })}
           // Le menu natif suit le thème (color-scheme) : texte et fond lisibles dans les deux modes.
-          className="cursor-pointer appearance-none rounded-lg bg-transparent px-2 py-1 pr-7 text-center text-xl font-semibold text-ink [color-scheme:light] outline-none focus:bg-neutral-100 dark:text-fg dark:[color-scheme:dark] dark:focus:bg-raised"
+          className="cursor-pointer appearance-none rounded-lg bg-transparent px-2 py-1 pr-7 text-left text-xl font-semibold text-ink [color-scheme:light] outline-none focus:bg-neutral-100 dark:text-fg dark:[color-scheme:dark] dark:focus:bg-raised"
         >
           <option value="stats" className="bg-white text-ink dark:bg-card dark:text-fg">
             {t("nav.stats")}
@@ -47,7 +50,9 @@ export function VisualisationLayout() {
           <path d="M5 8l5 5 5-5" />
         </svg>
         </span>
-      </h1>
+        </h1>
+        <AccountMenu />
+      </div>
       <Outlet />
     </div>
   );

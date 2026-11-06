@@ -21,6 +21,7 @@ import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { upTo } from "../../domain/cutoff";
 import { BrandMark } from "../../components/BrandMark";
 import { SyncButton } from "../sync/SyncButton";
+import { AccountMenu } from "../../components/AccountMenu";
 import { updatePreferences } from "../settings/preferences-service";
 import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 
@@ -29,25 +30,6 @@ const EMPTY_DEBTS: never[] = [];
 const EMPTY_PAYMENTS: never[] = [];
 const EMPTY_RECONCILIATIONS: never[] = [];
 const PREVIEW = 2;
-
-/** Engrenage des réglages (tracé ISC, Lucide), en haut à droite. */
-function GearIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
 
 /** Les N derniers jours (AAAA-MM-JJ), du plus ancien au plus récent. */
 function lastDays(count: number): string[] {
@@ -295,13 +277,7 @@ export function HomePage() {
         </div>
         <div className="flex items-center gap-2">
           <SyncButton />
-          <Link
-            to="/plus"
-            aria-label={t("nav.more")}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-sm dark:bg-raised dark:text-fg"
-          >
-            <GearIcon />
-          </Link>
+          <AccountMenu />
         </div>
       </header>
 
