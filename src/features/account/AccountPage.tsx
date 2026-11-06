@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PageTitle } from "../../components/PageHeader";
-import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { buttonDanger, buttonSecondary } from "../../components/FormControls";
 import { HelpTip } from "../../components/HelpTip";
 import { askConfirm } from "../../components/confirm-service";
 import { format } from "date-fns";
@@ -11,7 +11,10 @@ import { signOutAndClear } from "./sign-out";
 import { deleteOwnAccount } from "./delete-account";
 import { downloadLocalBackup } from "../backup/export-backup";
 
-/** Page Compte : identité, état de la synchronisation, déconnexion. La connexion est obligatoire (AccountGate). */
+/**
+ * Page Compte : identité, état de la synchronisation, données et déconnexion, puis zone dangereuse en bas.
+ * La connexion est obligatoire (AccountGate).
+ */
 export function AccountPage() {
   const { t } = useTranslation();
   const account = useAccount();
@@ -34,6 +37,17 @@ export function AccountPage() {
   const pending = sync.pending;
   const busy = sync.busy || signingOut;
   const syncNow = () => sync.syncNow();
+  const shownError = sync.error;
+  const email = account.session.user.email ?? "";
+  const initial = email.charAt(0).toUpperCase() || "?";
+
+  // Pastille et libellé d'état : l'erreur a priorité, puis les modifications en attente, sinon « À jour ».
+  const syncDot = shownError ? "bg-red-700" : pending ? "bg-amber-500" : "bg-income";
+  const syncLabel = shownError
+    ? t("account.sync.buttonError")
+    : pending
+      ? t("account.sync.pending", { count: pending })
+      : t("account.sync.upToDate");
 
   async function signOut() {
     const lost = pending;
@@ -47,8 +61,6 @@ export function AccountPage() {
     await signOutAndClear(client);
     setSigningOut(false);
   }
-
-  const shownError = sync.error;
 
   /** Export RGPD : une sauvegarde complète de cet appareil, téléchargée. */
   async function exportData() {
@@ -77,50 +89,74 @@ export function AccountPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-3">
-        <PageTitle className="text-2xl font-semibold">{t("account.title")}</PageTitle>
+      <PageTitle className="text-2xl font-semibold">{t("account.title")}</PageTitle>
+
+      {/* Identité : initiale dans un rond, e-mail en gras, aide à droite. */}
+      <div className="flex items-center gap-3 rounded-card border border-neutral-200 p-4 dark:border-white/15">
+        <span
+          aria-hidden="true"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-lg font-semibold text-brand-900 dark:bg-brand-900 dark:text-brand-100"
+        >
+          {initial}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("account.signedInAs")}</p>
+          <p className="truncate font-semibold">{email}</p>
+        </div>
         <HelpTip title={t("account.help.title")} paragraphs={[t("account.help.p1"), t("account.help.p2")]} />
       </div>
-      <p>
-        {t("account.signedInAs")} <strong>{account.session.user.email}</strong>
-      </p>
 
-      <div className="flex flex-col gap-2 rounded-card border border-neutral-200 p-4 dark:border-white/15">
-        <h2 className="font-semibold">{t("account.sync.title")}</h2>
+      {/* Synchronisation : état visible, action secondaire (routine, pas une urgence). */}
+      <section className="flex flex-col gap-3 rounded-card border border-neutral-200 p-4 dark:border-white/15">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-semibold">{t("account.sync.title")}</h2>
+          <span className="flex items-center gap-2 text-sm text-neutral-700 dark:text-muted">
+            <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${syncDot}`} />
+            {syncLabel}
+          </span>
+        </div>
         <p className="text-sm text-neutral-700 dark:text-muted">
           {t("account.sync.lastSync")} :{" "}
           {state?.lastSyncAt ? format(new Date(state.lastSyncAt), "dd/MM/yyyy HH:mm") : t("account.sync.never")}
         </p>
-        {pending ? (
-          <p className="text-sm text-neutral-700 dark:text-muted">{t("account.sync.pending", { count: pending })}</p>
-        ) : null}
         {shownError ? (
           <p role="alert" className="text-sm text-red-700 dark:text-red-400">
             {t(`account.sync.error.${shownError}`)}
           </p>
         ) : null}
-        <button type="button" className={buttonPrimary} disabled={busy} onClick={() => void syncNow()}>
+        <button type="button" className={`${buttonSecondary} w-full`} disabled={busy} onClick={() => void syncNow()}>
           {t("account.sync.syncNow")}
         </button>
-      </div>
+      </section>
 
-      <p className="text-sm text-neutral-600 dark:text-muted">{t("account.localNotice")}</p>
-      <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void exportData()}>
-        {t("account.privacy.export")}
-      </button>
-      {exportError ? (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">{t("account.privacy.exportError")}</p>
-      ) : null}
-      <button type="button" className={buttonSecondary} disabled={busy} onClick={() => void signOut()}>
-        {t("account.signOut")}
-      </button>
+      {/* Données et session : export, puis déconnexion avec son avertissement juste dessous. */}
+      <section className="flex flex-col rounded-card border border-neutral-200 dark:border-white/15">
+        <button
+          type="button"
+          className="flex min-h-[52px] items-center px-4 text-left font-medium disabled:opacity-50"
+          disabled={busy}
+          onClick={() => void exportData()}
+        >
+          {t("account.privacy.export")}
+        </button>
+        {exportError ? (
+          <p role="alert" className="px-4 pb-3 text-sm text-red-700 dark:text-red-400">{t("account.privacy.exportError")}</p>
+        ) : null}
+        <div className="flex flex-col gap-3 border-t border-neutral-200 p-4 dark:border-white/15">
+          <button type="button" className={`${buttonSecondary} w-full`} disabled={busy} onClick={() => void signOut()}>
+            {t("account.signOut")}
+          </button>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("account.localNotice")}</p>
+        </div>
+      </section>
 
+      {/* Zone dangereuse en bas : contour rouge seulement, la confirmation reste obligatoire. */}
       <section className="flex flex-col gap-2 rounded-card border border-red-200 p-4 dark:border-red-400/30">
         <h2 className="font-semibold">{t("account.privacy.deleteTitle")}</h2>
         <p className="text-sm text-neutral-600 dark:text-muted">{t("account.privacy.deleteHint")}</p>
         <button
           type="button"
-          className="min-h-[44px] rounded-xl bg-red-700 font-semibold text-white disabled:opacity-50"
+          className={`${buttonDanger} mt-1 w-full`}
           disabled={busy}
           onClick={() => void removeAccount()}
         >

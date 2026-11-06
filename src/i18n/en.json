@@ -790,6 +790,7 @@
       "pending": "{{count}} change(s) waiting to be sent",
       "syncNow": "Sync now",
       "starting": "Syncing…",
+      "upToDate": "Up to date",
       "error": {
         "network": "No connection: sync will resume when the network is back.",
         "suspended": "Account suspended: sync is blocked.",
@@ -805,7 +806,12 @@
       "welcomeTitle": "Welcome back",
       "welcomeSub": "Sign in to see your finances.",
       "createTitle": "Create an account",
-      "createSub": "It only takes a few seconds. Your data then syncs."
+      "createSub": "It only takes a few seconds. Your data then syncs.",
+      "signInTitle": "Sign in to your account",
+      "orSignIn": "Or sign in with",
+      "orSignUp": "Or sign up with",
+      "noAccount": "No account yet?",
+      "backAria": "Back"
     },
     "confirmPassword": "Confirm password",
     "passwordMismatch": "The two passwords do not match.",

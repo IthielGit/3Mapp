@@ -42,7 +42,7 @@ describe("compte obligatoire", () => {
         </AccountGate>
       </AccountProvider>,
     );
-    expect(await screen.findByRole("tab", { name: /Connexion/ })).toBeTruthy();
+    expect(await screen.findByRole("heading", { name: /Connexion à votre compte/ })).toBeTruthy();
     expect(screen.queryByText("Contenu protégé")).toBeNull();
   });
 

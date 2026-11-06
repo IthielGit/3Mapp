@@ -790,6 +790,7 @@
       "pending": "{{count}} modification(s) en attente d'envoi",
       "syncNow": "Synchroniser maintenant",
       "starting": "Synchronisation en cours…",
+      "upToDate": "À jour",
       "error": {
         "network": "Pas de connexion : la synchronisation reprendra au retour du réseau.",
         "suspended": "Compte suspendu : la synchronisation est bloquée.",
@@ -805,7 +806,12 @@
       "welcomeTitle": "Bon retour",
       "welcomeSub": "Connectez-vous pour retrouver vos finances.",
       "createTitle": "Créer un compte",
-      "createSub": "Quelques secondes suffisent. Vos données se synchronisent ensuite."
+      "createSub": "Quelques secondes suffisent. Vos données se synchronisent ensuite.",
+      "signInTitle": "Connexion à votre compte",
+      "orSignIn": "Ou se connecter avec",
+      "orSignUp": "Ou s'inscrire avec",
+      "noAccount": "Pas encore de compte ?",
+      "backAria": "Retour"
     },
     "confirmPassword": "Confirmer le mot de passe",
     "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
