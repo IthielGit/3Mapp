@@ -8,6 +8,7 @@ import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
+import { CategoryPicker } from "../transactions/CategoryPicker";
 import { parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
@@ -17,7 +18,6 @@ import { minorToPlainText } from "../../lib/amount-text";
 const EMPTY: never[] = [];
 type TxType = Recurring["type"];
 
-const NEW_CATEGORY = "__new__";
 export function RecurringFormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -174,33 +174,14 @@ export function RecurringFormPage() {
           </Field>
         ) : (
             <>
-          <Field label={t("common.category")}>
-            <select
-              className={inputClass}
-              value={categoryId}
-              required
-              onChange={(e) => {
-                if (e.target.value === NEW_CATEGORY) {
-                  setCreatingCategory(true);
-                  return;
-                }
-                setCategoryId(e.target.value);
-              }}
-            >
-              <option value="" disabled>
-                {t("transactions.chooseCategory")}
-              </option>
-              {categories
-                .filter((c) => c.kind === kind && !c.archived)
-                .sort(byName)
-                .map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.icon} {c.name}
-                  </option>
-                ))}
-              <option value={NEW_CATEGORY}>+ {t("transactions.newCategory")}</option>
-            </select>
-            </Field>
+          <CategoryPicker
+            label={t("common.category")}
+            placeholder={t("transactions.chooseCategory")}
+            value={categoryId}
+            options={categories.filter((c) => c.kind === kind && !c.archived).sort(byName)}
+            onChange={(id) => setCategoryId(id)}
+            onCreateNew={() => setCreatingCategory(true)}
+          />
           <QuickCategorySheet
             open={creatingCategory}
             kind={kind}

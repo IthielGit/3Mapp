@@ -1,3 +1,5 @@
+import { onRadioGroupKeyDown } from "./radio-keys";
+
 const ICON_CHOICES = [
   "🏦",
   "💵",
@@ -42,13 +44,15 @@ interface IconPickerProps {
 
 export function IconPicker({ value, onChange, label }: IconPickerProps) {
   return (
-    <div role="radiogroup" aria-label={label} className="grid grid-cols-6 gap-2">
+    <div role="radiogroup" aria-label={label} onKeyDown={onRadioGroupKeyDown} className="grid grid-cols-6 gap-2">
       {ICON_CHOICES.map((icon) => (
         <button
           key={icon}
           type="button"
           role="radio"
           aria-checked={value === icon}
+          aria-label={icon}
+          tabIndex={value === icon || (!ICON_CHOICES.includes(value) && icon === ICON_CHOICES[0]) ? 0 : -1}
           onClick={() => onChange(icon)}
           className={`flex min-h-[44px] items-center justify-center rounded-lg border text-xl ${
             value === icon
