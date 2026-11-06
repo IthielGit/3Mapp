@@ -22,6 +22,10 @@ const profileSchema = z.object({
 /** Délai maximal de lecture du profil : au-delà, on continue avec le dernier statut connu. */
 export const PROFILE_TIMEOUT_MS = 8000;
 
+/** Nouvelles tentatives après un échec de lecture (démarrage à froid, réseau instable) avant d'abandonner. */
+export const PROFILE_RETRIES = 2;
+export const PROFILE_RETRY_MS = 2000;
+
 /** Lit le profil du compte connecté. `undefined` en cas d'erreur réseau ou de profil absent. */
 export async function fetchProfile(client: SupabaseClient, userId: string): Promise<AccountProfile | undefined> {
   const { data, error } = await client

@@ -104,7 +104,8 @@ describe("garde de compte suspendu", () => {
         </AccountGate>
       </AccountProvider>,
     );
-    expect(await screen.findByText("Compte suspendu")).toBeTruthy();
+    // Deux nouvelles tentatives (2 s chacune) avant de retenir le statut mémorisé.
+    expect(await screen.findByText("Compte suspendu", {}, { timeout: 6000 })).toBeTruthy();
     expect(screen.queryByText("Contenu de l'application")).toBeNull();
   });
 
@@ -132,6 +133,7 @@ describe("garde de compte suspendu", () => {
         </AccountGate>
       </AccountProvider>,
     );
-    expect(await screen.findByText("Compte suspendu")).toBeTruthy();
+    // Deux nouvelles tentatives (2 s chacune) avant de retenir le statut mémorisé.
+    expect(await screen.findByText("Compte suspendu", {}, { timeout: 6000 })).toBeTruthy();
   });
 });

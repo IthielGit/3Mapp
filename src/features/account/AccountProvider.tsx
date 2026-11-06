@@ -3,6 +3,8 @@ import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { getSupabase } from "./supabase-client";
 import {
   fetchProfile,
+  PROFILE_RETRIES,
+  PROFILE_RETRY_MS,
   PROFILE_TIMEOUT_MS,
   readCachedStatus,
   resolveStatus,
@@ -75,18 +77,37 @@ export function AccountProvider({
   useEffect(() => {
     if (!client || !userId) return;
     let active = true;
-    const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), PROFILE_TIMEOUT_MS));
-    void Promise.race([fetchProfile(client, userId), timeout])
-      .then((next) => {
-        if (!active) return;
-        if (next) writeCachedStatus(userId, next.status);
-        setProfileRead({ userId, profile: next });
-      })
-      .catch(() => {
-        if (active) setProfileRead({ userId });
-      });
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    // Lecture du profil avec nouvelles tentatives : un échec transitoire ne doit pas être pris pour « pas de profil ».
+    const load = (attempt: number) => {
+      const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), PROFILE_TIMEOUT_MS));
+      void Promise.race([fetchProfile(client, userId), timeout])
+        .then((next) => {
+          if (!active) return;
+          if (next) {
+            writeCachedStatus(userId, next.status);
+            setProfileRead({ userId, profile: next });
+            return;
+          }
+          if (attempt < PROFILE_RETRIES && navigator.onLine) {
+            retry = setTimeout(() => load(attempt + 1), PROFILE_RETRY_MS);
+            return;
+          }
+          setProfileRead({ userId });
+        })
+        .catch(() => {
+          if (!active) return;
+          if (attempt < PROFILE_RETRIES && navigator.onLine) {
+            retry = setTimeout(() => load(attempt + 1), PROFILE_RETRY_MS);
+            return;
+          }
+          setProfileRead({ userId });
+        });
+    };
+    load(0);
     return () => {
       active = false;
+      if (retry !== undefined) clearTimeout(retry);
     };
   }, [client, userId, online]);
 

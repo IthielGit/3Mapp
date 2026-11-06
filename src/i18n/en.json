@@ -891,6 +891,8 @@
     "deleteTitle": "Delete this account",
     "deleteWarning": "This permanently deletes the account and all its data. This cannot be undone.",
     "deleteTypeEmail": "To confirm, type the exact address: {{email}}",
+    "profileUnavailable": "Could not verify your access right now. Check your connection.",
+    "retry": "Try again",
     "deleteForever": "Delete permanently",
     "cancel": "Cancel",
     "contents": "Contents",

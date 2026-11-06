@@ -891,6 +891,8 @@
     "deleteTitle": "Supprimer ce compte",
     "deleteWarning": "Cette action supprime définitivement le compte et toutes ses données. Elle est irréversible.",
     "deleteTypeEmail": "Pour confirmer, saisissez exactement l'adresse : {{email}}",
+    "profileUnavailable": "Impossible de vérifier vos droits pour le moment. Vérifiez votre connexion.",
+    "retry": "Réessayer",
     "deleteForever": "Supprimer définitivement",
     "cancel": "Annuler",
     "contents": "Contenu",
