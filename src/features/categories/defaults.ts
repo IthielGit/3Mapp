@@ -27,6 +27,7 @@ export const DEFAULT_CATEGORIES: readonly DefaultCategory[] = [
   { name: "Divers", kind: "expense", icon: "📦", color: "#64748b" },
   { name: "Salaire", kind: "income", icon: "💼", color: "#059669" },
   { name: "Primes", kind: "income", icon: "🏅", color: "#16a34a" },
+  { name: "Activité annexe", kind: "income", icon: "🧑‍💻", color: "#0369a1" },
   { name: "Intérêts", kind: "income", icon: "🏧", color: "#0d9488" },
   { name: "Remboursements", kind: "income", icon: "🔄", color: "#0891b2" },
   { name: "Ventes", kind: "income", icon: "🛒", color: "#d97706" },
@@ -48,4 +49,39 @@ export function missingDefaultCategories(
 ): DefaultCategory[] {
   const present = new Set(existing.map((c) => defaultKey(c.kind, c.name)));
   return DEFAULT_CATEGORIES.filter((d) => !present.has(defaultKey(d.kind, d.name)));
+}
+
+/**
+ * Version du jeu de catégories par défaut. À chaque ajout de catégories, on incrémente ce numéro et on
+ * indique la version de chaque nouvelle catégorie. Chaque compte garde la version qu'il a atteinte
+ * (réglage synchronisé) : les catégories ajoutées sont proposées une seule fois, sans jamais revenir
+ * sur une catégorie que l'utilisateur a supprimée.
+ */
+export const DEFAULTS_VERSION = 3;
+
+/** Catégories ajoutées depuis la version 2. Les autres font partie de la version 1. */
+const ADDED_IN: readonly { kind: DefaultCategory["kind"]; name: string; version: number }[] = [
+  { kind: "income", name: "Activité annexe", version: 3 },
+  { kind: "expense", name: "Téléphone et internet", version: 2 },
+  { kind: "expense", name: "Électricité et eau", version: 2 },
+  { kind: "expense", name: "Assurances", version: 2 },
+  { kind: "expense", name: "Frais bancaires", version: 2 },
+  { kind: "expense", name: "Abonnements", version: 2 },
+  { kind: "expense", name: "Impôts et taxes", version: 2 },
+  { kind: "expense", name: "Dons et solidarité", version: 2 },
+  { kind: "expense", name: "Remboursements", version: 2 },
+  { kind: "income", name: "Primes", version: 2 },
+  { kind: "income", name: "Intérêts", version: 2 },
+];
+
+/** Version à partir de laquelle la catégorie par défaut figure dans le jeu. */
+export function defaultCategoryVersion(category: DefaultCategory): number {
+  const key = defaultKey(category.kind, category.name);
+  const hit = ADDED_IN.find((added) => defaultKey(added.kind, added.name) === key);
+  return hit?.version ?? 1;
+}
+
+/** Catégories par défaut introduites après une version donnée. */
+export function defaultCategoriesAfter(version: number): DefaultCategory[] {
+  return DEFAULT_CATEGORIES.filter((d) => defaultCategoryVersion(d) > version);
 }

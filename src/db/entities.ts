@@ -42,6 +42,8 @@ export const settingsSchema = baseEntity.extend({
   lastBackupAt: isoDateTime.optional(),
   /** Touche de zéros du clavier de saisie : « 00 » ou « 000 » (défaut : 000). */
   keypadZeros: z.union([z.literal(2), z.literal(3)]).optional(),
+  /** Version du jeu de catégories par défaut déjà proposé à ce compte (synchronisée). Absent : version 1. */
+  defaultCategoriesVersion: z.number().int().min(1).optional(),
   /** Solde « à aujourd'hui » : ignore les transactions datées dans le futur. */
   ignoreFutureBalance: z.boolean().optional(),
   /** Rappel quotidien de saisie (notification, uniquement quand l'app est ouverte). */

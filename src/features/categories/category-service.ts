@@ -8,7 +8,7 @@ import {
 } from "../../db/entities";
 import { createRepository } from "../../db/repositories";
 import { moveItem, sortOrderChanges } from "../../domain/ordering";
-import { missingDefaultCategories } from "./defaults";
+import { DEFAULTS_VERSION, defaultCategoriesAfter, missingDefaultCategories } from "./defaults";
 
 export type CategoryInput = Omit<Category, "id" | "createdAt" | "updatedAt" | "sortOrder">;
 
@@ -69,6 +69,32 @@ export async function restoreDefaultCategories(database: AppDatabase = defaultDb
     }
   });
   return missing.length;
+}
+
+/**
+ * Propose à ce compte les catégories par défaut ajoutées depuis sa dernière version (une seule fois).
+ * Les catégories déjà présentes ou supprimées avant cette version ne reviennent pas.
+ * Retourne le nombre de catégories ajoutées. Sans réglages locaux, rien n'est fait.
+ */
+export async function applyDefaultCategoryUpdates(database: AppDatabase = defaultDb): Promise<number> {
+  const settings = await database.settings.toCollection().first();
+  if (!settings) return 0;
+  const stored = settings.defaultCategoriesVersion ?? 1;
+  if (stored >= DEFAULTS_VERSION) return 0;
+
+  const existing = await database.categories.toArray();
+  const present = new Set(existing.map((c) => `${c.kind}|${c.name.trim().toLocaleLowerCase("fr")}`));
+  const toAdd = defaultCategoriesAfter(stored).filter(
+    (d) => !present.has(`${d.kind}|${d.name.trim().toLocaleLowerCase("fr")}`),
+  );
+
+  await database.transaction("rw", database.categories, database.settings, async () => {
+    for (const category of toAdd) {
+      await createCategory({ ...category, archived: false }, database);
+    }
+    await database.settings.update(settings.id, { defaultCategoriesVersion: DEFAULTS_VERSION });
+  });
+  return toAdd.length;
 }
 
 export async function updateCategory(
