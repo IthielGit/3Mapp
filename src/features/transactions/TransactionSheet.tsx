@@ -19,6 +19,7 @@ import {
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
+import { CategoryPicker } from "./CategoryPicker";
 import { minorToPlainText } from "../../lib/amount-text";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { createRecurring } from "../recurring/recurring-service";
@@ -68,7 +69,6 @@ interface TransactionSheetProps {
   copyOf?: Transaction | undefined;
 }
 
-const NEW_CATEGORY = "__new__";
 export function TransactionSheet({
   transaction,
   defaultType,
@@ -403,31 +403,17 @@ export function TransactionSheet({
             </Field>
           ) : (
               <>
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={categoryId}
-                required
-                onChange={(e) => {
-                  if (e.target.value === NEW_CATEGORY) {
-                    setCreatingCategory(true);
-                    return;
-                  }
-                  setCategoryId(e.target.value);
-                  setSubcategoryId("");
-                }}
-              >
-                <option value="" disabled>
-                  {t("transactions.chooseCategory")}
-                </option>
-                {categoryOptions.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.icon} {c.name}
-                  </option>
-                ))}
-                <option value={NEW_CATEGORY}>+ {t("transactions.newCategory")}</option>
-              </select>
-              </Field>
+            <CategoryPicker
+              label={t("common.category")}
+              placeholder={t("transactions.chooseCategory")}
+              value={categoryId}
+              options={categoryOptions}
+              onChange={(id) => {
+                setCategoryId(id);
+                setSubcategoryId("");
+              }}
+              onCreateNew={() => setCreatingCategory(true)}
+            />
             <QuickCategorySheet
               open={creatingCategory}
               kind={kind}

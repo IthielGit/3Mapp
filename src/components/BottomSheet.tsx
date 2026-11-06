@@ -16,6 +16,9 @@ interface BottomSheetProps {
 /** Durée de sortie : la feuille reste montée le temps de glisser vers le bas. */
 const EXIT_MS = 320;
 
+/** Pile des feuilles ouvertes (une feuille peut en ouvrir une autre, comme le choix de catégorie). */
+const sheetStack: symbol[] = [];
+
 /**
  * Feuille modale en bas d'écran. Entrée et sortie par glissement depuis le bord (la sortie suit
  * le chemin de l'entrée). Fermeture par Échap, par le fond, ou par le bouton ×.
@@ -59,14 +62,26 @@ export function BottomSheet({ open, title, onClose, children, footer, actions }:
     if (open && present) panelRef.current?.focus({ preventScroll: true });
   }, [open, present]);
 
+  // Feuilles ouvertes, de la plus ancienne à la plus récente : Échap ne ferme que la feuille du dessus.
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  });
+  const tokenRef = useRef<symbol>(Symbol("bottom-sheet"));
   useEffect(() => {
     if (!open) return;
+    const token = tokenRef.current;
+    sheetStack.push(token);
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape" && sheetStack[sheetStack.length - 1] === token) closeRef.current();
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      const index = sheetStack.lastIndexOf(token);
+      if (index >= 0) sheetStack.splice(index, 1);
+    };
+  }, [open]);
 
   if (!present) return null;
   const shown = open && visible;
