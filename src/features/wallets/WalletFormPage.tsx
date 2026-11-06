@@ -6,7 +6,9 @@ import { db } from "../../db/database";
 import type { Wallet } from "../../db/entities";
 import { ColorPicker, IconPicker } from "../../components/Pickers";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
-import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { CURRENCIES, formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { createWallet, updateWallet } from "./wallet-service";
 
 const GROUPS: Wallet["group"][] = ["bank", "cash", "mobile", "savings", "credit_card"];
@@ -48,14 +50,14 @@ export function WalletFormPage() {
 
   function missingField(): string | null {
     if (name.trim() === "") return t("forms.missingName");
-    if (parseMoney(balanceText || "0", currency) === null) return t("errors.invalidAmount");
+    if (parseAmountText(balanceText || "0", currency) === null) return t("errors.invalidAmount");
     return null;
   }
 
   async function save() {
     setError(undefined);
     if (name.trim() === "") return setNameError(t("errors.required"));
-    const initialBalance = parseMoney(balanceText || "0", currency);
+    const initialBalance = parseAmountText(balanceText || "0", currency);
     if (initialBalance === null) return setError(t("errors.invalidAmount"));
 
     const input = {
@@ -129,11 +131,10 @@ export function WalletFormPage() {
 
       <div className="grid grid-cols-[1fr_auto] items-end gap-3">
         <Field label={t("wallets.initialBalance")}>
-          <input
-            inputMode="decimal"
+          <AmountTextInput
             className={inputClass}
             value={balanceText}
-            onChange={(e) => setBalanceText(e.target.value)}
+            onValueChange={setBalanceText}
           />
         </Field>
         <label className="flex min-h-[44px] items-center gap-2 whitespace-nowrap">

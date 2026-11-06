@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { ColorPicker, IconPicker } from "../../components/Pickers";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { LogoTile } from "../../components/LogoTile";
-import { CURRENCIES, formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { CURRENCIES, formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { completeOnboarding } from "./onboarding-service";
 import { PaySetupForm, type PayChoice } from "../cycle/PaySetupForm";
 import { useAccount } from "../account/AccountProvider";
@@ -60,7 +62,7 @@ export function OnboardingPage() {
   async function finish() {
     setError(undefined);
     if (name.trim() === "") return setNameError(t("errors.required"));
-    const initialBalance = parseMoney(balanceText || "0", currency);
+    const initialBalance = parseAmountText(balanceText || "0", currency);
     if (initialBalance === null) return setError(t("errors.invalidAmount"));
 
     setSaving(true);
@@ -160,12 +162,7 @@ export function OnboardingPage() {
             />
           </Field>
           <Field label={t("wallets.initialBalance")}>
-            <input
-              inputMode="decimal"
-              className={inputClass}
-              value={balanceText}
-              onChange={(e) => setBalanceText(e.target.value)}
-              placeholder={formatMoney(0, currency, { withSymbol: false })}
+            <AmountTextInput className={inputClass} value={balanceText} onValueChange={setBalanceText} placeholder={formatMoney(0, currency, { withSymbol: false })}
             />
           </Field>
           <PaySetupForm tone="page" monthStartDay={1} onChange={setPay} />

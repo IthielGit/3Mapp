@@ -8,6 +8,8 @@ import { RuleError } from "../../db/errors";
 import { CURRENCIES, type CurrencyCode } from "../../lib/money";
 import { buttonDanger, buttonPrimary, Field, inputClass } from "../../components/FormControls";
 import { deleteRate, saveRate } from "./money-services";
+import { rawFromDisplay } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 
 const EMPTY: never[] = [];
 const CODES = Object.keys(CURRENCIES) as CurrencyCode[];
@@ -23,14 +25,14 @@ export function RatesPage() {
   const [error, setError] = useState<string | undefined>();
 
   function missingRate(): string | null {
-    const value = Number(rate.replace(",", "."));
+    const value = Number(rawFromDisplay(rate).replace(",", "."));
     if (!Number.isFinite(value) || value <= 0) return t("forms.missingRate");
     return null;
   }
 
   async function save() {
     setError(undefined);
-    const value = Number(rate.replace(",", "."));
+    const value = Number(rawFromDisplay(rate).replace(",", "."));
     try {
       await saveRate(from, to, value, new Date(`${date}T12:00`).toISOString());
       setRate("");
@@ -75,12 +77,7 @@ export function RatesPage() {
         </Field>
       </div>
       <Field label={t("rates.rate", { from, to })}>
-        <input
-          inputMode="decimal"
-          className={inputClass}
-          value={rate}
-          onChange={(e) => setRate(e.target.value)}
-        />
+        <AmountTextInput className={inputClass} value={rate} onValueChange={setRate} />
       </Field>
       <Field label={t("rates.date")}>
         <input

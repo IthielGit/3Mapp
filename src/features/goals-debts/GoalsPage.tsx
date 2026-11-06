@@ -14,7 +14,9 @@ import {
   inputClass,
 } from "../../components/FormControls";
 import { goalProgress } from "../../domain/goals";
-import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { addGoalMovement, createGoal, deleteGoal, setGoalArchived } from "./goals-debts-service";
 import { askConfirm } from "../../components/confirm-service";
 
@@ -103,14 +105,14 @@ function GoalForm({ onDone }: { onDone: () => void }) {
 
   function missingGoal(): string | null {
     if (name.trim() === "") return t("forms.missingName");
-    const amount = parseMoney(target, currency);
+    const amount = parseAmountText(target, currency);
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
     return null;
   }
 
   async function save() {
     setError(undefined);
-    const amount = parseMoney(target, currency);
+    const amount = parseAmountText(target, currency);
     if (name.trim() === "") return setNameError(t("errors.required"));
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     await createGoal({
@@ -136,12 +138,7 @@ function GoalForm({ onDone }: { onDone: () => void }) {
         />
       </Field>
       <Field label={`${t("goals.target")} (${currency})`}>
-        <input
-          inputMode="decimal"
-          className={inputClass}
-          value={target}
-          onChange={(e) => setTarget(e.target.value)}
-        />
+        <AmountTextInput className={inputClass} value={target} onValueChange={setTarget} />
       </Field>
       <Field label={t("goals.targetDate")}>
         <input
@@ -190,14 +187,14 @@ function GoalDetail({ id }: { id: string }) {
   const goalCurrency = goal.currency;
 
   function missingMovement(): string | null {
-    const value = parseMoney(amount, goalCurrency);
+    const value = parseAmountText(amount, goalCurrency);
     if (value === null || value <= 0) return t("transactions.amountRequired");
     return null;
   }
 
   async function addMovement() {
     setError(undefined);
-    const value = parseMoney(amount, goalCurrency);
+    const value = parseAmountText(amount, goalCurrency);
     if (value === null || value <= 0) return setError(t("errors.invalidAmount"));
     try {
       await addGoalMovement(
@@ -251,12 +248,7 @@ function GoalDetail({ id }: { id: string }) {
           </button>
         </div>
         <Field label={`${t("transactions.amount")} (${goal.currency})`}>
-          <input
-            inputMode="decimal"
-            className={inputClass}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <AmountTextInput className={inputClass} value={amount} onValueChange={setAmount} />
         </Field>
         <Field label={t("transactions.date")}>
           <input

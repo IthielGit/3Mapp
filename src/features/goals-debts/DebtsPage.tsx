@@ -8,7 +8,9 @@ import { db } from "../../db/database";
 import { RuleError } from "../../db/errors";
 import { Field, buttonDanger, buttonPrimary, inputClass } from "../../components/FormControls";
 import { debtState } from "../../domain/debts";
-import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import type { Debt } from "../../db/entities";
 import { addDebtPayment, createDebt, deleteDebt } from "./goals-debts-service";
 import { askConfirm } from "../../components/confirm-service";
@@ -103,7 +105,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
 
   function missingDebt(): string | null {
     if (counterparty.trim() === "") return t("forms.missingName");
-    const amount = parseMoney(principal, currency);
+    const amount = parseAmountText(principal, currency);
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
     if (rate.trim() !== "") {
       const pct = Number(rate.replace(",", "."));
@@ -114,7 +116,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
 
   async function save() {
     setError(undefined);
-    const amount = parseMoney(principal, currency);
+    const amount = parseAmountText(principal, currency);
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     const pct = rate.trim() === "" ? undefined : Number(rate.replace(",", "."));
     if (pct !== undefined && (!Number.isFinite(pct) || pct < 0))
@@ -147,12 +149,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
         />
       </Field>
       <Field label={`${t("debts.principal")} (${currency})`}>
-        <input
-          inputMode="decimal"
-          className={inputClass}
-          value={principal}
-          onChange={(e) => setPrincipal(e.target.value)}
-        />
+        <AmountTextInput className={inputClass} value={principal} onValueChange={setPrincipal} />
       </Field>
       <Field label={t("debts.rate")}>
         <input
@@ -231,7 +228,7 @@ function DebtDetail({ id }: { id: string }) {
   const debtCurrency = debt.currency;
 
   function missingPayment(): string | null {
-    const value = parseMoney(amount, debtCurrency);
+    const value = parseAmountText(amount, debtCurrency);
     if (value === null || value <= 0) return t("transactions.amountRequired");
     if (value > state.remaining) return t("debts.tooMuch");
     return null;
@@ -239,7 +236,7 @@ function DebtDetail({ id }: { id: string }) {
 
   async function pay() {
     setError(undefined);
-    const value = parseMoney(amount, debtCurrency);
+    const value = parseAmountText(amount, debtCurrency);
     if (value === null || value <= 0) return setError(t("errors.invalidAmount"));
     if (value > state.remaining) return setError(t("debts.tooMuch"));
     try {
@@ -268,12 +265,7 @@ function DebtDetail({ id }: { id: string }) {
       {state.remaining > 0 ? (
         <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
           <Field label={`${t("debts.payment")} (${debt.currency})`}>
-            <input
-              inputMode="decimal"
-              className={inputClass}
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
+            <AmountTextInput className={inputClass} value={amount} onValueChange={setAmount} />
           </Field>
           <Field label={t("transactions.date")}>
             <input

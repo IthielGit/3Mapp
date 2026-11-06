@@ -18,6 +18,8 @@ import {
   inputClass,
 } from "../../components/FormControls";
 import { expressionToMinor } from "../../lib/calc";
+import { rawFromDisplay } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { CategoryPicker } from "./CategoryPicker";
 import { minorToEntryText } from "../../lib/amount-text";
@@ -104,11 +106,11 @@ export function TransactionSheet({
   const [toWalletId, setToWalletId] = useState(initial?.toWalletId ?? "");
   const [toAmountExpr, setToAmountExpr] = useState(
     transaction?.toAmount !== undefined && transaction.toWalletId
-      ? minorToEntryText(transaction.toAmount, transactionTargetCurrency(transaction, wallets))
+      ? formatMoney(transaction.toAmount, transactionTargetCurrency(transaction, wallets), { withSymbol: false })
       : "",
   );
   const [feeExpr, setFeeExpr] = useState(
-    transaction?.fee ? minorToEntryText(transaction.fee, transaction.currency) : "",
+    transaction?.fee ? formatMoney(transaction.fee, transaction.currency, { withSymbol: false }) : "",
   );
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [creatingCategory, setCreatingCategory] = useState(false);
@@ -162,14 +164,14 @@ export function TransactionSheet({
 
     let toAmount: number | undefined;
     if (crossCurrency && targetWallet) {
-      const received = expressionToMinor(toAmountExpr, targetWallet.currency);
+      const received = expressionToMinor(rawFromDisplay(toAmountExpr), targetWallet.currency);
       if (received === null) throw new RuleError(t("transactions.receivedAmountRequired"));
       toAmount = received;
     }
 
     let fee: number | undefined;
     if (type === "transfer" && feeExpr.trim() !== "") {
-      const parsedFee = expressionToMinor(feeExpr, currency);
+      const parsedFee = expressionToMinor(rawFromDisplay(feeExpr), currency);
       if (parsedFee === null) throw new RuleError(t("errors.invalidAmount"));
       fee = parsedFee;
     }
@@ -431,21 +433,11 @@ export function TransactionSheet({
           <div className="grid grid-cols-2 gap-3">
             {crossCurrency && targetWallet ? (
               <Field label={t("transactions.receivedAmount", { currency: targetWallet.currency })}>
-                <input
-                  inputMode="decimal"
-                  className={inputClass}
-                  value={toAmountExpr}
-                  onChange={(e) => setToAmountExpr(e.target.value)}
-                />
+                <AmountTextInput allowOperators className={inputClass} value={toAmountExpr} onValueChange={setToAmountExpr} />
               </Field>
             ) : null}
             <Field label={t("transactions.fee", { currency })}>
-              <input
-                inputMode="decimal"
-                className={inputClass}
-                value={feeExpr}
-                onChange={(e) => setFeeExpr(e.target.value)}
-              />
+              <AmountTextInput allowOperators className={inputClass} value={feeExpr} onValueChange={setFeeExpr} />
             </Field>
           </div>
         ) : null}

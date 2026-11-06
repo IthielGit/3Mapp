@@ -8,7 +8,9 @@ import { format } from "date-fns";
 import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
-import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { createBudget, updateBudget, type BudgetInput } from "./budget-service";
 import type { Budget } from "../../db/entities";
 
@@ -66,7 +68,7 @@ export function BudgetFormPage() {
 
   function missingField(): string | null {
     if (name.trim() === "") return t("forms.missingName");
-    const amount = parseMoney(amountText, currency);
+    const amount = parseAmountText(amountText, currency);
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
     if (categoryIds.length === 0) return t("budgets.needCategory");
     return null;
@@ -75,7 +77,7 @@ export function BudgetFormPage() {
   async function save() {
     setError(undefined);
     if (name.trim() === "") return setNameError(t("errors.required"));
-    const amount = parseMoney(amountText, currency);
+    const amount = parseAmountText(amountText, currency);
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     if (categoryIds.length === 0) return setError(t("budgets.needCategory"));
     const pct = Number(threshold);
@@ -125,14 +127,13 @@ export function BudgetFormPage() {
       </Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label={`${t("budgets.amount")} (${currency})`}>
-          <input
-            inputMode="decimal"
+          <AmountTextInput
             className={inputClass}
             value={amountText}
-            onChange={(e) => setAmountText(e.target.value)}
+            onValueChange={setAmountText}
             onBlur={() => {
               // À la sortie du champ, le montant reprend le format de la liste (300 000 au lieu de 300000).
-              const value = parseMoney(amountText, currency);
+              const value = parseAmountText(amountText, currency);
               if (value !== null && value > 0) setAmountText(formatMoney(value, currency, { withSymbol: false }));
             }}
           />

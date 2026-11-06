@@ -1,4 +1,14 @@
-import { AMOUNT_SEPARATORS, getAmountFormat, type AmountFormat } from "./money";
+import {
+  AMOUNT_SEPARATORS,
+  getAmountFormat,
+  parseMoney,
+  type AmountFormat,
+  type CurrencyCode,
+  type Minor,
+} from "./money";
+
+/** Opérateurs de la calculatrice, acceptés seulement dans les champs d'expression. */
+const OPERATORS = "+-−*/×÷()";
 
 /**
  * Saisie du montant : la calculatrice garde une expression « brute » (chiffres, virgule décimale,
@@ -66,4 +76,48 @@ export function rawIndexFromDisplay(
     if (!(group && display[i] === group)) count++;
   }
   return count;
+}
+
+/**
+ * Texte d'un champ de montant (tel qu'affiché, avec séparateurs) → montant en unités mineures.
+ * Les séparateurs de milliers saisis ou affichés sont ignorés.
+ */
+export function parseAmountText(
+  display: string,
+  code: CurrencyCode,
+  format: AmountFormat = getAmountFormat(),
+): Minor | null {
+  return parseMoney(rawFromDisplay(display, format), code);
+}
+
+/**
+ * Garde seulement les caractères utiles à la saisie (chiffres, décimale et groupement du format,
+ * opérateurs si demandés). Le curseur suit les caractères conservés. Les séparateurs de milliers
+ * sont retirés ensuite par rawFromDisplay, puis réinsérés à l'affichage.
+ */
+export function sanitizeAmountDisplay(
+  display: string,
+  cursor: number,
+  allowOperators: boolean,
+  format: AmountFormat = getAmountFormat(),
+): { text: string; cursor: number } {
+  const { group, decimal } = AMOUNT_SEPARATORS[format];
+  let text = "";
+  let at = cursor;
+  let hasDecimal = false;
+  for (let i = 0; i < display.length; i++) {
+    const char = display[i] ?? "";
+    // Une seule décimale par montant (une expression en contient une par nombre).
+    const isDecimal = char === decimal;
+    const keep =
+      /\d/.test(char) ||
+      (isDecimal && (allowOperators || !hasDecimal)) ||
+      (group !== "" && char === group) ||
+      (allowOperators && OPERATORS.includes(char));
+    if (keep) {
+      text += char;
+      if (isDecimal) hasDecimal = true;
+    } else if (i < cursor) at--;
+  }
+  return { text, cursor: at };
 }

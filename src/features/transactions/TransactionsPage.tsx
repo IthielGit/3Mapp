@@ -23,7 +23,9 @@ import {
 } from "../../domain/filters";
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
-import { formatMoney, parseMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import {
   bulkUpdate,
   removeTransactions,
@@ -634,29 +636,23 @@ export function TransactionsPage() {
 
             <div className="grid grid-cols-2 gap-2">
               <Field label={t("transactions.minAmount")}>
-                <input
-                  inputMode="decimal"
-                  className={inputClass}
-                  defaultValue=""
+                <AmountTextInput className={inputClass} defaultValue=""
                   onBlur={(e) => {
                     const value =
                       e.target.value.trim() === ""
                         ? undefined
-                        : (parseMoney(e.target.value, baseCurrency) ?? undefined);
+                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
                     setDraftFilters((f) => ({ ...f, minAmount: value }));
                   }}
                 />
               </Field>
               <Field label={t("transactions.maxAmount")}>
-                <input
-                  inputMode="decimal"
-                  className={inputClass}
-                  defaultValue=""
+                <AmountTextInput className={inputClass} defaultValue=""
                   onBlur={(e) => {
                     const value =
                       e.target.value.trim() === ""
                         ? undefined
-                        : (parseMoney(e.target.value, baseCurrency) ?? undefined);
+                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
                     setDraftFilters((f) => ({ ...f, maxAmount: value }));
                   }}
                 />
