@@ -604,7 +604,7 @@ export function TransactionsPage() {
 
             {/* Types en puces activables : une seule rangée au lieu de quatre cases à cocher. */}
             <fieldset className="flex flex-col gap-1.5">
-              <legend className="text-sm font-medium">{t("transactions.type")}</legend>
+              <legend className="mb-2 text-sm font-medium">{t("transactions.type")}</legend>
               <div className="grid grid-cols-2 gap-2">
                 {ALL_TYPES.map((tp) => {
                   const pressed = draftFilters.types?.includes(tp) ?? false;
