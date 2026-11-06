@@ -52,7 +52,7 @@ const TONES = {
     hint: "text-sm text-neutral-600 dark:text-muted",
     select: inputClass,
     option:
-      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-neutral-200 px-3 text-ink has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50 dark:border-white/15 dark:text-fg dark:has-[:checked]:border-brand-dark",
+      "flex min-h-[44px] cursor-pointer items-center gap-3 rounded-xl border border-neutral-200 px-3 text-ink has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50 dark:border-white/15 dark:has-[:checked]:bg-brand-900 dark:text-fg dark:has-[:checked]:border-brand-dark",
     submit:
       "min-h-[44px] rounded-xl bg-brand-600 font-semibold text-white disabled:opacity-50 dark:bg-brand-dark dark:text-ink",
     link: "inline-flex min-h-[44px] items-center text-brand-700 underline dark:text-brand-dark",
