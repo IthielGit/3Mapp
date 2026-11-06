@@ -139,8 +139,13 @@ export async function applyDefaultCategoryUpdates(database: AppDatabase = defaul
 
 /**
  * Fusionne les catégories par défaut dupliquées (même nature, même nom du jeu par défaut) dans une seule.
- * Les références sont déplacées vers la catégorie conservée : active de préférence, puis rattachée au jeu
- * par défaut, puis la plus ancienne. Retourne le nombre de doublons supprimés.
+ * Les références sont déplacées vers la catégorie conservée.
+ *
+ * Le choix de la conservée ne repose que sur des champs synchronisés (archivée, identifiant stable,
+ * date de création, identifiant) : deux appareils qui voient les mêmes lignes gardent la même. Un critère
+ * local (ex. l'origine, remplie seulement sur certains appareils) ferait garder à chacun une copie
+ * différente, puis supprimer celle de l'autre : la synchro effacerait alors toutes les copies.
+ * Retourne le nombre de doublons supprimés.
  */
 export async function removeDuplicateDefaultCategories(database: AppDatabase = defaultDb): Promise<number> {
   const groups = new Map<string, Category[]>();
@@ -150,13 +155,15 @@ export async function removeDuplicateDefaultCategories(database: AppDatabase = d
     groups.set(key, [...(groups.get(key) ?? []), category]);
   }
 
+  const isStable = (c: Category) => c.id === defaultCategoryId(c.kind, c.name);
+
   let removed = 0;
   for (const group of groups.values()) {
     if (group.length < 2) continue;
     const [keep, ...duplicates] = [...group].sort(
       (a, b) =>
         Number(a.archived) - Number(b.archived) ||
-        Number(b.origin !== undefined) - Number(a.origin !== undefined) ||
+        Number(isStable(b)) - Number(isStable(a)) ||
         a.createdAt.localeCompare(b.createdAt) ||
         a.id.localeCompare(b.id),
     );
