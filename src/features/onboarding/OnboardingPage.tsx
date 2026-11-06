@@ -88,7 +88,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-6 bg-canvas px-6 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] dark:bg-page">
+    <section className="mx-auto flex min-h-dvh w-full max-w-lg flex-col md:max-w-2xl gap-6 bg-canvas px-6 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] dark:bg-page">
       <header className="flex items-center gap-3">
         <LogoTile />
         <p className="text-xl font-semibold tracking-tight text-brand-600 dark:text-brand-dark">{t("app.title")}</p>
