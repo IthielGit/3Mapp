@@ -426,6 +426,7 @@
     "unit": "Unité",
     "startDate": "Premier passage",
     "endDate": "Fin (facultatif)",
+    "clearEnd": "Effacer",
     "lastDay": "Toujours le dernier jour du mois",
     "autoPost": "Créer directement comme validée (sinon en attente)",
     "invalidInterval": "L'intervalle doit être un entier d'au moins 1.",
