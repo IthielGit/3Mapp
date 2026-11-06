@@ -38,7 +38,8 @@ export function AccountGate({ children }: { children: ReactNode }) {
     return <AuthForm client={account.client} />;
   }
 
-  if (account.status === "suspended") {
+  if (account.status === "suspended" || (account.status === "offline" && account.blocked)) {
+    const client = account.client;
     return (
       <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 p-6">
         <h1 className="text-2xl font-semibold">{t("account.suspended.title")}</h1>
@@ -49,7 +50,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
           disabled={busy}
           onClick={() => {
             setBusy(true);
-            void signOutAndClear(account.client).finally(() => setBusy(false));
+            void signOutAndClear(client).finally(() => setBusy(false));
           }}
         >
           {t("account.signOut")}
@@ -58,5 +59,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
     );
   }
 
+  // Hors ligne (identité mémorisée) : pas de synchro, l'app s'ouvre avec les données locales.
+  // SyncBootstrap ne synchronise que pour un compte connecté ; il laisse passer les enfants sinon.
   return <SyncBootstrap>{children}</SyncBootstrap>;
 }

@@ -8,7 +8,7 @@ import { askConfirm } from "../../components/confirm-service";
 import { format } from "date-fns";
 import { useSyncStatus } from "../sync/useSyncStatus";
 import { useAccount } from "./AccountProvider";
-import { useAccountIdentity } from "./account-identity";
+import { currentAccount, useAccountIdentity } from "./account-identity";
 import { useSignOut } from "./use-sign-out";
 import { deleteOwnAccount } from "./delete-account";
 import { downloadLocalBackup } from "../backup/export-backup";
@@ -27,7 +27,8 @@ export function AccountPage() {
   const [exportError, setExportError] = useState(false);
   const [deleteError, setDeleteError] = useState<"network" | "unknown" | undefined>();
 
-  if (account.status !== "signedIn") {
+  const current = currentAccount(account);
+  if (!current) {
     return (
       <section className="flex flex-col gap-4">
         <PageTitle className="text-2xl font-semibold">{t("account.title")}</PageTitle>
@@ -36,13 +37,13 @@ export function AccountPage() {
     );
   }
 
-  const client = account.client;
+  const client = current.client;
   const state = sync.state;
   const pending = sync.pending;
   const busy = sync.busy || signOutFlow.busy || deleting;
   const syncNow = () => sync.syncNow();
   const shownError = sync.error;
-  const email = account.session.user.email ?? "";
+  const email = current.user.email ?? "";
   const initial = email.charAt(0).toUpperCase() || "?";
 
   // Pastille et libellé d'état : l'erreur a priorité, puis les modifications en attente, sinon « À jour ».
