@@ -19,8 +19,6 @@ import {
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
-import { parseAmountText } from "../../lib/amount-entry";
-import { AmountTextInput } from "../../components/AmountTextInput";
 import {
   bulkUpdate,
   removeTransactions,
@@ -86,6 +84,16 @@ export function TransactionsPage() {
   const categoryNames = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
   const walletName = useMemo(() => new Map(wallets.map((w) => [w.id, w.name])), [wallets]);
+  // Montants existants (valeurs absolues, devise de base) : bornes possibles de la fourchette du filtre.
+  const amountOptions = useMemo(
+    () =>
+      [
+        ...new Set(
+          transactions.filter((t) => t.currency === baseCurrency).map((t) => Math.abs(t.amount)),
+        ),
+      ].sort((a, b) => a - b),
+    [transactions, baseCurrency],
+  );
 
   const periodBounds = useMemo(() => {
     const now = new Date();
@@ -672,32 +680,53 @@ export function TransactionsPage() {
               </Field>
             </div>
 
+            {/* Fourchette choisie parmi les montants existants : chaque borne ne propose que des valeurs cohérentes. */}
             <div className="flex flex-col gap-3">
               <Field label={t("transactions.minAmount")}>
-                <AmountTextInput
+                <select
                   className={inputClass}
-                  defaultValue=""
-                  onBlur={(e) => {
-                    const value =
-                      e.target.value.trim() === ""
-                        ? undefined
-                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
-                    setDraftFilters((f) => ({ ...f, minAmount: value }));
-                  }}
-                />
+                  value={draftFilters.minAmount === undefined ? "" : String(draftFilters.minAmount)}
+                  onChange={(e) =>
+                    setDraftFilters((f) => ({
+                      ...f,
+                      minAmount: e.target.value === "" ? undefined : Number(e.target.value),
+                    }))
+                  }
+                >
+                  <option value="">{t("transactions.anyAmount")}</option>
+                  {amountOptions
+                    .filter(
+                      (v) => draftFilters.maxAmount === undefined || v <= draftFilters.maxAmount,
+                    )
+                    .map((v) => (
+                      <option key={v} value={String(v)}>
+                        {formatMoney(v, baseCurrency)}
+                      </option>
+                    ))}
+                </select>
               </Field>
               <Field label={t("transactions.maxAmount")}>
-                <AmountTextInput
+                <select
                   className={inputClass}
-                  defaultValue=""
-                  onBlur={(e) => {
-                    const value =
-                      e.target.value.trim() === ""
-                        ? undefined
-                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
-                    setDraftFilters((f) => ({ ...f, maxAmount: value }));
-                  }}
-                />
+                  value={draftFilters.maxAmount === undefined ? "" : String(draftFilters.maxAmount)}
+                  onChange={(e) =>
+                    setDraftFilters((f) => ({
+                      ...f,
+                      maxAmount: e.target.value === "" ? undefined : Number(e.target.value),
+                    }))
+                  }
+                >
+                  <option value="">{t("transactions.anyAmount")}</option>
+                  {amountOptions
+                    .filter(
+                      (v) => draftFilters.minAmount === undefined || v >= draftFilters.minAmount,
+                    )
+                    .map((v) => (
+                      <option key={v} value={String(v)}>
+                        {formatMoney(v, baseCurrency)}
+                      </option>
+                    ))}
+                </select>
               </Field>
             </div>
           </div>

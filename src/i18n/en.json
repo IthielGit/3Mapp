@@ -230,6 +230,7 @@
     "period30": "Last 30 days",
     "anyWallet": "All wallets",
     "anyCategory": "All categories",
+    "anyAmount": "Any",
     "minAmount": "Min. amount",
     "maxAmount": "Max. amount",
     "reset": "Reset",
