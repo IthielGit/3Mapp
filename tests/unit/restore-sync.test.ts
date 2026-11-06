@@ -23,7 +23,7 @@ function recon(updatedAt: string) {
 afterEach(() => setSyncTracking(false));
 
 describe("restauration et synchro", () => {
-  it("en remplacement avec synchro active, les versions restaurées l'emportent sur celles du compte", async () => {
+  it("avec synchro active, le remplacement est refusé et n'efface rien", async () => {
     const source = new AppDatabase(`restore-src-${Math.random().toString(36).slice(2)}`);
     await source.reconciliations.put(recon(OLD));
     const prepared = prepareRestore(await createBackup(source));
@@ -31,14 +31,13 @@ describe("restauration et synchro", () => {
     await source.delete();
 
     const target = new AppDatabase(`restore-dst-${Math.random().toString(36).slice(2)}`);
+    await target.reconciliations.put({ ...recon(OLD), id: "55555555-5555-4555-8555-555555555555" });
     setSyncTracking(true);
-    const before = Date.now();
-    await restoreBackup(prepared, "replace", target);
+    await expect(restoreBackup(prepared, "replace", target)).rejects.toThrow("remplacement");
     setSyncTracking(false);
 
-    const restored = await target.reconciliations.get(ID);
-    expect(restored).toBeDefined();
-    expect(Date.parse(restored?.updatedAt ?? "")).toBeGreaterThanOrEqual(before);
+    expect(await target.reconciliations.count()).toBe(1);
+    expect(await target.reconciliations.get(ID)).toBeUndefined();
     target.close();
     await target.delete();
   });

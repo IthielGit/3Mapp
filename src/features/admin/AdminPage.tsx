@@ -12,6 +12,7 @@ export function AdminPage() {
   const { t } = useTranslation();
   const account = useAccount();
   const client = account.status === "signedIn" ? account.client : undefined;
+  const selfId = account.status === "signedIn" ? account.session.user.id : undefined;
   const [accounts, setAccounts] = useState<AdminAccount[] | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [query, setQuery] = useState("");
@@ -67,7 +68,10 @@ export function AdminPage() {
               className="flex min-h-[64px] flex-col gap-1 rounded-card border border-neutral-200 p-3 dark:border-white/15"
             >
               <span className="flex items-center justify-between gap-2">
-                <span className="truncate font-medium">{a.email}</span>
+                <span className="truncate font-medium">
+                  {a.email}
+                  {a.id === selfId ? <span className="ml-2 text-xs font-normal text-neutral-600 dark:text-muted">{t("admin.you")}</span> : null}
+                </span>
                 <span className="shrink-0 text-xs font-semibold">
                   {a.role === "super_admin" ? t("admin.role.super_admin") : t("admin.role.user")}
                 </span>

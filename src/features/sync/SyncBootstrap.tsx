@@ -8,6 +8,8 @@ import { useAccount } from "../account/AccountProvider";
 import { signOutAndClear } from "../account/sign-out";
 import { downloadLocalBackup } from "../backup/export-backup";
 import { checkDeviceOwnership, enableSync, ensureSync } from "./sync-engine";
+import { ConsultBanner } from "../admin/ConsultBanner";
+import { endConsult, getConsult, hasLeftoverConsult, useConsult } from "../admin/consult";
 import type { DeviceOwnership } from "../../domain/sync";
 
 /** Délai après une modification locale avant l'envoi (regroupe les saisies rapprochées). */
@@ -34,14 +36,20 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
   const userId = account.status === "signedIn" ? account.session.user.id : undefined;
   const ready = userId !== undefined && readyFor === userId;
   const pending = useLiveQuery(() => db.syncOutbox.count(), [], 0);
+  const consult = useConsult();
 
   useEffect(() => {
     if (!client || !userId) return;
+    // Consultation en cours dans cet onglet : aucune synchro (les données locales appartiennent à un autre compte).
+    if (getConsult()) return;
     let active = true;
     let detach: (() => void) | undefined;
     const sync = () => ensureSync(client, userId).catch(() => undefined);
 
     void (async () => {
+      // Rechargement pendant une consultation : on referme la consultation et on repart du compte de l'administrateur.
+      if (hasLeftoverConsult()) await endConsult(client, userId).catch(() => undefined);
+      if (!active) return;
       const ownership = await checkDeviceOwnership(userId).catch((): DeviceOwnership => "ok");
       if (!active) return;
       if (ownership === "foreign" || ownership === "unowned") {
@@ -70,18 +78,27 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
       active = false;
       detach?.();
     };
-  }, [client, userId, decided]);
+  }, [client, userId, decided, consult?.targetId]);
 
   // Envoi après une modification locale (debounce).
   useEffect(() => {
-    if (!client || !userId || !ready || pending === 0) return;
+    if (!client || !userId || !ready || pending === 0 || consult) return;
     const timer = window.setTimeout(() => {
       void ensureSync(client, userId).catch(() => undefined);
     }, DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
-  }, [client, userId, ready, pending]);
+  }, [client, userId, ready, pending, consult]);
 
   if (!client || !userId) return <>{children}</>;
+
+  if (consult && consult.adminId === userId) {
+    return (
+      <>
+        <ConsultBanner client={client} adminId={userId} consult={consult} />
+        {children}
+      </>
+    );
+  }
 
   if (choice?.userId === userId && !ready) {
     /** Sauvegarde non chiffrée des données de cet appareil, téléchargée dans le navigateur. */
@@ -151,6 +168,11 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
         </button>
         <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("account.device.replaceHint")}</p>
         {!backedUp ? <p className="-mt-2 text-sm text-red-700 dark:text-red-400">{t("account.device.needBackup")}</p> : null}
+
+        <section className="flex flex-col gap-2 rounded-card border border-neutral-200 p-4 dark:border-white/15">
+          <h2 className="font-semibold">{t("account.device.keepTitle")}</h2>
+          <p className="text-sm text-neutral-600 dark:text-muted">{t("account.device.keepSteps")}</p>
+        </section>
 
         <button
           type="button"

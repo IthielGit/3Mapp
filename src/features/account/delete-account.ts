@@ -3,6 +3,7 @@ import { db as defaultDb, type AppDatabase } from "../../db/database";
 import { resetAccount } from "../settings/reset-account";
 import { disableSync } from "../sync/sync-engine";
 import { signOutAccount, type AccountResult } from "./account-service";
+import { leaveConsultLocally } from "../admin/consult";
 
 /**
  * Supprime définitivement le compte connecté (RGPD) : ses données sur le serveur, puis celles de cet appareil.
@@ -13,6 +14,7 @@ export async function deleteOwnAccount(
   client: SupabaseClient,
   database: AppDatabase = defaultDb,
 ): Promise<AccountResult> {
+  await leaveConsultLocally(client);
   const { error } = await client.rpc("delete_own_account");
   if (error) {
     const message = (error.message ?? "").toLowerCase();

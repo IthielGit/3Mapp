@@ -8,6 +8,7 @@ import {
   endRemoteWrites,
   beginRemoteWrites,
   flushOutbox,
+  isReadOnly,
   nextSeq,
   setSyncTracking,
   type OutboxEntry,
@@ -24,6 +25,7 @@ import {
   shouldApplyTombstone,
 } from "../../domain/sync";
 import type { TableName } from "../backup/backup-format";
+import { restoreDefaultCategories } from "../categories/category-service";
 import { decodeRecord, encodeRecord } from "./sync-records";
 
 const PUSH_BATCH = 100;
@@ -50,7 +52,7 @@ export interface SyncReport {
 }
 
 /** Ligne telle que renvoyée par la table serveur sync_records. */
-interface RemoteRow {
+export interface RemoteRow {
   table_name: string;
   record_id: string;
   updated_at: string;
@@ -148,7 +150,7 @@ async function pushOutbox(
   return { pushed, skipped };
 }
 
-interface Prepared {
+export interface Prepared {
   table: TableName;
   incomingId: string;
   kind: "put" | "delete";
@@ -157,7 +159,7 @@ interface Prepared {
 }
 
 /** Valide une page reçue avant toute écriture locale ; une donnée invalide est comptée et ignorée. */
-async function prepareRows(rows: RemoteRow[]): Promise<{ prepared: Prepared[]; skipped: number }> {
+export async function prepareRows(rows: RemoteRow[]): Promise<{ prepared: Prepared[]; skipped: number }> {
   const prepared: Prepared[] = [];
   let skipped = 0;
   for (const row of rows) {
@@ -288,7 +290,20 @@ export function runSync(
   return run;
 }
 
+/**
+ * Compte sans aucune catégorie après une synchro complète (nouveau compte, catégories effacées) :
+ * il reçoit les catégories par défaut. À n'appeler qu'après la récupération : hors ligne, on ne crée
+ * rien, sinon les catégories du compte arriveraient en doublon.
+ */
+async function seedDefaultCategoriesIfEmpty(database: AppDatabase): Promise<boolean> {
+  if ((await database.categories.count()) > 0) return false;
+  await restoreDefaultCategories(database);
+  return true;
+}
+
 async function runSyncOnce(client: SupabaseClient, database: AppDatabase): Promise<SyncReport> {
+  // Consultation en cours : les données locales sont celles d'un autre compte, rien ne doit partir ni arriver.
+  if (isReadOnly()) return { pushed: 0, skipped: 0, applied: 0 };
   const state = await getState(database);
   setSyncTracking(state?.enabled === true);
   if (!state?.enabled) return { pushed: 0, skipped: 0, applied: 0 };
@@ -296,6 +311,11 @@ async function runSyncOnce(client: SupabaseClient, database: AppDatabase): Promi
     await flushOutbox(database);
     const pushed = await pushOutbox(client, database);
     const pulled = await pullChanges(client, database);
+    // Compte vide : les catégories par défaut créées ici partent tout de suite vers le serveur.
+    if (await seedDefaultCategoriesIfEmpty(database)) {
+      await flushOutbox(database);
+      await pushOutbox(client, database);
+    }
     await saveState(database, { lastSyncAt: new Date().toISOString(), lastError: undefined });
     return { pushed: pushed.pushed, skipped: pushed.skipped + pulled.skipped, applied: pulled.applied };
   } catch (error) {
@@ -352,6 +372,8 @@ export async function enableSync(
   mode: "merge" | "remote",
   database: AppDatabase = defaultDb,
 ): Promise<SyncReport> {
+  // Consultation en cours : interdit, sinon les données du compte consulté seraient envoyées sous ce compte.
+  if (isReadOnly()) throw new SyncError("unknown");
   // Jamais de fusion entre comptes : une fusion n'est permise que pour un appareil vide ou déjà lié à ce compte.
   if (mode === "merge") {
     const ownership = await checkDeviceOwnership(userId, database);
@@ -418,6 +440,7 @@ export async function ensureSync(
   userId: string,
   database: AppDatabase = defaultDb,
 ): Promise<SyncReport> {
+  if (isReadOnly()) return { pushed: 0, skipped: 0, applied: 0 };
   const state = await getState(database);
   if (state?.enabled && state.userId === userId) return runSync(client, database);
   return enableSync(client, userId, "merge", database);

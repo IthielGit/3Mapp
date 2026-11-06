@@ -108,6 +108,7 @@
     "modeMergeHint": "Adds missing items and keeps the most recent ones. Your current settings are kept.",
     "modeReplace": "Replace all data",
     "modeReplaceHint": "Erases the data on this device before restoring.",
+    "replaceUnavailable": "Replace is not offered with an account: it would not erase data already stored on the account. Merge adds the items from the backup.",
     "confirmReplace": "I understand that the current data will be erased.",
     "restore": "Restore",
     "restored": "Restore complete: {{count}} records processed.",
@@ -187,6 +188,10 @@
     "expense": "Expenses",
     "income": "Income",
     "archivedSection": "Archived",
+    "restoreDefaults": "Restore default categories",
+    "restoreHint": "Adds the starter categories that were deleted. Your existing categories are not changed.",
+    "restoreDone": "{{count}} category(ies) added.",
+    "restoreNone": "All default categories are already there.",
     "newTitle": "New category",
     "editTitle": "Edit category",
     "kind": "Type",
@@ -811,6 +816,8 @@
       "bodyUnowned": "This device holds data that is not linked to any account. It cannot be merged into this account.",
       "replace": "Use this account only",
       "replaceHint": "This device's data is erased and replaced by the account's data.",
+      "keepTitle": "To keep this data in this account",
+      "keepSteps": "1. Download the backup. 2. Tap \"Use only this account\". 3. Once signed in, open Settings, then Backup and restore, and choose \"Merge with current data\" to restore the file. The data is then sent to your account.",
       "backupTitle": "1. Back up first",
       "backupHint": "A backup file is downloaded to this device. Keep it somewhere safe: it is the only copy of this device's data if you erase it.",
       "backupButton": "Download a backup",
@@ -860,13 +867,32 @@
       "lastSync": "Last sync",
       "records": "Records"
     },
-    "selfNote": "You cannot suspend or delete your own account.",
+    "selfNote": "You cannot suspend, delete or change the role of your own account.",
+    "you": "(you)",
+    "makeSuperAdmin": "Make super admin",
+    "makeStandard": "Make standard user",
+    "confirmPromote": "{{email}} will become a super admin: they will be able to view, suspend and delete all accounts. Continue?",
+    "confirmDemote": "{{email}} will no longer manage accounts. The change applies at their next sign-in. Continue?",
+    "consult": {
+      "label": "Account view",
+      "start": "View as this user",
+      "hint": "Read-only: you see their app but cannot change it. The view is logged.",
+      "banner": "Viewing {{email}} (read-only)",
+      "back": "Back to my account",
+      "blocked": "Read-only: an administrator cannot change this account.",
+      "confirmUnsent": "Your unsent changes will be lost. Continue?"
+    },
     "suspend": "Suspend account",
     "reactivate": "Reactivate account",
     "delete": "Delete account",
     "confirmSuspend": "Suspend {{email}}? The account will no longer sign in or sync.",
     "confirmReactivate": "Reactivate {{email}}?",
     "confirmDelete": "Permanently delete {{email}} and all its data? This cannot be undone.",
+    "deleteTitle": "Delete this account",
+    "deleteWarning": "This permanently deletes the account and all its data. This cannot be undone.",
+    "deleteTypeEmail": "To confirm, type the exact address: {{email}}",
+    "deleteForever": "Delete permanently",
+    "cancel": "Cancel",
     "contents": "Contents",
     "table": "Data",
     "noRecords": "No records in this category.",
@@ -875,6 +901,8 @@
       "forbidden": "Reserved for the super administrator.",
       "network": "Could not connect. Check your network.",
       "invalid": "Unexpected server response.",
+      "selfAction": "This action cannot be done on your own account.",
+      "lastSuperAdmin": "At least one active super admin must remain.",
       "unknown": "Something went wrong. Try again."
     },
     "audit": {
@@ -885,7 +913,13 @@
       "action": {
         "suspend": "Account suspended",
         "reactivate": "Account reactivated",
-        "delete": "Account deleted"
+        "delete": "Account deleted",
+   "consult_start": "View opened",
+   "confirmDelete": "Delete this journal entry? It will be removed permanently.",
+   "delete": "Delete",
+   "consult_end": "View closed",
+   "role_super_admin": "Made super admin",
+   "role_user": "Made standard user"
       }
     }
   }

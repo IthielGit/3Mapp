@@ -114,7 +114,7 @@ Sur un portefeuille : l'utilisateur saisit le solde réel ; l'app calcule l'éca
 
 JSON complet (toutes tables + pièces jointes en base64), chiffrement optionnel par mot de passe (AES-GCM, PBKDF2), restauration avec aperçu et mode « fusion » ou « remplacement ». Rappel si dernière sauvegarde > 7 jours. Export RGPD : la page Compte télécharge une sauvegarde complète de l'appareil.
 
-Restauration en « remplacement » alors que la synchro est active : les versions restaurées reçoivent la date de restauration, pour l'emporter sur celles du compte. Les données du compte absentes du fichier restent sur le compte et reviennent à la synchronisation.
+Restauration avec un compte : seul le mode « fusion » est proposé. Le « remplacement » est refusé, car il n'effacerait pas les données déjà présentes sur le compte. La fusion garde les dates du fichier : une version plus récente du compte l'emporte.
 
 Google Drive n'est pas utilisé : la sauvegarde passe par le téléchargement de fichier et le partage natif (Web Share).
 

@@ -149,6 +149,8 @@ describe("envoi et réception", () => {
   it("reçoit les changements distants sans les renvoyer (pas d'écho)", async () => {
     const id = "44444444-4444-4444-8444-444444444444";
     const remote = recon(id, "2026-01-05T00:00:00.000Z", "distant");
+    const categoryId = "55555555-5555-4555-8555-555555555555";
+    // Une catégorie sur le serveur : le compte n'est pas vide, donc aucune catégorie par défaut n'est ajoutée.
     const server = fakeServer([
       {
         table_name: "reconciliations",
@@ -156,6 +158,22 @@ describe("envoi et réception", () => {
         updated_at: "2026-01-05T00:00:00.000Z",
         deleted: false,
         data: remote,
+      },
+      {
+        table_name: "categories",
+        record_id: categoryId,
+        updated_at: "2026-01-04T00:00:00.000Z",
+        deleted: false,
+        data: {
+          id: categoryId,
+          createdAt: "2026-01-01T00:00:00.000Z",
+          updatedAt: "2026-01-04T00:00:00.000Z",
+          name: "Divers",
+          kind: "expense",
+          icon: "📦",
+          color: "#64748b",
+          sortOrder: 0,
+        },
       },
     ]);
 
@@ -238,7 +256,8 @@ describe("envoi et réception", () => {
 
     expect(report.pushed).toBe(0);
     expect(await db.syncOutbox.count()).toBe(0);
-    expect(server.rows.size).toBe(0);
+    // Les catégories par défaut ajoutées à l'activation sont sur le serveur, pas la saisie faite après désactivation.
+    expect([...server.rows.keys()].some((key) => key.startsWith("reconciliations|"))).toBe(false);
   });
 });
 
@@ -253,6 +272,26 @@ describe("synchronisation du compte connecté", () => {
     expect(report.pushed).toBe(1);
     expect(server.rows.has("reconciliations|33333333-3333-4333-8333-333333333333")).toBe(true);
   });
+
+  it("un compte sans aucune catégorie reçoit les catégories par défaut après la synchro", async () => {
+    const server = fakeServer();
+    await ensureSync(server.client, USER, db);
+    expect(await db.categories.count()).toBeGreaterThan(0);
+    await ensureSync(server.client, USER, db);
+    expect(await db.categories.count()).toBeGreaterThan(0);
+  });
+
+  it("hors ligne, aucune catégorie par défaut n'est créée avant la récupération", async () => {
+    const server = fakeServer();
+    await ensureSync(server.client, USER, db);
+    await db.categories.clear();
+    const offline = () => {
+      throw new Error("Failed to fetch");
+    };
+    const failing = { rpc: vi.fn(offline), from: vi.fn(offline) } as unknown as SupabaseClient;
+    await expect(ensureSync(failing, USER, db)).rejects.toThrow();
+    expect(await db.categories.count()).toBe(0);
+  });
 });
 
 describe("changement de compte sur un appareil", () => {
@@ -261,7 +300,8 @@ describe("changement de compte sur un appareil", () => {
     await enableSync(server.client, "A-USER", "merge", db);
     await db.syncState.update("state", { cursor: "2031-01-01T00:00:00.000Z" });
 
-    await enableSync(server.client, "B-USER", "merge", db);
+    // Autre compte : pas de fusion, il faut effacer l'appareil après sauvegarde (mode « remote »).
+    await enableSync(server.client, "B-USER", "remote", db);
 
     const state = await db.syncState.get("state");
     expect(state?.userId).toBe("B-USER");

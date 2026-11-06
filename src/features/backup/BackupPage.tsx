@@ -22,6 +22,7 @@ import {
   type RestoreMode,
 } from "./backup-service";
 import { backupReminder } from "../../domain/backup";
+import { useAccount } from "../account/AccountProvider";
 
 const DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
@@ -56,6 +57,7 @@ export function BackupPage() {
   const [decryptPassword, setDecryptPassword] = useState("");
   const [prepared, setPrepared] = useState<PreparedRestore | undefined>();
   const [mode, setMode] = useState<RestoreMode>("merge");
+  const signedIn = useAccount().status === "signedIn";
   const [confirmed, setConfirmed] = useState(false);
   const [restored, setRestored] = useState<number | undefined>();
 
@@ -337,22 +339,26 @@ export function BackupPage() {
                   <span className="text-sm text-neutral-600 dark:text-muted">{t("backup.modeMergeHint")}</span>
                 </span>
               </label>
-              <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
-                <input
-                  type="radio"
-                  name="restore-mode"
-                  value="replace"
-                  checked={mode === "replace"}
-                  onChange={() => setMode("replace")}
-                  className="mt-1 h-5 w-5"
-                />
-                <span className="flex flex-col">
-                  <span className="font-medium">{t("backup.modeReplace")}</span>
-                  <span className="text-sm text-neutral-600 dark:text-muted">{t("backup.modeReplaceHint")}</span>
-                </span>
-              </label>
+              {signedIn ? (
+                <p className="text-sm text-neutral-600 dark:text-muted">{t("backup.replaceUnavailable")}</p>
+              ) : (
+                <label className="flex min-h-[44px] items-start gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15">
+                  <input
+                    type="radio"
+                    name="restore-mode"
+                    value="replace"
+                    checked={mode === "replace"}
+                    onChange={() => setMode("replace")}
+                    className="mt-1 h-5 w-5"
+                  />
+                  <span className="flex flex-col">
+                    <span className="font-medium">{t("backup.modeReplace")}</span>
+                    <span className="text-sm text-neutral-600 dark:text-muted">{t("backup.modeReplaceHint")}</span>
+                  </span>
+                </label>
+              )}
             </fieldset>
-            {mode === "replace" ? (
+            {mode === "replace" && !signedIn ? (
               <label className="flex min-h-[44px] items-center gap-3">
                 <input
                   type="checkbox"
