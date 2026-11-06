@@ -3,6 +3,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
 import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { LoadingScreen } from "../../components/LoadingScreen";
 import { askConfirm } from "../../components/confirm-service";
 import { useAccount } from "../account/AccountProvider";
 import { signOutAndClear } from "../account/sign-out";
@@ -187,11 +188,7 @@ export function SyncBootstrap({ children }: { children: ReactNode }) {
   }
 
   if (!ready) {
-    return (
-      <div aria-busy="true" role="status" className="flex min-h-screen items-center justify-center p-6">
-        <p className="text-neutral-600 dark:text-muted">{t("account.sync.starting")}</p>
-      </div>
-    );
+    return <LoadingScreen label={t("account.sync.starting")} />;
   }
   return <>{children}</>;
 }
