@@ -73,7 +73,7 @@ describe("restauration concurrente", () => {
 
 describe("suppression des doublons de catégories par défaut", () => {
   it("fusionne les doublons et déplace les transactions vers la catégorie conservée", async () => {
-    const keepId = "11111111-1111-4111-8111-111111111111";
+    const keepId = defaultCategoryId("expense", "Alimentation");
     const dupId = "22222222-2222-4222-8222-222222222222";
     await putCategory(keepId, "Alimentation", "expense", {
       origin: "expense|alimentation",
@@ -87,6 +87,28 @@ describe("suppression des doublons de catégories par défaut", () => {
     const remaining = await db.categories.toArray();
     expect(remaining.map((c) => c.id)).toEqual([keepId]);
     expect((await db.transactions.get("t1"))?.categoryId).toBe(keepId);
+  });
+
+  it("deux appareils aux lignes différentes gardent la même catégorie (pas de double suppression)", async () => {
+    // Même jeu de lignes sur les deux appareils ; seule l'origine (locale) diffère selon l'appareil.
+    const stableId = defaultCategoryId("expense", "Logement");
+    const oldId = "99999999-9999-4999-8999-999999999999";
+    const base = { name: "Logement", kind: "expense" as const, icon: "🏠", color: "#000", sortOrder: 0, archived: false, updatedAt: BASE };
+    const oldRow = { ...base, id: oldId, createdAt: "2025-01-01T00:00:00.000Z" };
+    const stableRow = { ...base, id: stableId, createdAt: "2026-11-05T00:00:00.000Z", origin: "expense|logement" };
+    const deviceA = new AppDatabase(`defaults-dev-a-${Math.random().toString(36).slice(2)}`);
+    const deviceB = new AppDatabase(`defaults-dev-b-${Math.random().toString(36).slice(2)}`);
+    try {
+      await deviceA.categories.bulkPut([oldRow, stableRow] as never);
+      await deviceB.categories.bulkPut([{ ...oldRow, origin: "expense|logement" }, stableRow] as never);
+      await removeDuplicateDefaultCategories(deviceA);
+      await removeDuplicateDefaultCategories(deviceB);
+      expect((await deviceA.categories.toArray()).map((c) => c.id)).toEqual([stableId]);
+      expect((await deviceB.categories.toArray()).map((c) => c.id)).toEqual([stableId]);
+    } finally {
+      await deviceA.delete();
+      await deviceB.delete();
+    }
   });
 
   it("garde la catégorie active plutôt qu'une archivée, même plus ancienne", async () => {
