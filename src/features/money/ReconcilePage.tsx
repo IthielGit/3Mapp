@@ -11,7 +11,9 @@ import { upTo } from "../../domain/cutoff";
 import { lastKnownActivity } from "../../domain/reconciliation";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { buttonPrimary, Field, inputClass } from "../../components/FormControls";
-import { formatMoney, parseMoney } from "../../lib/money";
+import { formatMoney } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import { HelpTip } from "../../components/HelpTip";
 import { reconcileWallet } from "./money-services";
 
@@ -44,7 +46,7 @@ export function ReconcilePage() {
   if (!wallet) return <p>{t("wallets.notFound")}</p>;
   const currency = wallet.currency;
   const computed = walletBalance(wallet, upTo(transactions, cutoff));
-  const realValue = real.trim() === "" ? null : parseMoney(real, currency);
+  const realValue = real.trim() === "" ? null : parseAmountText(real, currency);
   const gap = realValue === null ? null : realValue - computed;
   // Début de la période que couvre l'écart : dernier mouvement ou dernière réconciliation connus.
   const since = lastKnownActivity(wallet, transactions, history);
@@ -87,12 +89,7 @@ export function ReconcilePage() {
       </p>
 
       <Field label={`${t("reconcile.real")} (${currency})`}>
-        <input
-          inputMode="decimal"
-          className={inputClass}
-          value={real}
-          onChange={(e) => setReal(e.target.value)}
-        />
+        <AmountTextInput className={inputClass} value={real} onValueChange={setReal} />
       </Field>
       <p className="text-sm text-neutral-600 dark:text-muted">
         {t("reconcile.since", { date: format(since, "dd/MM/yyyy"), days: Math.max(0, sinceDays) })}

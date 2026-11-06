@@ -9,11 +9,12 @@ import { byName } from "../../lib/compare";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { CategoryPicker } from "../transactions/CategoryPicker";
-import { parseMoney, type CurrencyCode } from "../../lib/money";
+import { formatMoney, type CurrencyCode } from "../../lib/money";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
 import { createRecurring, updateRecurring } from "./recurring-service";
-import { minorToEntryText } from "../../lib/amount-text";
 
 const EMPTY: never[] = [];
 type TxType = Recurring["type"];
@@ -50,7 +51,7 @@ export function RecurringFormPage() {
     setType(existing.type);
     setWalletId(existing.walletId);
     setToWalletId(existing.toWalletId ?? "");
-    setAmountText(minorToEntryText(existing.amount, existing.currency));
+    setAmountText(formatMoney(existing.amount, existing.currency, { withSymbol: false }));
     setCategoryId(existing.categoryId ?? "");
     setMemo(existing.memo);
     setUnit(existing.frequency.unit);
@@ -68,7 +69,7 @@ export function RecurringFormPage() {
 
   /** Ce qui manque avant d'enregistrer ; null quand le formulaire est complet. */
   function missingField(): string | null {
-    const amount = parseMoney(amountText, currency);
+    const amount = parseAmountText(amountText, currency);
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
     const every = Number(interval);
     if (!Number.isInteger(every) || every < 1) return t("recurring.invalidInterval");
@@ -79,7 +80,7 @@ export function RecurringFormPage() {
 
   async function save() {
     setError(undefined);
-    const amount = parseMoney(amountText, currency);
+    const amount = parseAmountText(amountText, currency);
     if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     const every = Number(interval);
     if (!Number.isInteger(every) || every < 1) return setError(t("recurring.invalidInterval"));
@@ -132,11 +133,10 @@ export function RecurringFormPage() {
           </select>
         </Field>
         <Field label={`${t("transactions.amount")} (${currency})`}>
-          <input
-            inputMode="decimal"
+          <AmountTextInput
             className={inputClass}
             value={amountText}
-            onChange={(e) => setAmountText(e.target.value)}
+            onValueChange={setAmountText}
           />
         </Field>
       </div>
