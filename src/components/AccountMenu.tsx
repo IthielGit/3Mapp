@@ -155,21 +155,21 @@ export function AccountMenu() {
           ref={menuRef}
           role="menu"
           onKeyDown={onMenuKey}
-          className="menu-pop absolute right-0 top-12 z-30 w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-white/15 dark:bg-card"
+          className="menu-pop absolute right-0 top-12 z-30 w-80 overflow-hidden rounded-2xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-white/15 dark:bg-card"
         >
           <li role="none" className="truncate px-4 pb-1 pt-2 text-xs text-neutral-600 dark:text-muted" title={email}>
             {email}
           </li>
           <li role="none">
-            <Link role="menuitem" to="/plus/account" className={ITEM} onClick={() => setOpen(false)}>
-              <Icon name="user" className={ICON} />
-              {t("account.title")}
-            </Link>
-          </li>
-          <li role="none">
             <Link role="menuitem" to="/plus" className={ITEM} onClick={() => setOpen(false)}>
               <Icon name="sliders" className={ICON} />
               {t("nav.more")}
+            </Link>
+          </li>
+          <li role="none">
+            <Link role="menuitem" to="/plus/account" className={ITEM} onClick={() => setOpen(false)}>
+              <Icon name="user" className={ICON} />
+              {t("account.title")}
             </Link>
           </li>
           {/* Thème : une seule ligne, trois icônes en bloc (libellés accessibles et infobulles). */}
