@@ -7,6 +7,7 @@ import { NotFoundPage } from "./components/NotFoundPage";
 import { VisualisationLayout } from "./features/visualisation/VisualisationLayout";
 import { Skeleton } from "./components/PwaComponents";
 import { RequireSuperAdmin } from "./features/admin/RequireSuperAdmin";
+import { useAmountFormatSetting } from "./features/settings/amount-format";
 
 /**
  * Chaque page est chargée à la demande : le bundle initial reste léger et les bibliothèques
@@ -118,6 +119,8 @@ const CategoryFormPage = page(() =>
 );
 
 export default function App() {
+  // Le format des montants vient des réglages : son changement redessine toutes les pages ci-dessous.
+  useAmountFormatSetting();
   return (
     <Suspense
       fallback={

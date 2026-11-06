@@ -678,7 +678,15 @@
     "payIncomeNone": "Aucun pour l’instant",
     "payIncomeHint": "Sert à savoir si votre paie est arrivée.",
     "keypadZerosHint": "Nombre de zéros ajoutés d’un coup quand vous saisissez un montant. 000 par défaut.",
-    "advanced": "Avancé"
+    "advanced": "Avancé",
+    "amountFormat": "Format des montants",
+    "amountFormatHint": "Séparateurs affichés pour les montants, y compris pendant la saisie. Les montants enregistrés ne changent pas.",
+    "amountFormats": {
+      "dot": "Points",
+      "space": "Espaces",
+      "comma": "Virgules",
+      "plain": "Aucun séparateur"
+    }
   },
   "repeat": {
     "label": "Répéter (récurrence)",

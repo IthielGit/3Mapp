@@ -678,7 +678,15 @@
     "payIncomeNone": "None for now",
     "payIncomeHint": "Used to know whether your pay has arrived.",
     "keypadZerosHint": "Number of zeros added at once when you type an amount. 000 by default.",
-    "advanced": "Advanced"
+    "advanced": "Advanced",
+    "amountFormat": "Amount format",
+    "amountFormatHint": "Separators shown for amounts, including while you type. Saved amounts do not change.",
+    "amountFormats": {
+      "dot": "Dots",
+      "space": "Spaces",
+      "comma": "Commas",
+      "plain": "No separator"
+    }
   },
   "repeat": {
     "label": "Repeat (recurring)",

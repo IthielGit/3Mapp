@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { MoneyError, formatMoney, parseMoney, roundedDivide, sumMinor, majorToMinor, minorToMajor } from "../../src/lib/money";
+import { afterEach, describe, expect, it } from "vitest";
+import { MoneyError, formatMoney, getAmountFormat, parseMoney, roundedDivide, setAmountFormat, sumMinor, majorToMinor, minorToMajor } from "../../src/lib/money";
 
 const GROUP = ".";
+const NNBSP = " ";
 const NBSP = " ";
 const MINUS = "−";
 
@@ -137,5 +138,26 @@ describe("conversion mineur / majeur par devise", () => {
   it("EUR a deux décimales : 150,25 € = 15 025 centimes", () => {
     expect(minorToMajor(15025, "EUR")).toBe(150.25);
     expect(majorToMinor(150.25, "EUR")).toBe(15025);
+  });
+});
+
+describe("formatMoney : format des montants", () => {
+  afterEach(() => setAmountFormat(undefined));
+
+  it("format explicite : espaces, virgules, sans séparateur", () => {
+    expect(formatMoney(1500000, "MGA", { format: "space", withSymbol: false })).toBe(`1${NNBSP}500${NNBSP}000`);
+    expect(formatMoney(1500000, "EUR", { format: "comma" })).toBe(`15,000.00${NBSP}€`);
+    expect(formatMoney(1500000, "MGA", { format: "plain", withSymbol: false })).toBe("1500000");
+  });
+
+  it("le réglage de l'app s'applique par défaut", () => {
+    setAmountFormat("comma");
+    expect(formatMoney(1234567, "USD")).toBe("$12,345.67");
+    expect(getAmountFormat()).toBe("comma");
+  });
+
+  it("revient au format par points sans réglage", () => {
+    setAmountFormat(undefined);
+    expect(formatMoney(1500000, "MGA", { withSymbol: false })).toBe("1.500.000");
   });
 });

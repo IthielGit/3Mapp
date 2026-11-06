@@ -3,7 +3,8 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../db/database";
 import { expressionToMinor } from "../lib/calc";
-import { minorToPlainText } from "../lib/amount-text";
+import { minorToEntryText } from "../lib/amount-text";
+import { formatExpressionForDisplay, rawFromDisplay, rawIndexFromDisplay } from "../lib/amount-entry";
 import { formatMoney, type CurrencyCode, type Minor } from "../lib/money";
 
 // Pavé de chiffres : le mode par défaut. "000" devient "00" selon le réglage.
@@ -69,7 +70,9 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
   useLayoutEffect(() => {
     const el = inputRef.current;
     if (el && pendingCaret.current !== null) {
-      el.setSelectionRange(pendingCaret.current, pendingCaret.current);
+      // La position est gardée en expression brute ; l'affichage peut avoir des séparateurs en plus.
+      const at = formatExpressionForDisplay(expression).toDisplay[pendingCaret.current] ?? el.value.length;
+      el.setSelectionRange(at, at);
       pendingCaret.current = null;
     }
   }, [expression]);
@@ -99,8 +102,9 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
   const minor: Minor | null =
     expression.trim() === "" ? null : expressionToMinor(expression, currency);
 
+  /** Le curseur lu dans le champ (texte affiché) est gardé en position de l'expression brute. */
   function rememberCaret(el: HTMLInputElement) {
-    moveCaret(el.selectionStart ?? el.value.length);
+    moveCaret(rawIndexFromDisplay(el.value, el.selectionStart ?? el.value.length));
   }
 
   function press(key: string) {
@@ -129,11 +133,14 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
   function equals() {
     if (minor === null) return;
     moveCaret(null);
-    onExpressionChange(minorToPlainText(minor, currency));
+    onExpressionChange(minorToEntryText(minor, currency));
   }
 
   // Position affichée : jamais au-delà de la fin de l'expression.
   const shownAt = Math.min(caret ?? expression.length, expression.length);
+  // Texte affiché avec séparateurs (réglage « Format des montants »), et position du curseur dans ce texte.
+  const display = formatExpressionForDisplay(expression);
+  const displayShownAt = display.toDisplay[shownAt] ?? display.text.length;
 
   let result = "";
   if (minor !== null) result = formatMoney(minor, currency);
@@ -154,10 +161,14 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
             placeholder="0"
             // Le curseur est dessiné par la superposition ci-dessous : celui du navigateur est masqué.
             className="w-full bg-transparent text-3xl font-semibold caret-transparent outline-none placeholder:text-neutral-600 dark:placeholder:text-muted"
-            value={expression}
+            value={display.text}
             onChange={(e) => {
-              rememberCaret(e.currentTarget);
-              onExpressionChange(e.target.value);
+              const el = e.currentTarget;
+              const at = rawIndexFromDisplay(el.value, el.selectionStart ?? el.value.length);
+              // Le champ se reformate à la prochaine rendu : le curseur est replacé d'après la position brute.
+              moveCaret(at);
+              pendingCaret.current = at;
+              onExpressionChange(rawFromDisplay(el.value));
             }}
             onKeyDown={onKeyDown}
             onSelect={(e) => rememberCaret(e.currentTarget)}
@@ -170,9 +181,9 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 flex items-center whitespace-pre text-3xl font-semibold"
             >
-              <span className="invisible">{expression.slice(0, shownAt)}</span>
+              <span className="invisible">{display.text.slice(0, displayShownAt)}</span>
               <span className="h-9 w-0.5 rounded-full bg-brand-600 caret-blink dark:bg-brand-dark" />
-              <span className="invisible">{expression.slice(shownAt)}</span>
+              <span className="invisible">{display.text.slice(displayShownAt)}</span>
             </div>
           ) : (
             <div

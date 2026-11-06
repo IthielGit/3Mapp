@@ -13,7 +13,7 @@ import { parseMoney, type CurrencyCode } from "../../lib/money";
 import type { Recurring } from "../../db/entities";
 import type { DayRule, RecurrenceUnit } from "../../domain/recurrence";
 import { createRecurring, updateRecurring } from "./recurring-service";
-import { minorToPlainText } from "../../lib/amount-text";
+import { minorToEntryText } from "../../lib/amount-text";
 
 const EMPTY: never[] = [];
 type TxType = Recurring["type"];
@@ -50,7 +50,7 @@ export function RecurringFormPage() {
     setType(existing.type);
     setWalletId(existing.walletId);
     setToWalletId(existing.toWalletId ?? "");
-    setAmountText(minorToPlainText(existing.amount, existing.currency));
+    setAmountText(minorToEntryText(existing.amount, existing.currency));
     setCategoryId(existing.categoryId ?? "");
     setMemo(existing.memo);
     setUnit(existing.frequency.unit);
