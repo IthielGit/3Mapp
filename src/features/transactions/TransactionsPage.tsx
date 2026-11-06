@@ -19,7 +19,8 @@ import {
 import { groupByDay } from "../../domain/grouping";
 import { totals } from "../../domain/totals";
 import { formatMoney, type CurrencyCode } from "../../lib/money";
-import { AmountRangeSlider } from "../../components/AmountRangeSlider";
+import { parseAmountText } from "../../lib/amount-entry";
+import { AmountTextInput } from "../../components/AmountTextInput";
 import {
   bulkUpdate,
   removeTransactions,
@@ -85,16 +86,6 @@ export function TransactionsPage() {
   const categoryNames = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
   const walletName = useMemo(() => new Map(wallets.map((w) => [w.id, w.name])), [wallets]);
-  // Montants existants (valeurs absolues, devise de base) : bornes possibles de la fourchette du filtre.
-  const amountOptions = useMemo(
-    () =>
-      [
-        ...new Set(
-          transactions.filter((t) => t.currency === baseCurrency).map((t) => Math.abs(t.amount)),
-        ),
-      ].sort((a, b) => a - b),
-    [transactions, baseCurrency],
-  );
 
   const periodBounds = useMemo(() => {
     const now = new Date();
@@ -681,18 +672,34 @@ export function TransactionsPage() {
               </Field>
             </div>
 
-            {/* Fourchette à deux poignées sur les montants existants. */}
-            <AmountRangeSlider
-              label={t("transactions.amount")}
-              options={amountOptions}
-              min={draftFilters.minAmount}
-              max={draftFilters.maxAmount}
-              format={(v) => formatMoney(v, baseCurrency)}
-              anyLabel={t("transactions.anyAmount")}
-              onChange={(minAmount, maxAmount) =>
-                setDraftFilters((f) => ({ ...f, minAmount, maxAmount }))
-              }
-            />
+            <div className="flex flex-col gap-3">
+              <Field label={t("transactions.minAmount")}>
+                <AmountTextInput
+                  className={inputClass}
+                  defaultValue=""
+                  onBlur={(e) => {
+                    const value =
+                      e.target.value.trim() === ""
+                        ? undefined
+                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
+                    setDraftFilters((f) => ({ ...f, minAmount: value }));
+                  }}
+                />
+              </Field>
+              <Field label={t("transactions.maxAmount")}>
+                <AmountTextInput
+                  className={inputClass}
+                  defaultValue=""
+                  onBlur={(e) => {
+                    const value =
+                      e.target.value.trim() === ""
+                        ? undefined
+                        : (parseAmountText(e.target.value, baseCurrency) ?? undefined);
+                    setDraftFilters((f) => ({ ...f, maxAmount: value }));
+                  }}
+                />
+              </Field>
+            </div>
           </div>
         </BottomSheet>
       ) : null}
