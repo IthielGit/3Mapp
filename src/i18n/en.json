@@ -71,15 +71,17 @@
     "groups": {
       "manage": "Management",
       "data": "Data and security",
-      "appearance": "Appearance"
+      "appearance": "Appearance",
+      "myData": "My data",
+      "myAccount": "My account"
     },
     "budgets": "Budgets"
   },
   "pwa": {
     "updateAvailable": "A new version is available.",
     "update": "Update",
-    "installTitle": "Install the app",
-    "installHint": "Add Money Manager to your home screen to open it like an app, even offline.",
+    "installTitle": "Install Fundora",
+    "installHint": "Add Fundora to your home screen to open it like an app, even offline.",
     "installButton": "Install the app",
     "installDone": "App installed.",
     "installIosHint": "On iPhone or iPad: tap Share, then “Add to Home Screen”."
@@ -630,7 +632,7 @@
     "weekStart": "First day of the week",
     "monthStart": "My month starts on",
     "monthDay": "Day {{day}}",
-    "keypadZeros": "Zero key on the keypad",
+    "keypadZeros": "Quick zeros key",
     "ignoreFuture": "Ignore future balance",
     "ignoreFutureHint": "Balances only include transactions dated up to today.",
     "reminder": "Entry reminder",
@@ -664,7 +666,9 @@
     "payOnFridayHint": "Example: the 28th is a Saturday, the cycle starts on Friday the 27th.",
     "payIncome": "My pay income",
     "payIncomeNone": "None for now",
-    "payIncomeHint": "Used to know whether your pay has arrived."
+    "payIncomeHint": "Used to know whether your pay has arrived.",
+    "keypadZerosHint": "Number of zeros added at once when you type an amount. 000 by default.",
+    "advanced": "Advanced"
   },
   "repeat": {
     "label": "Repeat (recurring)",
@@ -687,7 +691,9 @@
     "title": "Reset account?",
     "warning": "All your data on this device will be erased. Consider downloading a backup first if you want to keep it.",
     "confirm": "Yes, start again",
-    "group": "Reset"
+    "group": "Reset",
+    "typeWord": "RESET",
+    "typeLabel": "To confirm, type {{word}}:"
   },
   "forms": {
     "missingName": "Enter a name.",
@@ -915,14 +921,14 @@
       "action": {
         "suspend": "Account suspended",
         "reactivate": "Account reactivated",
-        "delete": "Account deleted",
-   "consult_start": "View opened",
-   "confirmDelete": "Delete this journal entry? It will be removed permanently.",
-   "delete": "Delete",
-   "consult_end": "View closed",
-   "role_super_admin": "Made super admin",
-   "role_user": "Made standard user"
+        "delete": "Delete",
+        "consult_start": "View opened",
+        "confirmDelete": "Delete this journal entry? It will be removed permanently.",
+        "consult_end": "View closed",
+        "role_super_admin": "Made super admin",
+        "role_user": "Made standard user"
       }
-    }
+    },
+    "badge": "Admin"
   }
 }

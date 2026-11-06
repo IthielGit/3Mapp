@@ -176,7 +176,7 @@ export function SideNav() {
               className={({ isActive }) =>
                 `flex min-h-[44px] items-center gap-3 rounded-xl px-3 transition-colors ${
                   isActive
-                    ? "bg-brand-600/10 font-semibold text-brand-700 dark:text-brand-dark"
+                    ? "bg-brand-600/10 font-semibold text-brand-700 dark:bg-brand-600/25 dark:text-brand-100"
                     : "font-medium text-neutral-600 hover:bg-neutral-100 dark:text-muted dark:hover:bg-raised"
                 }`
               }

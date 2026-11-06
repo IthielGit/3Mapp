@@ -10,6 +10,7 @@ import { accountingMonth } from "../../domain/period";
 import { byName } from "../../lib/compare";
 import { updatePreferences } from "./preferences-service";
 import { askConfirm } from "../../components/confirm-service";
+import { useTheme } from "../../lib/theme-context";
 
 /** Jours de la semaine, lundi d'abord. La valeur est celle de Date.getDay() (dimanche = 0). */
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
@@ -21,6 +22,7 @@ export function PreferencesSection() {
   const settings = useLiveQuery(() => db.settings.toCollection().first(), []);
   const allCategories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const [message, setMessage] = useState<string | undefined>();
+  const { theme, setTheme } = useTheme();
 
   if (!settings) return null;
 
@@ -92,6 +94,38 @@ export function PreferencesSection() {
             <option value="en">{t("prefs.languageEn")}</option>
           </select>
         </Field>
+
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-1 text-sm font-medium">{t("pages.more.theme")}</legend>
+          <div className="grid grid-cols-3 gap-2">
+            {(["system", "light", "dark"] as const).map((mode) => (
+              <label
+                key={mode}
+                className={`flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-xl border px-2 text-sm font-medium transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600 ${
+                  theme === mode
+                    ? "border-brand-600 bg-brand-50 text-brand-900 dark:border-brand-dark dark:bg-brand-900 dark:text-brand-100"
+                    : "border-neutral-300 text-ink dark:border-white/15 dark:text-fg"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="theme"
+                  value={mode}
+                  checked={theme === mode}
+                  onChange={() => setTheme(mode)}
+                  className="sr-only"
+                />
+                {t(
+                  mode === "system"
+                    ? "pages.more.themeSystem"
+                    : mode === "light"
+                      ? "pages.more.themeLight"
+                      : "pages.more.themeDark",
+                )}
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         <Field label={t("prefs.weekStart")}>
           <select
@@ -166,31 +200,42 @@ export function PreferencesSection() {
         </Field>
         <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("prefs.payIncomeHint")}</p>
 
-        <Field label={t("prefs.keypadZeros")}>
-          <select
-            className={inputClass}
-            value={settings.keypadZeros ?? 3}
-            onChange={(e) => void change({ keypadZeros: Number(e.target.value) as 2 | 3 })}
-          >
-            <option value={2}>00</option>
-            <option value={3}>000</option>
-          </select>
-        </Field>
-
-        <label className="flex min-h-[44px] items-start gap-3">
-          <input
-            type="checkbox"
-            className="mt-1 h-5 w-5 accent-brand-600"
-            checked={settings.ignoreFutureBalance === true}
-            onChange={(e) => void change({ ignoreFutureBalance: e.target.checked })}
-          />
-          <span className="flex flex-col">
-            <span className="font-medium">{t("prefs.ignoreFuture")}</span>
-            <span className="text-sm text-neutral-600 dark:text-muted">
-              {t("prefs.ignoreFutureHint")}
+        <details className="group rounded-xl border border-neutral-200 p-3 dark:border-white/15">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-3 font-medium focus-visible:outline-2 focus-visible:outline-brand-600">
+            {t("prefs.advanced")}
+            <span aria-hidden="true" className="text-xl text-neutral-600 transition-transform duration-200 ease-out-strong group-open:rotate-90 motion-reduce:transition-none dark:text-muted">
+              ›
             </span>
-          </span>
-        </label>
+          </summary>
+          <div className="mt-3 flex flex-col gap-4">
+            <Field label={t("prefs.keypadZeros")}>
+              <select
+                className={inputClass}
+                value={settings.keypadZeros ?? 3}
+                onChange={(e) => void change({ keypadZeros: Number(e.target.value) as 2 | 3 })}
+              >
+                <option value={2}>00</option>
+                <option value={3}>000</option>
+              </select>
+            </Field>
+            <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">{t("prefs.keypadZerosHint")}</p>
+
+            <label className="flex min-h-[44px] items-start gap-3">
+              <input
+                type="checkbox"
+                className="mt-1 h-5 w-5 accent-brand-600"
+                checked={settings.ignoreFutureBalance === true}
+                onChange={(e) => void change({ ignoreFutureBalance: e.target.checked })}
+              />
+              <span className="flex flex-col">
+                <span className="font-medium">{t("prefs.ignoreFuture")}</span>
+                <span className="text-sm text-neutral-600 dark:text-muted">
+                  {t("prefs.ignoreFutureHint")}
+                </span>
+              </span>
+            </label>
+          </div>
+        </details>
 
         <div className="flex flex-col gap-3 border-t border-neutral-200 pt-4 dark:border-white/15">
           <label className="flex min-h-[44px] items-start gap-3">

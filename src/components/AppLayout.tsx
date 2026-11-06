@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { BottomNav, SideNav } from "./BottomNav";
 import { BackButton } from "./BackButton";
+import { Icon } from "./Icon";
 import { UpdateBanner } from "./PwaComponents";
 import { HeaderSlotsContext } from "./header-slots";
 import { generateDueOccurrences } from "../features/recurring/recurring-service";
@@ -43,8 +45,11 @@ export function AppLayout() {
 
   // L’onglet Visualisation porte lui-même le bouton retour, sur la ligne de ses onglets.
   const showHeader = !ROOTS.includes(location.pathname) && !location.pathname.startsWith("/visualisation");
+  // Sur téléphone, la barre basse n'a pas de place pour Paramètres : un lien discret en haut des écrans racines.
+  const showSettingsLink = ROOTS.includes(location.pathname) && !location.pathname.startsWith("/visualisation");
   const [titleSlot, setTitleSlot] = useState<HTMLElement | null>(null);
   const [actionsSlot, setActionsSlot] = useState<HTMLElement | null>(null);
+  const { t } = useTranslation();
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col md:max-w-none md:flex-row">
@@ -52,6 +57,17 @@ export function AppLayout() {
       <HeaderSlotsContext.Provider value={{ titleSlot, actionsSlot }}>
         <main className="flex-1 px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))] md:px-10 md:pb-10 md:pt-8">
           <div className="mx-auto w-full md:max-w-5xl">
+            {showSettingsLink ? (
+              <div className="mb-2 flex justify-end md:hidden">
+                <Link
+                  to="/plus"
+                  className="flex min-h-[44px] items-center gap-2 rounded-full border border-neutral-200 px-3 text-sm font-medium text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:border-white/15 dark:text-fg"
+                >
+                  <Icon name="sliders" className="h-4 w-4" />
+                  {t("pages.more.title")}
+                </Link>
+              </div>
+            ) : null}
             {showHeader ? (
               <HeaderRow onTitleSlot={setTitleSlot} onActionsSlot={setActionsSlot} />
             ) : null}

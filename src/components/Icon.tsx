@@ -2,6 +2,18 @@ import type { ReactNode } from "react";
 
 /** Icônes de trait (même style que la barre basse) : une seule source pour toute l'interface. */
 const PATHS: Record<string, ReactNode> = {
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+    </>
+  ),
+  crown: (
+    <>
+      <path d="M3 8l4.5 4L12 6l4.5 6L21 8l-2 11H5z" />
+      <path d="M5 19h14" />
+    </>
+  ),
   wallet: (
     <>
       <rect x="3" y="6" width="18" height="13" rx="3" />
