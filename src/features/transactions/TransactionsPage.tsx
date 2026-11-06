@@ -575,7 +575,7 @@ export function TransactionsPage() {
             </div>
           }
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
             {/* Période et tri côte à côte : deux réglages courts, une seule ligne. */}
             <div className="grid grid-cols-2 gap-2">
               <Field label={t("transactions.period")}>
@@ -605,7 +605,7 @@ export function TransactionsPage() {
             {/* Types en puces activables : une seule rangée au lieu de quatre cases à cocher. */}
             <fieldset className="flex flex-col gap-1.5">
               <legend className="text-sm font-medium">{t("transactions.type")}</legend>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {ALL_TYPES.map((tp) => {
                   const pressed = draftFilters.types?.includes(tp) ?? false;
                   return (
@@ -622,7 +622,7 @@ export function TransactionsPage() {
                           return { ...f, types };
                         })
                       }
-                      className={`min-h-[44px] rounded-full border px-4 text-sm font-medium transition-colors ${
+                      className={`min-h-[44px] rounded-xl border px-3 text-sm font-medium transition-colors ${
                         pressed
                           ? "border-brand-600 bg-brand-600 text-white"
                           : "border-neutral-500 bg-white text-ink dark:border-white/15 dark:bg-card dark:text-fg"
@@ -635,39 +635,42 @@ export function TransactionsPage() {
               </div>
             </fieldset>
 
-            <Field label={t("transactions.wallet")}>
-              <select
-                className={inputClass}
-                value={draftFilters.walletId ?? ""}
-                onChange={(e) =>
-                  setDraftFilters((f) => ({ ...f, walletId: e.target.value || undefined }))
-                }
-              >
-                <option value="">{t("transactions.anyWallet")}</option>
-                {wallets.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            {/* Compte et catégorie forment un groupe : espacement serré à l'intérieur, large autour. */}
+            <div className="flex flex-col gap-3">
+              <Field label={t("transactions.wallet")}>
+                <select
+                  className={inputClass}
+                  value={draftFilters.walletId ?? ""}
+                  onChange={(e) =>
+                    setDraftFilters((f) => ({ ...f, walletId: e.target.value || undefined }))
+                  }
+                >
+                  <option value="">{t("transactions.anyWallet")}</option>
+                  {wallets.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
 
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={draftFilters.categoryId ?? ""}
-                onChange={(e) =>
-                  setDraftFilters((f) => ({ ...f, categoryId: e.target.value || undefined }))
-                }
-              >
-                <option value="">{t("transactions.anyCategory")}</option>
-                {[...categories].sort(byName).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
+              <Field label={t("common.category")}>
+                <select
+                  className={inputClass}
+                  value={draftFilters.categoryId ?? ""}
+                  onChange={(e) =>
+                    setDraftFilters((f) => ({ ...f, categoryId: e.target.value || undefined }))
+                  }
+                >
+                  <option value="">{t("transactions.anyCategory")}</option>
+                  {[...categories].sort(byName).map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
 
             <div className="grid grid-cols-2 gap-2">
               <Field label={t("transactions.minAmount")}>
