@@ -27,11 +27,15 @@ const ICON_CHOICES: readonly string[] = [
 
 const COLOR_CHOICES = [
   "#0B7E9D",
+  "#0FA7D1",
   "#2563eb",
-  "#dc2626",
-  "#d97706",
+  "#4f46e5",
   "#7c3aed",
   "#db2777",
+  "#dc2626",
+  "#ea580c",
+  "#d97706",
+  "#65a30d",
   "#059669",
   "#475569",
 ] as const;
@@ -44,7 +48,7 @@ interface IconPickerProps {
 
 export function IconPicker({ value, onChange, label }: IconPickerProps) {
   return (
-    <div role="radiogroup" aria-label={label} onKeyDown={onRadioGroupKeyDown} className="grid grid-cols-6 gap-2">
+    <div role="radiogroup" aria-label={label} onKeyDown={onRadioGroupKeyDown} className="grid grid-cols-6 gap-2 md:grid-cols-8">
       {ICON_CHOICES.map((icon) => (
         <button
           key={icon}
@@ -75,7 +79,7 @@ interface ColorPickerProps {
 
 export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex flex-wrap gap-3">
+    <div role="radiogroup" aria-label={label} className="grid grid-cols-6 justify-items-center gap-3 md:grid-cols-12">
       {COLOR_CHOICES.map((color) => (
         <button
           key={color}
