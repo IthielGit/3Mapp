@@ -3,10 +3,12 @@ import { useTranslation } from "react-i18next";
 import { PageTitle } from "../../components/PageHeader";
 import { buttonDanger, buttonSecondary } from "../../components/FormControls";
 import { HelpTip } from "../../components/HelpTip";
+import { AccountAvatar } from "../../components/AccountAvatar";
 import { askConfirm } from "../../components/confirm-service";
 import { format } from "date-fns";
 import { useSyncStatus } from "../sync/useSyncStatus";
 import { useAccount } from "./AccountProvider";
+import { useAccountIdentity } from "./account-identity";
 import { useSignOut } from "./use-sign-out";
 import { deleteOwnAccount } from "./delete-account";
 import { downloadLocalBackup } from "../backup/export-backup";
@@ -20,6 +22,7 @@ export function AccountPage() {
   const account = useAccount();
   const sync = useSyncStatus();
   const signOutFlow = useSignOut();
+  const identity = useAccountIdentity();
   const [deleting, setDeleting] = useState(false);
   const [exportError, setExportError] = useState(false);
   const [deleteError, setDeleteError] = useState<"network" | "unknown" | undefined>();
@@ -83,9 +86,9 @@ export function AccountPage() {
       <div className="flex items-center gap-3 rounded-card border border-neutral-200 p-4 dark:border-white/15">
         <span
           aria-hidden="true"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-lg font-semibold text-brand-900 dark:bg-brand-900 dark:text-brand-100"
+          className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-lg font-semibold text-brand-900 dark:bg-brand-900 dark:text-brand-100"
         >
-          {initial}
+          <AccountAvatar avatarUrl={identity.avatarUrl} initial={initial} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-sm text-neutral-600 dark:text-muted">{t("account.signedInAs")}</p>
