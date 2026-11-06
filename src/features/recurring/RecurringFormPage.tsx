@@ -1,5 +1,5 @@
 import { PageTitle } from "../../components/PageHeader";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,8 @@ type TxType = Recurring["type"];
 export function RecurringFormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const endId = useId();
+  const startId = useId();
   const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? EMPTY;
   const active = wallets.filter((w) => !w.archived);
@@ -35,7 +37,7 @@ export function RecurringFormPage() {
   const [memo, setMemo] = useState("");
   const [unit, setUnit] = useState<RecurrenceUnit>("month");
   const [interval, setInterval] = useState("1");
-  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
+  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState("");
   const [lastDay, setLastDay] = useState(false);
   const [autoPost, setAutoPost] = useState(false);
@@ -56,7 +58,7 @@ export function RecurringFormPage() {
     setMemo(existing.memo);
     setUnit(existing.frequency.unit);
     setInterval(String(existing.frequency.interval));
-    setStartDate(format(new Date(existing.startDate), "yyyy-MM-ddTHH:mm"));
+    setStartDate(format(new Date(existing.startDate), "yyyy-MM-dd"));
     setEndDate(existing.endDate ? format(new Date(existing.endDate), "yyyy-MM-dd") : "");
     setLastDay(existing.dayOfMonthRule === "last_day");
     setAutoPost(existing.autoPost);
@@ -66,25 +68,28 @@ export function RecurringFormPage() {
   const effectiveWallet = walletId || active[0]?.id || "";
   const currency: CurrencyCode = active.find((w) => w.id === effectiveWallet)?.currency ?? "MGA";
   const kind = type === "income" ? "income" : "expense";
+  const isCategorised = type === "expense" || type === "income";
+  const isMonthly = unit === "month" || unit === "year";
 
-  /** Ce qui manque avant d'enregistrer ; null quand le formulaire est complet. */
-  function missingField(): string | null {
-    const amount = parseAmountText(amountText, currency);
+  /** Premier problème bloquant, ou null quand le formulaire peut être enregistré. */
+  function validationError(amount: number | null, every: number): string | null {
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
-    const every = Number(interval);
     if (!Number.isInteger(every) || every < 1) return t("recurring.invalidInterval");
-    if ((type === "expense" || type === "income") && !categoryId) return t("transactions.categoryRequired");
+    if (isCategorised && !categoryId) return t("transactions.categoryRequired");
     if (type === "transfer" && !toWalletId) return t("transactions.chooseWallet");
+    if (!editId && !startDate) return t("errors.required");
     return null;
   }
 
   async function save() {
-    setError(undefined);
     const amount = parseAmountText(amountText, currency);
-    if (amount === null || amount <= 0) return setError(t("errors.invalidAmount"));
     const every = Number(interval);
-    if (!Number.isInteger(every) || every < 1) return setError(t("recurring.invalidInterval"));
-    const isCategorised = type === "expense" || type === "income";
+    const problem = validationError(amount, every);
+    if (problem !== null || amount === null) {
+      setError(problem ?? t("transactions.amountRequired"));
+      return;
+    }
+    setError(undefined);
     try {
       const input = {
         draft: {
@@ -98,13 +103,17 @@ export function RecurringFormPage() {
         },
         frequency: { unit, interval: every },
         endDate: endDate ? new Date(`${endDate}T23:59`).toISOString() : undefined,
-        dayOfMonthRule: (lastDay ? "last_day" : "same_day") as DayRule,
+        // La règle « dernier jour » ne vaut que pour les récurrences mensuelles ou annuelles.
+        dayOfMonthRule: (isMonthly && lastDay ? "last_day" : "same_day") as DayRule,
         autoPost,
       };
       if (editId) {
         await updateRecurring(editId, input);
       } else {
-        await createRecurring({ ...input, startDate: new Date(startDate).toISOString() });
+        await createRecurring({
+          ...input,
+          startDate: new Date(`${startDate}T00:00`).toISOString(),
+        });
       }
       navigate("/plus/recurring", { replace: true });
     } catch (err) {
@@ -113,12 +122,12 @@ export function RecurringFormPage() {
   }
 
   return (
-    <section className="flex flex-col gap-3">
-      <PageTitle className="text-2xl font-semibold">
+    <section className="flex flex-col gap-2">
+      <PageTitle className="text-xl font-semibold">
         {editId ? t("recurring.editTitle") : t("recurring.newTitle")}
       </PageTitle>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-2">
         <Field label={t("transactions.type")}>
           <select
             className={inputClass}
@@ -141,39 +150,39 @@ export function RecurringFormPage() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Field label={t("transactions.wallet")}>
+      <Field label={t("transactions.wallet")}>
+        <select
+          className={inputClass}
+          value={effectiveWallet}
+          onChange={(e) => setWalletId(e.target.value)}
+        >
+          {active.map((w) => (
+            <option key={w.id} value={w.id}>
+              {w.name} ({w.currency})
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      {type === "transfer" ? (
+        <Field label={t("transactions.toWallet")}>
           <select
             className={inputClass}
-            value={effectiveWallet}
-            onChange={(e) => setWalletId(e.target.value)}
+            value={toWalletId}
+            onChange={(e) => setToWalletId(e.target.value)}
           >
-            {active.map((w) => (
-              <option key={w.id} value={w.id}>
-                {w.name} ({w.currency})
-              </option>
-            ))}
+            <option value="">—</option>
+            {active
+              .filter((w) => w.id !== effectiveWallet)
+              .map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name}
+                </option>
+              ))}
           </select>
         </Field>
-        {type === "transfer" ? (
-          <Field label={t("transactions.toWallet")}>
-            <select
-              className={inputClass}
-              value={toWalletId}
-              onChange={(e) => setToWalletId(e.target.value)}
-            >
-              <option value="">—</option>
-              {active
-                .filter((w) => w.id !== effectiveWallet)
-                .map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.name}
-                  </option>
-                ))}
-            </select>
-          </Field>
-        ) : (
-            <>
+      ) : (
+        <>
           <CategoryPicker
             label={t("common.category")}
             placeholder={t("transactions.chooseCategory")}
@@ -191,15 +200,14 @@ export function RecurringFormPage() {
               setCreatingCategory(false);
             }}
           />
-          </>
-        )}
-      </div>
+        </>
+      )}
 
       <Field label={t("transactions.memo")}>
         <input className={inputClass} value={memo} onChange={(e) => setMemo(e.target.value)} />
       </Field>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-2">
         <Field label={t("recurring.every_label")}>
           <input
             inputMode="numeric"
@@ -223,66 +231,76 @@ export function RecurringFormPage() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <Field label={t("recurring.startDate")}>
           <input
-            type="datetime-local"
+            id={startId}
+            type="date"
             className={inputClass}
             value={startDate}
             disabled={Boolean(editId)}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </Field>
-        <Field label={t("recurring.endDate")}>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between gap-1">
+            <label htmlFor={endId} className="truncate text-sm font-medium">
+              {t("recurring.endDate")}
+            </label>
+            {endDate ? (
+              <button
+                type="button"
+                className="-my-2 min-h-[44px] shrink-0 px-1 text-sm font-medium text-brand-700 dark:text-brand-dark"
+                onClick={() => setEndDate("")}
+              >
+                {t("recurring.clearEnd")}
+              </button>
+            ) : null}
+          </div>
           <input
+            id={endId}
             type="date"
             className={inputClass}
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
-        </Field>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {unit === "month" || unit === "year" ? (
-          <label className="flex min-h-[44px] items-center gap-2">
+      <div className="flex flex-col divide-y divide-neutral-300 overflow-hidden rounded-xl border border-neutral-500 dark:divide-white/15 dark:border-white/15">
+        {isMonthly ? (
+          <label className="flex min-h-[44px] cursor-pointer items-start gap-3 px-3 py-2.5 text-sm leading-snug">
             <input
               type="checkbox"
-              className="h-5 w-5 shrink-0"
+              className="mt-0.5 h-5 w-5 shrink-0"
               checked={lastDay}
               onChange={(e) => setLastDay(e.target.checked)}
             />
-            {t("recurring.lastDay")}
+            <span>{t("recurring.lastDay")}</span>
           </label>
         ) : null}
-
-        <label className="flex min-h-[44px] items-center gap-2">
+        <label className="flex min-h-[44px] cursor-pointer items-start gap-3 px-3 py-2.5 text-sm leading-snug">
           <input
             type="checkbox"
-            className="h-5 w-5 shrink-0"
+            className="mt-0.5 h-5 w-5 shrink-0"
             checked={autoPost}
             onChange={(e) => setAutoPost(e.target.checked)}
           />
-          {t("recurring.autoPost")}
+          <span>{t("recurring.autoPost")}</span>
         </label>
       </div>
 
       {error ? (
-        <p role="alert" className="text-red-700 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       ) : null}
 
-      <div className="flex justify-end gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <button type="button" className={buttonSecondary} onClick={() => navigate(-1)}>
           {t("common.cancel")}
         </button>
-        <button
-          type="button"
-          className={buttonPrimary}
-          onClick={() => void save()}
-          disabled={missingField() !== null}
-        >
+        <button type="button" className={buttonPrimary} onClick={() => void save()}>
           {t("common.save")}
         </button>
       </div>

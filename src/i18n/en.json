@@ -426,6 +426,7 @@
     "unit": "Unit",
     "startDate": "First occurrence",
     "endDate": "End (optional)",
+    "clearEnd": "Clear",
     "lastDay": "Always on the last day of the month",
     "autoPost": "Create directly as confirmed (otherwise as pending)",
     "invalidInterval": "The interval must be a whole number of at least 1.",
