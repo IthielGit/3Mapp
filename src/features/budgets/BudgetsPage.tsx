@@ -1,4 +1,5 @@
 import { PageTitle } from "../../components/PageHeader";
+import { AccountMenu } from "../../components/AccountMenu";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -41,6 +42,7 @@ export function BudgetsPage() {
             {t("common.add")}
           </Link>
         ) : null}
+        <AccountMenu />
       </header>
 
       {active.length === 0 ? (

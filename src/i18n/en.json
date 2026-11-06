@@ -229,6 +229,7 @@
     "apply": "Apply",
     "sortNewest": "Newest first",
     "sortOldest": "Oldest first",
+    "sort": "Sort",
     "income": "Income",
     "expense": "Expenses",
     "net": "What is left",
@@ -740,6 +741,9 @@
     "payModeNone": "No pay to track",
     "payHintIrregular": "The month then follows the calendar month. Add your income as it comes in.",
     "payHintNone": "You can change this in Settings."
+  },
+  "accountMenu": {
+    "open": "Account menu"
   },
   "account": {
     "title": "Account",

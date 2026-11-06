@@ -229,6 +229,7 @@
     "apply": "Appliquer",
     "sortNewest": "Plus récentes d'abord",
     "sortOldest": "Plus anciennes d'abord",
+    "sort": "Tri",
     "income": "Revenus",
     "expense": "Dépenses",
     "net": "Ce qui vous reste",
@@ -740,6 +741,9 @@
     "payModeNone": "Pas de paie à suivre",
     "payHintIrregular": "Le cycle suit alors le mois calendaire. Ajoutez vos revenus au fil de l’eau.",
     "payHintNone": "Vous pourrez changer cela dans Réglages."
+  },
+  "accountMenu": {
+    "open": "Menu du compte"
   },
   "account": {
     "title": "Compte",

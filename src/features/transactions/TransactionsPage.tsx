@@ -9,9 +9,9 @@ import { db } from "../../db/database";
 import { byName } from "../../lib/compare";
 import type { Transaction } from "../../db/entities";
 import { BottomSheet } from "../../components/BottomSheet";
+import { AccountMenu } from "../../components/AccountMenu";
 import {
   Field,
-  buttonDanger,
   buttonPrimary,
   buttonSecondary,
   inputClass,
@@ -82,6 +82,7 @@ export function TransactionsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkWallet, setBulkWallet] = useState("");
+  const [bulkSheet, setBulkSheet] = useState<"category" | "wallet" | null>(null);
   const [undo, setUndo] = useState<Undo | null>(null);
   const [message, setMessage] = useState<string | undefined>();
 
@@ -250,50 +251,42 @@ export function TransactionsPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-col gap-4 bg-canvas px-4 pb-3 pt-5 dark:bg-page">
+      {/* Haut de page collé : titre, recherche, compte et résumé restent visibles pendant le défilement de la liste. */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-col gap-2 bg-canvas px-4 pb-2 pt-4 dark:bg-page">
         <header className="flex items-center justify-between gap-2">
           <h1 className="text-xl font-semibold text-ink dark:text-fg">
             {t("transactions.title")}
           </h1>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={openFilters}
-              aria-label={t("transactions.filters")}
-              className="relative flex h-11 w-11 items-center justify-center rounded-xl text-neutral-600 active:bg-neutral-100 dark:text-muted"
-            >
-              <FilterIcon />
-              {activeFilterCount > 0 ? (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-semibold text-white">
-                  {activeFilterCount}
-                </span>
-              ) : null}
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectMode((m) => !m)}
-              aria-pressed={selectMode}
-              className={`min-h-[44px] rounded-xl px-3 text-sm font-semibold ${
-                selectMode ? "bg-brand-600 text-white" : "text-brand-700 dark:text-brand-dark"
-              }`}
-            >
-              {selectMode ? t("transactions.selectDone") : t("transactions.select")}
-            </button>
-          </div>
+          <AccountMenu />
         </header>
 
-        <label className="relative block">
-          <span className="sr-only">{t("transactions.search")}</span>
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" />
-          <input
-            type="search"
-            className="h-[46px] w-full rounded-xl border border-neutral-200 bg-white pl-10 pr-3 text-base text-ink placeholder:text-neutral-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30 dark:border-white/15 dark:bg-card dark:text-fg"
-            placeholder={t("transactions.searchPlaceholder")}
-            aria-label={t("transactions.search")}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </label>
+        <div className="flex items-center gap-2">
+          <label className="relative block min-w-0 flex-1">
+            <span className="sr-only">{t("transactions.search")}</span>
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" />
+            <input
+              type="search"
+              className="h-[46px] w-full rounded-xl border border-neutral-200 bg-white pl-10 pr-3 text-base text-ink placeholder:text-neutral-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/30 dark:border-white/15 dark:bg-card dark:text-fg"
+              placeholder={t("transactions.searchPlaceholder")}
+              aria-label={t("transactions.search")}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={openFilters}
+            aria-label={t("transactions.filters")}
+            className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-600 dark:border-white/15 dark:bg-card dark:text-muted"
+          >
+            <FilterIcon />
+            {activeFilterCount > 0 ? (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-semibold text-white">
+                {activeFilterCount}
+              </span>
+            ) : null}
+          </button>
+        </div>
 
         <div className="flex items-center justify-between gap-2 text-sm">
           <span className="text-neutral-600 dark:text-muted">
@@ -307,35 +300,26 @@ export function TransactionsPage() {
             ) : null}
             <button
               type="button"
-              className="-my-3 flex h-11 w-11 items-center justify-center rounded-xl text-brand-700 dark:text-brand-dark"
-              onClick={() => setOldestFirst((o) => !o)}
-              aria-label={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
-              title={oldestFirst ? t("transactions.sortNewest") : t("transactions.sortOldest")}
+              onClick={() => setSelectMode((m) => !m)}
+              aria-pressed={selectMode}
+              className={`min-h-[44px] rounded-xl px-3 font-semibold ${
+                selectMode ? "bg-brand-600 text-white" : "text-brand-700 dark:text-brand-dark"
+              }`}
             >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d={oldestFirst ? "M12 19V5M6 11l6-6 6 6" : "M12 5v14M6 13l6 6 6-6"} />
-              </svg>
+              {selectMode ? t("transactions.selectDone") : t("transactions.select")}
             </button>
           </div>
         </div>
 
+        {/* Résumé compact : solde du mois sur une ligne, revenus et dépenses en dessous. */}
         <section
           aria-label={t("transactions.summary")}
-          className="flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-white/15 dark:bg-card"
+          className="flex flex-col gap-1 rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm dark:border-white/15 dark:bg-card"
         >
-          <div className="flex flex-col">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
             <p className="text-sm text-neutral-600 dark:text-muted">{`${t("transactions.net")} ${t(`transactions.netWhen.${period}`)}`}</p>
             <p
-              className={`text-3xl font-semibold tabular-nums ${
+              className={`text-xl font-semibold tabular-nums ${
                 summary.net < 0
                   ? "text-expense dark:text-expense-dark"
                   : summary.net > 0
@@ -347,25 +331,19 @@ export function TransactionsPage() {
               {formatMoney(summary.net, baseCurrency)}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3 border-t border-neutral-200 pt-3 text-sm dark:border-white/15">
-            <div className="flex flex-col">
-              <p className="text-neutral-600 dark:text-muted">{t("transactions.income")}</p>
-              <p
-                className="font-semibold tabular-nums text-income dark:text-income-dark"
-                data-amount
-              >
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm tabular-nums">
+            <p className="text-neutral-600 dark:text-muted">
+              {t("transactions.income")}{" "}
+              <span className="font-semibold text-income dark:text-income-dark" data-amount>
                 {formatMoney(summary.income, baseCurrency)}
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-neutral-600 dark:text-muted">{t("transactions.expense")}</p>
-              <p
-                className="font-semibold tabular-nums text-expense dark:text-expense-dark"
-                data-amount
-              >
+              </span>
+            </p>
+            <p className="text-neutral-600 dark:text-muted">
+              {t("transactions.expense")}{" "}
+              <span className="font-semibold text-expense dark:text-expense-dark" data-amount>
                 {formatMoney(summary.expense, baseCurrency)}
-              </p>
-            </div>
+              </span>
+            </p>
           </div>
         </section>
       </div>
@@ -454,54 +432,80 @@ export function TransactionsPage() {
         </div>
       </div>
 
+      {/* Barre d'actions de sélection : remplace la barre basse (et le bouton « + ») pendant la sélection. */}
       {selectMode ? (
-        <div className="fixed inset-x-0 bottom-16 z-30 mx-auto flex max-w-lg flex-col gap-2 border-t border-neutral-200 bg-white p-3 dark:border-white/15 dark:bg-card">
-          <p className="text-sm">{t("transactions.selectedCount", { count: selected.size })}</p>
-          <div className="grid grid-cols-2 gap-2">
+        <div className="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-lg flex-col gap-3 border-t border-neutral-200 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
+          <p className="text-sm font-medium text-ink dark:text-fg">
+            {t("transactions.selectedCount", { count: selected.size })}
+          </p>
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
-              className={buttonDanger}
+              className="min-h-[44px] rounded-xl border border-neutral-500 px-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
+              disabled={selected.size === 0}
+              onClick={() => {
+                setBulkCategory("");
+                setBulkSheet("category");
+              }}
+            >
+              {t("common.category")}
+            </button>
+            <button
+              type="button"
+              className="min-h-[44px] rounded-xl border border-neutral-500 px-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
+              disabled={selected.size === 0}
+              onClick={() => {
+                setBulkWallet("");
+                setBulkSheet("wallet");
+              }}
+            >
+              {t("common.wallet")}
+            </button>
+            <button
+              type="button"
+              className="min-h-[44px] rounded-xl border border-red-300 px-2 text-sm font-semibold text-expense disabled:opacity-50 dark:border-red-400/30"
               disabled={selected.size === 0}
               onClick={() => void deleteIds([...selected])}
             >
               {t("common.delete")}
             </button>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Feuilles de modification groupée : une seule liste déroulante, puis Appliquer. */}
+      {bulkSheet === "category" ? (
+        <BottomSheet open title={t("transactions.setCategory")} onClose={() => setBulkSheet(null)}>
+          <div className="flex flex-col gap-4">
+            <Field label={t("common.category")}>
+              <select className={inputClass} value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)}>
+                <option value="">—</option>
+                {[...categories].sort(byName).map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
             <button
               type="button"
-              className={buttonSecondary}
-              disabled={selected.size === 0}
-              onClick={() =>
-                void applyBulk((d) => ({
-                  ...d,
-                  categoryId: bulkCategory || undefined,
-                  subcategoryId: undefined,
-                }))
-              }
+              className={buttonPrimary}
+              onClick={() => {
+                setBulkSheet(null);
+                void applyBulk((d) => ({ ...d, categoryId: bulkCategory || undefined, subcategoryId: undefined }));
+              }}
             >
-              {t("transactions.setCategory")}
+              {t("transactions.apply")}
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              className={inputClass}
-              value={bulkCategory}
-              onChange={(e) => setBulkCategory(e.target.value)}
-              aria-label={t("transactions.setCategory")}
-            >
-              <option value="">—</option>
-              {[...categories].sort(byName).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-2">
-              <select
-                className={inputClass}
-                value={bulkWallet}
-                onChange={(e) => setBulkWallet(e.target.value)}
-                aria-label={t("transactions.setWallet")}
-              >
+        </BottomSheet>
+      ) : null}
+
+      {bulkSheet === "wallet" ? (
+        <BottomSheet open title={t("transactions.setWallet")} onClose={() => setBulkSheet(null)}>
+          <div className="flex flex-col gap-4">
+            <Field label={t("common.wallet")}>
+              <select className={inputClass} value={bulkWallet} onChange={(e) => setBulkWallet(e.target.value)}>
                 <option value="">—</option>
                 {wallets.map((w) => (
                   <option key={w.id} value={w.id}>
@@ -509,17 +513,20 @@ export function TransactionsPage() {
                   </option>
                 ))}
               </select>
-              <button
-                type="button"
-                className={buttonSecondary}
-                disabled={selected.size === 0 || !bulkWallet}
-                onClick={() => void applyBulk((d) => ({ ...d, walletId: bulkWallet }))}
-              >
-                {t("transactions.setWallet")}
-              </button>
-            </div>
+            </Field>
+            <button
+              type="button"
+              className={buttonPrimary}
+              disabled={!bulkWallet}
+              onClick={() => {
+                setBulkSheet(null);
+                void applyBulk((d) => ({ ...d, walletId: bulkWallet }));
+              }}
+            >
+              {t("transactions.apply")}
+            </button>
           </div>
-        </div>
+        </BottomSheet>
       ) : null}
 
       {undo ? (
@@ -550,6 +557,18 @@ export function TransactionsPage() {
                 <option value="all">{t("transactions.periodAll")}</option>
                 <option value="month">{t("transactions.periodMonth")}</option>
                 <option value="thirty">{t("transactions.period30")}</option>
+              </select>
+            </Field>
+
+            {/* Le tri est ici (et non plus sur la ligne de compte) : moins d'icônes à déchiffrer. */}
+            <Field label={t("transactions.sort")}>
+              <select
+                className={inputClass}
+                value={oldestFirst ? "oldest" : "newest"}
+                onChange={(e) => setOldestFirst(e.target.value === "oldest")}
+              >
+                <option value="newest">{t("transactions.sortNewest")}</option>
+                <option value="oldest">{t("transactions.sortOldest")}</option>
               </select>
             </Field>
 
