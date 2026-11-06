@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
@@ -32,6 +32,12 @@ export function OnboardingPage() {
   const [error, setError] = useState<string | undefined>();
   const [nameError, setNameError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  const stepTitleRef = useRef<HTMLHeadingElement>(null);
+  // Changer d'écran retire le bouton utilisé : sans cela, le focus est perdu et Tab sort de la page.
+  // Le focus va donc au titre du nouvel écran.
+  useEffect(() => {
+    if (step > 0) stepTitleRef.current?.focus();
+  }, [step]);
 
   // Première étape : écran d'introduction sombre, puis les deux écrans de configuration.
   if (step === 0) return <IntroScreen onStart={() => setStep(1)} />;
@@ -78,7 +84,7 @@ export function OnboardingPage() {
 
       {step === 1 ? (
         <div className="onb-step flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold">{t("onboarding.settingsTitle")}</h1>
+          <h1 ref={stepTitleRef} tabIndex={-1} className="text-2xl font-semibold">{t("onboarding.settingsTitle")}</h1>
           <Field label={t("onboarding.language")}>
             <select
               className={inputClass}
@@ -107,7 +113,7 @@ export function OnboardingPage() {
 
       {step === 2 ? (
         <div className="onb-step flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
+          <h1 ref={stepTitleRef} tabIndex={-1} className="text-2xl font-semibold">{t("onboarding.walletTitle")}</h1>
           <p className="text-neutral-600 dark:text-muted">{t("onboarding.balanceHint")}</p>
           <Field label={t("common.name")} error={nameError}>
             <input

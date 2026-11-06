@@ -21,10 +21,17 @@ body {
   outline-color: #7ADBF5;
 }
 
-/* Champs date : le focus passe d'un segment (jour, mois, année) à l'autre ; l'anneau doit entourer tout le champ. */
+/* Champs date et heure : le focus passe d'un segment (jour, mois, année, heure, minute) à l'autre ;
+   l'anneau doit entourer tout le champ, y compris pendant ces passages entre segments. */
 input[type="date"]:focus,
 input[type="date"]:focus-visible,
-input[type="date"]:focus-within {
+input[type="date"]:focus-within,
+input[type="time"]:focus,
+input[type="time"]:focus-visible,
+input[type="time"]:focus-within,
+input[type="datetime-local"]:focus,
+input[type="datetime-local"]:focus-visible,
+input[type="datetime-local"]:focus-within {
   outline: 2px solid #0B7E9D;
   outline-offset: 2px;
   border-radius: 0.5rem;
@@ -32,7 +39,13 @@ input[type="date"]:focus-within {
 
 :root.dark input[type="date"]:focus,
 :root.dark input[type="date"]:focus-visible,
-:root.dark input[type="date"]:focus-within {
+:root.dark input[type="date"]:focus-within,
+:root.dark input[type="time"]:focus,
+:root.dark input[type="time"]:focus-visible,
+:root.dark input[type="time"]:focus-within,
+:root.dark input[type="datetime-local"]:focus,
+:root.dark input[type="datetime-local"]:focus-visible,
+:root.dark input[type="datetime-local"]:focus-within {
   outline-color: #7ADBF5;
 }
 
