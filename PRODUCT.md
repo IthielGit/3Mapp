@@ -42,7 +42,7 @@ Suivre dépenses, revenus, virements, budgets, objectifs d'épargne et dettes, a
 - Multi-devises avec taux manuels datés.
 - Sécurité : PIN, biométrie en option, verrouillage automatique.
 - Droits RGPD : export complet, suppression définitive du compte.
-- Langues : français (par défaut), anglais, malgache. Tous les textes passent par i18n.
+- Langues : français (par défaut) et anglais. Tous les textes passent par i18n.
 - Incohérence connue : CLAUDE.md dit encore « aucun serveur obligatoire » ; SPEC §5.18 fait foi.
 
 ## Brand Commitments
@@ -73,4 +73,4 @@ Suivre dépenses, revenus, virements, budgets, objectifs d'épargne et dettes, a
 - Contrastes AA vérifiés pour chaque rôle de couleur (4,5:1 pour le texte, 3:1 pour les éléments graphiques).
 - Zones tactiles d'au moins 44 px ; labels sur tous les contrôles ; navigation clavier dans les feuilles modales.
 - Thème clair et sombre.
-- Trois langues, dont le malgache.
+- Deux langues : français et anglais.
