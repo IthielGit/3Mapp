@@ -23,7 +23,7 @@ comme une app installée (PWA), **offline-first**, sans serveur obligatoire. Tou
 - React Router, Zustand (état UI uniquement : filtres, thème, verrouillage)
 - Recharts (graphiques), date-fns, Zod (validation), Papa Parse (CSV), ExcelJS (export XLSX)
 - vite-plugin-pwa (service worker, manifest, raccourcis)
-- i18next (fr par défaut, en, mg)
+- i18next (fr par défaut, en)
 - Vitest + Testing Library (unitaire), Playwright (e2e mobile viewport 390×844)
 
 ## Structure
@@ -36,7 +36,7 @@ src/
                  templates, stats, import-export, backup, security, settings
   components/    UI partagée (BottomSheet, AmountInput, Calculator, IconPicker, ...)
   lib/           money.ts, dates.ts, csv.ts, crypto.ts
-  i18n/          fr.json, en.json, mg.json
+  i18n/          fr.json, en.json
 tests/           unit + e2e
 ```
 
