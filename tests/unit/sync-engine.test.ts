@@ -20,7 +20,8 @@ type Row = Record<string, unknown>;
  * Faux serveur sync_records : `sync_push_v2` applique « le plus récent gagne » comme la fonction SQL,
  * et la lecture renvoie les lignes modifiées après le curseur, comme la requête PostgREST.
  */
-function fakeServer(initial: Row[] = [], minClientVersion = 2) {
+/** `legacy` : serveur sans la migration 0006 (seule l'ancienne fonction sync_push existe). */
+function fakeServer(initial: Row[] = [], minClientVersion = 2, legacy = false) {
   const rows = new Map<string, Row>();
   let tick = 0;
   const stamp = () => new Date(Date.parse("2030-01-01T00:00:00.000Z") + ++tick * 1000).toISOString();
@@ -29,8 +30,9 @@ function fakeServer(initial: Row[] = [], minClientVersion = 2) {
 
   const client = {
     rpc: vi.fn(async (fn: string, args: { p_records: Row[]; p_client_version?: number }) => {
-      if (fn !== "sync_push_v2") return { data: null, error: { code: "PGRST202", message: "function not found" } };
-      if ((args.p_client_version ?? 0) < minClientVersion) {
+      const available = legacy ? "sync_push" : "sync_push_v2";
+      if (fn !== available) return { data: null, error: { code: "PGRST202", message: "function not found" } };
+      if (!legacy && (args.p_client_version ?? 0) < minClientVersion) {
         return { data: null, error: { code: "P0001", message: "client outdated" } };
       }
       pushes.push(args.p_records);
@@ -423,5 +425,19 @@ describe("remplacement par les données du compte", () => {
     expect(server.pushes.flat().filter((row) => row.deleted)).toHaveLength(0);
     expect(server.rows.get(`reconciliations|${id}`)?.deleted).toBe(false);
     expect(await db.reconciliations.get(id)).toBeDefined();
+  });
+});
+
+describe("serveur pas encore migré (0006 non appliquée)", () => {
+  it("repli sur l'ancienne fonction : la synchro continue", async () => {
+    const server = fakeServer([], 2, true);
+    await enableSync(server.client, USER, "merge", db);
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+
+    const report = await runSync(server.client, db);
+
+    expect(report.pushed).toBe(1);
+    expect(server.rows.has("reconciliations|33333333-3333-4333-8333-333333333333")).toBe(true);
+    expect(server.client.rpc).toHaveBeenCalledWith("sync_push", expect.anything());
   });
 });

@@ -3,8 +3,9 @@
 -- défaut du compte (ancienne fusion des doublons). Désormais, le client déclare sa version de synchro et le
 -- serveur refuse l'envoi d'une version trop ancienne : elle ne peut plus rien écrire ni supprimer.
 --
--- Ordre de déploiement : publier d'abord le client qui appelle sync_push_v2, puis appliquer cette migration.
--- L'ancienne fonction sync_push(jsonb) est supprimée : les anciens clients échouent avant tout envoi.
+-- Ordre de déploiement : indifférent. Le nouveau client se replie sur sync_push tant que sync_push_v2
+-- n'existe pas. Une fois cette migration appliquée, l'ancienne fonction sync_push(jsonb) est supprimée :
+-- les anciens clients échouent avant tout envoi.
 -- Pour bloquer une future version, augmenter min_version ci-dessous (nouvelle migration) en même temps que
 -- SYNC_CLIENT_VERSION côté client (src/features/sync/sync-engine.ts).
 
