@@ -77,7 +77,6 @@ export function TransactionsPage() {
 
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [bulkCategory, setBulkCategory] = useState("");
   const [bulkWallet, setBulkWallet] = useState("");
   const [bulkSheet, setBulkSheet] = useState<"category" | "wallet" | null>(null);
   const [undo, setUndo] = useState<Undo | null>(null);
@@ -473,32 +472,31 @@ export function TransactionsPage() {
 
       {/* Barre d'actions de sélection : remplace la barre basse (et le bouton « + ») pendant la sélection. */}
       {selectMode ? (
-        <div className="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-lg flex-col gap-3 border-t border-neutral-200 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-medium text-ink dark:text-fg" aria-live="polite">
+        <div className="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-lg flex-col gap-3 rounded-t-2xl border-t border-neutral-200 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] dark:border-white/15 dark:bg-card">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setSelectMode(false)}
+              aria-label={t("common.close")}
+              className="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-neutral-100 dark:text-fg dark:hover:bg-white/10"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+            <p className="min-w-0 flex-1 text-sm font-semibold text-ink dark:text-fg" aria-live="polite">
               {t("transactions.selectedCount", { count: selected.size })}
             </p>
             <button
               type="button"
               onClick={toggleAllVisible}
               disabled={visible.length === 0}
-              className="min-h-[44px] rounded-xl px-3 text-sm font-semibold text-brand-700 disabled:opacity-50 dark:text-brand-dark"
+              className="min-h-[44px] shrink-0 rounded-xl px-3 text-sm font-semibold text-brand-700 disabled:opacity-50 dark:text-brand-dark"
             >
               {allVisibleSelected ? t("transactions.deselectAll") : t("transactions.selectAll")}
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              className="min-h-[44px] rounded-xl border border-neutral-500 px-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
-              disabled={selected.size === 0}
-              onClick={() => {
-                setBulkCategory("");
-                setBulkSheet("category");
-              }}
-            >
-              {t("common.category")}
-            </button>
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               className="min-h-[44px] rounded-xl border border-neutral-500 px-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
@@ -522,45 +520,7 @@ export function TransactionsPage() {
         </div>
       ) : null}
 
-      {/* Feuilles de modification groupée : une seule liste déroulante, puis Appliquer. */}
-      {bulkSheet === "category" ? (
-        <BottomSheet open title={t("transactions.setCategory")} onClose={() => setBulkSheet(null)}>
-          <div className="flex flex-col gap-4">
-            <Field label={t("common.category")}>
-              <select
-                className={inputClass}
-                value={bulkCategory}
-                onChange={(e) => setBulkCategory(e.target.value)}
-              >
-                <option value="" disabled>
-                  —
-                </option>
-                {[...categories].sort(byName).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <button
-              type="button"
-              className={buttonPrimary}
-              disabled={!bulkCategory}
-              onClick={() => {
-                setBulkSheet(null);
-                void applyBulk((d) => ({
-                  ...d,
-                  categoryId: bulkCategory,
-                  subcategoryId: undefined,
-                }));
-              }}
-            >
-              {t("transactions.apply")}
-            </button>
-          </div>
-        </BottomSheet>
-      ) : null}
-
+      {/* Feuille de modification groupée : portefeuille, puis Appliquer. */}
       {bulkSheet === "wallet" ? (
         <BottomSheet open title={t("transactions.setWallet")} onClose={() => setBulkSheet(null)}>
           <div className="flex flex-col gap-4">
