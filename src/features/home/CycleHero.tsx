@@ -289,7 +289,7 @@ export function CycleHero({
             {/* Le montant d'abord, puis ce qu'il veut dire ; le pourcentage relie le texte à la jauge. */}
             <div className="flex min-w-0 flex-col">
               <p className="text-lg font-semibold" data-amount>
-                {formatMoney(Math.abs(cycle.saved), baseCurrency)}
+                {formatMoney(cycle.saved, baseCurrency)}
               </p>
               <p className="text-xs">
                 {cycle.saved < 0
