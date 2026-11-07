@@ -62,7 +62,11 @@ function lineText(t: TFunction, line: Line): string {
  * Texte lisible (pas seulement une couleur) ; rouge réservé aux erreurs. Les changements importants
  * (hors ligne, retour du réseau, nouvelle erreur) sont annoncés aux lecteurs d'écran.
  */
-export function SyncStatusLine() {
+/**
+ * `inline` : version discrète pour l'en-tête, à gauche du bouton de synchro. Pas de point dans l'état
+ * calme (le texte suffit) ; le point reste sur les états hors ligne et erreur, avec le texte en plus.
+ */
+export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
   const { t } = useTranslation();
   const status = useSyncStatus();
   const online = useOnline();
@@ -94,7 +98,14 @@ export function SyncStatusLine() {
   const isError = line.kind === "error";
 
   return (
-    <div className="flex min-h-5 items-center gap-2 text-xs font-medium">
+    <div
+      className={
+        inline
+          ? "flex min-w-0 items-center justify-end gap-1.5 text-right text-xs"
+          : "flex min-h-5 items-center gap-2 text-xs font-medium"
+      }
+    >
+      {inline && !isError && line.kind !== "offline" && line.kind !== "pending" ? null : (
       <span
         aria-hidden="true"
         className={`h-1.5 w-1.5 shrink-0 rounded-full ${
@@ -105,6 +116,7 @@ export function SyncStatusLine() {
               : "bg-brand-500"
         }`}
       />
+      )}
       <p
         className={isError ? "text-expense dark:text-expense-dark" : "text-neutral-600 dark:text-muted"}
         data-testid="sync-status"
