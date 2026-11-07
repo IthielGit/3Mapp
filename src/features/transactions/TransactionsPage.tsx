@@ -46,7 +46,7 @@ interface Undo {
 }
 
 type Row =
-  | { kind: "header"; key: string; day: string; net: number; currency: CurrencyCode }
+  | { kind: "header"; key: string; day: string; net: number; currency: CurrencyCode; ids: string[] }
   | { kind: "item"; key: string; transaction: Transaction };
 
 const EMPTY: never[] = [];
@@ -126,6 +126,7 @@ export function TransactionsPage() {
         day: group.day,
         net: group.net,
         currency: baseCurrency,
+        ids: group.items.map((transaction) => transaction.id),
       });
       for (const transaction of group.items) {
         out.push({ kind: "item", key: transaction.id, transaction });
@@ -218,6 +219,25 @@ export function TransactionsPage() {
       const next = new Set(prev);
       if (next.has(txId)) next.delete(txId);
       else next.add(txId);
+      return next;
+    });
+  }
+
+  // Tout sélectionner : porte sur les transactions visibles (filtres et recherche appliqués).
+  const allVisibleSelected = visible.length > 0 && visible.every((tx) => selected.has(tx.id));
+  function toggleAllVisible() {
+    setSelected(allVisibleSelected ? new Set() : new Set(visible.map((tx) => tx.id)));
+  }
+
+  // Une date : toutes ses transactions visibles. Si elles sont déjà toutes choisies, on les retire.
+  function toggleDay(ids: string[]) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const allChosen = ids.every((id) => next.has(id));
+      for (const id of ids) {
+        if (allChosen) next.delete(id);
+        else next.add(id);
+      }
       return next;
     });
   }
@@ -382,7 +402,17 @@ export function TransactionsPage() {
               >
                 {row.kind === "header" ? (
                   <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-neutral-100 px-3 py-2 dark:bg-raised">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
+                      {selectMode ? (
+                        <DaySelectCheckbox
+                          label={t("transactions.selectDay", {
+                            date: format(new Date(row.day), "d MMMM yyyy", { locale: fr }),
+                          })}
+                          checked={row.ids.length > 0 && row.ids.every((id) => selected.has(id))}
+                          mixed={row.ids.some((id) => selected.has(id)) && !row.ids.every((id) => selected.has(id))}
+                          onToggle={() => toggleDay(row.ids)}
+                        />
+                      ) : null}
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base font-semibold tabular-nums text-ink shadow-sm dark:bg-card dark:text-fg">
                         {format(new Date(row.day), "dd")}
                       </span>
@@ -391,7 +421,7 @@ export function TransactionsPage() {
                       </span>
                     </div>
                     <span
-                      className="text-sm font-semibold tabular-nums text-ink dark:text-fg"
+                      className="text-sm font-semibold tabular-nums text-ink opacity-60 dark:text-fg"
                       data-amount
                     >
                       {formatMoney(row.net, row.currency)}
@@ -437,9 +467,19 @@ export function TransactionsPage() {
       {/* Barre d'actions de sélection : remplace la barre basse (et le bouton « + ») pendant la sélection. */}
       {selectMode ? (
         <div className="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-w-lg flex-col gap-3 border-t border-neutral-200 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/15 dark:bg-card">
-          <p className="text-sm font-medium text-ink dark:text-fg">
-            {t("transactions.selectedCount", { count: selected.size })}
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-medium text-ink dark:text-fg" aria-live="polite">
+              {t("transactions.selectedCount", { count: selected.size })}
+            </p>
+            <button
+              type="button"
+              onClick={toggleAllVisible}
+              disabled={visible.length === 0}
+              className="min-h-[44px] rounded-xl px-3 text-sm font-semibold text-brand-700 disabled:opacity-50 dark:text-brand-dark"
+            >
+              {allVisibleSelected ? t("transactions.deselectAll") : t("transactions.selectAll")}
+            </button>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
@@ -791,17 +831,19 @@ function TransactionRow({
       type="button"
       onClick={selectMode ? onToggle : onOpen}
       aria-label={rowName}
-      className="flex min-h-[56px] w-full items-center gap-3 border-b border-neutral-200 py-2.5 text-left active:bg-neutral-100 dark:border-white/15 dark:active:bg-neutral-800/60"
+      className="flex min-h-[56px] w-full items-center gap-3 border-b border-neutral-200 px-3 py-2.5 text-left transition-colors duration-150 active:bg-neutral-100 dark:border-white/15 dark:active:bg-neutral-800/60"
       aria-pressed={selectMode ? selected : undefined}
     >
       {selectMode ? (
-        <span
-          aria-hidden="true"
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
-            selected ? "border-brand-600 bg-brand-600 text-white" : "border-neutral-600"
-          }`}
-        >
-          {selected ? "✓" : null}
+        // Même colonne que la case du jour : les cases et les pastilles s'alignent verticalement.
+        <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center">
+          <span
+            className={`flex h-5 w-5 items-center justify-center rounded border transition-colors duration-150 ${
+              selected ? "border-brand-600 bg-brand-600 text-white" : "border-neutral-600"
+            }`}
+          >
+            {selected ? "✓" : null}
+          </span>
         </span>
       ) : null}
       <span
@@ -824,6 +866,40 @@ function TransactionRow({
           {formatMoney(t.amount, t.currency)}
         </span>
         <span className="text-xs text-neutral-600 dark:text-muted">{time}</span>
+      </span>
+    </button>
+  );
+}
+
+/** Case de sélection d'une date : même trait que les lignes, zone tactile de 44 px, état « partiel ». */
+function DaySelectCheckbox({
+  label,
+  checked,
+  mixed,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  mixed: boolean;
+  onToggle: () => void;
+}) {
+  const on = checked || mixed;
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={mixed ? "mixed" : checked}
+      aria-label={label}
+      onClick={onToggle}
+      className="-my-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+    >
+      <span
+        aria-hidden="true"
+        className={`flex h-5 w-5 items-center justify-center rounded border transition-colors duration-150 ${
+          on ? "border-brand-600 bg-brand-600 text-white" : "border-neutral-600"
+        }`}
+      >
+        {checked ? "✓" : mixed ? "–" : null}
       </span>
     </button>
   );
