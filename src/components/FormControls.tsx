@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const inputClass =
-  "min-h-[44px] w-full rounded-xl border border-neutral-500 bg-white px-3 text-base dark:border-white/15 dark:bg-card";
+  "min-h-[44px] w-full min-w-0 max-w-full rounded-xl border border-neutral-500 bg-white px-3 text-base dark:border-white/15 dark:bg-card";
 
 export const buttonPrimary =
   "min-h-[44px] rounded-xl bg-brand-600 px-4 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-ink";
@@ -20,7 +20,7 @@ interface FieldProps {
 
 export function Field({ label, error, children }: FieldProps) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex min-w-0 flex-col gap-1">
       <span className="text-sm font-medium">{label}</span>
       {children}
       {error ? (
