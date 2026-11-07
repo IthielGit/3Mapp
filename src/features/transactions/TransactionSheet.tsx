@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
-import { byName } from "../../lib/compare";
+import { categoryChoices } from "../../domain/category-options";
 import type { Subcategory, Transaction } from "../../db/entities";
 import { RuleError } from "../../db/errors";
 import { BottomSheet } from "../../components/BottomSheet";
@@ -142,7 +142,7 @@ export function TransactionSheet({
   const crossCurrency =
     type === "transfer" && targetWallet !== undefined && targetWallet.currency !== currency;
   const kind = type === "income" ? "income" : "expense";
-  const categoryOptions = categories.filter((c) => !c.archived && c.kind === kind).sort(byName);
+  const categoryOptions = categoryChoices(categories, kind, initial?.categoryId);
 
   const subcategories =
     useLiveQuery(

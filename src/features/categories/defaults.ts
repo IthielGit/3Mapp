@@ -110,36 +110,70 @@ export function originBackfill(
 }
 
 /**
- * Version du jeu de catégories par défaut. À chaque ajout de catégories, on incrémente ce numéro et on
- * indique la version de chaque nouvelle catégorie. Chaque compte garde la version qu'il a atteinte
- * (réglage synchronisé) : les catégories ajoutées sont proposées une seule fois, sans jamais revenir
- * sur une catégorie que l'utilisateur a supprimée.
+ * Catégories par défaut à (re)créer : absentes (ni leur nom ni leur origine ne sont présents) et non masquées
+ * par l'utilisateur. Le jeu se répare ainsi tout seul : une catégorie perdue sans action de l'utilisateur
+ * (synchro, ancienne version de l'app) revient ; une catégorie supprimée par l'utilisateur, non.
+ * Une nouvelle catégorie ajoutée au jeu est proposée à tous les comptes par la même règle.
  */
-export const DEFAULTS_VERSION = 3;
-
-/** Catégories ajoutées depuis la version 2. Les autres font partie de la version 1. */
-const ADDED_IN: readonly { kind: DefaultCategory["kind"]; name: string; version: number }[] = [
-  { kind: "income", name: "Activité annexe", version: 3 },
-  { kind: "expense", name: "Téléphone et internet", version: 2 },
-  { kind: "expense", name: "Électricité et eau", version: 2 },
-  { kind: "expense", name: "Assurances", version: 2 },
-  { kind: "expense", name: "Frais bancaires", version: 2 },
-  { kind: "expense", name: "Abonnements", version: 2 },
-  { kind: "expense", name: "Impôts et taxes", version: 2 },
-  { kind: "expense", name: "Dons et solidarité", version: 2 },
-  { kind: "expense", name: "Remboursements", version: 2 },
-  { kind: "income", name: "Primes", version: 2 },
-  { kind: "income", name: "Intérêts", version: 2 },
-];
-
-/** Version à partir de laquelle la catégorie par défaut figure dans le jeu. */
-export function defaultCategoryVersion(category: DefaultCategory): number {
-  const key = defaultKey(category.kind, category.name);
-  const hit = ADDED_IN.find((added) => defaultKey(added.kind, added.name) === key);
-  return hit?.version ?? 1;
+export function defaultsToEnsure(
+  existing: readonly { name: string; kind: DefaultCategory["kind"]; origin?: string }[],
+  hidden: readonly string[] = [],
+): DefaultCategory[] {
+  const hiddenKeys = new Set(hidden);
+  return missingDefaultCategories(existing).filter((d) => !hiddenKeys.has(defaultKey(d.kind, d.name)));
 }
 
-/** Catégories par défaut introduites après une version donnée. */
-export function defaultCategoriesAfter(version: number): DefaultCategory[] {
-  return DEFAULT_CATEGORIES.filter((d) => defaultCategoryVersion(d) > version);
+/**
+ * Clé de catégorie par défaut que l'utilisateur fait disparaître en supprimant (ou fusionnant) cette catégorie :
+ * son origine, sinon son nom s'il est celui d'une catégorie par défaut. `undefined` pour une catégorie personnelle.
+ */
+export function defaultKeyOf(category: { name: string; kind: DefaultCategory["kind"]; origin?: string }): string | undefined {
+  const key = category.origin ?? defaultKey(category.kind, category.name);
+  return isDefaultCategoryKey(key) ? key : undefined;
+}
+
+interface CanonicalRow {
+  id: string;
+  name: string;
+  kind: DefaultCategory["kind"];
+  archived?: boolean;
+  createdAt: string;
+}
+
+/** Fusion à faire pour une catégorie par défaut : ses copies à identifiant aléatoire vers la ligne stable. */
+export interface CanonicalMerge<T extends CanonicalRow> {
+  key: string;
+  stableId: string;
+  /** Copies à fusionner, la plus « représentative » en tête (active, puis la plus ancienne). */
+  copies: T[];
+  /** Vrai si la ligne stable n'existe pas : elle est créée à partir de la première copie. */
+  createStable: boolean;
+}
+
+/**
+ * Plan de fusion des doublons de catégories par défaut. Toutes les copies portant le nom d'une catégorie par
+ * défaut vont vers sa ligne à identifiant stable, créée au besoin. La ligne stable n'est jamais supprimée :
+ * chaque appareil converge vers le même identifiant, quelles que soient les lignes qu'il voit.
+ * Une ligne stable renommée par l'utilisateur n'accueille pas les copies (ce n'est plus la même catégorie).
+ */
+export function canonicalMerges<T extends CanonicalRow>(existing: readonly T[]): CanonicalMerge<T>[] {
+  const byId = new Map(existing.map((c) => [c.id, c]));
+  const merges: CanonicalMerge<T>[] = [];
+  for (const d of DEFAULT_CATEGORIES) {
+    const key = defaultKey(d.kind, d.name);
+    const stableId = defaultCategoryId(d.kind, d.name);
+    const copies = existing
+      .filter((c) => c.id !== stableId && defaultKey(c.kind, c.name) === key)
+      .sort(
+        (a, b) =>
+          Number(a.archived ?? false) - Number(b.archived ?? false) ||
+          a.createdAt.localeCompare(b.createdAt) ||
+          a.id.localeCompare(b.id),
+      );
+    if (copies.length === 0) continue;
+    const stable = byId.get(stableId);
+    if (stable && defaultKey(stable.kind, stable.name) !== key) continue;
+    merges.push({ key, stableId, copies, createStable: stable === undefined });
+  }
+  return merges;
 }

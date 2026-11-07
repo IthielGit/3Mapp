@@ -3,29 +3,30 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppDatabase } from "../../src/db/database";
 import {
   DEFAULT_CATEGORIES,
-  DEFAULTS_VERSION,
-  defaultCategoriesAfter,
-  defaultCategoryVersion,
+  defaultCategoryId,
+  defaultKeyOf,
+  defaultsToEnsure,
 } from "../../src/features/categories/defaults";
-import { applyDefaultCategoryUpdates } from "../../src/features/categories/category-service";
-
-function byName(name: string) {
-  const found = DEFAULT_CATEGORIES.find((d) => d.name === name);
-  if (!found) throw new Error(`catégorie absente : ${name}`);
-  return found;
-}
+import {
+  deleteCategory,
+  ensureDefaultCategories,
+  mergeCategories,
+  restoreDefaultCategories,
+} from "../../src/features/categories/category-service";
 
 let db: AppDatabase;
 
 beforeEach(() => {
-  db = new AppDatabase(`defaults-update-${Math.random().toString(36).slice(2)}`);
+  db = new AppDatabase(`defaults-ensure-${Math.random().toString(36).slice(2)}`);
 });
 
 afterEach(async () => {
   await db.delete();
 });
 
-async function putSettings(version?: number) {
+const BASE = "2026-01-01T00:00:00.000Z";
+
+async function putSettings(extra: Record<string, unknown> = {}) {
   await db.settings.put({
     id: "settings",
     baseCurrency: "MGA",
@@ -33,89 +34,111 @@ async function putSettings(version?: number) {
     weekStartDay: 1,
     language: "fr",
     theme: "system",
-    ...(version === undefined ? {} : { defaultCategoriesVersion: version }),
+    ...extra,
   } as never);
 }
 
-/** Catégories d'un compte qui a déjà reçu la version 1 : toutes les catégories d'origine. */
-async function seedVersionOneAccount() {
-  const v1 = DEFAULT_CATEGORIES.filter((d) => defaultCategoryVersion(d) === 1);
-  for (const d of v1) {
-    await db.categories.put({
-      id: crypto.randomUUID(),
-      name: d.name,
-      kind: d.kind,
-      icon: d.icon,
-      color: d.color,
-      sortOrder: 0,
-      archived: false,
-      createdAt: "2026-01-01T00:00:00.000Z",
-      updatedAt: "2026-01-01T00:00:00.000Z",
-    } as never);
-  }
+async function putCategory(id: string, name: string, kind: "expense" | "income", origin?: string) {
+  await db.categories.put({
+    id,
+    name,
+    kind,
+    icon: "🚗",
+    color: "#000000",
+    sortOrder: 0,
+    archived: false,
+    createdAt: BASE,
+    updatedAt: BASE,
+    ...(origin === undefined ? {} : { origin }),
+  } as never);
 }
 
-describe("jeu de catégories par défaut : versions", () => {
-  it("les nouvelles catégories sont de la version 2 ; les anciennes de la version 1", () => {
-    expect(DEFAULTS_VERSION).toBe(3);
-    expect(defaultCategoryVersion(byName("Activité annexe"))).toBe(3);
-    expect(defaultCategoriesAfter(1).length).toBeGreaterThan(0);
-    expect(defaultCategoriesAfter(DEFAULTS_VERSION)).toHaveLength(0);
-    expect(defaultCategoryVersion(byName("Alimentation"))).toBe(1);
-    expect(defaultCategoryVersion(byName("Primes"))).toBe(2);
+describe("defaultsToEnsure", () => {
+  it("exclut les présentes (par nom ou par origine) et les masquées", () => {
+    const toEnsure = defaultsToEnsure(
+      [
+        { name: "Alimentation", kind: "expense" },
+        { name: "Voiture", kind: "expense", origin: "expense|transport" },
+      ],
+      ["expense|divers"],
+    );
+    const names = toEnsure.map((d) => `${d.kind}|${d.name}`);
+    expect(names).not.toContain("expense|Alimentation");
+    expect(names).not.toContain("expense|Transport");
+    expect(names).not.toContain("expense|Divers");
+    expect(toEnsure).toHaveLength(DEFAULT_CATEGORIES.length - 3);
+  });
+
+  it("defaultKeyOf : origine, sinon nom par défaut, sinon rien", () => {
+    expect(defaultKeyOf({ name: "Voiture", kind: "expense", origin: "expense|transport" })).toBe("expense|transport");
+    expect(defaultKeyOf({ name: "Salaire", kind: "income" })).toBe("income|salaire");
+    expect(defaultKeyOf({ name: "Moto 🏍️", kind: "expense" })).toBeUndefined();
   });
 });
 
-describe("mise à jour des catégories par défaut d'un compte", () => {
-  it("ajoute les nouvelles catégories une seule fois et enregistre la version", async () => {
-    await putSettings(); // compte sans marque : version 1
-    await seedVersionOneAccount();
+describe("ensureDefaultCategories : réparation après une synchro", () => {
+  it("compte qui n'a plus que « Moto » : les catégories par défaut reviennent, avec leur identifiant stable", async () => {
+    await putSettings({ defaultCategoriesVersion: 3 });
+    await putCategory("731d8045-b38b-4c03-9053-5a7c982da7b7", "Moto 🏍️", "expense");
 
-    const added = await applyDefaultCategoryUpdates(db);
-    expect(added).toBe(defaultCategoriesAfter(1).length);
-    expect((await db.settings.get("settings"))?.defaultCategoriesVersion).toBe(DEFAULTS_VERSION);
-    expect((await db.categories.filter((c) => c.name === "Téléphone et internet").count())).toBe(1);
-
-    expect(await applyDefaultCategoryUpdates(db)).toBe(0);
-    expect(await db.categories.filter((c) => c.name === "Téléphone et internet").count()).toBe(1);
+    expect(await ensureDefaultCategories(db)).toBe(DEFAULT_CATEGORIES.length);
+    expect(await db.categories.count()).toBe(DEFAULT_CATEGORIES.length + 1);
+    const salary = await db.categories.get(defaultCategoryId("income", "Salaire"));
+    expect(salary?.origin).toBe("income|salaire");
+    // Rien de plus au passage suivant.
+    expect(await ensureDefaultCategories(db)).toBe(0);
   });
 
-  it("ne réintroduit pas une catégorie d'origine supprimée par l'utilisateur", async () => {
+  it("la date de modification des catégories recréées est récente (elle l'emporte sur une suppression plus ancienne)", async () => {
     await putSettings();
-    await seedVersionOneAccount();
-    await db.categories.filter((c) => c.name === "Divers").delete();
-
-    await applyDefaultCategoryUpdates(db);
-    expect(await db.categories.filter((c) => c.name === "Divers").count()).toBe(0);
+    const before = Date.now();
+    await ensureDefaultCategories(db);
+    const food = await db.categories.get(defaultCategoryId("expense", "Alimentation"));
+    expect(Date.parse(food?.updatedAt ?? BASE)).toBeGreaterThanOrEqual(before);
   });
 
-  it("ne crée pas de doublon quand la catégorie existe déjà sous le même nom", async () => {
+  it("ne recrée pas une catégorie renommée (son origine la représente)", async () => {
     await putSettings();
-    await seedVersionOneAccount();
-    await db.categories.put({
-      id: crypto.randomUUID(),
-      name: "assurances",
-      kind: "expense",
-      icon: "🛡️",
-      color: "#000000",
-      sortOrder: 99,
-      archived: false,
-      createdAt: "2026-01-01T00:00:00.000Z",
-      updatedAt: "2026-01-01T00:00:00.000Z",
-    } as never);
-
-    await applyDefaultCategoryUpdates(db);
-    expect(await db.categories.where("kind").equals("expense").filter((c) => c.name.toLowerCase() === "assurances").count()).toBe(1);
+    await putCategory(defaultCategoryId("expense", "Transport"), "Voiture", "expense", "expense|transport");
+    await ensureDefaultCategories(db);
+    expect(await db.categories.filter((c) => c.name === "Transport").count()).toBe(0);
+    expect(await db.categories.count()).toBe(DEFAULT_CATEGORIES.length);
   });
 
-  it("ne fait rien quand le compte est déjà à la dernière version", async () => {
-    await putSettings(DEFAULTS_VERSION);
-    expect(await applyDefaultCategoryUpdates(db)).toBe(0);
+  it("ne fait rien sans réglages locaux (l'onboarding s'en charge)", async () => {
+    expect(await ensureDefaultCategories(db)).toBe(0);
     expect(await db.categories.count()).toBe(0);
   });
+});
 
-  it("ne fait rien sans réglages locaux", async () => {
-    expect(await applyDefaultCategoryUpdates(db)).toBe(0);
-    expect(await db.categories.count()).toBe(0);
+describe("suppression par l'utilisateur", () => {
+  it("une catégorie par défaut supprimée n'est pas recréée, « Restaurer » la ramène", async () => {
+    await putSettings();
+    await ensureDefaultCategories(db);
+    const diversId = defaultCategoryId("expense", "Divers");
+
+    await deleteCategory(diversId, db);
+    expect((await db.settings.get("settings"))?.hiddenDefaultCategories).toEqual(["expense|divers"]);
+    expect(await ensureDefaultCategories(db)).toBe(0);
+    expect(await db.categories.get(diversId)).toBeUndefined();
+
+    expect(await restoreDefaultCategories(db)).toBe(1);
+    expect(await db.categories.get(diversId)).toBeDefined();
+    expect((await db.settings.get("settings"))?.hiddenDefaultCategories).toEqual([]);
+  });
+
+  it("une catégorie personnelle supprimée ne touche pas à la liste masquée", async () => {
+    await putSettings();
+    await putCategory("11111111-1111-4111-8111-111111111111", "Moto 🏍️", "expense");
+    await deleteCategory("11111111-1111-4111-8111-111111111111", db);
+    expect((await db.settings.get("settings"))?.hiddenDefaultCategories).toBeUndefined();
+  });
+
+  it("fusionner une catégorie par défaut dans une autre la masque", async () => {
+    await putSettings();
+    await ensureDefaultCategories(db);
+    await mergeCategories(defaultCategoryId("expense", "Loisirs"), defaultCategoryId("expense", "Divers"), db);
+    expect((await db.settings.get("settings"))?.hiddenDefaultCategories).toEqual(["expense|loisirs"]);
+    expect(await ensureDefaultCategories(db)).toBe(0);
   });
 });

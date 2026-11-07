@@ -25,11 +25,7 @@ import {
   shouldApplyTombstone,
 } from "../../domain/sync";
 import type { TableName } from "../backup/backup-format";
-import {
-  applyDefaultCategoryUpdates,
-  removeDuplicateDefaultCategories,
-  restoreDefaultCategories,
-} from "../categories/category-service";
+import { canonicalizeDefaultCategories, ensureDefaultCategories } from "../categories/category-service";
 import { decodeRecord, encodeRecord } from "./sync-records";
 
 const PUSH_BATCH = 100;
@@ -294,17 +290,6 @@ export function runSync(
   return run;
 }
 
-/**
- * Compte sans aucune catégorie après une synchro complète (nouveau compte, catégories effacées) :
- * il reçoit les catégories par défaut. À n'appeler qu'après la récupération : hors ligne, on ne crée
- * rien, sinon les catégories du compte arriveraient en doublon.
- */
-async function seedDefaultCategoriesIfEmpty(database: AppDatabase): Promise<boolean> {
-  if ((await database.categories.count()) > 0) return false;
-  await restoreDefaultCategories(database);
-  return true;
-}
-
 async function runSyncOnce(client: SupabaseClient, database: AppDatabase): Promise<SyncReport> {
   // Consultation en cours : les données locales sont celles d'un autre compte, rien ne doit partir ni arriver.
   if (isReadOnly()) return { pushed: 0, skipped: 0, applied: 0 };
@@ -315,18 +300,14 @@ async function runSyncOnce(client: SupabaseClient, database: AppDatabase): Promi
     await flushOutbox(database);
     const pushed = await pushOutbox(client, database);
     const pulled = await pullChanges(client, database);
-    // Doublons de catégories par défaut venus de plusieurs appareils : fusionnés après la récupération.
-    await removeDuplicateDefaultCategories(database);
-    // Nouvelles catégories par défaut : proposées une fois à ce compte, après la fusion (pas de doublon).
-    // Le numéro de version ainsi mis à jour part aussi vers le serveur.
-    await applyDefaultCategoryUpdates(database);
+    // Catégories par défaut, toujours après une récupération complète (hors ligne, rien n'est créé) :
+    // 1. les copies venues de plusieurs appareils sont fusionnées dans la ligne à identifiant stable ;
+    // 2. celles qui manquent sans avoir été supprimées par l'utilisateur sont recréées.
+    // Les deux partent tout de suite vers le serveur.
+    await canonicalizeDefaultCategories(database);
+    await ensureDefaultCategories(database);
     await flushOutbox(database);
     await pushOutbox(client, database);
-    // Compte vide : les catégories par défaut créées ici partent tout de suite vers le serveur.
-    if (await seedDefaultCategoriesIfEmpty(database)) {
-      await flushOutbox(database);
-      await pushOutbox(client, database);
-    }
     await saveState(database, { lastSyncAt: new Date().toISOString(), lastError: undefined });
     return { pushed: pushed.pushed, skipped: pushed.skipped + pulled.skipped, applied: pulled.applied };
   } catch (error) {
