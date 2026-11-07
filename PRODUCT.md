@@ -49,7 +49,7 @@ Suivre dépenses, revenus, virements, budgets, objectifs d'épargne et dettes, a
 
 - Nom : **Fundora**, conservé par le propriétaire malgré un risque de marque signalé (vérification juridique recommandée avant les stores).
 - Logo existant : jauge à 270° avec un point au bout, le budget restant (`public/icons/`).
-- Identité visuelle validée et décrite dans CLAUDE.md (« Identité visuelle »). Elle fait autorité tant que DESIGN.md n'existe pas.
+- Identité visuelle validée et décrite dans CLAUDE.md (« Identité visuelle »). DESIGN.md en détaille les tokens.
 - Rouge réservé aux dépenses et aux suppressions.
 - Original uniquement : aucun code, nom, icône ni texte repris d'une autre app.
 

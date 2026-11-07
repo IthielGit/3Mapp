@@ -18,6 +18,7 @@ colors:
   stone-border: "#E3E6E8"
   field-border: "#6C787F"
   muted-text: "#4D565B"
+  placeholder-text: "#667085"
   night-page: "#1c1c22"
   night-card: "#26262d"
   night-raised: "#32323a"
@@ -121,7 +122,7 @@ Fundora se lit comme une eau limpide : on voit le fond. Chaque solde, chaque mou
 
 La densité est celle d'un outil de téléphone tenu d'une main : une colonne de 512 px au plus, des zones tactiles d'au moins 44 px, des lignes de transaction de 64 px. Les composants sont précis et doux : coins arrondis, bords fins de 1 px, ombres à peine perceptibles, et une réponse immédiate à l'appui (légère compression, sortie rapide, sans rebond).
 
-Le mode sombre est un monde à part entière, pas une inversion : fond nuit, cartes légèrement relevées, et un accent cyan clair (`spray-cyan`) qui n'existe que là.
+Le mode sombre est un monde à part entière : fond nuit, cartes légèrement relevées, et un accent cyan clair (`spray-cyan`) qui n'existe que là.
 
 **Key Characteristics:**
 - Une seule police, Outfit, hébergée dans l'app pour fonctionner hors ligne.
@@ -230,7 +231,7 @@ Précis et doux : ils répondent à l'appui par une compression de 3 % (160 ms, 
 - **Style :** fond Surface, contour 1 px Bord de Champ, coins 12 px, 44 px de haut, texte 16 px.
 - **Focus :** anneau Cyan Lagon de 2 px ; les champs date et heure gardent l'anneau autour de tout le champ pendant le passage d'un segment à l'autre.
 - **Label :** au-dessus, Body Small. **Erreur :** message en Rouge Sortie sous le champ, annoncé (`role="alert"`).
-- **Curseur :** Cyan Lagon ; texte indicatif gris lisible (#667085).
+- **Curseur :** Cyan Lagon ; texte indicatif gris lisible (placeholder-text, #667085).
 
 ### Navigation
 - **Barre basse (téléphone) :** fond Surface, bordure haute fine, cinq colonnes : Accueil, Transactions, « + », Budgets, Visualisation. Onglet actif : Lagon Pressé, semi-gras, trait d'icône épaissi. Inactif : Texte Discret.
