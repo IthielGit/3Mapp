@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useHomeData } from "./useHomeData";
 import { HomeHeader } from "./HomeHeader";
+import { HomeSkeleton } from "./HomeSkeleton";
 import { HomeAlerts, StaleWalletBanner } from "./HomeBanners";
 import { CycleHero } from "./CycleHero";
 import { BudgetsSection, RecentSection, UpcomingSection, WalletsSection } from "./HomeSections";
@@ -14,6 +15,7 @@ import { BudgetsSection, RecentSection, UpcomingSection, WalletsSection } from "
 export function HomePage() {
   const { t } = useTranslation();
   const data = useHomeData();
+  if (!data.loaded) return <HomeSkeleton />;
 
   return (
     <section className="-mx-4 flex flex-col gap-5 px-4">
