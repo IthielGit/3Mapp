@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import type { Category, Transaction, Wallet } from "../db/entities";
 import { formatMoney, formatMoneyCompact } from "../lib/money";
@@ -96,6 +97,22 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen, 
  * Le texte (Encre Charbon ou blanc) est choisi par contraste WCAG avec la couleur choisie.
  * Un solde trop long pour la carte passe au format compact ; le montant complet reste lu et en infobulle.
  */
+/**
+ * Effet verre métallisé de la carte de portefeuille : reflet diagonal, liseré clair et ombre
+ * interne. Le fond reste la couleur choisie par l'utilisateur.
+ */
+function glassStyle(color: string): CSSProperties {
+  return {
+    background: [
+      "linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.12) 50%, transparent 65%)",
+      "linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0) 60%)",
+      `linear-gradient(${color}, ${color})`,
+    ].join(", "),
+    border: "1px solid rgba(255,255,255,0.2)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -6px rgba(0,0,0,0.25)",
+  };
+}
+
 export function WalletCard({
   wallet,
   balance,
@@ -115,8 +132,8 @@ export function WalletCard({
   return (
     <Link
       to={`/plus/wallets/${wallet.id}`}
-      className={`flex min-w-0 flex-col gap-2 rounded-card p-3 shadow-sm ${textClass}`}
-      style={{ backgroundColor: wallet.color }}
+      className={`flex min-w-0 flex-col gap-2 rounded-card p-3 ${textClass}`}
+      style={glassStyle(wallet.color)}
     >
       <span className="flex items-start justify-between gap-2">
         <span aria-hidden="true" className="text-2xl">
