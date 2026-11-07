@@ -1,66 +1,103 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { Bar, BarChart, Cell, ResponsiveContainer } from "recharts";
 import { Icon } from "../../components/Icon";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney } from "../../lib/money";
+import { buttonSecondary } from "../../components/FormControls";
+import {
+  canTransfer,
+  capList,
+  HOME_WALLET_LIMIT,
+  reconcileTarget,
+  showBudgetsSection,
+  showRecentSection,
+} from "../../domain/home-layout";
 import type { HomeData } from "./useHomeData";
 
-/** Cette semaine : les dépenses des 7 derniers jours. */
-export function WeekChart({
-  weekExpenses,
-  weekTotalMinor,
-  baseCurrency,
-}: Pick<HomeData, "weekExpenses" | "weekTotalMinor" | "baseCurrency">) {
+/**
+ * En-tête de section : titre et lien « Tout voir ».
+ * Même libellé partout ; le nom accessible précise la destination (« Voir toutes les transactions »).
+ */
+function SectionHeader({ id, title, to, linkLabel }: { id: string; title: string; to: string; linkLabel: string }) {
   const { t } = useTranslation();
   return (
-    <section aria-labelledby="week-title" className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-sm dark:bg-card">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 id="week-title" className="font-semibold text-ink dark:text-fg">
-          {t("home.expenseCard")}
-        </h2>
-        <span className="text-sm font-medium tabular-nums text-ink dark:text-fg" data-amount>
-          {formatMoney(weekTotalMinor, baseCurrency)}
-        </span>
-      </div>
-      <div className="h-16">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart accessibilityLayer={false} data={weekExpenses}>
-            <Bar dataKey="value" radius={[8, 8, 4, 4]} isAnimationActive={false}>
-              {weekExpenses.map((entry, i) => (
-                <Cell key={entry.day} fill={i === weekExpenses.length - 1 ? "#0B7E9D" : "#4a9d91"} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </section>
+    <div className="flex items-center justify-between">
+      <h2 id={id} className="text-lg font-semibold text-ink dark:text-fg">{title}</h2>
+      <Link
+        to={to}
+        aria-label={linkLabel}
+        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-end px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
+      >
+        {t("home.layout.seeAll")}
+      </Link>
+    </div>
   );
 }
 
-/** Comptes : tous les comptes actifs, avec leur solde. */
-export function WalletsSection({ active, balances }: Pick<HomeData, "active" | "balances">) {
+/**
+ * Portefeuilles : les quatre premiers avec leur solde, un lien vers les autres,
+ * et les actions courantes entre comptes (virement, réconciliation).
+ */
+export function WalletsSection({
+  active,
+  balances,
+  stale,
+}: Pick<HomeData, "active" | "balances" | "stale">) {
   const { t } = useTranslation();
   if (active.length === 0) return null;
+  const { shown, hiddenCount } = capList(active, HOME_WALLET_LIMIT);
+  const target = reconcileTarget(active, stale);
+  const reconcileTo =
+    target?.kind === "wallet" ? `/plus/wallets/${target.walletId}/reconcile` : "/plus/wallets";
+  const reconcileName =
+    target?.kind === "wallet"
+      ? active.find((w) => w.id === target.walletId)?.name ?? ""
+      : undefined;
+  const actionClass = `${buttonSecondary} inline-flex flex-1 items-center justify-center gap-2 text-sm`;
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.wallets")}</h2>
-        <Link
-          to="/plus/wallets"
-          className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
-        >
-          {t("home.manage")}
-        </Link>
-      </div>
+    <section aria-labelledby="home-wallets-title" className="flex flex-col gap-3">
+      <SectionHeader
+        id="home-wallets-title"
+        title={t("home.wallets")}
+        to="/plus/wallets"
+        linkLabel={t("home.layout.seeAllWallets")}
+      />
       <ul className="grid grid-cols-2 gap-3">
-        {active.map((w) => (
+        {shown.map((w) => (
           <li key={w.id} className="min-w-0">
             <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
           </li>
         ))}
       </ul>
+      {hiddenCount > 0 ? (
+        <Link
+          to="/plus/wallets"
+          className="inline-flex min-h-[44px] items-center self-start text-sm font-medium text-brand-700 underline dark:text-brand-dark"
+        >
+          {t("home.layout.moreWallets", { count: active.length })}
+        </Link>
+      ) : null}
+      <div className="flex gap-3">
+        {canTransfer(active.length) ? (
+          <Link to="/transactions/new?type=transfer" className={actionClass}>
+            {t("home.layout.transfer")}
+          </Link>
+        ) : null}
+        {target ? (
+          <Link
+            to={reconcileTo}
+            className={actionClass}
+            aria-label={
+              reconcileName !== undefined
+                ? t("home.layout.reconcileWallet", { name: reconcileName })
+                : t("home.layout.reconcileChoose")
+            }
+          >
+            {t("home.layout.reconcile")}
+          </Link>
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -70,16 +107,13 @@ export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcomi
   const { t } = useTranslation();
   if (upcoming.length === 0) return null;
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.upcoming")}</h2>
-        <Link
-          to="/plus/recurring"
-          className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
-        >
-          {t("home.seeAll")}
-        </Link>
-      </div>
+    <section aria-labelledby="home-upcoming-title" className="flex flex-col gap-3">
+      <SectionHeader
+        id="home-upcoming-title"
+        title={t("home.upcoming")}
+        to="/plus/recurring"
+        linkLabel={t("home.layout.seeAllUpcoming")}
+      />
       <ul className="flex flex-col divide-y divide-neutral-200 rounded-3xl bg-white px-4 shadow-sm dark:divide-white/10 dark:bg-card">
         {upcoming.slice(0, 3).map((r) => {
           const due = new Date(r.nextDate);
@@ -113,20 +147,21 @@ export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcomi
   );
 }
 
-/** Budgets : les trois premiers, avec ce qui est dépensé et ce qui reste. */
-export function BudgetsSection({ budgetRows }: Pick<HomeData, "budgetRows">) {
+/** Budgets : les trois premiers, avec ce qui est dépensé et ce qui reste ; masqués au premier lancement. */
+export function BudgetsSection({
+  budgetRows,
+  transactionCount,
+}: Pick<HomeData, "budgetRows"> & { transactionCount: number }) {
   const { t } = useTranslation();
+  if (!showBudgetsSection(budgetRows.length, transactionCount)) return null;
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.budgetsTitle")}</h2>
-        <Link
-          to="/budgets"
-          className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
-        >
-          {t("home.manage")}
-        </Link>
-      </div>
+    <section aria-labelledby="home-budgets-title" className="flex flex-col gap-3">
+      <SectionHeader
+        id="home-budgets-title"
+        title={t("home.budgetsTitle")}
+        to="/budgets"
+        linkLabel={t("home.layout.seeAllBudgets")}
+      />
       {budgetRows.length === 0 ? (
         <Link
           to="/budgets/new"
@@ -182,24 +217,23 @@ export function BudgetsSection({ budgetRows }: Pick<HomeData, "budgetRows">) {
   );
 }
 
-/** Dernières transactions dans la devise de référence. */
+/** Dernières transactions dans la devise de référence ; masquées tant qu'il n'y en a aucune. */
 export function RecentSection({
   recent,
   categoryById,
   walletName,
-}: Pick<HomeData, "recent" | "categoryById" | "walletName">) {
+  transactionCount,
+}: Pick<HomeData, "recent" | "categoryById" | "walletName"> & { transactionCount: number }) {
   const { t } = useTranslation();
+  if (!showRecentSection(recent.length, transactionCount)) return null;
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink dark:text-fg">{t("home.recent")}</h2>
-        <Link
-          to="/transactions"
-          className="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-neutral-600 underline dark:text-muted"
-        >
-          {t("home.seeAll")}
-        </Link>
-      </div>
+    <section aria-labelledby="home-recent-title" className="flex flex-col gap-3">
+      <SectionHeader
+        id="home-recent-title"
+        title={t("home.recent")}
+        to="/transactions"
+        linkLabel={t("home.layout.seeAllTransactions")}
+      />
       {recent.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-neutral-500 p-4 text-center text-sm text-neutral-600 dark:border-white/15 dark:text-muted">
           <Icon name="inbox" className="h-6 w-6 text-teal-600 dark:text-teal-300" />

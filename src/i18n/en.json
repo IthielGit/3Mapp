@@ -523,7 +523,22 @@
     "budgetLeft": "{{amount}} left",
     "budgetOver": "Over by {{amount}}",
     "netThisMonth": "What is left this month",
-    "nextDue": "Next due"
+    "nextDue": "Next due",
+    "layout": {
+      "seeAll": "See all",
+      "seeAllTransactions": "See all transactions",
+      "seeAllWallets": "See all wallets",
+      "seeAllUpcoming": "See all upcoming payments",
+      "seeAllBudgets": "See all budgets",
+      "moreWallets_one": "See the wallet",
+      "moreWallets_other": "See all {{count}} wallets",
+      "transfer": "Transfer",
+      "reconcile": "Reconcile",
+      "reconcileWallet": "Reconcile {{name}}",
+      "reconcileChoose": "Reconcile: choose a wallet",
+      "staleMany_one": "No entry for {{days}} days on {{name}}, and {{count}} other wallet behind.",
+      "staleMany_other": "No entry for {{days}} days on {{name}}, and {{count}} other wallets behind."
+    }
   },
   "stats": {
     "title": "Analytics",
