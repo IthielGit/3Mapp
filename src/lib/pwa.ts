@@ -28,6 +28,35 @@ export async function installUpdate(): Promise<void> {
   if (applyUpdate) await applyUpdate();
 }
 
+/** Juste après le lancement, rien n'est encore saisi : une mise à jour trouvée dans ce délai s'applique tout de suite. */
+export const LAUNCH_UPDATE_WINDOW_MS = 5_000;
+
+/** Vérification régulière d'une nouvelle version, pour une app installée qui reste ouverte longtemps. */
+export const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+
+/**
+ * Applique une mise à jour en attente sans interrompre une saisie : tout de suite si elle arrive juste après
+ * le lancement, sinon la prochaine fois que l'app passe en arrière-plan. Ainsi une ancienne version ne reste
+ * pas active des jours sur un appareil où personne n'accepte le bandeau (qui reste proposé en attendant).
+ */
+export function autoApplyUpdate(
+  apply: ApplyUpdate,
+  options: { launchedAt: number; now?: number; doc?: Document },
+): void {
+  const now = options.now ?? Date.now();
+  if (now - options.launchedAt <= LAUNCH_UPDATE_WINDOW_MS) {
+    void apply();
+    return;
+  }
+  const doc = options.doc ?? document;
+  const onVisibility = () => {
+    if (doc.visibilityState !== "hidden") return;
+    doc.removeEventListener("visibilitychange", onVisibility);
+    void apply();
+  };
+  doc.addEventListener("visibilitychange", onVisibility);
+}
+
 export function useUpdateAvailable(): boolean {
   const [available, setAvailable] = useState(applyUpdate !== undefined);
   useEffect(() => {

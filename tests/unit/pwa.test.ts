@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  LAUNCH_UPDATE_WINDOW_MS,
+  autoApplyUpdate,
   installState,
   installUpdate,
   isIos,
@@ -58,6 +60,42 @@ describe("mise à jour du service worker", () => {
     const apply = vi.fn().mockResolvedValue(undefined);
     publishUpdate(apply);
     await installUpdate();
+    expect(apply).toHaveBeenCalledOnce();
+  });
+});
+
+/** Document minimal dont on contrôle l'état de visibilité. */
+function fakeDocument() {
+  const target = new EventTarget();
+  let state: DocumentVisibilityState = "visible";
+  Object.defineProperty(target, "visibilityState", { get: () => state });
+  const doc = target as unknown as Document;
+  const setVisibility = (next: DocumentVisibilityState) => {
+    state = next;
+    target.dispatchEvent(new Event("visibilitychange"));
+  };
+  return { doc, setVisibility };
+}
+
+describe("mise à jour automatique", () => {
+  it("juste après le lancement : appliquée tout de suite", () => {
+    const apply = vi.fn().mockResolvedValue(undefined);
+    autoApplyUpdate(apply, { launchedAt: 1_000, now: 1_000 + LAUNCH_UPDATE_WINDOW_MS, doc: fakeDocument().doc });
+    expect(apply).toHaveBeenCalledOnce();
+  });
+
+  it("app en cours d'utilisation : attend le passage en arrière-plan, une seule fois", () => {
+    const apply = vi.fn().mockResolvedValue(undefined);
+    const { doc, setVisibility } = fakeDocument();
+    autoApplyUpdate(apply, { launchedAt: 0, now: LAUNCH_UPDATE_WINDOW_MS + 1, doc });
+    expect(apply).not.toHaveBeenCalled();
+
+    setVisibility("visible");
+    expect(apply).not.toHaveBeenCalled();
+    setVisibility("hidden");
+    expect(apply).toHaveBeenCalledOnce();
+    setVisibility("visible");
+    setVisibility("hidden");
     expect(apply).toHaveBeenCalledOnce();
   });
 });
