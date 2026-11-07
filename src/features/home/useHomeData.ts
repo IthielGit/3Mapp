@@ -8,7 +8,6 @@ import { backupReminder } from "../../domain/backup";
 import { budgetStates } from "../../domain/budget";
 import { cycleOverview } from "../../domain/cycle";
 import { periodFor } from "../../domain/period";
-import { dailyExpenses } from "../../domain/home-series";
 import { upTo } from "../../domain/cutoff";
 import type { CurrencyCode } from "../../lib/money";
 import { usePeriodSettings } from "../stats/period-state";
@@ -19,14 +18,6 @@ const EMPTY_DEBTS: never[] = [];
 const EMPTY_PAYMENTS: never[] = [];
 const EMPTY_RECONCILIATIONS: never[] = [];
 const PREVIEW = 4;
-
-/** Les N derniers jours (AAAA-MM-JJ), du plus ancien au plus récent. */
-function lastDays(count: number): string[] {
-  const today = new Date();
-  return Array.from({ length: count }, (_, i) =>
-    format(addDays(today, i - count + 1), "yyyy-MM-dd"),
-  );
-}
 
 /**
  * Jour local courant (AAAA-MM-JJ), mis à jour à minuit et au retour de l'app au premier plan.
@@ -170,16 +161,6 @@ export function useHomeData() {
     [recurring],
   );
 
-  // Dépenses sur 7 jours (même règle que les dépenses affichées, voir domain/home-series).
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const days7 = useMemo(() => lastDays(30).slice(-7), [today]);
-  const expenseMinor = useMemo(
-    () => dailyExpenses(upTo(transactions, cutoff), days7, baseCurrency),
-    [transactions, days7, baseCurrency, cutoff],
-  );
-  const weekExpenses = days7.map((day, i) => ({ day, value: (expenseMinor[i] ?? 0) / 100 }));
-  const weekTotalMinor = expenseMinor.reduce((sum, v) => sum + v, 0);
-
   const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
   const walletName = (id: string | undefined) => active.find((w) => w.id === id)?.name ?? "";
   const recent = transactions.filter((tx) => tx.currency === baseCurrency).slice(0, PREVIEW);
@@ -200,8 +181,6 @@ export function useHomeData() {
     payAnswered,
     monthStartDay,
     upcoming,
-    weekExpenses,
-    weekTotalMinor,
     recent,
     stale,
     backupState,

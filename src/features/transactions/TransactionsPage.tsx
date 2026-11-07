@@ -182,6 +182,13 @@ export function TransactionsPage() {
   );
 
   function closeSheet() {
+    // Nouvelle saisie ouverte depuis un autre écran (accueil, « + ») : on y retourne, pour que
+    // la saisie apparaisse là où l'utilisateur l'a lancée. Ouverture directe (raccourci d'app,
+    // lien) ou copie d'une transaction : la liste des transactions, comme avant.
+    if (sheetMode === "new" && !copyFromId && location.key !== "default") {
+      navigate(-1);
+      return;
+    }
     navigate("/transactions", { replace: true });
   }
 
