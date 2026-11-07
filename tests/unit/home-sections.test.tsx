@@ -3,7 +3,6 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import type { Wallet } from "../../src/db/entities";
 import { WalletsSection } from "../../src/features/home/HomeSections";
-import { StaleWalletBanner } from "../../src/features/home/HomeBanners";
 import type { HomeData } from "../../src/features/home/useHomeData";
 
 function wallet(id: string): Wallet {
@@ -33,7 +32,7 @@ describe("Accueil : section Portefeuilles", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(4);
     expect(screen.getByRole("link", { name: "Voir les 6 portefeuilles" })).toHaveAttribute("href", "/plus/wallets");
     expect(screen.getByRole("link", { name: "Virement" })).toHaveAttribute("href", "/transactions/new?type=transfer");
-    expect(screen.getByRole("link", { name: "Réconcilier Compte 5" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Réconcilier · 1 portefeuille en retard, en commençant par Compte 5" })).toHaveAttribute(
       "href",
       "/plus/wallets/5/reconcile",
     );
@@ -56,15 +55,26 @@ describe("Accueil : section Portefeuilles", () => {
   });
 });
 
-describe("Accueil : bandeau de saisie en retard", () => {
-  it("compte les autres portefeuilles en retard et mène au plus ancien", () => {
+describe("Accueil : retard de saisie sur les tuiles", () => {
+  it("marque chaque portefeuille en retard et compte les retards sur « Réconcilier »", () => {
+    const active = ["1", "2", "3"].map(wallet);
     render(
       <MemoryRouter>
-        <StaleWalletBanner stale={[stale(wallet("1"), 90), stale(wallet("2"), 45), stale(wallet("3"), 31)]} />
+        <WalletsSection
+          active={active}
+          balances={{}}
+          stale={[stale(wallet("1"), 90), stale(wallet("3"), 31)]}
+        />
       </MemoryRouter>,
     );
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/plus/wallets/1/reconcile");
-    expect(link).toHaveTextContent("Aucune saisie depuis 90 jours sur Compte 1, et 2 autres portefeuilles en retard.");
+    expect(screen.getByText("90 j")).toBeInTheDocument();
+    expect(screen.getByText("31 j")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^Compte 1, sans saisie depuis 90 jours/ })).toHaveAttribute(
+      "href",
+      "/plus/wallets/1",
+    );
+    const reconcile = screen.getByRole("link", { name: "Réconcilier · 2 portefeuilles en retard, en commençant par Compte 1" });
+    expect(reconcile).toHaveTextContent("Réconcilier · 2");
+    expect(reconcile).toHaveAttribute("href", "/plus/wallets/1/reconcile");
   });
 });

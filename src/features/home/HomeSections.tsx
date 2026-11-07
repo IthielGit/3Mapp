@@ -56,6 +56,10 @@ export function WalletsSection({
       ? active.find((w) => w.id === target.walletId)?.name ?? ""
       : undefined;
   const actionClass = `${buttonSecondary} inline-flex flex-1 items-center justify-center gap-2 text-sm`;
+  // Le retard se lit sur la tuile (pastille « 47 j ») et se compte sur « Réconcilier » :
+  // plus de bandeau au-dessus de la carte du mois.
+  const staleDaysById = new Map(stale.map((s) => [s.wallet.id, s.daysSince]));
+  const staleCount = stale.length;
   return (
     <section aria-labelledby="home-wallets-title" className="flex flex-col gap-3">
       <SectionHeader
@@ -67,7 +71,11 @@ export function WalletsSection({
       <ul className="grid grid-cols-2 gap-3">
         {shown.map((w) => (
           <li key={w.id} className="min-w-0">
-            <WalletCard wallet={w} balance={balances[w.id] ?? w.initialBalance} />
+            <WalletCard
+              wallet={w}
+              balance={balances[w.id] ?? w.initialBalance}
+              staleDays={staleDaysById.get(w.id)}
+            />
           </li>
         ))}
       </ul>
@@ -90,12 +98,16 @@ export function WalletsSection({
             to={reconcileTo}
             className={actionClass}
             aria-label={
-              reconcileName !== undefined
-                ? t("home.layout.reconcileWallet", { name: reconcileName })
-                : t("home.layout.reconcileChoose")
+              staleCount > 0 && reconcileName !== undefined
+                ? t("home.layout.reconcileStale", { count: staleCount, name: reconcileName })
+                : reconcileName !== undefined
+                  ? t("home.layout.reconcileWallet", { name: reconcileName })
+                  : t("home.layout.reconcileChoose")
             }
           >
-            {t("home.layout.reconcile")}
+            {staleCount > 0
+              ? t("home.layout.reconcileCount", { count: staleCount })
+              : t("home.layout.reconcile")}
           </Link>
         ) : null}
       </div>
@@ -249,6 +261,7 @@ export function RecentSection({
                 transaction={tx}
                 category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
                 walletName={walletName}
+                showDay
               />
             </li>
           ))}

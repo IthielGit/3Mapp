@@ -493,8 +493,6 @@
     "next": "Période suivante"
   },
   "home": {
-    "staleWallet": "Aucune saisie depuis {{days}} jours sur {{name}}.",
-    "staleAction": "Réconcilier",
     "backupReminder": "Sauvegarde recommandée : aucune sauvegarde récente.",
     "totalBalance": "Solde total",
     "income": "Revenus",
@@ -533,8 +531,14 @@
       "reconcile": "Réconcilier",
       "reconcileWallet": "Réconcilier {{name}}",
       "reconcileChoose": "Réconcilier : choisir un portefeuille",
-      "staleMany_one": "Aucune saisie depuis {{days}} jours sur {{name}}, et {{count}} autre portefeuille en retard.",
-      "staleMany_other": "Aucune saisie depuis {{days}} jours sur {{name}}, et {{count}} autres portefeuilles en retard."
+      "todayAt": "Aujourd’hui · {{time}}",
+      "yesterdayAt": "Hier · {{time}}",
+      "staleChip": "{{days}} j",
+      "staleChipLabel_one": "sans saisie depuis {{count}} jour",
+      "staleChipLabel_other": "sans saisie depuis {{count}} jours",
+      "reconcileCount": "Réconcilier · {{count}}",
+      "reconcileStale_one": "Réconcilier · {{count}} portefeuille en retard, en commençant par {{name}}",
+      "reconcileStale_other": "Réconcilier · {{count}} portefeuilles en retard, en commençant par {{name}}"
     },
     "status": {
       "offlineSaved": "Hors ligne · enregistré sur cet appareil",

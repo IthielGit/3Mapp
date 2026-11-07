@@ -493,8 +493,6 @@
     "next": "Next period"
   },
   "home": {
-    "staleWallet": "No entries for {{days}} days on {{name}}.",
-    "staleAction": "Reconcile",
     "backupReminder": "Backup recommended: no recent backup.",
     "totalBalance": "Total balance",
     "income": "Income",
@@ -533,8 +531,14 @@
       "reconcile": "Reconcile",
       "reconcileWallet": "Reconcile {{name}}",
       "reconcileChoose": "Reconcile: choose a wallet",
-      "staleMany_one": "No entry for {{days}} days on {{name}}, and {{count}} other wallet behind.",
-      "staleMany_other": "No entry for {{days}} days on {{name}}, and {{count}} other wallets behind."
+      "todayAt": "Today · {{time}}",
+      "yesterdayAt": "Yesterday · {{time}}",
+      "staleChip": "{{days}} d",
+      "staleChipLabel_one": "no entry for {{count}} day",
+      "staleChipLabel_other": "no entry for {{count}} days",
+      "reconcileCount": "Reconcile · {{count}}",
+      "reconcileStale_one": "Reconcile · {{count}} wallet behind, starting with {{name}}",
+      "reconcileStale_other": "Reconcile · {{count}} wallets behind, starting with {{name}}"
     },
     "status": {
       "offlineSaved": "Offline · saved on this device",
