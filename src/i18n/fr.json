@@ -523,7 +523,41 @@
     "budgetLeft": "Reste {{amount}}",
     "budgetOver": "Dépassé de {{amount}}",
     "netThisMonth": "Ce qui vous reste ce mois-ci",
-    "nextDue": "Prochaine échéance"
+    "nextDue": "Prochaine échéance",
+    "status": {
+      "offlineSaved": "Hors ligne · enregistré sur cet appareil",
+      "offlinePending_one": "Hors ligne · {{count}} modification en attente d'envoi",
+      "offlinePending_other": "Hors ligne · {{count}} modifications en attente d'envoi",
+      "syncing": "Synchronisation…",
+      "pending_one": "Enregistré · {{count}} modification à envoyer",
+      "pending_other": "Enregistré · {{count}} modifications à envoyer",
+      "upToDate": "À jour",
+      "upToDateAgo": "À jour · {{ago}}",
+      "agoNow": "à l'instant",
+      "ago": {
+        "minutes_one": "il y a {{count}} min",
+        "minutes_other": "il y a {{count}} min",
+        "hours_one": "il y a {{count}} h",
+        "hours_other": "il y a {{count}} h",
+        "days_one": "il y a {{count}} jour",
+        "days_other": "il y a {{count}} jours"
+      },
+      "withPending_one": "{{message}} · {{count}} modification en attente",
+      "withPending_other": "{{message}} · {{count}} modifications en attente",
+      "error": {
+        "network": "Envoi impossible : serveur injoignable",
+        "suspended": "Compte suspendu : synchronisation bloquée",
+        "unknown": "La synchronisation a échoué",
+        "foreign": "Synchronisation bloquée : données d'un autre compte",
+        "outdated": "Mettez l'app à jour pour synchroniser"
+      },
+      "retry": "Réessayer",
+      "announce": {
+        "offline": "Hors ligne. Vos modifications restent enregistrées sur cet appareil.",
+        "restored": "Connexion rétablie. Vos données sont synchronisées."
+      },
+      "loading": "Chargement de vos données…"
+    }
   },
   "stats": {
     "title": "Analyses",

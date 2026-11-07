@@ -31,7 +31,9 @@ export function useSyncStatus(): SyncStatus {
   const state = useLiveQuery(() => db.syncState.get(SYNC_STATE_ID), []);
   const pending = useLiveQuery(() => db.syncOutbox.count(), [], 0);
   const [busy, setBusy] = useState(false);
-  const [requestError, setRequestError] = useState<SyncErrorCode | undefined>();
+  // Erreur de la demande manuelle, avec la date de dernière synchro connue à ce moment :
+  // une synchro automatique réussie ensuite la rend caduque.
+  const [requestError, setRequestError] = useState<{ code: SyncErrorCode; since: string | undefined } | undefined>();
   const { t } = useTranslation();
 
   const signedIn = account.status === "signedIn";
@@ -48,7 +50,7 @@ export function useSyncStatus(): SyncStatus {
       announce(t("a11y.syncDone"));
     } catch (err) {
       const code: SyncErrorCode = err instanceof SyncError ? err.code : "unknown";
-      setRequestError(code);
+      setRequestError({ code, since: state?.lastSyncAt });
       announce(`${t("a11y.syncFailed")} ${t(`account.sync.error.${code}`, { defaultValue: t("account.sync.error.unknown") })}`, "assertive");
     } finally {
       setBusy(false);
@@ -60,7 +62,9 @@ export function useSyncStatus(): SyncStatus {
     state,
     pending: pending ?? 0,
     busy,
-    error: requestError ?? (state?.lastError as SyncErrorCode | undefined),
+    error:
+      (requestError && requestError.since === state?.lastSyncAt ? requestError.code : undefined) ??
+      (state?.lastError as SyncErrorCode | undefined),
     syncNow,
   };
 }

@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
 import { db } from "../../db/database";
 import { staleWallets } from "../../domain/reconciliation";
 import { computeBalances } from "../../domain/balance";
@@ -26,6 +26,29 @@ function lastDays(count: number): string[] {
   return Array.from({ length: count }, (_, i) =>
     format(addDays(today, i - count + 1), "yyyy-MM-dd"),
   );
+}
+
+/**
+ * Jour local courant (AAAA-MM-JJ), mis à jour à minuit et au retour de l'app au premier plan.
+ * Une seule minuterie, jusqu'au prochain minuit : rien ne tourne en continu.
+ */
+function useLocalDay(): string {
+  const [day, setDay] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  useEffect(() => {
+    const refresh = () => setDay(format(new Date(), "yyyy-MM-dd"));
+    const nextMidnight = startOfDay(addDays(new Date(), 1)).getTime();
+    // Une seconde de marge : une minuterie peut partir quelques millisecondes en avance.
+    const timer = window.setTimeout(refresh, Math.max(1000, nextMidnight - Date.now() + 1000));
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [day]);
+  return day;
 }
 
 /**
@@ -95,9 +118,11 @@ export function useHomeData() {
 
   // Irregular ou sans paie : la question est réglée, la carte ne la repose plus.
   const payAnswered = payMode === "irregular" || payMode === "none";
-  // « Maintenant » est recalculé à chaque changement des données, pour que la carte reste à jour.
+  // « Maintenant » est recalculé à chaque changement des données et à chaque changement de jour
+  // (minuit, retour au premier plan) : le cycle ne reste pas figé si l'app reste ouverte.
+  const today = useLocalDay();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const cycleNow = useMemo(() => new Date(), [transactions]);
+  const cycleNow = useMemo(() => new Date(), [transactions, today]);
   const { monthStartDay, payOnFriday } = periodSettings;
   const cycleView = useMemo(() => {
     const period = periodFor("month", cycleNow, { monthStartDay, weekStartDay: 1, payOnFriday });
@@ -146,7 +171,8 @@ export function useHomeData() {
   );
 
   // Dépenses sur 7 jours (même règle que les dépenses affichées, voir domain/home-series).
-  const days7 = useMemo(() => lastDays(30).slice(-7), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const days7 = useMemo(() => lastDays(30).slice(-7), [today]);
   const expenseMinor = useMemo(
     () => dailyExpenses(upTo(transactions, cutoff), days7, baseCurrency),
     [transactions, days7, baseCurrency, cutoff],

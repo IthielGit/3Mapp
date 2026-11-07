@@ -523,7 +523,41 @@
     "budgetLeft": "{{amount}} left",
     "budgetOver": "Over by {{amount}}",
     "netThisMonth": "What is left this month",
-    "nextDue": "Next due"
+    "nextDue": "Next due",
+    "status": {
+      "offlineSaved": "Offline · saved on this device",
+      "offlinePending_one": "Offline · {{count}} change waiting to send",
+      "offlinePending_other": "Offline · {{count}} changes waiting to send",
+      "syncing": "Syncing…",
+      "pending_one": "Saved · {{count}} change to send",
+      "pending_other": "Saved · {{count}} changes to send",
+      "upToDate": "Up to date",
+      "upToDateAgo": "Up to date · {{ago}}",
+      "agoNow": "just now",
+      "ago": {
+        "minutes_one": "{{count}} min ago",
+        "minutes_other": "{{count}} min ago",
+        "hours_one": "{{count}} h ago",
+        "hours_other": "{{count}} h ago",
+        "days_one": "{{count}} day ago",
+        "days_other": "{{count}} days ago"
+      },
+      "withPending_one": "{{message}} · {{count}} change waiting",
+      "withPending_other": "{{message}} · {{count}} changes waiting",
+      "error": {
+        "network": "Can't send: server unreachable",
+        "suspended": "Account suspended: sync blocked",
+        "unknown": "Sync failed",
+        "foreign": "Sync blocked: data belongs to another account",
+        "outdated": "Update the app to sync"
+      },
+      "retry": "Retry",
+      "announce": {
+        "offline": "Offline. Your changes stay saved on this device.",
+        "restored": "Back online. Your data is synced."
+      },
+      "loading": "Loading your data…"
+    }
   },
   "stats": {
     "title": "Analytics",
