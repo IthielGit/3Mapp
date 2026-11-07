@@ -572,6 +572,18 @@
         "restored": "Back online. Your data is synced."
       },
       "loading": "Loading your data…"
+    },
+    "onboard": {
+      "startBalance": "To begin, enter how much is in your accounts today.",
+      "firstEntry": "Add a first expense or income: this card will then show what you have left.",
+      "firstEntryAction": "Add a transaction",
+      "payPrompt": "When do you get paid?",
+      "payAnswer": "Answer",
+      "paySheetTitle": "Your pay",
+      "payAccepted": "“{{category}}” is now your pay.",
+      "paySaved": "Answer saved.",
+      "undone": "Answer undone.",
+      "suggestionDismissed": "Got it, this entry won’t be suggested as your pay again."
     }
   },
   "stats": {

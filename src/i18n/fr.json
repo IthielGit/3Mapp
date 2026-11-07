@@ -572,6 +572,18 @@
         "restored": "Connexion rétablie. Vos données sont synchronisées."
       },
       "loading": "Chargement de vos données…"
+    },
+    "onboard": {
+      "startBalance": "Pour commencer, indiquez combien il y a sur vos comptes aujourd’hui.",
+      "firstEntry": "Notez une première dépense ou un premier revenu : la carte vous dira ce qui vous reste.",
+      "firstEntryAction": "Ajouter une transaction",
+      "payPrompt": "Quand touchez-vous votre paie ?",
+      "payAnswer": "Répondre",
+      "paySheetTitle": "Votre paie",
+      "payAccepted": "« {{category}} » est maintenant votre paie.",
+      "paySaved": "Réponse enregistrée.",
+      "undone": "Réponse annulée.",
+      "suggestionDismissed": "C’est noté, cette entrée ne vous sera plus proposée comme paie."
     }
   },
   "stats": {
