@@ -4,6 +4,7 @@ import { AppDatabase } from "../../src/db/database";
 import { discardPending, setSyncTracking } from "../../src/db/sync-tracking";
 import { checkDeviceOwnership, disableSync, enableSync, ensureSync, runSync } from "../../src/features/sync/sync-engine";
 import { decodeRecord, encodeRecord } from "../../src/features/sync/sync-records";
+import { DEFAULT_CATEGORIES, defaultCategoryId } from "../../src/features/categories/defaults";
 
 type Row = Record<string, unknown>;
 
@@ -150,7 +151,7 @@ describe("envoi et réception", () => {
     const id = "44444444-4444-4444-8444-444444444444";
     const remote = recon(id, "2026-01-05T00:00:00.000Z", "distant");
     const categoryId = "55555555-5555-4555-8555-555555555555";
-    // Une catégorie sur le serveur : le compte n'est pas vide, donc aucune catégorie par défaut n'est ajoutée.
+    // Une catégorie personnelle et pas de réglages : aucune catégorie par défaut n'est ajoutée ni fusionnée.
     const server = fakeServer([
       {
         table_name: "reconciliations",
@@ -168,7 +169,7 @@ describe("envoi et réception", () => {
           id: categoryId,
           createdAt: "2026-01-01T00:00:00.000Z",
           updatedAt: "2026-01-04T00:00:00.000Z",
-          name: "Divers",
+          name: "Projet perso",
           kind: "expense",
           icon: "📦",
           color: "#64748b",
@@ -273,12 +274,43 @@ describe("synchronisation du compte connecté", () => {
     expect(server.rows.has("reconciliations|33333333-3333-4333-8333-333333333333")).toBe(true);
   });
 
-  it("un compte sans aucune catégorie reçoit les catégories par défaut après la synchro", async () => {
+  it("un compte initialisé dont les catégories par défaut ont été supprimées les retrouve, et le serveur aussi", async () => {
+    const salaryId = defaultCategoryId("income", "Salaire");
+    const server = fakeServer([
+      {
+        table_name: "settings",
+        record_id: "settings",
+        updated_at: "2026-01-01T00:00:00.000Z",
+        deleted: false,
+        data: {
+          id: "77777777-7777-4777-8777-777777777777",
+          createdAt: "2026-01-01T00:00:00.000Z",
+          updatedAt: "2026-01-01T00:00:00.000Z",
+          baseCurrency: "MGA",
+          monthStartDay: 1,
+          weekStartDay: 1,
+          language: "fr",
+          theme: "system",
+          defaultCategoriesVersion: 3,
+        },
+      },
+      // Suppression envoyée par une ancienne version de l'app.
+      { table_name: "categories", record_id: salaryId, updated_at: "2026-11-07T06:48:07.000Z", deleted: true, data: null },
+    ]);
+    await ensureSync(server.client, USER, db);
+
+    expect(await db.categories.count()).toBe(DEFAULT_CATEGORIES.length);
+    const row = server.rows.get(`categories|${salaryId}`);
+    expect(row?.deleted).toBe(false);
+    // Au passage suivant, rien n'est recréé ni renvoyé en double.
+    await ensureSync(server.client, USER, db);
+    expect(await db.categories.count()).toBe(DEFAULT_CATEGORIES.length);
+  });
+
+  it("un compte sans réglages (pas encore initialisé) ne reçoit rien de la synchro : l'onboarding s'en charge", async () => {
     const server = fakeServer();
     await ensureSync(server.client, USER, db);
-    expect(await db.categories.count()).toBeGreaterThan(0);
-    await ensureSync(server.client, USER, db);
-    expect(await db.categories.count()).toBeGreaterThan(0);
+    expect(await db.categories.count()).toBe(0);
   });
 
   it("hors ligne, aucune catégorie par défaut n'est créée avant la récupération", async () => {

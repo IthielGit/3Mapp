@@ -6,7 +6,7 @@ import { db } from "../../db/database";
 import { InUseError } from "../../db/errors";
 import { ActionMenu, DetailHeader, type MenuItem } from "../../components/DetailHeader";
 import { buttonDanger, buttonPrimary } from "../../components/FormControls";
-import { deleteCategory, moveCategory, setCategoryArchived } from "./category-service";
+import { deleteCategory, setCategoryArchived } from "./category-service";
 import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
@@ -40,11 +40,7 @@ export function CategoryDetailPage() {
     }
   }
 
-  const menu: MenuItem[] = [
-    { label: t("common.moveUp"), onSelect: () => void moveCategory(id, -1) },
-    { label: t("common.moveDown"), onSelect: () => void moveCategory(id, 1) },
-    { label: t("common.archive"), onSelect: () => void archive() },
-  ];
+  const menu: MenuItem[] = [{ label: t("common.archive"), onSelect: () => void archive() }];
 
   return (
     <section className="flex flex-col gap-4">

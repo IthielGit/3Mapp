@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { db } from "../../db/database";
-import { byName } from "../../lib/compare";
+import { categoryChoices } from "../../domain/category-options";
 import { Field, buttonPrimary, buttonSecondary, inputClass } from "../../components/FormControls";
 import { QuickCategorySheet } from "../categories/QuickCategorySheet";
 import { CategoryPicker } from "../transactions/CategoryPicker";
@@ -187,7 +187,7 @@ export function RecurringFormPage() {
             label={t("common.category")}
             placeholder={t("transactions.chooseCategory")}
             value={categoryId}
-            options={categories.filter((c) => c.kind === kind && !c.archived).sort(byName)}
+            options={categoryChoices(categories, kind, existing?.categoryId)}
             onChange={(id) => setCategoryId(id)}
             onCreateNew={() => setCreatingCategory(true)}
           />

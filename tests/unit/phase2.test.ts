@@ -10,7 +10,6 @@ import {
   deleteCategory,
   deleteSubcategory,
   mergeCategories,
-  moveCategory,
 } from "../../src/features/categories/category-service";
 import { completeOnboarding, isOnboarded } from "../../src/features/onboarding/onboarding-service";
 import {
@@ -256,13 +255,5 @@ describe("catégories", () => {
     const dep = await createCategory(expenseInput, testDb);
     const rev = await createCategory({ ...expenseInput, name: "Salaire", kind: "income" }, testDb);
     await expect(mergeCategories(dep.id, rev.id, testDb)).rejects.toBeInstanceOf(RuleError);
-  });
-
-  it("réordonnancement au sein de la même nature", async () => {
-    const a = await createCategory(expenseInput, testDb);
-    const b = await createCategory({ ...expenseInput, name: "Transport" }, testDb);
-    await moveCategory(b.id, -1, testDb);
-    expect((await testDb.categories.get(b.id))?.sortOrder).toBe(0);
-    expect((await testDb.categories.get(a.id))?.sortOrder).toBe(1);
   });
 });

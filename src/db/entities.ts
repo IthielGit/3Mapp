@@ -44,8 +44,10 @@ export const settingsSchema = baseEntity.extend({
   keypadZeros: z.union([z.literal(2), z.literal(3)]).optional(),
   /** Format d'affichage des montants (séparateurs). Absent : « dot », 1.000.000,00. */
   amountFormat: z.enum(["dot", "space", "comma", "plain"]).optional(),
-  /** Version du jeu de catégories par défaut déjà proposé à ce compte (synchronisée). Absent : version 1. */
+  /** Ancien numéro de version du jeu de catégories par défaut ; n'est plus lu (voir hiddenDefaultCategories). */
   defaultCategoriesVersion: z.number().int().min(1).optional(),
+  /** Catégories par défaut supprimées par l'utilisateur (clés « nature|nom ») : elles ne sont pas recréées. */
+  hiddenDefaultCategories: z.array(z.string()).optional(),
   /** Solde « à aujourd'hui » : ignore les transactions datées dans le futur. */
   ignoreFutureBalance: z.boolean().optional(),
   /** Rappel quotidien de saisie (notification, uniquement quand l'app est ouverte). */
