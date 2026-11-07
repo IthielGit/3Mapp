@@ -25,6 +25,11 @@ export const settingsSchema = baseEntity.extend({
   payIncomeCategoryId: z.uuid().optional(),
   /** Réponse à la question de paie : jour fixe, revenus irréguliers, ou pas de paie à suivre. Absent : pas encore répondu. */
   payMode: z.enum(["fixed", "irregular", "none"]).optional(),
+  /**
+   * Moment où l'utilisateur a répondu « Non » à « C'est votre paie ? ». La suggestion n'est reposée
+   * que pour une entrée de revenu plus récente (voir domain/homeNextStep). Synchronisé avec les réglages.
+   */
+  paySuggestionDismissedAt: isoDateTime.optional(),
   weekStartDay: z.number().int().min(0).max(6),
   // « mg » n'est plus pris en charge : les réglages enregistrés avec cette valeur repassent en français.
   language: z.preprocess((v) => (v === "mg" ? "fr" : v), z.enum(["fr", "en"])),

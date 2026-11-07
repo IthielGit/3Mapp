@@ -12,6 +12,7 @@ export type PreferencePatch = Partial<
     | "payOnFriday"
     | "payIncomeCategoryId"
     | "payMode"
+    | "paySuggestionDismissedAt"
     | "keypadZeros"
     | "amountFormat"
     | "ignoreFutureBalance"

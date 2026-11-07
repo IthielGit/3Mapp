@@ -523,7 +523,19 @@
     "budgetLeft": "{{amount}} left",
     "budgetOver": "Over by {{amount}}",
     "netThisMonth": "What is left this month",
-    "nextDue": "Next due"
+    "nextDue": "Next due",
+    "onboard": {
+      "startBalance": "To begin, enter how much is in your accounts today.",
+      "firstEntry": "Add a first expense or income: this card will then show what you have left.",
+      "firstEntryAction": "Add a transaction",
+      "payPrompt": "When do you get paid?",
+      "payAnswer": "Answer",
+      "paySheetTitle": "Your pay",
+      "payAccepted": "“{{category}}” is now your pay.",
+      "paySaved": "Answer saved.",
+      "undone": "Answer undone.",
+      "suggestionDismissed": "Got it, this entry won’t be suggested as your pay again."
+    }
   },
   "stats": {
     "title": "Analytics",
