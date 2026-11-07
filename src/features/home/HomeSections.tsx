@@ -5,12 +5,9 @@ import { enUS, fr } from "date-fns/locale";
 import { Icon } from "../../components/Icon";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney } from "../../lib/money";
-import { buttonSecondary } from "../../components/FormControls";
 import {
-  canTransfer,
   capList,
   HOME_WALLET_LIMIT,
-  reconcileTarget,
   showBudgetsSection,
   showRecentSection,
 } from "../../domain/home-layout";
@@ -37,8 +34,7 @@ function SectionHeader({ id, title, to, linkLabel }: { id: string; title: string
 }
 
 /**
- * Portefeuilles : les quatre premiers avec leur solde, un lien vers les autres,
- * et les actions courantes entre comptes (virement, réconciliation).
+ * Portefeuilles : les quatre premiers avec leur solde et un lien vers les autres.
  */
 export function WalletsSection({
   active,
@@ -48,18 +44,8 @@ export function WalletsSection({
   const { t } = useTranslation();
   if (active.length === 0) return null;
   const { shown, hiddenCount } = capList(active, HOME_WALLET_LIMIT);
-  const target = reconcileTarget(active, stale);
-  const reconcileTo =
-    target?.kind === "wallet" ? `/plus/wallets/${target.walletId}/reconcile` : "/plus/wallets";
-  const reconcileName =
-    target?.kind === "wallet"
-      ? active.find((w) => w.id === target.walletId)?.name ?? ""
-      : undefined;
-  const actionClass = `${buttonSecondary} inline-flex flex-1 items-center justify-center gap-2 text-sm`;
-  // Le retard se lit sur la tuile (pastille « 47 j ») et se compte sur « Réconcilier » :
-  // plus de bandeau au-dessus de la carte du mois.
+  // Le retard se lit sur la tuile (pastille « 47 j ») : plus de bandeau au-dessus de la carte du mois.
   const staleDaysById = new Map(stale.map((s) => [s.wallet.id, s.daysSince]));
-  const staleCount = stale.length;
   return (
     <section aria-labelledby="home-wallets-title" className="flex flex-col gap-3">
       <SectionHeader
@@ -87,30 +73,6 @@ export function WalletsSection({
           {t("home.layout.moreWallets", { count: active.length })}
         </Link>
       ) : null}
-      <div className="flex gap-3">
-        {canTransfer(active.length) ? (
-          <Link to="/transactions/new?type=transfer" className={actionClass}>
-            {t("home.layout.transfer")}
-          </Link>
-        ) : null}
-        {target ? (
-          <Link
-            to={reconcileTo}
-            className={actionClass}
-            aria-label={
-              staleCount > 0 && reconcileName !== undefined
-                ? t("home.layout.reconcileStale", { count: staleCount, name: reconcileName })
-                : reconcileName !== undefined
-                  ? t("home.layout.reconcileWallet", { name: reconcileName })
-                  : t("home.layout.reconcileChoose")
-            }
-          >
-            {staleCount > 0
-              ? t("home.layout.reconcileCount", { count: staleCount })
-              : t("home.layout.reconcile")}
-          </Link>
-        ) : null}
-      </div>
     </section>
   );
 }
@@ -132,6 +94,7 @@ export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcomi
         {upcoming.slice(0, 3).map((r) => {
           const due = new Date(r.nextDate);
           const income = r.type === "income";
+          const transfer = r.type === "transfer";
           return (
             <li key={r.id}>
               <Link to={`/plus/recurring/${r.id}`} className="pressable flex min-h-[64px] items-center gap-3 py-3">
@@ -141,15 +104,18 @@ export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcomi
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium text-ink dark:text-fg">
-                    {r.memo || t(`transactions.types.${r.type}`)}
+                    {r.memo ||
+                      (transfer
+                        ? `${walletName(r.walletId)} → ${walletName(r.toWalletId)}`
+                        : t(`transactions.types.${r.type}`))}
                   </span>
                   <span className="truncate text-xs text-neutral-600 dark:text-muted">{walletName(r.walletId)}</span>
                 </span>
                 <span
-                  className={`shrink-0 text-sm font-semibold tabular-nums ${income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
+                  className={`shrink-0 text-sm font-semibold tabular-nums ${transfer ? "text-ink dark:text-fg" : income ? "text-income dark:text-income-dark" : "text-expense dark:text-expense-dark"}`}
                   data-amount
                 >
-                  {income ? "+" : "−"}
+                  {transfer ? "" : income ? "+" : "−"}
                   {formatMoney(r.amount, r.currency)}
                 </span>
               </Link>

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import type { PayStatus } from "../../domain/cycle";
 import { homeNextStep } from "../../domain/homeNextStep";
+import { gaugeGeometry, remainingShare } from "../../domain/month-gauge";
 import { db } from "../../db/database";
 import { formatMoney } from "../../lib/money";
 import { heroAmountClass } from "../../lib/amount-fit";
@@ -210,6 +211,8 @@ export function CycleHero({
     }
   }
 
+  const monthGauge = gaugeGeometry(remainingShare(cycle.income, cycle.expense));
+
   const payContent =
     step === "pay" || step === "paySuggestion"
       ? payQuestion()
@@ -273,11 +276,21 @@ export function CycleHero({
       ) : step !== "startBalance" ? (
         // Ce qui reste du mois, ou le dépassement.
         <div className="flex flex-col gap-2 border-t border-white/20 pt-3">
-          <p className="text-sm">
-            {cycle.saved >= 0
-              ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
-              : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
-          </p>
+          <div className="flex items-center gap-3">
+            {/* Jauge de la marque : le point marque la part restante du revenu. Le texte la décrit déjà. */}
+            <svg viewBox="0 0 48 48" className="h-12 w-12 shrink-0" aria-hidden="true" focusable="false">
+              <path d={monthGauge.track} fill="none" stroke="currentColor" strokeOpacity="0.3" strokeWidth="4" strokeLinecap="round" />
+              {monthGauge.fill ? (
+                <path d={monthGauge.fill} fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+              ) : null}
+              {monthGauge.dot ? <circle cx={monthGauge.dot.x} cy={monthGauge.dot.y} r="3.5" fill="currentColor" /> : null}
+            </svg>
+            <p className="text-sm">
+              {cycle.saved >= 0
+                ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
+                : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
+            </p>
+          </div>
         </div>
       ) : null}
 

@@ -22,7 +22,7 @@ function stale(w: Wallet, daysSince: number): HomeData["stale"][number] {
 }
 
 describe("Accueil : section Portefeuilles", () => {
-  it("limite à quatre cartes, propose de voir les autres, virement et réconciliation", () => {
+  it("limite à quatre cartes, propose de voir les autres", () => {
     const active = ["1", "2", "3", "4", "5", "6"].map(wallet);
     render(
       <MemoryRouter>
@@ -31,15 +31,11 @@ describe("Accueil : section Portefeuilles", () => {
     );
     expect(screen.getAllByRole("listitem")).toHaveLength(4);
     expect(screen.getByRole("link", { name: "Voir les 6 portefeuilles" })).toHaveAttribute("href", "/plus/wallets");
-    expect(screen.getByRole("link", { name: "Virement" })).toHaveAttribute("href", "/transactions/new?type=transfer");
-    expect(screen.getByRole("link", { name: "Réconcilier · 1 portefeuille en retard, en commençant par Compte 5" })).toHaveAttribute(
-      "href",
-      "/plus/wallets/5/reconcile",
-    );
+    expect(screen.queryByRole("link", { name: /Réconcilier/ })).toBeNull();
     expect(screen.getByRole("link", { name: "Tout voir : portefeuilles" })).toBeInTheDocument();
   });
 
-  it("un seul portefeuille : pas de virement, réconciliation de ce portefeuille", () => {
+  it("un seul portefeuille : pas de virement ni de lien de réconciliation", () => {
     const active = [wallet("1")];
     render(
       <MemoryRouter>
@@ -48,15 +44,12 @@ describe("Accueil : section Portefeuilles", () => {
     );
     expect(screen.queryByRole("link", { name: "Virement" })).toBeNull();
     expect(screen.queryByRole("link", { name: /Voir les/ })).toBeNull();
-    expect(screen.getByRole("link", { name: "Réconcilier Compte 1" })).toHaveAttribute(
-      "href",
-      "/plus/wallets/1/reconcile",
-    );
+    expect(screen.queryByRole("link", { name: /Réconcilier/ })).toBeNull();
   });
 });
 
 describe("Accueil : retard de saisie sur les tuiles", () => {
-  it("marque chaque portefeuille en retard et compte les retards sur « Réconcilier »", () => {
+  it("marque chaque portefeuille en retard sur sa tuile", () => {
     const active = ["1", "2", "3"].map(wallet);
     render(
       <MemoryRouter>
@@ -73,8 +66,6 @@ describe("Accueil : retard de saisie sur les tuiles", () => {
       "href",
       "/plus/wallets/1",
     );
-    const reconcile = screen.getByRole("link", { name: "Réconcilier · 2 portefeuilles en retard, en commençant par Compte 1" });
-    expect(reconcile).toHaveTextContent("Réconcilier · 2");
-    expect(reconcile).toHaveAttribute("href", "/plus/wallets/1/reconcile");
+    expect(screen.queryByRole("link", { name: /Réconcilier/ })).toBeNull();
   });
 });
