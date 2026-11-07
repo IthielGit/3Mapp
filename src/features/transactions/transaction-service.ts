@@ -85,13 +85,13 @@ export async function validateDraft(
     }
     fee = draft.fee && draft.fee > 0 ? draft.fee : undefined;
   } else if (draft.type === "expense" || draft.type === "income") {
-    if (draft.categoryId) {
-      const category = await database.categories.get(draft.categoryId);
-      if (!category) throw new RuleError("Catégorie introuvable");
-      const expected = draft.type === "expense" ? "expense" : "income";
-      if (category.kind !== expected) throw new RuleError("Catégorie incompatible avec le type");
-      categoryId = category.id;
-    }
+    // Dépense et revenu : catégorie obligatoire, quelle que soit la source (feuille, récurrence, objectif, dette, édition groupée).
+    if (!draft.categoryId) throw new RuleError("Choisissez une catégorie, ou créez-en une.");
+    const category = await database.categories.get(draft.categoryId);
+    if (!category) throw new RuleError("Catégorie introuvable");
+    const expected = draft.type === "expense" ? "expense" : "income";
+    if (category.kind !== expected) throw new RuleError("Catégorie incompatible avec le type");
+    categoryId = category.id;
     if (draft.subcategoryId) {
       const sub = await database.subcategories.get(draft.subcategoryId);
       if (!sub || sub.categoryId !== categoryId) {

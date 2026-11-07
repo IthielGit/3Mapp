@@ -183,11 +183,17 @@ export function buildRows(
       if (walletName === "") errors.push("Portefeuille manquant");
     }
 
+    // Dépense et revenu : catégorie obligatoire (comme à la saisie). Une ligne sans catégorie est rejetée.
+    const categoryName = cell(raw, file.headers, mapping.category);
+    if ((type === "expense" || type === "income") && categoryName === "") {
+      errors.push("Catégorie manquante");
+    }
+
     return {
       line,
       date,
       type: type ?? "expense",
-      categoryName: cell(raw, file.headers, mapping.category),
+      categoryName,
       amount,
       currency,
       memo: cell(raw, file.headers, mapping.memo),

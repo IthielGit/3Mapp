@@ -201,9 +201,9 @@ describe("modification, suppression et annulation", () => {
   });
 
   it("duplication crée une copie avec un nouvel identifiant", async () => {
-    const { bank } = await setup();
+    const { bank, salary } = await setup();
     const tx = await createTransaction(
-      draft({ type: "income", amount: 9000, walletId: bank.id }),
+      draft({ type: "income", amount: 9000, walletId: bank.id, categoryId: salary.id }),
       db,
     );
     const copy = await duplicateTransaction(tx.id, db);
@@ -229,5 +229,40 @@ describe("modification, suppression et annulation", () => {
     ).rejects.toThrow();
     expect((await db.transactions.get(a.id))?.categoryId).toBe(food.id);
     expect((await db.transactions.get(b.id))?.categoryId).toBe(salary.id);
+  });
+});
+
+describe("catégorie obligatoire pour les dépenses et revenus", () => {
+  it("une dépense ou un revenu sans catégorie est refusé, quelle que soit la source", async () => {
+    const { bank } = await setup();
+    await expect(
+      createTransaction(draft({ type: "expense", amount: 1000, walletId: bank.id }), db),
+    ).rejects.toThrow(RuleError);
+    await expect(
+      createTransaction(draft({ type: "income", amount: 1000, walletId: bank.id }), db),
+    ).rejects.toThrow(RuleError);
+    expect(await db.transactions.count()).toBe(0);
+  });
+
+  it("un virement ou un ajustement reste sans catégorie", async () => {
+    const { bank, cash } = await setup();
+    await createTransaction(
+      draft({ type: "transfer", amount: 1000, walletId: bank.id, toWalletId: cash.id }),
+      db,
+    );
+    await createTransaction(draft({ type: "adjustment", amount: -500, walletId: bank.id }), db);
+    expect(await db.transactions.count()).toBe(2);
+  });
+
+  it("l'édition groupée ne peut pas retirer la catégorie d'une dépense", async () => {
+    const { bank, food } = await setup();
+    const a = await createTransaction(
+      draft({ type: "expense", amount: 1000, walletId: bank.id, categoryId: food.id }),
+      db,
+    );
+    await expect(
+      bulkUpdate([a.id], (d) => ({ ...d, categoryId: undefined }), db),
+    ).rejects.toThrow(RuleError);
+    expect((await db.transactions.get(a.id))?.categoryId).toBe(food.id);
   });
 });

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppDatabase } from "../../src/db/database";
 import { walletBalance } from "../../src/domain/balance";
 import { reconcileWallet } from "../../src/features/money/money-services";
+import { createCategory } from "../../src/features/categories/category-service";
 import { createTransaction } from "../../src/features/transactions/transaction-service";
 import { createWallet } from "../../src/features/wallets/wallet-service";
 
@@ -30,11 +31,16 @@ describe("réconciliation (SPEC §5.12)", () => {
       },
       db,
     );
+    const food = await createCategory(
+      { name: "Alimentation", kind: "expense", icon: "🍽️", color: "#000000", archived: false },
+      db,
+    );
     await createTransaction(
       {
         type: "expense",
         amount: 30000,
         walletId: wallet.id,
+        categoryId: food.id,
         memo: "Course",
         attachmentIds: [],
         date: new Date(2026, 0, 5).toISOString(),

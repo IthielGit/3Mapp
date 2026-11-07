@@ -13,6 +13,7 @@ import { parseAmountText } from "../../lib/amount-entry";
 import { AmountTextInput } from "../../components/AmountTextInput";
 import type { Debt } from "../../db/entities";
 import { addDebtPayment, createDebt, deleteDebt } from "./goals-debts-service";
+import { LinkedCategoryField } from "./LinkedCategoryField";
 import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
@@ -92,6 +93,7 @@ function DebtList() {
 function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone: () => void }) {
   const formWallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
   const [linkWallet, setLinkWallet] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const { t } = useTranslation();
   const wallets = useLiveQuery(() => db.wallets.toArray(), []) ?? EMPTY;
   const currency: CurrencyCode = wallets[0]?.currency ?? "MGA";
@@ -107,6 +109,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
     if (counterparty.trim() === "") return t("forms.missingName");
     const amount = parseAmountText(principal, currency);
     if (amount === null || amount <= 0) return t("transactions.amountRequired");
+    if (linkWallet && !categoryId) return t("transactions.categoryRequired");
     if (rate.trim() !== "") {
       const pct = Number(rate.replace(",", "."));
       if (!Number.isFinite(pct) || pct < 0) return t("debts.invalidRate");
@@ -124,6 +127,7 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
     try {
       await createDebt({
         linkWalletId: linkWallet || undefined,
+        categoryId: linkWallet ? categoryId : undefined,
         direction,
         counterparty,
         principal: amount,
@@ -187,6 +191,13 @@ function DebtForm({ direction, onDone }: { direction: Debt["direction"]; onDone:
             ))}
         </select>
       </Field>
+      {linkWallet ? (
+        <LinkedCategoryField
+          kind={direction === "borrowed" ? "income" : "expense"}
+          value={categoryId}
+          onChange={setCategoryId}
+        />
+      ) : null}
       <Field label={t("transactions.memo")}>
         <input className={inputClass} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </Field>
@@ -220,6 +231,7 @@ function DebtDetail({ id }: { id: string }) {
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
   const [memo, setMemo] = useState("");
   const [linkWallet, setLinkWallet] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [error, setError] = useState<string | undefined>();
 
   if (debt === undefined) return null;
@@ -231,6 +243,7 @@ function DebtDetail({ id }: { id: string }) {
     const value = parseAmountText(amount, debtCurrency);
     if (value === null || value <= 0) return t("transactions.amountRequired");
     if (value > state.remaining) return t("debts.tooMuch");
+    if (linkWallet && !categoryId) return t("transactions.categoryRequired");
     return null;
   }
 
@@ -240,7 +253,14 @@ function DebtDetail({ id }: { id: string }) {
     if (value === null || value <= 0) return setError(t("errors.invalidAmount"));
     if (value > state.remaining) return setError(t("debts.tooMuch"));
     try {
-      await addDebtPayment(id, value, new Date(date).toISOString(), memo, linkWallet || undefined);
+      await addDebtPayment(
+        id,
+        value,
+        new Date(date).toISOString(),
+        memo,
+        linkWallet || undefined,
+        linkWallet ? categoryId : undefined,
+      );
       setAmount("");
       setMemo("");
     } catch (err) {
@@ -294,6 +314,13 @@ function DebtDetail({ id }: { id: string }) {
                 ))}
             </select>
           </Field>
+          {linkWallet ? (
+            <LinkedCategoryField
+              kind={debt.direction === "borrowed" ? "expense" : "income"}
+              value={categoryId}
+              onChange={setCategoryId}
+            />
+          ) : null}
           {error ? (
             <p role="alert" className="text-red-700 dark:text-red-400">
               {error}

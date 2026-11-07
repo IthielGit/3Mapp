@@ -1,6 +1,7 @@
 import Dexie from "dexie";
 import { describe, expect, it } from "vitest";
 import { createDebt } from "../../src/features/goals-debts/goals-debts-service";
+import { createCategory } from "../../src/features/categories/category-service";
 import { createWallet } from "../../src/features/wallets/wallet-service";
 import { AppDatabase } from "../../src/db/database";
 import type { Transaction } from "../../src/db/entities";
@@ -125,9 +126,14 @@ describe("dette reliée à un compte à la création", () => {
       { name: "BNI", icon: "🏦", color: "#000000", group: "bank", currency: "MGA", initialBalance: 0, includeInTotal: true, archived: false },
       db,
     );
+    const income = await createCategory(
+      { name: "Emprunts", kind: "income", icon: "🤝", color: "#000000", archived: false },
+      db,
+    );
     await createDebt(
       {
         linkWalletId: wallet.id,
+        categoryId: income.id,
         direction: "borrowed",
         counterparty: "Cousin",
         principal: 300_000,
@@ -163,5 +169,31 @@ describe("reste du mois avec objectifs et dettes", () => {
     expect(s.savedToGoals).toBe(100_000);
     expect(s.debtsPaid).toBe(50_000);
     expect(s.saved).toBe(650_000);
+  });
+});
+
+describe("dette reliée à un compte sans catégorie", () => {
+  it("est refusée sans rien enregistrer : ni dette orpheline, ni transaction", async () => {
+    const db = new AppDatabase(`test-${crypto.randomUUID()}`);
+    const wallet = await createWallet(
+      { name: "BNI", icon: "🏦", color: "#000000", group: "bank", currency: "MGA", initialBalance: 0, includeInTotal: true, archived: false },
+      db,
+    );
+    await expect(
+      createDebt(
+        {
+          linkWalletId: wallet.id,
+          direction: "borrowed",
+          counterparty: "Cousin",
+          principal: 300_000,
+          currency: "MGA",
+          startDate: new Date().toISOString(),
+          notes: "",
+        },
+        db,
+      ),
+    ).rejects.toThrow("Choisissez une catégorie, ou créez-en une.");
+    expect(await db.debts.count()).toBe(0);
+    expect(await db.transactions.count()).toBe(0);
   });
 });

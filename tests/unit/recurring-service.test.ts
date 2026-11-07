@@ -39,7 +39,11 @@ async function setup() {
     { name: "Loyer", kind: "expense", icon: "🏠", color: "#000000", archived: false },
     db,
   );
-  return { wallet, rent };
+  const salary = await createCategory(
+    { name: "Salaire", kind: "income", icon: "💰", color: "#000000", archived: false },
+    db,
+  );
+  return { wallet, rent, salary };
 }
 
 const START = new Date(2026, 0, 1, 9).toISOString();
@@ -73,13 +77,14 @@ describe("rattrapage des récurrences (SPEC §5.7)", () => {
   });
 
   it("autoPost désactivé : les occurrences arrivent en attente", async () => {
-    const { wallet } = await setup();
+    const { wallet, salary } = await setup();
     await createRecurring(
       {
         draft: {
           type: "income",
           amount: 1000000,
           walletId: wallet.id,
+          categoryId: salary.id,
           memo: "Salaire",
           attachmentIds: [],
         },
@@ -95,13 +100,14 @@ describe("rattrapage des récurrences (SPEC §5.7)", () => {
   });
 
   it("une récurrence en pause ne génère rien ; à la reprise, pas de rafale", async () => {
-    const { wallet } = await setup();
+    const { wallet, rent } = await setup();
     const r = await createRecurring(
       {
         draft: {
           type: "expense",
           amount: 1000,
           walletId: wallet.id,
+          categoryId: rent.id,
           memo: "Abonnement",
           attachmentIds: [],
         },
@@ -122,13 +128,14 @@ describe("rattrapage des récurrences (SPEC §5.7)", () => {
   });
 
   it("un 31 janvier se répète aux bonnes dates (pas de dérive)", async () => {
-    const { wallet } = await setup();
+    const { wallet, rent } = await setup();
     await createRecurring(
       {
         draft: {
           type: "expense",
           amount: 1000,
           walletId: wallet.id,
+          categoryId: rent.id,
           memo: "Fin de mois",
           attachmentIds: [],
         },
@@ -149,13 +156,14 @@ describe("rattrapage des récurrences (SPEC §5.7)", () => {
 
 describe("actions sur les transactions en attente", () => {
   async function pendingOne() {
-    const { wallet } = await setup();
+    const { wallet, rent } = await setup();
     await createRecurring(
       {
         draft: {
           type: "expense",
           amount: 1000,
           walletId: wallet.id,
+          categoryId: rent.id,
           memo: "Test",
           attachmentIds: [],
         },

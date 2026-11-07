@@ -13,6 +13,7 @@ import {
   restoreTransactions,
 } from "../../src/features/transactions/transaction-service";
 import { createWallet } from "../../src/features/wallets/wallet-service";
+import { createCategory } from "../../src/features/categories/category-service";
 
 let db: AppDatabase;
 
@@ -26,8 +27,17 @@ afterEach(async () => {
 
 const NOW = new Date(2026, 5, 1, 12);
 
+/** Catégorie de dépense : obligatoire pour toute transaction créée dans un portefeuille lié. */
+function expenseCategory() {
+  return createCategory(
+    { name: "Divers", kind: "expense", icon: "🏷️", color: "#000000", archived: false },
+    db,
+  );
+}
+
 describe("paiements de dette liés à une transaction", () => {
   it("reste dû exact après plusieurs paiements, avec transactions réelles", async () => {
+    const category = await expenseCategory();
     const wallet = await createWallet(
       {
         name: "Banque",
@@ -58,6 +68,7 @@ describe("paiements de dette liés à une transaction", () => {
       new Date(2026, 1, 1).toISOString(),
       "Premier",
       wallet.id,
+      category.id,
       db,
     );
     await addDebtPayment(
@@ -66,6 +77,7 @@ describe("paiements de dette liés à une transaction", () => {
       new Date(2026, 2, 1).toISOString(),
       "Deuxième",
       wallet.id,
+      category.id,
       db,
     );
 
@@ -75,6 +87,7 @@ describe("paiements de dette liés à une transaction", () => {
   });
 
   it("supprimer la transaction d’un paiement retire le paiement, et l’annulation le restaure", async () => {
+    const category = await expenseCategory();
     const wallet = await createWallet(
       {
         name: "Banque",
@@ -105,6 +118,7 @@ describe("paiements de dette liés à une transaction", () => {
       new Date(2026, 1, 1).toISOString(),
       "Premier",
       wallet.id,
+      category.id,
       db,
     );
     const linkedTx = (await db.transactions.toArray())[0];
@@ -121,6 +135,7 @@ describe("paiements de dette liés à une transaction", () => {
 
 describe("versements d’objectif liés à une transaction", () => {
   it("versement lié : une dépense est créée et le montant épargné suit", async () => {
+    const category = await expenseCategory();
     const wallet = await createWallet(
       {
         name: "Banque",
@@ -144,6 +159,7 @@ describe("versements d’objectif liés à une transaction", () => {
       new Date(2026, 0, 5).toISOString(),
       "Versement",
       wallet.id,
+      category.id,
       db,
     );
     await addGoalMovement(
@@ -151,6 +167,7 @@ describe("versements d’objectif liés à une transaction", () => {
       -50000,
       new Date(2026, 0, 9).toISOString(),
       "Retrait",
+      undefined,
       undefined,
       db,
     );

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppDatabase } from "../../src/db/database";
 import { completeOnboarding } from "../../src/features/onboarding/onboarding-service";
+import { createCategory } from "../../src/features/categories/category-service";
 import { createTransaction } from "../../src/features/transactions/transaction-service";
 import {
   backupFileName,
@@ -63,11 +64,20 @@ async function balancesOf(db: AppDatabase) {
  */
 async function seedSource(db: AppDatabase) {
   const walletId = await onboard(db);
+  const salary = await createCategory(
+    { name: "Salaire", kind: "income", icon: "💰", color: "#000000", archived: false },
+    db,
+  );
+  const rent = await createCategory(
+    { name: "Loyer", kind: "expense", icon: "🏠", color: "#000000", archived: false },
+    db,
+  );
   await createTransaction(
     {
       type: "income",
       amount: 500_000,
       walletId,
+      categoryId: salary.id,
       memo: "Salaire",
       attachmentIds: [],
       date: "2026-01-28T09:00:00.000Z",
@@ -80,6 +90,7 @@ async function seedSource(db: AppDatabase) {
       type: "expense",
       amount: 150_000,
       walletId,
+      categoryId: rent.id,
       memo: "Loyer",
       attachmentIds: [],
       date: "2026-01-05T09:00:00.000Z",

@@ -532,7 +532,9 @@ export function TransactionsPage() {
                 value={bulkCategory}
                 onChange={(e) => setBulkCategory(e.target.value)}
               >
-                <option value="">—</option>
+                <option value="" disabled>
+                  —
+                </option>
                 {[...categories].sort(byName).map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -543,11 +545,12 @@ export function TransactionsPage() {
             <button
               type="button"
               className={buttonPrimary}
+              disabled={!bulkCategory}
               onClick={() => {
                 setBulkSheet(null);
                 void applyBulk((d) => ({
                   ...d,
-                  categoryId: bulkCategory || undefined,
+                  categoryId: bulkCategory,
                   subcategoryId: undefined,
                 }));
               }}

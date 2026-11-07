@@ -18,6 +18,7 @@ import { formatMoney, type CurrencyCode } from "../../lib/money";
 import { parseAmountText } from "../../lib/amount-entry";
 import { AmountTextInput } from "../../components/AmountTextInput";
 import { addGoalMovement, createGoal, deleteGoal, setGoalArchived } from "./goals-debts-service";
+import { LinkedCategoryField } from "./LinkedCategoryField";
 import { askConfirm } from "../../components/confirm-service";
 
 const EMPTY: never[] = [];
@@ -179,6 +180,7 @@ function GoalDetail({ id }: { id: string }) {
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
   const [memo, setMemo] = useState("");
   const [linkWallet, setLinkWallet] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [error, setError] = useState<string | undefined>();
 
   if (goal === undefined) return null;
@@ -189,6 +191,7 @@ function GoalDetail({ id }: { id: string }) {
   function missingMovement(): string | null {
     const value = parseAmountText(amount, goalCurrency);
     if (value === null || value <= 0) return t("transactions.amountRequired");
+    if (linkWallet && !categoryId) return t("transactions.categoryRequired");
     return null;
   }
 
@@ -203,6 +206,7 @@ function GoalDetail({ id }: { id: string }) {
         new Date(date).toISOString(),
         memo,
         linkWallet || undefined,
+        linkWallet ? categoryId : undefined,
       );
       setAmount("");
       setMemo("");
@@ -234,7 +238,10 @@ function GoalDetail({ id }: { id: string }) {
             type="button"
             aria-pressed={!withdraw}
             className={buttonSecondary}
-            onClick={() => setWithdraw(false)}
+            onClick={() => {
+              setWithdraw(false);
+              setCategoryId("");
+            }}
           >
             {t("goals.deposit")}
           </button>
@@ -242,7 +249,10 @@ function GoalDetail({ id }: { id: string }) {
             type="button"
             aria-pressed={withdraw}
             className={buttonSecondary}
-            onClick={() => setWithdraw(true)}
+            onClick={() => {
+              setWithdraw(true);
+              setCategoryId("");
+            }}
           >
             {t("goals.withdraw")}
           </button>
@@ -277,6 +287,13 @@ function GoalDetail({ id }: { id: string }) {
               ))}
           </select>
         </Field>
+        {linkWallet ? (
+          <LinkedCategoryField
+            kind={withdraw ? "income" : "expense"}
+            value={categoryId}
+            onChange={setCategoryId}
+          />
+        ) : null}
         {error ? (
           <p role="alert" className="text-red-700 dark:text-red-400">
             {error}

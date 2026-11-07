@@ -97,6 +97,21 @@ describe("lecture du fichier", () => {
 });
 
 describe("lignes et erreurs", () => {
+  it("dépense ou revenu sans catégorie : ligne rejetée ; virement sans catégorie accepté", () => {
+    const file = parseCsvText(
+      [
+        HEADER,
+        "02/03/2026,expense,,12,MGA,Bon,BNI",
+        "02/03/2026,income,,12,MGA,Bon,BNI",
+        "02/03/2026,transfer,,12,MGA,Bon,\"BNI -> Espèces\"",
+      ].join("\n"),
+    );
+    const rows = buildRows(file, autoMapping(file.headers), "MGA", "mdy");
+    expect(rows[0]?.errors).toContain("Catégorie manquante");
+    expect(rows[1]?.errors).toContain("Catégorie manquante");
+    expect(rows[2]?.errors).toEqual([]);
+  });
+
   it("une ligne correcte n’a pas d’erreur et le montant est positif", () => {
     const file = parseCsvText(
       [HEADER, '"02/03/2026, 10:00",expense,Food,-12,MGA,Bon,BNI'].join("\n"),

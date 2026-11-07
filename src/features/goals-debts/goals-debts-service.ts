@@ -40,6 +40,7 @@ export async function addGoalMovement(
   date: string,
   memo: string,
   linkWalletId?: string | undefined,
+  categoryId?: string | undefined,
   database: AppDatabase = defaultDb,
 ): Promise<void> {
   if (amount === 0) throw new RuleError("Montant nul");
@@ -53,6 +54,7 @@ export async function addGoalMovement(
         type: amount > 0 ? "expense" : "income",
         amount: Math.abs(amount),
         walletId: linkWalletId,
+        categoryId,
         memo: memo || goal.name,
         attachmentIds: [],
         date,
@@ -99,6 +101,8 @@ export async function setGoalArchived(
 export interface DebtInputFields {
   /** Portefeuille où l’argent est reçu (emprunt) ou sort (prêt). Sans lui, aucune transaction n’est créée. */
   linkWalletId?: string | undefined;
+  /** Obligatoire quand un portefeuille est lié : la transaction créée est une dépense ou un revenu. */
+  categoryId?: string | undefined;
   direction: Debt["direction"];
   counterparty: string;
   principal: Minor;
@@ -114,7 +118,9 @@ export async function createDebt(
   database: AppDatabase = defaultDb,
 ): Promise<Debt> {
   if (input.counterparty.trim() === "") throw new RuleError("Nom de la contrepartie requis");
-  const { linkWalletId, ...fields } = input;
+  const { linkWalletId, categoryId, ...fields } = input;
+  // Vérifié avant l'écriture de la dette : sinon une dette sans transaction resterait en base.
+  if (linkWalletId && !categoryId) throw new RuleError("Choisissez une catégorie, ou créez-en une.");
   const now = new Date().toISOString();
   const parsed = debtSchema.safeParse({
     ...fields,
@@ -133,6 +139,7 @@ export async function createDebt(
         type: parsed.data.direction === "borrowed" ? "income" : "expense",
         amount: parsed.data.principal,
         walletId: linkWalletId,
+        categoryId,
         memo: parsed.data.counterparty,
         attachmentIds: [],
         date: parsed.data.startDate,
@@ -155,6 +162,7 @@ export async function addDebtPayment(
   date: string,
   memo: string,
   linkWalletId?: string | undefined,
+  categoryId?: string | undefined,
   database: AppDatabase = defaultDb,
 ): Promise<void> {
   const debt = await database.debts.get(debtId);
@@ -167,6 +175,7 @@ export async function addDebtPayment(
         type: debt.direction === "borrowed" ? "expense" : "income",
         amount,
         walletId: linkWalletId,
+        categoryId,
         memo: memo || debt.counterparty,
         attachmentIds: [],
         date,
