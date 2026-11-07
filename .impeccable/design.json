@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T00:00:00Z",
+  "title": "Design System: Fundora",
+  "extensions": {
+    "colorMeta": {
+      "lagoon-cyan": { "role": "primary", "displayName": "Cyan Lagon", "tonalRamp": ["#053947", "#075064", "#096780", "#0B7E9D", "#0FA7D1", "#2EC6F0", "#7ADBF5", "#D9F5FC"] },
+      "lagoon-pressed": { "role": "primary", "displayName": "Lagon Pressé" },
+      "lagoon-deep": { "role": "primary", "displayName": "Lagon Profond" },
+      "shallow-cyan": { "role": "primary", "displayName": "Cyan Peu Profond" },
+      "spray-cyan": { "role": "primary", "displayName": "Cyan Embrun (sombre uniquement)" },
+      "mist-cyan": { "role": "primary", "displayName": "Brume Cyan" },
+      "income-green": { "role": "secondary", "displayName": "Vert Entrée" },
+      "income-green-dark": { "role": "secondary", "displayName": "Vert Entrée (sombre)" },
+      "expense-red": { "role": "secondary", "displayName": "Rouge Sortie" },
+      "expense-red-dark": { "role": "secondary", "displayName": "Rouge Sortie (sombre)" },
+      "ink": { "role": "neutral", "displayName": "Encre Charbon" },
+      "canvas": { "role": "neutral", "displayName": "Toile", "tonalRamp": ["#171A1C", "#262A2C", "#3D4448", "#4D565B", "#6C787F", "#A1ABAF", "#D0D5D7", "#F3F4F4"] },
+      "surface": { "role": "neutral", "displayName": "Surface" },
+      "stone-border": { "role": "neutral", "displayName": "Bord Pierre" },
+      "field-border": { "role": "neutral", "displayName": "Bord de Champ" },
+      "muted-text": { "role": "neutral", "displayName": "Texte Discret" },
+      "night-page": { "role": "neutral", "displayName": "Nuit (fond)" },
+      "night-card": { "role": "neutral", "displayName": "Nuit (carte)" },
+      "night-raised": { "role": "neutral", "displayName": "Nuit (relevé)" },
+      "night-fg": { "role": "neutral", "displayName": "Nuit (texte)" },
+      "night-muted": { "role": "neutral", "displayName": "Nuit (texte discret)" },
+      "brand-navy": { "role": "neutral", "displayName": "Marine de Marque" }
+    },
+    "typographyMeta": {
+      "amount-hero": { "displayName": "Amount Hero", "purpose": "Total d'un écran de statistiques." },
+      "amount": { "displayName": "Amount", "purpose": "Montant en saisie, montant d'une transaction ouverte, solde du mois." },
+      "headline": { "displayName": "Headline", "purpose": "Titres de page et salutation de l'accueil." },
+      "title": { "displayName": "Title", "purpose": "Titres de feuilles modales et d'en-têtes de détail." },
+      "body": { "displayName": "Body", "purpose": "Texte courant et champs (16 px minimum)." },
+      "body-sm": { "displayName": "Body Small", "purpose": "Corps le plus fréquent : libellés, lignes, messages." },
+      "label": { "displayName": "Label", "purpose": "Sous-titres de lignes, heures, barre basse." }
+    },
+    "shadows": [
+      { "name": "effleurement", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Cartes posées sur la Toile, menus." },
+      { "name": "bouton-flottant", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Uniquement le « + » de la barre basse, avec un anneau de 4 px à la couleur de la surface." },
+      { "name": "feuille", "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)", "purpose": "Feuille modale montée du bas." }
+    ],
+    "motion": [
+      { "name": "out-strong", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Courbe par défaut : appui, menus, entrées de page, bandeaux." },
+      { "name": "drawer", "value": "cubic-bezier(0.32, 0.72, 0, 1)", "purpose": "Montée de la feuille modale (320 ms)." },
+      { "name": "press", "value": "160ms", "purpose": "Compression à l'appui (scale 0.97 boutons, 0.98 surfaces)." },
+      { "name": "page-in", "value": "220ms", "purpose": "Entrée de page : fondu et glissement de 6 px." },
+      { "name": "theme-swap", "value": "220ms", "purpose": "Fondu croisé au changement de thème (transition de vue)." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Bouton principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Action principale d'un écran ou d'une feuille.",
+      "html": "<button class=\"ds-btn-primary\">Enregistrer</button>",
+      "css": ".ds-btn-primary { min-height: 44px; padding: 0 16px; border: none; border-radius: 12px; background: #0B7E9D; color: #fff; font-family: Outfit, system-ui, sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-primary:active { transform: scale(0.97); background: #096780; } .ds-btn-primary:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Bouton secondaire",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Action secondaire, à côté du bouton principal.",
+      "html": "<button class=\"ds-btn-secondary\">Annuler</button>",
+      "css": ".ds-btn-secondary { min-height: 44px; padding: 0 16px; border: 1px solid #6C787F; border-radius: 12px; background: transparent; color: #223135; font-family: Outfit, system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: transform 160ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-secondary:active { transform: scale(0.97); } .ds-btn-secondary:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Bouton de suppression",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Réservé aux suppressions.",
+      "html": "<button class=\"ds-btn-danger\">Supprimer</button>",
+      "css": ".ds-btn-danger { min-height: 44px; padding: 0 16px; border: 1px solid #fca5a5; border-radius: 12px; background: transparent; color: #b91c1c; font-family: Outfit, system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: transform 160ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-danger:active { transform: scale(0.97); } .ds-btn-danger:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Champ avec libellé",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Champ de formulaire, libellé au-dessus.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Mémo</span><input class=\"ds-input\" placeholder=\"Courses du samedi\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; font-family: Outfit, system-ui, sans-serif; color: #223135; } .ds-field-label { font-size: 0.875rem; font-weight: 500; } .ds-input { min-height: 44px; padding: 0 12px; border: 1px solid #6C787F; border-radius: 12px; background: #fff; color: #223135; font: inherit; font-size: 1rem; caret-color: #0B7E9D; } .ds-input::placeholder { color: #667085; } .ds-input:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Carte",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Conteneur de section sur la Toile.",
+      "html": "<section class=\"ds-card\"><h3 class=\"ds-card-title\">Ce mois-ci</h3><p class=\"ds-card-amount\">1 250 000 Ar</p></section>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid #E3E6E8; border-radius: 20px; background: #fff; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); font-family: Outfit, system-ui, sans-serif; color: #223135; } .ds-card-title { margin: 0; font-size: 1.125rem; font-weight: 600; } .ds-card-amount { margin: 0; font-size: 1.875rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: #11745B; }"
+    },
+    {
+      "name": "Ligne de transaction",
+      "kind": "custom",
+      "refersTo": "transaction-row",
+      "description": "Une transaction dans une liste.",
+      "html": "<button class=\"ds-tx-row\"><span class=\"ds-tx-icon\" style=\"background:#0FA7D1\">🛒</span><span class=\"ds-tx-text\"><span class=\"ds-tx-title\">Alimentation</span><span class=\"ds-tx-sub\">Mobile money · Marché</span></span><span class=\"ds-tx-end\"><span class=\"ds-tx-amount\">−45 000 Ar</span><span class=\"ds-tx-sub\">09:41</span></span></button>",
+      "css": ".ds-tx-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 8px 4px; border: none; border-radius: 8px; background: transparent; text-align: left; font-family: Outfit, system-ui, sans-serif; color: #223135; cursor: pointer; transition: background-color 150ms; } .ds-tx-row:active { background: #F3F4F4; } .ds-tx-row:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; } .ds-tx-icon { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 9999px; font-size: 1.25rem; } .ds-tx-text { display: flex; flex: 1; min-width: 0; flex-direction: column; } .ds-tx-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-tx-sub { font-size: 0.75rem; color: #4D565B; } .ds-tx-end { display: flex; flex-direction: column; align-items: flex-end; } .ds-tx-amount { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: #b91c1c; }"
+    },
+    {
+      "name": "Barre basse",
+      "kind": "nav",
+      "refersTo": "fab-add",
+      "description": "Navigation téléphone avec le « + » central en relief.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-tab ds-active\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1h-4.5v-6h-6v6H4.5a1 1 0 0 1-1-1z\"/></svg>Accueil</a><a class=\"ds-nav-tab\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01\"/></svg>Transactions</a><span class=\"ds-nav-add\"><a class=\"ds-fab\" href=\"#\" aria-label=\"Ajouter\">+</a></span><a class=\"ds-nav-tab\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 3.5a8.5 8.5 0 0 1 8.5 8.5H12z\"/></svg>Budgets</a><a class=\"ds-nav-tab\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M5 20V12M12 20V5M19 20v-7\"/></svg>Visualisation</a></nav>",
+      "css": ".ds-nav { display: grid; grid-template-columns: 1fr 1fr 3.5rem 1fr 1fr; align-items: center; margin-top: 32px; border-top: 1px solid #E3E6E8; background: #fff; font-family: Outfit, system-ui, sans-serif; } .ds-nav-tab { display: flex; min-height: 60px; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 0.75rem; font-weight: 500; color: #4D565B; text-decoration: none; } .ds-nav-tab.ds-active { font-weight: 600; color: #096780; } .ds-nav-tab:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 2px; } .ds-nav-add { display: flex; justify-content: center; } .ds-fab { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; margin-top: -28px; border-radius: 9999px; background: #0B7E9D; color: #fff; font-size: 1.875rem; line-height: 1; text-decoration: none; box-shadow: 0 0 0 4px #fff, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transition: transform 150ms cubic-bezier(0.23,1,0.32,1); } .ds-fab:active { transform: scale(0.95); } .ds-fab:focus-visible { outline: 2px solid #0B7E9D; outline-offset: 6px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "L'Eau Claire",
+    "overview": "Fundora se lit comme une eau limpide : on voit le fond. Chaque solde, chaque mouvement est visible sans effort, sans effet qui le trouble. Le cyan lagon porte l'action et la marque. Les neutres froids, de la même teinte (200°, très peu saturés), forment le fond sur lequel les montants se posent. La couleur vive est réservée à ce qui a un sens : vert pour l'argent qui entre, rouge pour celui qui sort ou ce qu'on supprime.\n\nLa densité est celle d'un outil de téléphone tenu d'une main : une colonne de 512 px au plus, des zones tactiles d'au moins 44 px, des lignes de transaction de 64 px. Les composants sont précis et doux : coins arrondis, bords fins de 1 px, ombres à peine perceptibles, et une réponse immédiate à l'appui (légère compression, sortie rapide, sans rebond).\n\nLe mode sombre est un monde à part entière, pas une inversion : fond nuit, cartes légèrement relevées, et un accent cyan clair (`spray-cyan`) qui n'existe que là.",
+    "keyCharacteristics": [
+      "Une seule police, Outfit, hébergée dans l'app pour fonctionner hors ligne.",
+      "Chiffres tabulaires sur chaque montant ; un montant ne se coupe jamais.",
+      "Profondeur par bordures fines et tons, presque pas par les ombres.",
+      "Mouvements courts (150 à 320 ms), courbe à sortie forte, toujours une version « mouvement réduit ».",
+      "Contrastes AA vérifiés pour chaque rôle de couleur."
+    ],
+    "rules": [
+      { "name": "La Règle du Rouge Réservé", "body": "Le rouge sert aux dépenses, aux erreurs et aux suppressions, et à rien d'autre. Jamais comme accent, jamais pour attirer l'œil.", "section": "colors" },
+      { "name": "La Règle des Trois Cyans", "body": "Cyan Peu Profond pour décorer (texte charbon dessus), Cyan Lagon pour agir (texte blanc dessus), Lagon Pressé pour le texte cyan sur fond gris. Ne pas les échanger.", "section": "colors" },
+      { "name": "La Règle du Fond Froid", "body": "Les neutres restent à la teinte du cyan. Pas de gris chauds (`stone`), pas de crème.", "section": "colors" },
+      { "name": "La Règle du Chiffre Droit", "body": "Tout montant porte `data-amount` : chiffres tabulaires, jamais de retour à la ligne au milieu de « Ar », flou quand l'utilisateur masque les montants.", "section": "typography" },
+      { "name": "La Règle du Semi-Gras", "body": "Le poids d'emphase est 600. Le gras 700 est chargé mais n'est pas utilisé dans l'interface.", "section": "typography" },
+      { "name": "La Règle du Pouce", "body": "L'ajout (« + ») est au centre de la barre basse, en relief au-dessus d'elle. Les actions principales d'une feuille modale sont dans son pied, collées en bas.", "section": "layout" },
+      { "name": "La Règle Plat au Repos", "body": "Une surface au repos n'a pas d'ombre ou une ombre d'effleurement. Seuls le « + » et la feuille modale flottent vraiment.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do utiliser Cyan Lagon pour toute action principale, avec du texte blanc.",
+      "Do marquer chaque montant avec `data-amount` (chiffres tabulaires, pas de coupure).",
+      "Do garder chaque cible tactile à 44 px minimum.",
+      "Do donner une version « mouvement réduit » à chaque animation (fondu seul, sans déplacement).",
+      "Do utiliser les courbes à sortie forte (`cubic-bezier(0.23, 1, 0.32, 1)`) et des durées de 150 à 320 ms.",
+      "Do vérifier le contraste AA de toute nouvelle paire de couleurs (4,5:1 pour le texte, 3:1 pour les éléments graphiques)."
+    ],
+    "donts": [
+      "Don't utiliser le rouge comme accent ou pour attirer l'attention : il est réservé aux dépenses, erreurs et suppressions.",
+      "Don't mettre du texte blanc sur Cyan Peu Profond, ni du texte Cyan Lagon sur fond gris (utiliser Lagon Pressé).",
+      "Don't réintroduire des gris chauds ou un fond crème.",
+      "Don't ajouter une seconde famille de caractères.",
+      "Don't utiliser Cyan Embrun en mode clair.",
+      "Don't animer avec des courbes molles par défaut (`ease`) ni des rebonds."
+    ]
+  }
+}
