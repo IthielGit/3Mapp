@@ -217,3 +217,62 @@ export function formatMoney(
     ? `${sign}${def.symbol}${number}`
     : `${sign}${number}${NBSP}${def.symbol}`;
 }
+
+/** Langue des abréviations du format compact. */
+export type CompactLocale = "fr" | "en";
+
+const COMPACT_UNITS: Readonly<Record<CompactLocale, readonly { size: number; suffix: string }[]>> = {
+  // Du plus grand au plus petit : milliard puis million.
+  fr: [
+    { size: 1_000_000_000, suffix: "Md" },
+    { size: 1_000_000, suffix: "M" },
+  ],
+  en: [
+    { size: 1_000_000_000, suffix: "B" },
+    { size: 1_000_000, suffix: "M" },
+  ],
+};
+
+/**
+ * Montant abrégé pour les espaces étroits (cartes de portefeuille) : « 1,25 Md Ar », « 3,4 M Ar ».
+ * En dessous d'un million d'unités majeures, le montant complet (formatMoney) est rendu tel quel.
+ * Trois chiffres significatifs au plus, tronqués (jamais arrondis vers le haut : on n'affiche pas plus
+ * que ce qu'il y a). Calcul en entiers sur les unités mineures ; rien n'est stocké.
+ * Les séparateurs suivent le réglage « Format des montants » ; seuls les suffixes dépendent de la langue.
+ * L'appelant garde le montant complet pour les lecteurs d'écran.
+ */
+export function formatMoneyCompact(
+  amount: Minor,
+  code: CurrencyCode,
+  locale: CompactLocale = "fr",
+  options: Pick<FormatOptions, "withSymbol" | "format"> = {},
+): string {
+  assertMinor(amount);
+  const { withSymbol = true, format = activeAmountFormat } = options;
+  const def = getCurrency(code);
+  const minorPerMajor = 10 ** def.decimals;
+  const abs = Math.abs(amount);
+  const unit = COMPACT_UNITS[locale].find((u) => abs >= u.size * minorPerMajor);
+  if (!unit) return formatMoney(amount, code, { withSymbol, format });
+
+  const { group, decimal } = AMOUNT_SEPARATORS[format];
+  const unitMinor = unit.size * minorPerMajor;
+  const whole = Math.floor(abs / unitMinor);
+  // Décimales gardées : 2 sous 10, 1 sous 100, aucune au-delà (trois chiffres significatifs).
+  const fractionDigits = whole < 10 ? 2 : whole < 100 ? 1 : 0;
+  const fraction =
+    fractionDigits === 0
+      ? ""
+      : Math.floor(((abs % unitMinor) * 10 ** fractionDigits) / unitMinor)
+          .toString()
+          .padStart(fractionDigits, "0")
+          .replace(/0+$/, "");
+  const intText = group ? whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, group) : whole.toString();
+  const number = `${intText}${fraction ? `${decimal}${fraction}` : ""}${NBSP}${unit.suffix}`;
+
+  const sign = amount < 0 ? MINUS_SIGN : "";
+  if (!withSymbol) return `${sign}${number}`;
+  return def.symbolPosition === "before"
+    ? `${sign}${def.symbol}${number}`
+    : `${sign}${number}${NBSP}${def.symbol}`;
+}

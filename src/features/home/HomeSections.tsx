@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
+import { enUS, fr } from "date-fns/locale";
 import { Icon } from "../../components/Icon";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
 import { formatMoney } from "../../lib/money";
@@ -104,7 +105,8 @@ export function WalletsSection({
 
 /** Échéances à venir : les trois prochaines récurrences. */
 export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcoming" | "walletName">) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateLocale = i18n.language.startsWith("en") ? enUS : fr;
   if (upcoming.length === 0) return null;
   return (
     <section aria-labelledby="home-upcoming-title" className="flex flex-col gap-3">
@@ -123,7 +125,7 @@ export function UpcomingSection({ upcoming, walletName }: Pick<HomeData, "upcomi
               <Link to={`/plus/recurring/${r.id}`} className="pressable flex min-h-[64px] items-center gap-3 py-3">
                 <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-neutral-100 text-center leading-none dark:bg-raised">
                   <span className="text-base font-semibold tabular-nums text-ink dark:text-fg">{format(due, "d")}</span>
-                  <span className="mt-0.5 text-[10px] uppercase text-neutral-600 dark:text-muted">{format(due, "MMM")}</span>
+                  <span className="mt-0.5 text-xs uppercase text-neutral-600 dark:text-muted">{format(due, "MMM", { locale: dateLocale })}</span>
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium text-ink dark:text-fg">
@@ -199,7 +201,7 @@ export function BudgetsSection({
                     <div className={`progress-fill h-full rounded-full ${barColor}`} style={{ transform: `scaleX(${width / 100})` }} />
                   </div>
                   {state.status === "exceeded" ? (
-                    <p className="text-xs font-medium text-red-700 dark:text-red-400">
+                    <p className="text-xs font-medium text-expense dark:text-expense-dark">
                       {t("budgets.exceededBy", { amount: formatMoney(-state.remaining, budget.currency) })}
                     </p>
                   ) : state.status === "threshold" ? (
@@ -235,8 +237,8 @@ export function RecentSection({
         linkLabel={t("home.layout.seeAllTransactions")}
       />
       {recent.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-neutral-500 p-4 text-center text-sm text-neutral-600 dark:border-white/15 dark:text-muted">
-          <Icon name="inbox" className="h-6 w-6 text-teal-600 dark:text-teal-300" />
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-neutral-200 p-4 text-center text-sm text-neutral-600 dark:border-white/15 dark:text-muted">
+          <Icon name="inbox" className="h-6 w-6 text-brand-600 dark:text-brand-dark" />
           <span>{t("home.noTransactions")}</span>
         </div>
       ) : (
