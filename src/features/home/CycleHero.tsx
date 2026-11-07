@@ -8,6 +8,8 @@ import type { PayStatus } from "../../domain/cycle";
 import { homeNextStep } from "../../domain/homeNextStep";
 import { db } from "../../db/database";
 import { formatMoney } from "../../lib/money";
+import { heroAmountClass } from "../../lib/amount-fit";
+import { Icon } from "../../components/Icon";
 import { BottomSheet } from "../../components/BottomSheet";
 import { announce } from "../../components/announce";
 import { updatePreferences, type PreferencePatch } from "../settings/preferences-service";
@@ -123,6 +125,7 @@ export function CycleHero({
   }
 
   const day = (d: Date) => format(d, "d MMM", { locale: cycleLocale });
+  const availableText = formatMoney(cycle.available, baseCurrency);
 
   /** Question de paie sans réponse : la suggestion « C'est votre paie ? », ou une ligne qui ouvre la feuille. */
   function payQuestion() {
@@ -148,7 +151,7 @@ export function CycleHero({
             </button>
             <button
               type="button"
-              className="min-h-[44px] rounded-xl border border-white/40 font-medium text-white"
+              className="min-h-[44px] rounded-xl border border-white/70 font-medium text-white"
               onClick={() => void dismissSuggestion()}
             >
               {t("cycle.no")}
@@ -217,10 +220,9 @@ export function CycleHero({
   return (
     <section
       aria-labelledby="cycle-title"
-      className="relative flex flex-col gap-3 overflow-hidden rounded-3xl p-5 text-white shadow-lg"
-      style={{ background: "linear-gradient(150deg, #0B7E9D 0%, #075064 100%)" }}
+      className="relative flex flex-col gap-3 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 p-5 text-white shadow-sm"
     >
-      <h2 id="cycle-title" className="text-xs font-medium text-teal-50">
+      <h2 id="cycle-title" className="text-xs font-medium">
         {t("cycle.title", {
           from: format(cycle.period.from, "d MMM", { locale: cycleLocale }),
           to: format(cycleLastDay, "d MMM", { locale: cycleLocale }),
@@ -245,9 +247,9 @@ export function CycleHero({
         </div>
       ) : (
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-teal-50">{t("cycle.available")}</p>
-          <p className="text-[40px] font-semibold leading-none tracking-tight tabular-nums" data-amount>
-            {formatMoney(cycle.available, baseCurrency)}
+          <p className="text-xs">{t("cycle.available")}</p>
+          <p className={`${heroAmountClass(availableText)} font-semibold leading-none tracking-tight tabular-nums`} data-amount>
+            {availableText}
           </p>
           {cycle.available < 0 ? (
             <p className="pt-1 text-sm">
@@ -271,7 +273,7 @@ export function CycleHero({
       ) : step !== "startBalance" ? (
         // Ce qui reste du mois, ou le dépassement.
         <div className="flex flex-col gap-2 border-t border-white/20 pt-3">
-          <p className="text-sm text-teal-50">
+          <p className="text-sm">
             {cycle.saved >= 0
               ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
               : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
@@ -280,10 +282,10 @@ export function CycleHero({
       ) : null}
 
       {/* La question de paie, en une ligne sur la carte ; le formulaire s'ouvre dans une feuille. */}
-      {payContent ? <div className="rounded-2xl bg-white/15 p-3 text-sm">{payContent}</div> : null}
+      {payContent ? <div className="rounded-2xl bg-brand-900/40 p-3 text-sm">{payContent}</div> : null}
 
       {undo ? (
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-white/15 p-3 text-sm">
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-brand-900/40 p-3 text-sm">
           <p>{undo.message}</p>
           <button
             type="button"
@@ -298,7 +300,7 @@ export function CycleHero({
       {/* Détail replié : comptes pris en compte, entrées, sorties et versements. Masqué tant que tout vaut 0. */}
       {firstRun ? null : (
         <details className="group flex flex-col gap-3 border-t border-white/20 pt-3">
-          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium text-teal-50 [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-xs font-medium [&::-webkit-details-marker]:hidden">
             {t("cycle.thisMonth")}
             <svg
               aria-hidden="true"
@@ -309,7 +311,7 @@ export function CycleHero({
               <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </summary>
-          <p className="text-xs text-teal-50">
+          <p className="text-xs">
             {countedList.length <= 2
               ? t("cycle.accounts", { names: countedNames || "—" })
               : t("cycle.accountsCount", { count: countedList.length })}{" "}
@@ -319,14 +321,20 @@ export function CycleHero({
           </p>
           <dl className="grid grid-cols-2 gap-2 text-center">
             <div className="flex flex-col gap-0.5">
-              <dt className="text-xs text-teal-50">{t("cycle.income")}</dt>
-              <dd className="text-sm font-semibold tabular-nums text-emerald-200" data-amount>
+              <dt className="inline-flex items-center justify-center gap-1 text-xs">
+                <Icon name="plus" className="h-3 w-3" />
+                {t("cycle.income")}
+              </dt>
+              <dd className="text-sm font-semibold tabular-nums" data-amount>
                 {formatMoney(cycle.income, baseCurrency)}
               </dd>
             </div>
             <div className="flex flex-col gap-0.5">
-              <dt className="text-xs text-teal-50">{t("cycle.expense")}</dt>
-              <dd className="text-sm font-semibold tabular-nums text-rose-200" data-amount>
+              <dt className="inline-flex items-center justify-center gap-1 text-xs">
+                <Icon name="minus" className="h-3 w-3" />
+                {t("cycle.expense")}
+              </dt>
+              <dd className="text-sm font-semibold tabular-nums" data-amount>
                 {formatMoney(cycle.expense, baseCurrency)}
               </dd>
             </div>
@@ -338,7 +346,7 @@ export function CycleHero({
             <p className="text-sm">{t("cycle.debtsPaid", { amount: formatMoney(cycle.debtsPaid, baseCurrency) })}</p>
           ) : null}
           {cycleView.plannedSaving !== undefined ? (
-            <p className="text-xs text-teal-50">
+            <p className="text-xs">
               {t("cycle.plannedSaving", { amount: formatMoney(cycleView.plannedSaving, baseCurrency) })}
             </p>
           ) : null}

@@ -1,8 +1,12 @@
-import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { Category, Transaction, Wallet } from "../db/entities";
-import { formatMoney } from "../lib/money";
+import { formatMoney, formatMoneyCompact } from "../lib/money";
+import { readableTextOn } from "../lib/contrast";
+import { fitsWalletCard } from "../lib/amount-fit";
+
+/** Pastille sans catégorie : neutral-500 (DESIGN.md field-border), gris froid. */
+const NO_CATEGORY_COLOR = "#6C787F";
 
 interface TransactionRowProps {
   transaction: Transaction;
@@ -41,7 +45,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
       <span
         aria-hidden="true"
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl text-white"
-        style={{ backgroundColor: category?.color ?? "#64748b" }}
+        style={{ backgroundColor: category?.color ?? NO_CATEGORY_COLOR }}
       >
         {category?.icon ?? "•"}
       </span>
@@ -69,34 +73,38 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen }
   );
 }
 
-/** Carte de portefeuille : couleur du portefeuille, icône et solde. */
-/** Fond léger : teinte du portefeuille, reflet métallique très discret en diagonale et liseré clair. */
-function glassStyle(color: string): CSSProperties {
-  return {
-    background: [
-      "linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.12) 50%, transparent 65%)",
-      "linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0) 60%)",
-      `linear-gradient(${color}, ${color})`,
-    ].join(", "),
-    border: "1px solid rgba(255,255,255,0.2)",
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 12px -6px rgba(0,0,0,0.25)",
-  };
-}
-
+/**
+ * Carte de portefeuille : pleine, à la couleur du portefeuille, plate au repos (effleurement seul).
+ * Le texte (Encre Charbon ou blanc) est choisi par contraste WCAG avec la couleur choisie.
+ * Un solde trop long pour la carte passe au format compact ; le montant complet reste lu et en infobulle.
+ */
 export function WalletCard({ wallet, balance }: { wallet: Wallet; balance: number }) {
+  const { i18n } = useTranslation();
+  const textClass = readableTextOn(wallet.color) === "ink" ? "text-ink" : "text-white";
+  const full = formatMoney(balance, wallet.currency);
+  const shown = fitsWalletCard(full)
+    ? full
+    : formatMoneyCompact(balance, wallet.currency, i18n.language.startsWith("en") ? "en" : "fr");
   return (
     <Link
       to={`/plus/wallets/${wallet.id}`}
-      className="flex min-w-0 flex-col gap-2 rounded-card p-3 text-white"
-      style={glassStyle(wallet.color)}
+      className={`flex min-w-0 flex-col gap-2 rounded-card p-3 shadow-sm ${textClass}`}
+      style={{ backgroundColor: wallet.color }}
     >
       <span aria-hidden="true" className="text-2xl">
         {wallet.icon}
       </span>
-      <span className="truncate text-sm font-medium opacity-95">{wallet.name}</span>
-      <span className="font-semibold" data-amount>
-        {formatMoney(balance, wallet.currency)}
-      </span>
+      <span className="truncate text-sm font-medium">{wallet.name}</span>
+      {shown === full ? (
+        <span className="font-semibold" data-amount>
+          {full}
+        </span>
+      ) : (
+        <span className="font-semibold" data-amount title={full}>
+          <span aria-hidden="true">{shown}</span>
+          <span className="sr-only">{full}</span>
+        </span>
+      )}
     </Link>
   );
 }
