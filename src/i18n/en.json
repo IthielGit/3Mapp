@@ -817,7 +817,8 @@
         "network": "No connection: sync will resume when the network is back.",
         "suspended": "Account suspended: sync is blocked.",
         "unknown": "Sync failed. Retrying automatically.",
-        "foreign": "Merge refused: this device's data belongs to another account."
+        "foreign": "Merge refused: this device's data belongs to another account.",
+        "outdated": "This version of the app is too old to sync. Close the app and open it again to update it."
       },
       "button": "Sync now",
       "buttonBusy": "Syncing",

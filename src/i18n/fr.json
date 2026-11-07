@@ -817,7 +817,8 @@
         "network": "Pas de connexion : la synchronisation reprendra au retour du réseau.",
         "suspended": "Compte suspendu : la synchronisation est bloquée.",
         "unknown": "La synchronisation a échoué. Nouvel essai automatique.",
-        "foreign": "Fusion refusée : les données de cet appareil appartiennent à un autre compte."
+        "foreign": "Fusion refusée : les données de cet appareil appartiennent à un autre compte.",
+        "outdated": "Cette version de l'app est trop ancienne pour synchroniser. Fermez l'app puis rouvrez-la pour la mettre à jour."
       },
       "button": "Synchroniser maintenant",
       "buttonBusy": "Synchronisation en cours",
