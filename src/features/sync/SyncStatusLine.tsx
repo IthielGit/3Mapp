@@ -116,7 +116,7 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
     <div
       className={
         inline
-          ? "flex min-w-0 items-center justify-end gap-1.5 text-right text-[11px]"
+          ? "flex shrink-0 items-center justify-end gap-1.5 whitespace-nowrap text-right text-[11px]"
           : "flex min-h-5 items-center gap-2 text-xs font-medium"
       }
     >
@@ -137,9 +137,11 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
       <p
         className={
           isError
-            ? "text-expense dark:text-expense-dark"
+            ? "whitespace-normal text-expense dark:text-expense-dark"
             : inline
               ? "text-neutral-600 opacity-85 dark:text-muted"
+              : line.kind === "upToDate"
+              ? "text-neutral-600 opacity-50 dark:text-muted"
               : "text-neutral-600 dark:text-muted"
         }
         data-testid="sync-status"
