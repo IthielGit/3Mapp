@@ -20,7 +20,7 @@
     "undo": "Annuler",
     "back": "Retour",
     "wallet": "Portefeuille",
-    "more": "Plus d’actions",
+    "more": "Plus d'actions",
     "close": "Fermer",
     "confirm": "Valider",
     "confirmTitle": "Confirmer"
@@ -118,7 +118,7 @@
     "updateAvailable": "Nouvelle version disponible.",
     "update": "Mettre à jour",
     "installTitle": "Installer Fundora",
-    "installHint": "Ajoutez Fundora à l’écran d’accueil pour l’ouvrir comme une app, même hors ligne.",
+    "installHint": "Ajoutez Fundora à l'écran d'accueil pour l'ouvrir comme une app, même hors ligne.",
     "installButton": "Installer l'application",
     "installDone": "Application installée.",
     "installIosHint": "Sur iPhone ou iPad : touchez Partager, puis « Sur l'écran d'accueil »."
@@ -143,7 +143,7 @@
     "signedInAs": "Connecté en tant que",
     "notYou": "Pas vous ? Se déconnecter",
     "syncRequiredTitle": "Synchronisation nécessaire",
-    "syncRequiredBody": "Nous n’avons pas pu récupérer les données de votre compte. Vérifiez votre connexion : rien n’est effacé et aucune configuration n’est demandée.",
+    "syncRequiredBody": "Nous n'avons pas pu récupérer les données de votre compte. Vérifiez votre connexion : rien n'est effacé et aucune configuration n'est demandée.",
     "syncFailed": "Toujours hors ligne ou injoignable. Réessayez dans un instant.",
     "retry": "Réessayer",
     "language": "Langue",
@@ -159,7 +159,7 @@
     "introStart": "Commencer",
     "skip": "Passer",
     "nameRequired": "Donnez un nom à votre portefeuille pour continuer.",
-    "balanceHint": "Le montant déjà disponible dans ce portefeuille aujourd’hui. Si vous ne le connaissez pas, laissez 0 : vous pourrez le corriger plus tard.",
+    "balanceHint": "Le montant déjà disponible dans ce portefeuille aujourd'hui. Si vous ne le connaissez pas, laissez 0 : vous pourrez le corriger plus tard.",
     "payDay": "Quel jour recevez-vous votre salaire ?",
     "firstDay": "Je ne sais pas (le 1er)",
     "dayOption": "Le {{day}}",
@@ -190,7 +190,7 @@
     "noMovements": "Aucun mouvement pour le moment.",
     "notFound": "Portefeuille introuvable.",
     "deleteConfirm": "Supprimer ce compte ? Vous ne pourrez pas revenir en arrière.",
-    "deleteBlocked": "Ce compte contient déjà des opérations. Vous pouvez le ranger en l’archivant."
+    "deleteBlocked": "Ce compte contient déjà des opérations. Vous pouvez le ranger en l'archivant."
   },
   "categories": {
     "title": "Catégories",
@@ -209,7 +209,7 @@
     "subPlaceholder": "Nouvelle sous-catégorie",
     "subDeleteBlocked": "Cette sous-catégorie est utilisée et ne peut pas être supprimée.",
     "deleteConfirm": "Supprimer cette catégorie et ses sous-catégories ?",
-    "deleteBlocked": "Cette catégorie contient déjà des opérations. Vous pouvez la ranger en l’archivant, ou la fusionner avec une autre.",
+    "deleteBlocked": "Cette catégorie contient déjà des opérations. Vous pouvez la ranger en l'archivant, ou la fusionner avec une autre.",
     "merge": "Fusionner",
     "mergeHint": "Toutes les opérations de cette catégorie seront transférées vers la catégorie choisie, puis cette catégorie sera supprimée.",
     "mergeTarget": "Fusionner dans…",
@@ -220,7 +220,7 @@
     "title": "Transactions",
     "newTitle": "Nouvelle transaction",
     "editTitle": "Modifier la transaction",
-    "empty": "Rien pour l’instant. Appuyez sur + pour noter votre première dépense ou un revenu.",
+    "empty": "Rien pour l'instant. Appuyez sur + pour noter votre première dépense ou un revenu.",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher un mémo ou une catégorie",
     "filters": "Filtres",
@@ -290,7 +290,7 @@
     "photoAlt": "Pièce jointe {{n}}",
     "removePhoto": "Retirer",
     "removePhotoN": "Retirer la pièce jointe {{n}}",
-    "transferHint": "Virement : déplacer de l’argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas.",
+    "transferHint": "Virement : déplacer de l'argent entre deux de vos comptes (par exemple de la banque vers le mobile money). Le total de vos comptes ne change pas.",
     "amountTapToEdit": "Toucher pour modifier le montant",
     "amountDone": "Terminé",
     "amountTapToEnter": "Toucher pour saisir le montant",
@@ -348,8 +348,8 @@
     "percentUsed": "{{percent}} % consommé",
     "counted": "Dépenses comptées",
     "noCounted": "Aucune dépense comptée sur cette période.",
-    "emptyTitle": "Aucun budget pour l’instant",
-    "emptyHint": "Un budget fixe une somme par catégorie et vous montre ce qu’il reste.",
+    "emptyTitle": "Aucun budget pour l'instant",
+    "emptyHint": "Un budget fixe une somme par catégorie et vous montre ce qu'il reste.",
     "createFirst": "Créer mon premier budget",
     "showDetails": "Détails",
     "hideDetails": "Masquer"
@@ -395,7 +395,7 @@
     "payment": "Paiement",
     "addPayment": "Enregistrer le paiement",
     "linkWallet": "Créer aussi la transaction dans",
-    "tooMuch": "Ce montant est plus grand que ce qu’il reste à rembourser.",
+    "tooMuch": "Ce montant est plus grand que ce qu'il reste à rembourser.",
     "deleteConfirm": "Supprimer cette dette et ses paiements ?"
   },
   "recurring": {
@@ -502,12 +502,10 @@
     "noTransactions": "Aucune transaction pour le moment.",
     "pendingBanner": "{{count}} transaction(s) récurrente(s) en attente de validation",
     "missingRate": "Taux manquant pour {{currencies}} : ces soldes ne sont pas inclus dans le total.",
-    "overview": "Vue d’ensemble",
     "wallets": "Portefeuilles",
     "hello": "Bienvenue",
     "upcoming": "Échéances à venir",
     "noUpcoming": "Aucune échéance prévue.",
-    "overviewTitle": "Vue d'ensemble",
     "balanceCard": "Solde",
     "dailyCheck": "Saisie du jour",
     "dailyHint": "Notez vos dépenses d'aujourd'hui.",
@@ -531,7 +529,7 @@
       "reconcile": "Réconcilier",
       "reconcileWallet": "Réconcilier {{name}}",
       "reconcileChoose": "Réconcilier : choisir un portefeuille",
-      "todayAt": "Aujourd’hui · {{time}}",
+      "todayAt": "Aujourd'hui · {{time}}",
       "yesterdayAt": "Hier · {{time}}",
       "staleChip": "{{days}} j",
       "staleChipLabel_one": "sans saisie depuis {{count}} jour",
@@ -575,7 +573,7 @@
       "loading": "Chargement de vos données…"
     },
     "onboard": {
-      "startBalance": "Pour commencer, indiquez combien il y a sur vos comptes aujourd’hui.",
+      "startBalance": "Pour commencer, indiquez combien il y a sur vos comptes aujourd'hui.",
       "firstEntry": "Notez une première dépense ou un premier revenu : la carte vous dira ce qui vous reste.",
       "firstEntryAction": "Ajouter une transaction",
       "payPrompt": "Quand touchez-vous votre paie ?",
@@ -584,7 +582,7 @@
       "payAccepted": "« {{category}} » est maintenant votre paie.",
       "paySaved": "Réponse enregistrée.",
       "undone": "Réponse annulée.",
-      "suggestionDismissed": "C’est noté, cette entrée ne vous sera plus proposée comme paie."
+      "suggestionDismissed": "Cette entrée ne vous sera plus proposée comme paie."
     }
   },
   "stats": {
@@ -625,7 +623,7 @@
     "savedMore": "Vous avez mis de côté {{amount}} {{when}}",
     "currentBalance": "Solde actuel",
     "periodWhen": {
-      "day": "aujourd’hui",
+      "day": "aujourd'hui",
       "week": "cette semaine",
       "month": "ce mois-ci",
       "year": "cette année",
@@ -638,7 +636,7 @@
   "importExport": {
     "title": "Import / Export",
     "importTitle": "Importer un fichier CSV",
-    "importHint": "Format natif : Date, Type, Category, Amount, Currency, Memo, Wallet. Les dates peuvent s’écrire JJ/MM/AAAA, MM/JJ/AAAA ou AAAA-MM-JJ, avec l’heure en option. Un virement est une seule ligne « A -> B ».",
+    "importHint": "Format natif : Date, Type, Category, Amount, Currency, Memo, Wallet. Les dates peuvent s'écrire JJ/MM/AAAA, MM/JJ/AAAA ou AAAA-MM-JJ, avec l'heure en option. Un virement est une seule ligne « A -> B ».",
     "chooseFile": "Choisir un fichier CSV",
     "separator": "Séparateur détecté : {{separator}}",
     "preview": "Aperçu",
@@ -662,7 +660,7 @@
       "dmy": "JJ/MM/AAAA (ex. 28/10/2026)",
       "mdy": "MM/JJ/AAAA (ex. 10/28/2026)"
     },
-    "dateAmbiguous": "{{count}} date(s) peuvent se lire dans les deux sens. Vérifiez l’ordre choisi ci-dessus avant d’importer."
+    "dateAmbiguous": "{{count}} date(s) peuvent se lire dans les deux sens. Vérifiez l'ordre choisi ci-dessus avant d'importer."
   },
   "app": {
     "updateAvailable": "Nouvelle version disponible",
@@ -741,9 +739,9 @@
     "payOnFriday": "Si le jour tombe un week-end, compter la paie le vendredi",
     "payOnFridayHint": "Exemple : le 28 est un samedi, le cycle commence le vendredi 27.",
     "payIncome": "Mon revenu de paie",
-    "payIncomeNone": "Aucun pour l’instant",
+    "payIncomeNone": "Aucun pour l'instant",
     "payIncomeHint": "Sert à savoir si votre paie est arrivée.",
-    "keypadZerosHint": "Nombre de zéros ajoutés d’un coup quand vous saisissez un montant. 000 par défaut.",
+    "keypadZerosHint": "Nombre de zéros ajoutés d'un coup quand vous saisissez un montant. 000 par défaut.",
     "advanced": "Avancé",
     "amountFormat": "Format des montants",
     "amountFormatHint": "Séparateurs affichés pour les montants, y compris pendant la saisie. Les montants enregistrés ne changent pas.",
@@ -788,7 +786,7 @@
     "available": "Sur vos comptes",
     "income": "Reçu",
     "expense": "Dépensé",
-    "saved": "Gardé ce mois : {{percent}} % de ce que vous avez reçu",
+    "saved": "Il vous reste {{percent}} % de vos revenus du mois",
     "savedNoIncome": "Gardé ce mois",
     "spentMore": "Dépensé de plus que reçu ce mois",
     "thisMonth": "Détail du mois",
@@ -799,7 +797,7 @@
     "payReceived": "Paie reçue : {{amount}} le {{date}}",
     "payExpected": "Paie attendue le {{date}}",
     "payLate": "Paie en retard de {{days}} jours",
-    "lastEntry": "Dernière entrée : {{amount}} le {{date}}, {{category}}. C’est votre paie ?",
+    "lastEntry": "Dernière entrée : {{amount}} le {{date}}, {{category}}. C'est votre paie ?",
     "yes": "Oui",
     "no": "Non",
     "addPay": "Ajouter ma paie",
@@ -814,12 +812,12 @@
     "paySetupCategory": "Revenu concerné",
     "paySetupPick": "Choisir…",
     "paySetupHint": "Le cycle commence ce jour-là, et le revenu choisi sert de paie.",
-    "paySetupNoCategory": "Créez d’abord une catégorie de revenu",
+    "paySetupNoCategory": "Créez d'abord une catégorie de revenu",
     "paySetupSave": "Enregistrer",
     "payModeFixed": "Salaire à date fixe",
     "payModeIrregular": "Revenus irréguliers",
     "payModeNone": "Pas de paie à suivre",
-    "payHintIrregular": "Le cycle suit alors le mois calendaire. Ajoutez vos revenus au fil de l’eau.",
+    "payHintIrregular": "Le cycle suit alors le mois calendaire. Ajoutez vos revenus au fil de l'eau.",
     "payHintNone": "Vous pourrez changer cela dans Réglages."
   },
   "accountMenu": {
@@ -850,7 +848,7 @@
     "checkEmail": "Vérifiez votre boîte e-mail pour confirmer votre compte.",
     "suspended": {
       "title": "Compte suspendu",
-      "body": "Votre compte a été suspendu par l’administrateur du service. L’application est bloquée sur cet appareil. Contactez l’administrateur pour plus d’informations."
+      "body": "Votre compte a été suspendu par l'administrateur du service. L'application est bloquée sur cet appareil. Contactez l'administrateur pour plus d'informations."
     },
     "errors": {
       "invalidEmail": "Adresse e-mail invalide.",
