@@ -126,6 +126,26 @@ async function buildRow(database: AppDatabase, entry: OutboxEntry): Promise<Push
   };
 }
 
+/** Code PostgREST d'une fonction introuvable. */
+const FUNCTION_NOT_FOUND = "PGRST202";
+
+/**
+ * Envoie un lot par sync_push_v2. Tant que la migration 0006 n'est pas appliquée (fonction absente), repli
+ * sur l'ancienne sync_push : publier ce client avant la migration ne coupe pas la synchro. Une fois la
+ * migration appliquée, l'ancienne fonction n'existe plus et ce repli ne sert plus.
+ */
+async function sendRows(
+  client: SupabaseClient,
+  rows: PushRow[],
+): Promise<{ error: { code?: string; message?: string } | null }> {
+  const result = await client.rpc("sync_push_v2", {
+    p_records: rows,
+    p_client_version: SYNC_CLIENT_VERSION,
+  });
+  if (result.error?.code !== FUNCTION_NOT_FOUND) return result;
+  return client.rpc("sync_push", { p_records: rows });
+}
+
 /** Envoie la file par lots. Ne retire de la file que les entrées qui n'ont pas changé pendant l'envoi. */
 async function pushOutbox(
   client: SupabaseClient,
@@ -143,10 +163,7 @@ async function pushOutbox(
       else skipped += 1;
     }
     if (rows.length > 0) {
-      const { error } = await client.rpc("sync_push_v2", {
-        p_records: rows,
-        p_client_version: SYNC_CLIENT_VERSION,
-      });
+      const { error } = await sendRows(client, rows);
       if (error) throw classify(error);
       pushed += rows.length;
     }

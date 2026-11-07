@@ -8,7 +8,7 @@ import { SecurityProvider } from "./features/security/SecurityProvider";
 import { AccountProvider } from "./features/account/AccountProvider";
 import { AccountGate } from "./features/account/AccountGate";
 import { ThemeProvider } from "./lib/theme";
-import { listenForInstallPrompt, publishUpdate } from "./lib/pwa";
+import { UPDATE_CHECK_INTERVAL_MS, autoApplyUpdate, listenForInstallPrompt, publishUpdate } from "./lib/pwa";
 import "./i18n";
 import "@fontsource/outfit/latin-400.css";
 import "@fontsource/outfit/latin-500.css";
@@ -16,11 +16,19 @@ import "@fontsource/outfit/latin-600.css";
 import "@fontsource/outfit/latin-700.css";
 import "./index.css";
 
-// Mise à jour : le bandeau « Nouvelle version disponible » propose de recharger (SPEC §5.17).
+// Mise à jour : le bandeau « Nouvelle version disponible » propose de recharger (SPEC §5.17). Sans réponse,
+// la mise à jour s'applique d'elle-même au lancement ou quand l'app passe en arrière-plan (jamais pendant une saisie).
+const launchedAt = Date.now();
 const updateServiceWorker = registerSW({
   immediate: true,
   onNeedRefresh() {
-    publishUpdate(() => updateServiceWorker(true));
+    const apply = () => updateServiceWorker(true);
+    publishUpdate(apply);
+    autoApplyUpdate(apply, { launchedAt });
+  },
+  onRegisteredSW(_url, registration) {
+    if (!registration) return;
+    window.setInterval(() => void registration.update().catch(() => undefined), UPDATE_CHECK_INTERVAL_MS);
   },
 });
 
