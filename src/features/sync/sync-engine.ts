@@ -33,8 +33,15 @@ const PULL_PAGE = 500;
 const WRITE_BATCH = 500;
 const EPOCH = "1970-01-01T00:00:00.000Z";
 
+/**
+ * Version de synchro de ce client, vérifiée par le serveur (sync_push_v2, migration 0006) : une version
+ * plus ancienne que le minimum du serveur ne peut plus rien envoyer. À augmenter avec ce minimum quand une
+ * ancienne version doit être bloquée (par exemple si son comportement risque d'effacer des données).
+ */
+export const SYNC_CLIENT_VERSION = 2;
+
 /** Erreur de synchro, classée pour l'affichage (jamais de message serveur brut dans l'interface). */
-export type SyncErrorCode = "network" | "suspended" | "unknown" | "foreign";
+export type SyncErrorCode = "network" | "suspended" | "unknown" | "foreign" | "outdated";
 
 export class SyncError extends Error {
   readonly code: SyncErrorCode;
@@ -77,6 +84,7 @@ interface PushRow {
 export function classify(error: { code?: string; message?: string } | null): SyncError {
   const message = (error?.message ?? "").toLowerCase();
   if (error?.code === "42501" || message.includes("account suspended")) return new SyncError("suspended");
+  if (message.includes("client outdated")) return new SyncError("outdated");
   if (message.includes("fetch") || message.includes("network")) return new SyncError("network");
   return new SyncError("unknown");
 }
@@ -135,7 +143,10 @@ async function pushOutbox(
       else skipped += 1;
     }
     if (rows.length > 0) {
-      const { error } = await client.rpc("sync_push", { p_records: rows });
+      const { error } = await client.rpc("sync_push_v2", {
+        p_records: rows,
+        p_client_version: SYNC_CLIENT_VERSION,
+      });
       if (error) throw classify(error);
       pushed += rows.length;
     }
@@ -378,6 +389,10 @@ export async function enableSync(
     if (ownerChanged) await database.syncOutbox.clear();
     await enqueueAll(database);
   } else {
+    // Le vidage local ne doit jamais partir vers le serveur comme une suppression de toutes les données :
+    // suivi coupé et file en mémoire abandonnée avant d'effacer (la synchro est réactivée juste après).
+    setSyncTracking(false);
+    discardPending();
     await database.transaction("rw", database.tables, async () => {
       for (const name of SYNCED_TABLES) {
         if (name === "settings") continue;

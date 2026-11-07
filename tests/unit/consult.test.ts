@@ -155,7 +155,7 @@ describe("consultation", () => {
     rpc.mockClear();
     await runSync(client, db);
     await ensureSync(client, ADMIN_ID, db);
-    expect(rpc).not.toHaveBeenCalledWith("sync_push", expect.anything());
+    expect(rpc).not.toHaveBeenCalledWith("sync_push_v2", expect.anything());
     await expect(enableSync(client, ADMIN_ID, "merge", db)).rejects.toThrow();
   });
 

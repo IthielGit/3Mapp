@@ -2,17 +2,25 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AppDatabase } from "../../src/db/database";
 import { discardPending, setSyncTracking } from "../../src/db/sync-tracking";
-import { checkDeviceOwnership, disableSync, enableSync, ensureSync, runSync } from "../../src/features/sync/sync-engine";
+import {
+  SYNC_CLIENT_VERSION,
+  checkDeviceOwnership,
+  classify,
+  disableSync,
+  enableSync,
+  ensureSync,
+  runSync,
+} from "../../src/features/sync/sync-engine";
 import { decodeRecord, encodeRecord } from "../../src/features/sync/sync-records";
 import { DEFAULT_CATEGORIES, defaultCategoryId } from "../../src/features/categories/defaults";
 
 type Row = Record<string, unknown>;
 
 /**
- * Faux serveur sync_records : `sync_push` applique « le plus récent gagne » comme la fonction SQL,
+ * Faux serveur sync_records : `sync_push_v2` applique « le plus récent gagne » comme la fonction SQL,
  * et la lecture renvoie les lignes modifiées après le curseur, comme la requête PostgREST.
  */
-function fakeServer(initial: Row[] = []) {
+function fakeServer(initial: Row[] = [], minClientVersion = 2) {
   const rows = new Map<string, Row>();
   let tick = 0;
   const stamp = () => new Date(Date.parse("2030-01-01T00:00:00.000Z") + ++tick * 1000).toISOString();
@@ -20,7 +28,11 @@ function fakeServer(initial: Row[] = []) {
   const pushes: Row[][] = [];
 
   const client = {
-    rpc: vi.fn(async (_fn: string, args: { p_records: Row[] }) => {
+    rpc: vi.fn(async (fn: string, args: { p_records: Row[]; p_client_version?: number }) => {
+      if (fn !== "sync_push_v2") return { data: null, error: { code: "PGRST202", message: "function not found" } };
+      if ((args.p_client_version ?? 0) < minClientVersion) {
+        return { data: null, error: { code: "P0001", message: "client outdated" } };
+      }
       pushes.push(args.p_records);
       for (const incoming of args.p_records) {
         const key = `${incoming.table_name}|${incoming.record_id}`;
@@ -363,5 +375,53 @@ describe("jamais de fusion entre comptes", () => {
     await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
     await expect(enableSync(server.client, USER, "merge", db)).rejects.toMatchObject({ code: "foreign" });
     expect(server.rows.size).toBe(0);
+  });
+});
+
+describe("version minimale du client", () => {
+  it("le serveur refuse l'envoi d'une version trop ancienne : rien n'est écrit, l'erreur est « outdated »", async () => {
+    const server = fakeServer([], 99);
+    await db.syncState.put({ id: "state", enabled: true, userId: USER });
+    setSyncTracking(true);
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+
+    await expect(runSync(server.client, db)).rejects.toMatchObject({ code: "outdated" });
+    expect(server.rows.size).toBe(0);
+    // La modification reste en file : elle partira après la mise à jour de l'app.
+    expect(await db.syncOutbox.count()).toBe(1);
+    expect((await db.syncState.get("state"))?.lastError).toBe("outdated");
+  });
+
+  it("classify reconnaît le refus du serveur", () => {
+    expect(classify({ code: "P0001", message: "client outdated" }).code).toBe("outdated");
+  });
+
+  it("le client envoie sa version de synchro", async () => {
+    const server = fakeServer();
+    await enableSync(server.client, USER, "merge", db);
+    await db.reconciliations.put(recon("33333333-3333-4333-8333-333333333333", "2026-01-02T00:00:00.000Z"));
+    await runSync(server.client, db);
+    expect(server.client.rpc).toHaveBeenCalledWith(
+      "sync_push_v2",
+      expect.objectContaining({ p_client_version: SYNC_CLIENT_VERSION }),
+    );
+  });
+});
+
+describe("remplacement par les données du compte", () => {
+  it("vider l'appareil n'envoie aucune suppression, même avec le suivi actif", async () => {
+    const id = "33333333-3333-4333-8333-333333333333";
+    const server = fakeServer([
+      { table_name: "reconciliations", record_id: id, updated_at: "2026-01-02T00:00:00.000Z", deleted: false, data: recon(id, "2026-01-02T00:00:00.000Z") },
+    ]);
+    await db.reconciliations.put(recon("44444444-4444-4444-8444-444444444444", "2026-01-03T00:00:00.000Z"));
+    // Suivi déjà actif (synchro lancée plus tôt dans la session).
+    setSyncTracking(true);
+
+    await enableSync(server.client, USER, "remote", db);
+
+    expect(server.pushes.flat().filter((row) => row.deleted)).toHaveLength(0);
+    expect(server.rows.get(`reconciliations|${id}`)?.deleted).toBe(false);
+    expect(await db.reconciliations.get(id)).toBeDefined();
   });
 });
