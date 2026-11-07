@@ -3,11 +3,12 @@ import { useHomeData } from "./useHomeData";
 import { HomeHeader } from "./HomeHeader";
 import { HomeAlerts, StaleWalletBanner } from "./HomeBanners";
 import { CycleHero } from "./CycleHero";
-import { BudgetsSection, RecentSection, UpcomingSection, WalletsSection, WeekChart } from "./HomeSections";
+import { BudgetsSection, RecentSection, UpcomingSection, WalletsSection } from "./HomeSections";
 
 /**
- * Accueil : en-tête, alerte de saisie en retard, carte du mois, alertes, dépenses de la semaine,
- * portefeuilles, échéances, budgets et dernières transactions.
+ * Accueil : en-tête, alerte de saisie en retard, carte du mois, alertes, dernières transactions
+ * (juste sous la carte, pour retrouver une saisie), portefeuilles avec virement et réconciliation,
+ * échéances, budgets. Le graphique des 7 jours vit dans Visualisation.
  * Les données viennent de useHomeData ; chaque bloc vit dans son propre composant.
  */
 export function HomePage() {
@@ -30,15 +31,15 @@ export function HomePage() {
         monthStartDay={data.monthStartDay}
       />
       <HomeAlerts backupState={data.backupState} pendingCount={data.pendingCount} />
-      <WeekChart
-        weekExpenses={data.weekExpenses}
-        weekTotalMinor={data.weekTotalMinor}
-        baseCurrency={data.baseCurrency}
+      <RecentSection
+        recent={data.recent}
+        categoryById={data.categoryById}
+        walletName={data.walletName}
+        transactionCount={data.transactions.length}
       />
-      <WalletsSection active={data.active} balances={data.balances} />
+      <WalletsSection active={data.active} balances={data.balances} stale={data.stale} />
       <UpcomingSection upcoming={data.upcoming} walletName={data.walletName} />
-      <BudgetsSection budgetRows={data.budgetRows} />
-      <RecentSection recent={data.recent} categoryById={data.categoryById} walletName={data.walletName} />
+      <BudgetsSection budgetRows={data.budgetRows} transactionCount={data.transactions.length} />
     </section>
   );
 }

@@ -18,7 +18,7 @@ const EMPTY: never[] = [];
 const EMPTY_DEBTS: never[] = [];
 const EMPTY_PAYMENTS: never[] = [];
 const EMPTY_RECONCILIATIONS: never[] = [];
-const PREVIEW = 2;
+const PREVIEW = 4;
 
 /** Les N derniers jours (AAAA-MM-JJ), du plus ancien au plus récent. */
 function lastDays(count: number): string[] {

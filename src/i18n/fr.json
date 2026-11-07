@@ -523,7 +523,22 @@
     "budgetLeft": "Reste {{amount}}",
     "budgetOver": "Dépassé de {{amount}}",
     "netThisMonth": "Ce qui vous reste ce mois-ci",
-    "nextDue": "Prochaine échéance"
+    "nextDue": "Prochaine échéance",
+    "layout": {
+      "seeAll": "Tout voir",
+      "seeAllTransactions": "Tout voir : transactions",
+      "seeAllWallets": "Tout voir : portefeuilles",
+      "seeAllUpcoming": "Tout voir : échéances",
+      "seeAllBudgets": "Tout voir : budgets",
+      "moreWallets_one": "Voir le portefeuille",
+      "moreWallets_other": "Voir les {{count}} portefeuilles",
+      "transfer": "Virement",
+      "reconcile": "Réconcilier",
+      "reconcileWallet": "Réconcilier {{name}}",
+      "reconcileChoose": "Réconcilier : choisir un portefeuille",
+      "staleMany_one": "Aucune saisie depuis {{days}} jours sur {{name}}, et {{count}} autre portefeuille en retard.",
+      "staleMany_other": "Aucune saisie depuis {{days}} jours sur {{name}}, et {{count}} autres portefeuilles en retard."
+    }
   },
   "stats": {
     "title": "Analyses",
