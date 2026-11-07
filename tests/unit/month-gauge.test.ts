@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { gaugeGeometry, remainingShare } from "../../src/domain/month-gauge";
+import { gaugeGeometry, keptPercent, remainingShare } from "../../src/domain/month-gauge";
+
+describe("keptPercent", () => {
+  it("arrondit la part gardée en pourcentage", () => {
+    expect(keptPercent(1_000_000, 320_011)).toBe(68);
+  });
+
+  it("vaut 0 quand on a dépensé plus que reçu", () => {
+    expect(keptPercent(1_000_000, 1_200_000)).toBe(0);
+  });
+
+  it("sans revenu : null", () => {
+    expect(keptPercent(0, 0)).toBeNull();
+  });
+});
 
 describe("remainingShare", () => {
   it("donne la part du revenu qui reste", () => {

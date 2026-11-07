@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import type { PayStatus } from "../../domain/cycle";
 import { homeNextStep } from "../../domain/homeNextStep";
-import { gaugeGeometry, remainingShare } from "../../domain/month-gauge";
+import { gaugeGeometry, keptPercent, remainingShare } from "../../domain/month-gauge";
 import { db } from "../../db/database";
 import { formatMoney } from "../../lib/money";
 import { heroAmountClass } from "../../lib/amount-fit";
@@ -212,6 +212,7 @@ export function CycleHero({
   }
 
   const monthGauge = gaugeGeometry(remainingShare(cycle.income, cycle.expense));
+  const keptShare = keptPercent(cycle.income, cycle.expense);
 
   const payContent =
     step === "pay" || step === "paySuggestion"
@@ -285,11 +286,19 @@ export function CycleHero({
               ) : null}
               {monthGauge.dot ? <circle cx={monthGauge.dot.x} cy={monthGauge.dot.y} r="3.5" fill="currentColor" /> : null}
             </svg>
-            <p className="text-sm">
-              {cycle.saved >= 0
-                ? t("cycle.saved", { amount: formatMoney(cycle.saved, baseCurrency) })
-                : t("cycle.spentMore", { amount: formatMoney(-cycle.saved, baseCurrency) })}
-            </p>
+            {/* Le montant d'abord, puis ce qu'il veut dire ; le pourcentage relie le texte à la jauge. */}
+            <div className="flex min-w-0 flex-col">
+              <p className="text-lg font-semibold" data-amount>
+                {formatMoney(Math.abs(cycle.saved), baseCurrency)}
+              </p>
+              <p className="text-xs">
+                {cycle.saved < 0
+                  ? t("cycle.spentMore")
+                  : keptShare === null
+                    ? t("cycle.savedNoIncome")
+                    : t("cycle.saved", { percent: keptShare })}
+              </p>
+            </div>
           </div>
         </div>
       ) : null}
@@ -324,7 +333,8 @@ export function CycleHero({
               <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </summary>
-          <p className="text-xs">
+          {/* Collée au titre : la zone tactile du lien « Modifier » fait déjà la marge. */}
+          <p className="-mt-3 text-xs">
             {countedList.length <= 2
               ? t("cycle.accounts", { names: countedNames || "—" })
               : t("cycle.accountsCount", { count: countedList.length })}{" "}

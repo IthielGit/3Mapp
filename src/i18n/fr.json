@@ -351,8 +351,8 @@
     "emptyTitle": "Aucun budget pour l’instant",
     "emptyHint": "Un budget fixe une somme par catégorie et vous montre ce qu’il reste.",
     "createFirst": "Créer mon premier budget",
-    "showDetails": "Afficher les détails",
-    "hideDetails": "Masquer les détails"
+    "showDetails": "Détails",
+    "hideDetails": "Masquer"
   },
   "goals": {
     "title": "Objectifs d'épargne",
@@ -788,8 +788,9 @@
     "available": "Sur vos comptes",
     "income": "Reçu",
     "expense": "Dépensé",
-    "saved": "Ce mois, reçu − dépensé : {{amount}}",
-    "spentMore": "Dépensé plus que reçu : {{amount}}",
+    "saved": "Gardé ce mois : {{percent}} % de ce que vous avez reçu",
+    "savedNoIncome": "Gardé ce mois",
+    "spentMore": "Dépensé de plus que reçu ce mois",
     "thisMonth": "Détail du mois",
     "accounts": "Comptes pris en compte : {{names}}",
     "editAccounts": "Modifier",

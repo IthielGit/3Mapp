@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { db } from "../../db/database";
-import { buttonPrimary, buttonSecondary } from "../../components/FormControls";
+import { buttonPrimary } from "../../components/FormControls";
 import { Icon } from "../../components/Icon";
 import { budgetStates } from "../../domain/budget";
 import { formatMoney } from "../../lib/money";
@@ -18,7 +18,15 @@ const EMPTY: never[] = [];
 export function BudgetsPage() {
   const { t } = useTranslation();
   const settings = usePeriodSettings();
-  const [extended, setExtended] = useState(false);
+  // Budgets dont le détail (catégories, report) est déplié, un par un.
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(() => new Set());
+  const toggle = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   const [now] = useState(() => new Date());
   const budgets = useLiveQuery(() => db.budgets.toArray(), []) ?? EMPTY;
   const transactions = useLiveQuery(() => db.transactions.toArray(), []) ?? EMPTY;
@@ -35,14 +43,12 @@ export function BudgetsPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex items-center justify-between gap-2">
+      {/* Collé en haut pendant le défilement ; son fond couvre la zone de l'encoche. */}
+      <header className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex min-h-11 items-center justify-between gap-2 bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
         <PageTitle className="text-2xl font-semibold">{t("budgets.title")}</PageTitle>
-        {active.length > 0 ? (
-          <Link to="/budgets/new" className={buttonPrimary + " inline-flex items-center"}>
-            {t("common.add")}
-          </Link>
-        ) : null}
-        <AccountMenu />
+        <div className="flex shrink-0 items-center gap-2">
+          <AccountMenu />
+        </div>
       </header>
 
       {active.length === 0 ? (
@@ -55,18 +61,7 @@ export function BudgetsPage() {
             {t("budgets.createFirst")}
           </Link>
         </div>
-      ) : (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className={buttonSecondary}
-            aria-pressed={extended}
-            onClick={() => setExtended((e) => !e)}
-          >
-            {extended ? t("budgets.hideDetails") : t("budgets.showDetails")}
-          </button>
-        </div>
-      )}
+      ) : null}
 
       <ul className="flex flex-col gap-3">
         {active.map((b) => {
@@ -128,8 +123,8 @@ export function BudgetsPage() {
                 ) : null}
               </Link>
 
-              {extended ? (
-                <p className="text-xs text-neutral-600 dark:text-muted">
+              {expanded.has(b.id) ? (
+                <p id={`budget-details-${b.id}`} className="text-xs text-neutral-600 dark:text-muted">
                   {b.categoryIds
                     .map((id) => names.get(id))
                     .filter(Boolean)
@@ -137,10 +132,41 @@ export function BudgetsPage() {
                   {b.rollover ? ` · ${t("budgets.rolloverOn")}` : ""}
                 </p>
               ) : null}
+
+              {/* Bouton discret : petit visuellement, zone tactile de 44 px gardée par les marges négatives. */}
+              <button
+                type="button"
+                className="-my-3 -mr-2 inline-flex min-h-11 items-center gap-1 self-end rounded-lg px-2 text-xs text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/40 dark:text-muted dark:hover:text-fg"
+                aria-expanded={expanded.has(b.id)}
+                aria-controls={`budget-details-${b.id}`}
+                onClick={() => toggle(b.id)}
+              >
+                {expanded.has(b.id) ? t("budgets.hideDetails") : t("budgets.showDetails")}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  className={`h-4 w-4 transition-transform ${expanded.has(b.id) ? "rotate-180" : ""}`}
+                >
+                  <path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </li>
           );
         })}
       </ul>
+
+      {/* Ajout en fin de liste : une carte pointillée, comme l'état vide. */}
+      {active.length > 0 ? (
+        <Link
+          to="/budgets/new"
+          className="flex min-h-11 items-center justify-center gap-2 rounded-card border border-dashed border-neutral-500 p-4 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/40 dark:border-white/15 dark:text-brand-dark dark:hover:bg-white/10"
+        >
+          <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4">
+            <path d="M10 4.5v11M4.5 10h11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          {t("budgets.newTitle")}
+        </Link>
+      ) : null}
     </section>
   );
 }

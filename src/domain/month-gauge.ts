@@ -10,6 +10,12 @@ export function remainingShare(income: number, expense: number): number {
   return Math.min(1, Math.max(0, share));
 }
 
+/** Part restante du revenu, en pourcentage arrondi. Sans revenu : null (rien à rapporter). */
+export function keptPercent(income: number, expense: number): number | null {
+  if (income <= 0) return null;
+  return Math.round(remainingShare(income, expense) * 100);
+}
+
 export interface GaugePoint {
   x: number;
   y: number;

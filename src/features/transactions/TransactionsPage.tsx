@@ -277,7 +277,7 @@ export function TransactionsPage() {
   return (
     <section className="flex flex-col gap-4">
       {/* Haut de page collé : titre, recherche, compte et résumé restent visibles pendant le défilement de la liste. */}
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-col gap-2 bg-canvas px-4 pb-2 pt-4 dark:bg-page">
+      <div className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex flex-col gap-2 bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
         <header className="flex items-center justify-between gap-2">
           <h1 className="text-xl font-semibold text-ink dark:text-fg">{t("transactions.title")}</h1>
           <AccountMenu />

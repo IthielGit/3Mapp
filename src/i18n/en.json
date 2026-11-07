@@ -351,8 +351,8 @@
     "emptyTitle": "No budget yet",
     "emptyHint": "A budget sets an amount per category and shows what is left.",
     "createFirst": "Create my first budget",
-    "showDetails": "Show details",
-    "hideDetails": "Hide details"
+    "showDetails": "Details",
+    "hideDetails": "Hide"
   },
   "goals": {
     "title": "Savings goals",
@@ -788,8 +788,9 @@
     "available": "In your accounts",
     "income": "Received",
     "expense": "Spent",
-    "saved": "This month, received − spent: {{amount}}",
-    "spentMore": "Spent more than received: {{amount}}",
+    "saved": "Kept this month: {{percent}}% of what you received",
+    "savedNoIncome": "Kept this month",
+    "spentMore": "Spent more than you received this month",
     "thisMonth": "Month details",
     "accounts": "Accounts counted: {{names}}",
     "editAccounts": "Edit",

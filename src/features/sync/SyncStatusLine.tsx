@@ -125,13 +125,7 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
       ) : (
         <span
           aria-hidden="true"
-          className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-            isError
-              ? "bg-expense dark:bg-expense-dark"
-              : line.kind === "offline" || line.kind === "pending"
-                ? "bg-neutral-500 dark:bg-muted"
-                : "bg-brand-500"
-          }`}
+          className={`h-1.5 w-1.5 shrink-0 rounded-full ${inlineDotClass(line.kind)}`}
         />
       )}
       <p
@@ -141,7 +135,7 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
             : inline
               ? "text-neutral-600 opacity-85 dark:text-muted"
               : line.kind === "upToDate"
-              ? "text-neutral-600 opacity-50 dark:text-muted"
+              ? "text-neutral-600 opacity-65 dark:text-muted"
               : "text-neutral-600 dark:text-muted"
         }
         data-testid="sync-status"
