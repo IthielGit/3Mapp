@@ -156,7 +156,8 @@ export function AmountInput({ expression, onExpressionChange, currency, label, o
           <input
             id="amount-expression"
             ref={inputRef}
-            inputMode="decimal"
+            // Pas de clavier système : le pavé ci-dessous (et le clavier physique) saisit le montant.
+            inputMode="none"
             autoComplete="off"
             placeholder="0"
             // Le curseur est dessiné par la superposition ci-dessous : celui du navigateur est masqué.
