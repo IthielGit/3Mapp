@@ -13,7 +13,7 @@ export function HomeHeader() {
   const { t } = useTranslation();
   const identity = useAccountIdentity();
   return (
-    <header className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex items-start justify-between gap-3 bg-canvas px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
+    <header className="sticky top-0 z-20 -mx-4 -mt-[max(1rem,env(safe-area-inset-top))] flex items-start justify-between gap-3 bg-canvas px-4 pb-5 pt-[max(1rem,env(safe-area-inset-top))] dark:bg-page">
       <div className="flex min-w-0 items-center gap-3">
         <BrandMark size={44} className="shrink-0 rounded-xl shadow-sm" />
         <div className="flex min-w-[6rem] flex-col">

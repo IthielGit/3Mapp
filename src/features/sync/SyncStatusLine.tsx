@@ -133,7 +133,7 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
           isError
             ? "whitespace-normal text-expense dark:text-expense-dark"
             : inline
-              ? "text-neutral-600 opacity-85 dark:text-muted"
+              ? "text-neutral-600 opacity-65 dark:text-muted"
               : line.kind === "upToDate"
               ? "text-neutral-600 opacity-65 dark:text-muted"
               : "text-neutral-600 dark:text-muted"
