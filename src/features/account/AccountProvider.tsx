@@ -34,6 +34,9 @@ export type AccountState =
 
 const AccountContext = createContext<AccountState>({ status: "unconfigured" });
 
+/** Délai maximal pour relire la session au démarrage avant de basculer sur l'identité mémorisée. */
+const SESSION_RESTORE_TIMEOUT_MS = 5000;
+
 /** Erreur de réseau (ou navigateur hors ligne) : la session n'est pas remise en cause. */
 function isTransient(error: AuthError | null): boolean {
   if (typeof navigator !== "undefined" && navigator.onLine === false) return true;
@@ -90,9 +93,20 @@ export function AccountProvider({
       setSession(null);
     };
     const restore = () => {
-      client.auth
-        .getSession()
-        .then(({ data, error }) => apply(data.session, isTransient(error)))
+      // Hors ligne (réseau instable, sans erreur immédiate) : getSession() peut tenter de renouveler
+      // le jeton et rester bloqué longtemps. Au-delà du délai, on bascule sur l'identité mémorisée
+      // comme pour une erreur réseau ; si la session finit par répondre, elle prend le relais normalement.
+      const timeout = new Promise<"timeout">((resolve) =>
+        setTimeout(() => resolve("timeout"), SESSION_RESTORE_TIMEOUT_MS),
+      );
+      void Promise.race([client.auth.getSession(), timeout])
+        .then((result) => {
+          if (result === "timeout") {
+            apply(null, true);
+            return;
+          }
+          apply(result.data.session, isTransient(result.error));
+        })
         .catch(() => apply(null, true));
     };
     restore();
