@@ -34,8 +34,8 @@ export type AccountState =
 
 const AccountContext = createContext<AccountState>({ status: "unconfigured" });
 
-/** Délai maximal pour relire la session au démarrage avant de basculer sur l'identité mémorisée. */
-const SESSION_RESTORE_TIMEOUT_MS = 5000;
+/** Délai avant d'ouvrir l'app avec l'identité mémorisée pendant que la session est relue. */
+const SESSION_RESTORE_TIMEOUT_MS = 1000;
 
 /** Erreur de réseau (ou navigateur hors ligne) : la session n'est pas remise en cause. */
 function isTransient(error: AuthError | null): boolean {
@@ -73,6 +73,7 @@ export function AccountProvider({
   useEffect(() => {
     if (!client) return;
     let active = true;
+    let restored = false;
     const apply = (next: Session | null, transient: boolean) => {
       if (!active) return;
       if (next) {
@@ -98,25 +99,27 @@ export function AccountProvider({
         apply(null, true);
         return;
       }
-      // Réseau instable : au-delà du délai, on bascule sur l'identité mémorisée comme pour une erreur
-      // réseau ; si la session finit par répondre, elle prend le relais normalement.
-      const timeout = new Promise<"timeout">((resolve) =>
-        setTimeout(() => resolve("timeout"), SESSION_RESTORE_TIMEOUT_MS),
-      );
-      void Promise.race([client.auth.getSession(), timeout])
-        .then((result) => {
-          if (result === "timeout") {
-            apply(null, true);
-            return;
-          }
-          apply(result.data.session, isTransient(result.error));
+      // Réseau lent ou sans accès : après un court délai, on ouvre avec l'identité mémorisée.
+      // La session reste attendue : si elle répond plus tard, elle remplace cet état.
+      window.setTimeout(() => {
+        if (!restored && readCachedUser()) apply(null, true);
+      }, SESSION_RESTORE_TIMEOUT_MS);
+      client.auth
+        .getSession()
+        .then(({ data, error }) => {
+          restored = true;
+          apply(data.session, isTransient(error));
         })
-        .catch(() => apply(null, true));
+        .catch(() => {
+          restored = true;
+          apply(null, true);
+        });
     };
     restore();
     const { data } = client.auth.onAuthStateChange((event, next) => {
       if (!active) return;
       if (next) {
+        restored = true;
         writeCachedUser(next.user);
         setOfflineUser(undefined);
         setSession(next);
