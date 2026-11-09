@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { buttonSecondary } from "../../components/FormControls";
+import { LoadingScreen } from "../../components/LoadingScreen";
 import { SyncBootstrap } from "../sync/SyncBootstrap";
 import { AuthForm } from "./AuthForm";
 import { useAccount } from "./AccountProvider";
@@ -18,11 +19,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState(false);
 
   if (account.status === "loading") {
-    return (
-      <div aria-busy="true" className="min-h-screen" role="status">
-        <span className="sr-only">{t("account.loading")}</span>
-      </div>
-    );
+    return <LoadingScreen label={t("account.loading")} />;
   }
 
   if (account.status === "unconfigured") {

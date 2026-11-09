@@ -93,9 +93,13 @@ export function AccountProvider({
       setSession(null);
     };
     const restore = () => {
-      // Hors ligne (réseau instable, sans erreur immédiate) : getSession() peut tenter de renouveler
-      // le jeton et rester bloqué longtemps. Au-delà du délai, on bascule sur l'identité mémorisée
-      // comme pour une erreur réseau ; si la session finit par répondre, elle prend le relais normalement.
+      // Hors ligne : inutile d'attendre getSession(), qui peut tenter de renouveler le jeton.
+      if (navigator.onLine === false) {
+        apply(null, true);
+        return;
+      }
+      // Réseau instable : au-delà du délai, on bascule sur l'identité mémorisée comme pour une erreur
+      // réseau ; si la session finit par répondre, elle prend le relais normalement.
       const timeout = new Promise<"timeout">((resolve) =>
         setTimeout(() => resolve("timeout"), SESSION_RESTORE_TIMEOUT_MS),
       );
