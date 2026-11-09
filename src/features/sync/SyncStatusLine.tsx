@@ -116,7 +116,7 @@ export function SyncStatusLine({ inline = false }: { inline?: boolean } = {}) {
     <div
       className={
         inline
-          ? "flex shrink-0 items-center justify-end gap-1.5 whitespace-nowrap text-right text-[11px]"
+          ? "flex max-w-[11rem] shrink-0 items-center justify-end gap-1.5 text-right text-[11px]"
           : "flex min-h-5 items-center gap-2 text-xs font-medium"
       }
     >
