@@ -8,6 +8,7 @@ import {
   signInWithEmail,
   signUpWithEmail,
   sendPasswordReset,
+  signInWithGoogle,
 } from "../../src/features/account/account-service";
 
 function fakeClient(overrides: Partial<Record<string, unknown>> = {}) {
@@ -113,5 +114,14 @@ describe("connexion et réinitialisation", () => {
     expect(auth.resetPasswordForEmail).not.toHaveBeenCalled();
     expect(await sendPasswordReset(client, "a@b.be", "r")).toEqual({ ok: true });
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith("a@b.be", { redirectTo: "r" });
+  });
+
+  it("connexion Google : force le choix du compte (prompt select_account)", async () => {
+    const { client, auth } = fakeClient();
+    expect(await signInWithGoogle(client, "https://app/")).toEqual({ ok: true });
+    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: { redirectTo: "https://app/", queryParams: { prompt: "select_account" } },
+    });
   });
 });
