@@ -72,11 +72,14 @@ export async function signInWithEmail(
   return error ? { ok: false, code: mapAuthError(error) } : { ok: true };
 }
 
-/** Lance la connexion Google (redirection). Le résultat arrive au retour sur l'app. */
+/**
+ * Lance la connexion Google (redirection). Le résultat arrive au retour sur l'app.
+ * `prompt: select_account` force le choix du compte : sans lui, Google réutilise le dernier compte vu sur le téléphone.
+ */
 export async function signInWithGoogle(client: SupabaseClient, redirectTo: string): Promise<AccountResult> {
   const { error } = await client.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo },
+    options: { redirectTo, queryParams: { prompt: "select_account" } },
   });
   return error ? { ok: false, code: mapAuthError(error) } : { ok: true };
 }
