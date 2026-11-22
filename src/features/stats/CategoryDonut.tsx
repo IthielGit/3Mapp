@@ -35,6 +35,11 @@ export function CategoryDonut({ items, fmt, onOpen }: CategoryDonutProps) {
   function open(index: number) {
     const item = items[index];
     if (!item) return;
+    // Retoucher la part déjà choisie la désélectionne, sans rouvrir la feuille.
+    if (selected === index) {
+      setSelected(null);
+      return;
+    }
     setSelected(index);
     onOpen(item.key);
   }
@@ -92,6 +97,7 @@ export function CategoryDonut({ items, fmt, onOpen }: CategoryDonutProps) {
             <button
               type="button"
               aria-haspopup="dialog"
+              aria-pressed={selected === i}
               onClick={() => open(i)}
               className={`flex min-h-[52px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors ${
                 selected === i ? "bg-white dark:bg-raised" : ""
