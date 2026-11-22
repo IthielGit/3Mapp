@@ -11,6 +11,7 @@ import {
 import {
   balanceEvolution,
   bucketTotals,
+  categoryExpenses,
   expenseByCategory,
   periodSummary,
   topExpenses,
@@ -128,6 +129,19 @@ describe("résumé de période (SPEC §6)", () => {
     expect(slices.map((s) => s.name)).toEqual(["Alimentation", "Sans catégorie"]);
     expect(slices[0]?.share).toBe(75);
     expect(slices[1]?.share).toBe(25);
+  });
+
+  it("dépenses d'une catégorie : mêmes lignes que la part, plus récentes d'abord", () => {
+    const list = [
+      tx({ type: "expense", amount: 300, categoryId: C, date: at(2026, 1, 2) }),
+      tx({ type: "expense", amount: 200, categoryId: C, date: at(2026, 1, 5) }),
+      tx({ type: "income", amount: 900, categoryId: C, date: at(2026, 1, 3) }),
+      tx({ type: "expense", amount: 50, categoryId: C, status: "pending", date: at(2026, 1, 4) }),
+      tx({ type: "expense", amount: 100, date: at(2026, 1, 3) }),
+      tx({ type: "adjustment", amount: -40, date: at(2026, 1, 6) }),
+    ];
+    expect(categoryExpenses(list, C).map((t) => t.amount)).toEqual([200, 300]);
+    expect(categoryExpenses(list, null).map((t) => t.amount)).toEqual([-40, 100]);
   });
 
   it("top 10 des dépenses", () => {

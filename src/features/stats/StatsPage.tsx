@@ -23,6 +23,7 @@ import { db } from "../../db/database";
 import {
   balanceEvolution,
   bucketTotals,
+  categoryExpenses,
   expenseByCategory,
   periodSummary,
   topExpenses,
@@ -91,6 +92,8 @@ export function StatsPage() {
   const [walletFilter, setWalletFilter] = useState<string | undefined>(undefined);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [savingsMonths, setSavingsMonths] = useState<3 | 6 | 12>(6);
+  /** Catégorie dont on affiche les opérations ("" = sans catégorie) ; undefined = feuille fermée. */
+  const [openCategory, setOpenCategory] = useState<string | undefined>(undefined);
 
   const period = currentPeriod(state, settings);
   const previous = previousPeriod(period, state.kind, settings);
@@ -236,20 +239,17 @@ export function StatsPage() {
   const forecastMinor = Math.round(monthNets.slice(0, 3).reduce((sum, n) => sum + n, 0) / 3);
 
   const categoryData = slices.map((s) => ({ name: s.name, value: toMajor(s.amount) }));
-  // Nombre d'opérations par catégorie, pour la répartition en anneau.
-  const operationCounts = new Map<string, number>();
-  for (const tx of inPeriod) {
-    if (tx.type !== "expense" || tx.status !== "posted") continue;
-    const key = tx.categoryId ?? "";
-    operationCounts.set(key, (operationCounts.get(key) ?? 0) + 1);
-  }
+  // Opérations de chaque part : même règle que le graphique, donc le compte correspond à la liste.
   const categoryItems = slices.map((s) => ({
     key: s.categoryId ?? "",
     name: s.name,
     value: toMajor(s.amount),
     share: s.share,
-    count: operationCounts.get(s.categoryId ?? "") ?? 0,
+    count: categoryExpenses(inPeriod, s.categoryId).length,
   }));
+  const openSlice =
+    openCategory === undefined ? undefined : slices.find((s) => (s.categoryId ?? "") === openCategory);
+  const openTransactions = openSlice ? categoryExpenses(inPeriod, openSlice.categoryId) : EMPTY;
   const top = topExpenses(inPeriod, 10);
   const activeWallets = wallets.filter((w) => !w.archived && w.currency === baseCurrency);
 
@@ -500,7 +500,7 @@ export function StatsPage() {
             {t("stats.noExpenses")}
           </p>
         ) : dataset === "categories" && repr === "donut" ? (
-          <CategoryDonut items={categoryItems} fmt={fmt} />
+          <CategoryDonut items={categoryItems} fmt={fmt} onOpen={setOpenCategory} />
         ) : (
           <div className="h-64" role="img" aria-labelledby="stats-chart-title">
             <ResponsiveContainer width="100%" height="100%">
@@ -749,6 +749,49 @@ export function StatsPage() {
           </tbody>
         </table>
       </section>
+
+      {/* Opérations de la catégorie touchée dans le graphique (période et portefeuille en cours). */}
+      <BottomSheet
+        open={openSlice !== undefined}
+        title={openSlice?.name ?? ""}
+        onClose={() => setOpenCategory(undefined)}
+      >
+        {openSlice ? (
+          <div className="flex flex-col gap-3">
+            <p className="text-sm text-neutral-600 dark:text-muted">
+              {t("stats.categorySheetSummary", {
+                count: openTransactions.length,
+                amount: formatMoney(openSlice.amount, baseCurrency),
+              })}
+            </p>
+            <ul className="flex flex-col divide-y divide-neutral-200 dark:divide-white/10">
+              {openTransactions.map((tx) => (
+                <li key={tx.id}>
+                  <Link
+                    to={`/transactions/${tx.id}`}
+                    className="flex min-h-[52px] items-center gap-3 py-2"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium text-ink dark:text-fg">
+                        {tx.memo || openSlice.name}
+                      </span>
+                      <span className="block text-xs text-neutral-600 dark:text-muted">
+                        {format(new Date(tx.date), "dd/MM/yyyy")} · {walletName.get(tx.walletId) ?? ""}
+                      </span>
+                    </span>
+                    <span
+                      className="whitespace-nowrap font-medium tabular-nums text-expense dark:text-expense-dark"
+                      data-amount
+                    >
+                      {formatMoney(countedAmount(tx), tx.currency)}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </BottomSheet>
 
       <BottomSheet
         open={filtersOpen}
