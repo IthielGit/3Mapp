@@ -631,7 +631,8 @@
     },
     "currentBalanceHint": "Argent dans vos portefeuilles",
     "donutTotal": "Total des dépenses",
-    "donutOps": "{{count}} opération(s)"
+    "donutOps": "{{count}} opération(s)",
+    "categorySheetSummary": "{{count}} opération(s) · {{amount}}"
   },
   "importExport": {
     "title": "Import / Export",

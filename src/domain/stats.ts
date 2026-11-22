@@ -73,6 +73,21 @@ export function expenseByCategory(
     .sort((a, b) => b.amount - a.amount);
 }
 
+/**
+ * Dépenses d'une catégorie (null = sans catégorie), de la plus récente à la plus ancienne.
+ * Même règle que `expenseByCategory` : la liste correspond exactement à la part du graphique.
+ */
+export function categoryExpenses(
+  transactions: readonly Transaction[],
+  categoryId: string | null,
+): Transaction[] {
+  return transactions
+    .filter(
+      (t) => isSpending(t) && t.status === "posted" && (t.categoryId ?? null) === categoryId,
+    )
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export interface Bucket {
   key: string;
   income: Minor;

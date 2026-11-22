@@ -17,20 +17,26 @@ export interface DonutItem {
 interface CategoryDonutProps {
   items: DonutItem[];
   fmt: (value: number) => string;
+  /** Ouvre la liste des opérations de la catégorie touchée (clé de l'élément). */
+  onOpen: (key: string) => void;
 }
 
 /**
  * Répartition des dépenses par catégorie : anneau coloré, centre qui affiche le total ou la
- * catégorie choisie, et liste cliquable. Toucher une ligne ou une part la met en évidence.
+ * catégorie choisie, et liste cliquable. Toucher une part ou une ligne la met en évidence et
+ * ouvre la liste de ses opérations.
  */
-export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
+export function CategoryDonut({ items, fmt, onOpen }: CategoryDonutProps) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<number | null>(null);
   const total = items.reduce((sum, item) => sum + item.value, 0);
   const current = selected === null ? undefined : items[selected];
 
-  function toggle(index: number) {
-    setSelected((prev) => (prev === index ? null : index));
+  function open(index: number) {
+    const item = items[index];
+    if (!item) return;
+    setSelected(index);
+    onOpen(item.key);
   }
 
   return (
@@ -57,7 +63,8 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
               cornerRadius={6}
               stroke="none"
               isAnimationActive={false}
-              onClick={(_data, index) => toggle(index)}
+              onClick={(_data, index) => open(index)}
+              className="cursor-pointer"
             >
               {items.map((item, i) => (
                 <Cell
@@ -84,8 +91,8 @@ export function CategoryDonut({ items, fmt }: CategoryDonutProps) {
           <li key={item.key}>
             <button
               type="button"
-              aria-pressed={selected === i}
-              onClick={() => toggle(i)}
+              aria-haspopup="dialog"
+              onClick={() => open(i)}
               className={`flex min-h-[52px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors ${
                 selected === i ? "bg-white dark:bg-raised" : ""
               }`}
