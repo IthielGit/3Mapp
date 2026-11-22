@@ -7,6 +7,7 @@ import i18n from "../../i18n";
 import { db } from "../../db/database";
 import { Field, inputClass } from "../../components/FormControls";
 import { accountingMonth } from "../../domain/period";
+import { resolveSourceWalletId } from "../../domain/default-wallet";
 import { byName } from "../../lib/compare";
 import { updatePreferences } from "./preferences-service";
 import { AMOUNT_FORMATS, formatMoney, type AmountFormat } from "../../lib/money";
@@ -22,6 +23,7 @@ export function PreferencesSection() {
   const { t } = useTranslation();
   const settings = useLiveQuery(() => db.settings.toCollection().first(), []);
   const allCategories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
+  const wallets = useLiveQuery(() => db.wallets.orderBy("sortOrder").toArray(), []) ?? [];
   const [message, setMessage] = useState<string | undefined>();
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -45,6 +47,14 @@ export function PreferencesSection() {
     if (!(await askConfirm({ message: t("prefs.monthStartConfirm"), danger: false }))) return;
     await change({ monthStartDay: day });
   }
+
+  // Portefeuille proposé en premier à la saisie ; un réglage périmé (archivé, supprimé) retombe sur le premier.
+  const activeWallets = wallets.filter((w) => !w.archived);
+  const defaultWalletId = resolveSourceWalletId({
+    selected: "",
+    defaultWalletId: settings.defaultWalletId,
+    activeWalletIds: activeWallets.map((w) => w.id),
+  });
 
   const locale = i18n.language.startsWith("en") ? enUS : fr;
   const payOnFriday = settings.payOnFriday !== false;
@@ -96,6 +106,27 @@ export function PreferencesSection() {
             <option value="en">{t("prefs.languageEn")}</option>
           </select>
         </Field>
+
+        {activeWallets.length > 0 ? (
+          <>
+            <Field label={t("prefs.defaultWallet")}>
+              <select
+                className={inputClass}
+                value={defaultWalletId}
+                onChange={(e) => void change({ defaultWalletId: e.target.value })}
+              >
+                {activeWallets.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <p className="-mt-2 text-sm text-neutral-600 dark:text-muted">
+              {t("prefs.defaultWalletHint")}
+            </p>
+          </>
+        ) : null}
 
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-1 text-sm font-medium">{t("pages.more.theme")}</legend>

@@ -103,3 +103,12 @@ describe("préférences", () => {
     await expect(updatePreferences({ reminderTime: "9h" }, db)).rejects.toThrow();
   });
 });
+
+describe("portefeuille par défaut", () => {
+  it("se change dans les préférences et se relit", async () => {
+    const other = crypto.randomUUID();
+    const saved = await updatePreferences({ defaultWalletId: other }, db);
+    expect(saved.defaultWalletId).toBe(other);
+    expect((await db.settings.toArray())[0]?.defaultWalletId).toBe(other);
+  });
+});
