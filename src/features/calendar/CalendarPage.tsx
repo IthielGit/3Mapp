@@ -17,6 +17,7 @@ import { usePeriodSettings } from "../stats/period-state";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { askConfirm } from "../../components/confirm-service";
+import { useTransactionMenu } from "../transactions/TransactionActionsMenu";
 
 const EMPTY: never[] = [];
 
@@ -72,6 +73,7 @@ export function CalendarPage() {
     ),
   );
   const dayGroup = byDay.get(selected);
+  const txMenu = useTransactionMenu();
   const openTx = openId ? inBase.find((tx) => tx.id === openId) : undefined;
 
   return (
@@ -208,12 +210,14 @@ export function CalendarPage() {
                   category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
                   walletName={(id) => walletName.get(id ?? "") ?? ""}
                   onOpen={() => setOpenId(tx.id)}
+                  onLongPress={(title) => txMenu.open(tx, title)}
                 />
               </li>
             ))}
           </ul>
         )}
       </section>
+      {txMenu.menu}
       {openTx ? (
         <TransactionDetailSheet
           transaction={openTx}

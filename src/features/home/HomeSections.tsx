@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { Icon } from "../../components/Icon";
 import { TransactionRow, WalletCard } from "../../components/TransactionRow";
+import { useTransactionMenu } from "../transactions/TransactionActionsMenu";
 import { formatMoney } from "../../lib/money";
 import {
   capList,
@@ -205,6 +206,7 @@ export function RecentSection({
   transactionCount,
 }: Pick<HomeData, "recent" | "categoryById" | "walletName"> & { transactionCount: number }) {
   const { t } = useTranslation();
+  const txMenu = useTransactionMenu();
   if (!showRecentSection(recent.length, transactionCount)) return null;
   return (
     <section aria-labelledby="home-recent-title" className="flex flex-col gap-3">
@@ -228,11 +230,13 @@ export function RecentSection({
                 category={tx.categoryId ? categoryById.get(tx.categoryId) : undefined}
                 walletName={walletName}
                 showDay
+                onLongPress={(title) => txMenu.open(tx, title)}
               />
             </li>
           ))}
         </ul>
       )}
+      {txMenu.menu}
     </section>
   );
 }

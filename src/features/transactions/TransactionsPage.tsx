@@ -33,6 +33,8 @@ import { TransactionDetailSheet } from "./TransactionDetailSheet";
 import { upTo } from "../../domain/cutoff";
 import { useBalanceCutoff } from "../settings/balance-cutoff";
 import { askConfirm } from "../../components/confirm-service";
+import { useLongPress } from "../../lib/long-press";
+import { useTransactionMenu } from "./TransactionActionsMenu";
 import { announce } from "../../components/announce";
 
 const ALL_TYPES: TransactionType[] = ["expense", "income", "transfer", "adjustment"];
@@ -219,6 +221,15 @@ export function TransactionsPage() {
       setMessage(err instanceof Error ? err.message : t("errors.generic"));
     }
   }
+
+  // Appui long sur une ligne : menu d'options (modifier, dupliquer, sélectionner, supprimer).
+  const txMenu = useTransactionMenu({
+    onSelect: (tx) => {
+      setSelectMode(true);
+      setSelected(new Set([tx.id]));
+    },
+    onDelete: (tx) => void deleteIds([tx.id]),
+  });
 
   function toggleSelected(txId: string) {
     setSelected((prev) => {
@@ -461,6 +472,7 @@ export function TransactionsPage() {
                     selected={selected.has(row.transaction.id)}
                     onToggle={() => toggleSelected(row.transaction.id)}
                     onOpen={() => navigate(`/transactions/${row.transaction.id}`)}
+                    onLongPress={(title) => txMenu.open(row.transaction, title)}
                     time={format(new Date(row.transaction.date), "HH:mm")}
                   />
                 )}
@@ -714,6 +726,8 @@ export function TransactionsPage() {
         </BottomSheet>
       ) : null}
 
+      {txMenu.menu}
+
       {sheetMode === "view" && target ? (
         <TransactionDetailSheet
           transaction={target}
@@ -754,6 +768,8 @@ interface TransactionRowProps {
   selected: boolean;
   onToggle: () => void;
   onOpen: () => void;
+  /** Appui long (hors mode sélection) : reçoit le titre de la ligne. */
+  onLongPress: (title: string) => void;
   time: string;
 }
 
@@ -768,6 +784,7 @@ function TransactionRow({
   selected,
   onToggle,
   onOpen,
+  onLongPress,
   time,
 }: TransactionRowProps) {
   const { t: translate } = useTranslation();
@@ -796,12 +813,20 @@ function TransactionRow({
     .filter(Boolean)
     .join(", ");
 
+  const longPress = useLongPress(selectMode ? undefined : () => onLongPress(label));
+
   return (
     <button
       type="button"
-      onClick={selectMode ? onToggle : onOpen}
+      {...longPress}
+      onClick={(e) => {
+        longPress.onClick?.(e);
+        if (e.defaultPrevented) return;
+        if (selectMode) onToggle();
+        else onOpen();
+      }}
       aria-label={rowName}
-      className="flex min-h-[56px] w-full items-center gap-3 border-b border-neutral-200 px-3 py-2.5 text-left transition-colors duration-150 active:bg-neutral-100 dark:border-white/15 dark:active:bg-neutral-800/60"
+      className="flex min-h-[56px] w-full select-none items-center gap-3 [-webkit-touch-callout:none] border-b border-neutral-200 px-3 py-2.5 text-left transition-colors duration-150 active:bg-neutral-100 dark:border-white/15 dark:active:bg-neutral-800/60"
       aria-pressed={selectMode ? selected : undefined}
     >
       {selectMode ? (
