@@ -704,6 +704,8 @@
     "language": "Langue",
     "languageFr": "Français",
     "languageEn": "English",
+    "defaultWallet": "Portefeuille par défaut",
+    "defaultWalletHint": "Proposé en premier quand vous ajoutez une transaction.",
     "weekStart": "Premier jour de la semaine",
     "monthStart": "Mon mois commence le",
     "monthDay": "Le {{day}}",

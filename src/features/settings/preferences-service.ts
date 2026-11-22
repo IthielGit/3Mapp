@@ -7,6 +7,7 @@ export type PreferencePatch = Partial<
   Pick<
     Settings,
     | "language"
+    | "defaultWalletId"
     | "weekStartDay"
     | "monthStartDay"
     | "payOnFriday"

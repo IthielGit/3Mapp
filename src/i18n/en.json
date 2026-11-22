@@ -704,6 +704,8 @@
     "language": "Language",
     "languageFr": "Français",
     "languageEn": "English",
+    "defaultWallet": "Default wallet",
+    "defaultWalletHint": "Shown first when you add a transaction.",
     "weekStart": "First day of the week",
     "monthStart": "My month starts on",
     "monthDay": "Day {{day}}",
