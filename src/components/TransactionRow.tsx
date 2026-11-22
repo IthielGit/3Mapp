@@ -8,6 +8,7 @@ import { fitsWalletCard } from "../lib/amount-fit";
 import { format } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { relativeDay } from "../domain/relative-day";
+import { useLongPress } from "../lib/long-press";
 
 /** Pastille sans catégorie : neutral-500 (DESIGN.md field-border), gris froid. */
 const NO_CATEGORY_COLOR = "#6C787F";
@@ -23,13 +24,15 @@ interface TransactionRowProps {
    * comme sur l'accueil, où une heure seule ferait croire à une saisie du jour.
    */
   showDay?: boolean;
+  /** Appui long sur la ligne : reçoit le titre de la ligne (pour le menu d'options). */
+  onLongPress?: (title: string) => void;
 }
 
 /**
  * Une ligne de transaction : pastille de catégorie, libellé, portefeuille et heure,
  * montant aligné à droite. Couleur sémantique : dépense en rouge, revenu en vert.
  */
-export function TransactionRow({ transaction: tx, category, walletName, onOpen, showDay = false }: TransactionRowProps) {
+export function TransactionRow({ transaction: tx, category, walletName, onOpen, showDay = false, onLongPress }: TransactionRowProps) {
   const { t, i18n } = useTranslation();
   const isExpense = tx.type === "expense";
   const isIncome = tx.type === "income";
@@ -46,6 +49,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen, 
     tx.type === "transfer"
       ? t("transactions.types.transfer")
       : [category?.name, walletName(tx.walletId)].filter(Boolean).join(" · ");
+  const longPress = useLongPress(onLongPress ? () => onLongPress(title) : undefined);
   const clock = new Date(tx.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   let time = clock;
   if (showDay) {
@@ -58,7 +62,7 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen, 
           : format(day.date, "EEE d MMM", { locale: i18n.language.startsWith("en") ? enUS : fr });
   }
 
-  const className = "flex min-h-[64px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors duration-150 active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-600 dark:active:bg-neutral-800";
+  const className = "select-none [-webkit-touch-callout:none] flex min-h-[64px] w-full items-center gap-3 rounded-lg px-1 py-2 text-left transition-colors duration-150 active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-600 dark:active:bg-neutral-800";
   const content = (
     <>
       <span
@@ -82,11 +86,19 @@ export function TransactionRow({ transaction: tx, category, walletName, onOpen, 
     </>
   );
   return onOpen ? (
-    <button type="button" onClick={onOpen} className={className}>
+    <button
+      type="button"
+      {...longPress}
+      onClick={(e) => {
+        longPress.onClick?.(e);
+        if (!e.defaultPrevented) onOpen();
+      }}
+      className={className}
+    >
       {content}
     </button>
   ) : (
-    <Link to={`/transactions/${tx.id}`} className={className}>
+    <Link to={`/transactions/${tx.id}`} className={className} {...longPress}>
       {content}
     </Link>
   );
