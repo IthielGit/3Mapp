@@ -85,15 +85,15 @@ export function WalletDetailPage() {
               <li key={tx.id}>
                 <Link
                   to={`/transactions/${tx.id}`}
-                  className="flex justify-between rounded-lg border border-neutral-200 p-3 dark:border-white/15"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-white/15"
                 >
-                  <span className="text-sm">
+                  <span className="min-w-0 flex-1 break-words text-sm">
                     {format(new Date(tx.date), "dd/MM/yyyy HH:mm")} ·{" "}
                     {t(`transactions.types.${tx.type}`)}
                     {tx.memo ? ` · ${tx.memo}` : ""}
                   </span>
                   <span
-                    className={`font-medium tabular-nums ${
+                    className={`shrink-0 whitespace-nowrap font-medium tabular-nums ${
                       outflow
                         ? "text-expense dark:text-expense-dark"
                         : inflow
